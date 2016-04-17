@@ -1399,6 +1399,7 @@ endif]]></eval>
       </bootstrap>
     <bootstrap thing="wS2WarSpik">
       <autotag group="Warforged" tag="Spikes"/>
+      <autotag group="IsMaterial" tag="eAdamant"/>
       </bootstrap>
     <bootstrap thing="cWrjExBuRu">
       <autotag group="ClSpecWhen" tag="1"/>
@@ -2591,31 +2592,16 @@ field[trkMax].value += 3 + #attrmod[aINT]]]></eval>
     </thing>
   <thing id="cMnkS2BlDa" name="Blade Dancer" description="Through Valenar monastic weapon training, you have mastered a fighting style that makes use of the valenar double scimitar.  You gain proficiency with the double scimitar and can use it as a monk weapon gaining the ability to perform a flurry of blows with the weapon.\n\nThis ability replaces your first level bonus feat." compset="ClSpecial" summary="You gain proficiency with the double scimitar and can use it as part of a flurry of blows.">
     <eval phase="First" priority="11000"><![CDATA[
-doneif (field[xWhen].value > field[xAllLev].value)
+      ~ We're earlier than the normal test for whether we've reached the correct level, so we'll recreate that test here
+      doneif (root.linkage[varies].field[cTotalLev].value + field[xExtraLev].value + field[xEffectLev].value < tagvalue[ClSpecWhen.?])
 
-~ Make proficient with the Double Scimitar
-perform hero.assign[WepProf.wS2ScimDbl]
+      ~ Make proficient with the Double Scimitar
+      perform hero.assign[WepProf.wS2ScimDbl]
 
-~ make all double scimitars monk weapon
-foreach pick in hero from BaseWep where "thingid.wS2ScimDbl"
-   perform eachpick.assign[wFtrGroup.Monk]
-   perform eachpick.assign[wSpecial.Monk]
-nexteach]]></eval>
-    </thing>
-  <thing id="wS2WarSpik" name="Armor Spikes (Adamantine)" description="At 1st level, a warforged juggernaut grows armor spikes and gains proficiency in their use as a weapon. These adamantine armor spikes deal 1d6 points of piercing damage on a successful grapple attack.\n\nWhile the spikes can&apos;t be removed, they can be affected by spells like any other weapon. At 4th level, the damage these armor spikes deal increases to 1d8." compset="Weapon">
-    <usesource source="S2Eberron"/>
-    <tag group="Helper" tag="Helper"/>
-    <tag group="Helper" tag="NoOutGear"/>
-    <tag group="EquipType" tag="Metal"/>
-    <tag group="wMain" tag="1d6_5"/>
-    <tag group="wProfReq" tag="Martial"/>
-    <tag group="wFtrGroup" tag="Close"/>
-    <tag group="wCategory" tag="Melee"/>
-    <tag group="RaceEquip" tag="rS2Warforg"/>
-    <tag group="wCritMin" tag="20"/>
-    <tag group="wCritMult" tag="2"/>
-    <tag group="wType" tag="P"/>
-    <tag group="Helper" tag="GearNoSize"/>
-    <tag group="wClass" tag="OneHanded"/>
+      ~ make all double scimitars monk weapon
+      foreach pick in hero from BaseWep where "thingid.wS2ScimDbl"
+         perform eachpick.assign[wFtrGroup.Monk]
+         perform eachpick.assign[wSpecial.Monk]
+      nexteach]]></eval>
     </thing>
   </document>

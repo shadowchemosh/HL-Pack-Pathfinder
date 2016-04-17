@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_CampaignPack_Eberron RoE - Archetypes"/>
+  <thing id="arS2ChaEgo" name="Changeling Egoist" description="A changeling’s aptitude at reshaping his body makes him naturally inclined toward psionic powers that perform similar tasks, such as those of the psychometabolism discipline. The egoist—a psion who specializes in psychometabolic powers—is an avenue often pursued by psionic changelings; such characters are well-known for their superior mastery of the discipline.\n\n{b}Pathfinder:{/b} This archetype is desgined to work with the Psion class from Ulatimate Psionics.\n\nTODO: Implement this fully when the packs all become one." compset="ClassVary" uniqueness="unique">
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <link linkage="varies" thing="cHelpAdV"/>
+    <exprreq message="Eberron Changeling race required."><![CDATA[#hasrace[rS2Changel] <> 0]]></exprreq>
+    </thing>
+  <thing id="arS2ChaRog" name="Changeling" description="The changeling rogue follows the natural proclivities of the race and its favored class, with most multiclass changelings beginning their careers as rogues in order to benefit from the class’s wide range of skills. Though he gives up some of his adventure-oriented talents, the changeling rogue gains new abilities that aid him in more mainstream settings. Focusing on social deception and manipulation, he uses and shapes his racial abilities to strong advantage." compset="ClassVary" uniqueness="unique">
+    <fieldval field="cvSkillPts" value="10"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbReplace" tag="cRogTrapfn"/>
+    <tag group="AbReplace" tag="cTrapSense"/>
+    <tag group="AbModify" tag="cUncanny"/>
+    <bootstrap thing="cRogS2ClSk">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cRogS2MiLo">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cRogS2MiLo">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cRogS2MiLo">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cRogS2MiLo">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cRogS2MiLo">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cRogS2MiLo">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cRogS2SoIn">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cRogS2MuAn">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpRog"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Disable Improved Uncanny Dodge &
+      perform hero.findchild[BaseClSpec,"thingid.cUncanny & ClSpecWhen.8"].assign[Helper.SpcDisable]]]></eval>
+    <exprreq message="Eberron Changeling race required."><![CDATA[#hasrace[rS2Changel] <> 0]]></exprreq>
+    </thing>
+  <thing id="cRogS2ClSk" name="Class Skill" description="Changeling rogue substitution levels have the class skills of the standard rogue class, plus one Knowledge skill chosen when the first racial substitution level is taken. Once this selection is made, it cannot be changed. In addition a changeling rogue gains 10 skill points per level instead of the normal 8." compset="ClSpecial" summary="Gain one Knowledge skill as a class skill.">
+    <comment>Changeling Rogue</comment>
+    <fieldval field="usrCandid1" value="component.BaseSkill &amp; Helper.SkCatKnow"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we've not chosen anything, get out
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      ~ Let the hero know so we show as blue in selection list
+      perform field[usrChosen1].chosen.pulltags[ClassSkill.sk?]
+      perform hero.pushtags[ClassSkill.sk?]
+
+      ~ Find the skill and make it a class skill
+      perform hero.findchild[BaseSkill,tagids[ClassSkill.?]].assign[Helper.ClassSkill]]]></eval>
+    </thing>
+  <thing id="cRogS2SoIn" name="Social Intuition" description="A changeling rogue has an uncanny awareness of the tone of any social situation in which he finds himself. This grants benefits to a number of his skill checks.\n\n• Making a Diplomacy check to gather information to gain knowledge takes a changeling rogue only 1d4×10 minutes, instead of the normal 1d4 hours.\n• A gut assessment of a social situation with a Sense Motive check can be made as a full-round action instead of taking a full minute.\n• A changeling rogue can take 10 on Bluff, Diplomacy,  Intimidate, and Sense Motive checks, even if stress or distraction would normally prevent him from doing so.\n\nThis substitution feature replaces the standard rogue’s trapfinding ability." compset="ClSpecial" summary="Can always take 10 on Bluff, Deiplomancy, Intimidate, and Sense Motive.">
+    <comment>Changeling Rogue</comment>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #situational[hero.child[skDiplo],"Gather information you only 1d4x10 minutes, instead of the normal 1d4 hours.",field[name].text]
+
+      #situational[hero.child[skSenseMot],"Making a hunch assessment can be made as a full-round action instead of taking a full minute.",field[name].text]
+
+      var sText as string
+      sText = "You can take 10 on this skill even if stress or distraction would normally prevent you from doing so."
+
+      #situational[hero.child[skBluff],sText,field[name].text]
+      #situational[hero.child[skDiplo],sText,field[name].text]
+      #situational[hero.child[skIntim],sText,field[name].text]
+      #situational[hero.child[skSenseMot],sText,field[name].text]]]></eval>
+    </thing>
+  <thing id="cRogS2MiLo" name="Minor Lore" description="Thanks to his varied personas and pursuits, a changeling rogue picks up bits of stray knowledge. Beginning at 3rd level, he gains a +1 bonus on all Knowledge checks (though this bonus doesn&apos;t change an untrained check to a trained check), improving by +1 every three levels thereafter (to +2 at 6th level, +3 at 9th, and so on). In addition, whenever the rogue successfully aids another character&apos;s Knowledge check, that character can apply this bonus on his check result (in addition to the normal bonus granted by the rogue&apos;s aid another attempt).\n\nThis substitution feature replaces the standard rogue&apos;s trap sense ability." compset="ClSpecial" summary="Apply bonus to aid another on Knowledge checks in addition to normal bonus.">
+    <comment>Changeling Rogue</comment>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & signed(field[xIndex].value)
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ Give bonus to all knowledge skills
+      hero.child[AllKnow].field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cRogS2MuAn" name="Mutable Anatomy" description="A changeling rogue learns to shift his body&apos;s anatomy in subtle ways during combat to avoid otherwise lethal strikes. Beginning at 8th level, any time a critical hit or sneak attack is scored on a changeling rogue, there is a 50% chance that the critical hit or sneak attack is negated and damage is instead rolled normally. If the changeling rogue has the ability to negate critical hits or sneak attacks by some additional means (such as armor with the fortification special ability), apply the chances separately.\n\nThis substitution feature replaces the standard rogue&apos;s improved uncanny dodge." compset="ClSpecial" summary="Critical hit or sneak attack is negated and damage is instead rolled normally.">
+    <comment>Changeling Rogue</comment>
+    <fieldval field="abValue" value="50"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[livename].text = field[thingname].text & " " & field[abValue].value & "%"]]></eval>
+    </thing>
+  </document>

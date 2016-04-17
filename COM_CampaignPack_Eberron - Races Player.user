@@ -121,20 +121,18 @@ endif]]></eval>
     <bootstrap thing="raSTlongst">
       <containerreq phase="First" priority="500">Shifter.Longstride</containerreq>
       </bootstrap>
-    <eval phase="Final" priority="10000"><![CDATA[
+    <eval phase="Final" priority="10000">
       ~ We get a bonus of 1.5 rounds per shifter feat taken
       field[abValue].value += round(hero.tagcount[Shifter.Feat] * 1.5,0,-1)
 
       ~We get 3 + 1/2 Level + CON + Feats rounds of shift/day
-      field[trkMax].value += 3 + round(herofield[tLevel].value/2,0,-1) + hero.child[aCON].field[aBonus].value + field[abValue].value
-      ]]></eval>
-    <eval phase="First" index="2"><![CDATA[
+      field[trkMax].value += 3 + round(herofield[tLevel].value/2,0,-1) + hero.child[aCON].field[aBonus].value + field[abValue].value</eval>
+    <eval phase="First" index="2">
       ~ If we are not activated get out now
       doneif (field[abilActive].value = 0)
 
       ~ Set the shifting tag on to the hero
-      perform hero.assign[Shifter.Shifting]
-      ]]></eval>
+      perform hero.assign[Shifter.Shifting]</eval>
     </thing>
   <thing id="raShftAgil" name="Shifter Agility" description="A shifter’s animalistic heritage enhances many of her physical skills. Shifters gain a +2 racial bonus on Acrobatics, Climb, and Swim checks." compset="RaceSpec">
     <tag group="Helper" tag="ShowSpec"/>
@@ -147,10 +145,9 @@ endif]]></eval>
       #skillbonus[skAcrobat] += field[abValue].value
       #skillbonus[skClimb] += field[abValue].value
       #skillbonus[skSwim] += field[abValue].value]]></eval>
-    <eval phase="First" index="2"><![CDATA[
+    <eval phase="First" index="2">
       ~ Set bonus to +2
-      field[abValue].value += 2
-      ]]></eval>
+      field[abValue].value += 2</eval>
     </thing>
   <thing id="raSTbeasth" name="Beasthide" description="While shifting, a beasthide shifter gains a +2 bonus to Constitution and natural armor that provides a +2 bonus to AC." compset="RaceSpec" summary="+2 Con and +2 AC when shifting.">
     <comment>abValue = Ability Score bonus, abValue2 = Misc ability bonus, abValue3 = Natural Attack dmg bonus, abValue4 = Not Used</comment>
@@ -358,8 +355,7 @@ abValue4 = Not Used</comment>
     <tag group="AbilType" tag="Super"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="Shifter" tag="Truedive"/>
-    <eval phase="First" priority="1000">
-      ~ Make swim a class skill
+    <eval phase="First" priority="1000">~ Make swim a class skill
       #makeclassskill[skSwim]</eval>
     <eval phase="PreAttr" priority="1000" index="2"><![CDATA[
       ~ If not shifting get out now
@@ -423,19 +419,23 @@ abValue4 = Not Used</comment>
     <bootstrap thing="raCHGmcsha"></bootstrap>
     <bootstrap thing="raCHGintui"></bootstrap>
     </thing>
-  <thing id="raCHGintui" name="Intuition" description="Changelings are inherently skilled in deception and intimidation, and though they cannot actually detect thoughts as doppelgangers can, they can intuitively read body language and attitude with surprising accuracy.  Changelings gain a +2 racial bonus on Bluff, Intimidate, and Sense Motive checks." compset="RaceSpec">
+  <thing id="raCHGintui" name="Intuition" description="Changelings are inherently skilled in deception and intimidation, and though they cannot actually detect thoughts as doppelgangers can, they can intuitively read body language and attitude with surprising accuracy.  Changelings gain a +2 racial bonus on Bluff, Intimidate, and Sense Motive checks." compset="RaceSpec" summary="Racial bonus on Bluff, Intimidate, and Sense Motive checks.">
+    <fieldval field="abValue" value="2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-      ~if we've been replaced, get out now
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we've been replaced, get out now
       doneif (tagis[Helper.SpcReplace] <> 0)
 
-      ~ set bonus to be +2
-      field[abValue].value += 2
-
       ~ Bonus to Bluff, Intimdate, Sense Movtive
-      #skillbonus[skBluff] += field[abValue].value
-      #skillbonus[skIntim] += field[abValue].value
-      #skillbonus[skSenseMot] += field[abValue].value]]></eval>
+      #racialbonus[skBluff] += field[abValue].value
+      #racialbonus[skIntim] += field[abValue].value
+      #racialbonus[skSenseMot] += field[abValue].value
+
+      ~ Set live name with bonus
+      field[livename].text = field[name].text & " " & signed(field[abValue].value)]]></eval>
     </thing>
   <thing id="raCHGmcsha" name="Minor Change Shape" description="Changelings have the super natural ability to alter their appearance as though using a {i}disguise self{/i} or {i}alter self{/i} spell that affects their bodies but not their possessions. This ability is not an illusory effect, but a minor physical alteration of a changeling’s facial features, skin color and texture, and size, within the limits described for the spells. A changeling can use this ability at will, and the alteration lasts until she changes shape again. A changeling reverts to her natural form when killed. A true seeing spell reveals her natural form. When using this ability to create a disguise, a changeling receives a +10 circumstance bonus on Disguise checks. Using this ability is a full-round action." compset="RaceSpec">
     <tag group="Helper" tag="ShowSpec"/>
@@ -446,56 +446,52 @@ abValue4 = Not Used</comment>
     <tag group="SpecType" tag="Defense"/>
     <eval phase="Final" priority="50000"><![CDATA[
       ~ Situational note to all saves
-      #situational[hero.child[svAll],signed(field[abValue].value) & " racial bonus vs sleep and charm effects.",field[name].text]
-      ]]></eval>
+      #situational[hero.child[svAll],signed(field[abValue].value) & " racial bonus vs sleep and charm effects.",field[name].text]]]></eval>
     </thing>
   <thing id="raChangeMe" name="Shape Change (Medium)" description="If the form you take is that of a Medium humanoid, you gain a +2 size bonus to your Strength." compset="RaceSpec">
     <tag group="User" tag="Activation"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreAttr" priority="10000"><![CDATA[
+    <eval phase="PreAttr" priority="10000">
       ~ If we are not activated get out now
       doneif (field[abilActive].value = 0)
 
       ~ Add a +2 shape change bonus to our Strength
-      hero.child[aSTR].field[aStartMod].value += 2]]></eval>
-    <eval phase="PreLevel" priority="5000" index="2"><![CDATA[
+      hero.child[aSTR].field[aStartMod].value += 2</eval>
+    <eval phase="PreLevel" priority="5000" index="2">
       ~ If we are not activated get out now
       doneif (field[abilActive].value = 0)
 
       #applybonus[ModCirc,hero.child[skDisguise],10]
 
       ~Disable the other shape change
-      perform hero.child[raChangeSm].assign[Helper.ChgDisab1]]]></eval>
+      perform hero.child[raChangeSm].assign[Helper.ChgDisab1]</eval>
     </thing>
   <thing id="raChangeSm" name="Shape Change (Small)" description="If the form you take is that of a Small humanoid, you gain a +2 size bonus to your Dexterity." compset="RaceSpec">
     <tag group="User" tag="Activation"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreAttr" priority="10000"><![CDATA[
+    <eval phase="PreAttr" priority="10000">
       ~ If we are not activated get out now
       doneif (field[abilActive].value = 0)
 
       ~ Add a +2 shape change bonus
       hero.child[aDEX].field[aStartMod].value += 2
       ~Disable the other shape change
-      perform hero.child[raChangeMe].assign[Helper.ChgDisab1]
-      ]]></eval>
-    <eval phase="First" priority="20000" index="2"><![CDATA[
+      perform hero.child[raChangeMe].assign[Helper.ChgDisab1]</eval>
+    <eval phase="First" priority="20000" index="2">
       ~ If we are not activated get out now
       doneif (field[abilActive].value = 0)
 
       ~ Add to size - must come after race and template size set
       herofield[tSize].value -= 1
       ~ +10 circumstance bonus to disguise skill
-      #applybonus[ModCirc,hero.child[skDisguise],10]
-      ]]></eval>
+      #applybonus[ModCirc,hero.child[skDisguise],10]</eval>
     </thing>
   <thing id="fcBbnShift" name="Shifter Barbarian" description="Add 1 to the shifter&apos;s total number of rage rounds per day." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1 rage round/day"/>
     <usesource source="S2Eberron"/>
     <tag group="FavClass" tag="cBarbarian" name="Barbarian" abbrev="Barbarian"/>
     <tag group="IsRace" tag="rShifters"/>
-    <eval phase="PostAttr" priority="10000">
-      field[abValue].value += field[fcCount].value
+    <eval phase="PostAttr" priority="10000">field[abValue].value += field[fcCount].value
       #trkmax[cBbnRage] += field[abValue].value</eval>
     </thing>
   <thing id="fcRgrShift" name="Shifter Ranger" description="Add a +1/2 bonus on wild empathy checks to influence animals and magical beasts." compset="FavClass" uniqueness="unique">
@@ -503,8 +499,7 @@ abValue4 = Not Used</comment>
     <usesource source="S2Eberron"/>
     <tag group="IsRace" tag="rShifters"/>
     <tag group="FavClass" tag="cRanger" name="Ranger" abbrev="Ranger"/>
-    <eval phase="PostAttr" priority="10000">
-      field[abValue].value += round(field[fcCount].value/2,0,-1)
+    <eval phase="PostAttr" priority="10000">field[abValue].value += round(field[fcCount].value/2,0,-1)
       #value[cWildEmp] += field[abValue].value</eval>
     </thing>
   <thing id="raS2ShftTA" name="Shifter TAGS" description="This thing just holds all the Shifter Tags." compset="RaceSpec">
@@ -588,8 +583,7 @@ abValue4 = Not Used</comment>
     <tag group="Helper" tag="Shadow" name="Shadow" abbrev="Shadow"/>
     <tag group="Helper" tag="NoSelect" name="NoSelect" abbrev="NoSelect"/>
     <containerreq phase="GlobalTest" priority="0">TRUE</containerreq>
-    <eval phase="PreLevel" priority="5000">
-      ~ Call Magic Armor Gizmo
+    <eval phase="PreLevel" priority="5000">~ Call Magic Armor Gizmo
       Call iMagArmor
       ~ Make us proficient with our own bodies
       perform assign[Helper.Proficient]</eval>
@@ -615,8 +609,7 @@ abValue4 = Not Used</comment>
 
       ~ Set the livename
       field[livename].text = field[thingname].text & " " & field[abValue].value & "%"]]></eval>
-    <eval phase="First" priority="10000" index="2">
-      ~ Set fortification to 25% as default for race
+    <eval phase="First" priority="10000" index="2">~ Set fortification to 25% as default for race
       field[abValue].value += 25</eval>
     </thing>
   <thing id="mS2AdamBod" name="Adamantine Body" compset="Armor" holdable="no">
@@ -650,19 +643,17 @@ abValue4 = Not Used</comment>
     <tag group="Helper" tag="Shadow"/>
     <tag group="Helper" tag="NoSelect"/>
     <containerreq phase="GlobalTest" priority="0">TRUE</containerreq>
-    <eval phase="PreLevel" priority="5000"><![CDATA[
+    <eval phase="PreLevel" priority="5000">
       ~ Call Magic Armor Gizmo
       Call iMagArmor
       ~ Make us proficient in the use of our own body
       perform assign[Helper.Proficient]
       ~ Give 2/Adamatine DR
-      #applydr[xDamRdAdam,2]
-      ]]></eval>
+      #applydr[xDamRdAdam,2]</eval>
     <eval phase="Render" priority="99999999" index="2"><![CDATA[
       ~ Do to the way the Material bootstrap changes the name we need to
       ~ add this line to make the name correct again.
-      field[livename].text &= " Body"
-      ]]></eval>
+      field[livename].text &= " Body"]]></eval>
     <child entity="gMagArmor">
       <tag group="Helper" tag="NoSelChild" name="NoSelChild"/>
       <bootstrap thing="mS2AdamBod">
@@ -799,8 +790,7 @@ perform hero.assign[Warforged.Armored]</eval>
     <bootstrap thing="iS2AdamBod">
       <autotag group="Helper" tag="Displace"/>
       </bootstrap>
-    <eval phase="First">
-      ~ Assign Body tag to hero
+    <eval phase="First">~ Assign Body tag to hero
       perform hero.assign[Warforged.Adamantine]
       ~ Assign Armored tag to hero
       perform hero.assign[Warforged.Armored]</eval>
@@ -811,8 +801,7 @@ perform hero.assign[Warforged.Armored]</eval>
     <bootstrap thing="iS2MithBod">
       <autotag group="Helper" tag="Displace"/>
       </bootstrap>
-    <eval phase="First">
-      ~ Assign Body tag to hero
+    <eval phase="First">~ Assign Body tag to hero
       perform hero.assign[Warforged.Mithral]
       ~ Assign Armored tag to hero
       perform hero.assign[Warforged.Armored]</eval>
@@ -823,8 +812,7 @@ perform hero.assign[Warforged.Armored]</eval>
     <bootstrap thing="iS2IronBod">
       <autotag group="Helper" tag="Displace"/>
       </bootstrap>
-    <eval phase="First">
-      ~ Assign Body tag to hero
+    <eval phase="First">~ Assign Body tag to hero
       perform hero.assign[Warforged.Ironwood]
       ~ Assign Armored tag to hero
       perform hero.assign[Warforged.Armored]</eval>
@@ -832,8 +820,7 @@ perform hero.assign[Warforged.Armored]</eval>
   <thing id="rcWFBody05" name="Unarmored Body" description="{I}Your body is crafted without its normal layer of armor trading off physical strength for magical potential.{/i}\n\nYou lose the normal +2 armor bonus common to warforged characters, but you have no inherent chance of spell failure, do not count to be wearing armor, gain a +1 natural armor bonus and can wear armor or magic robes and gain their full effects." compset="RaceCustom" summary="+1AC and you can wear armor or magic robes." uniqueness="useronce">
     <usesource source="S2Eberron"/>
     <tag group="AllowRCust" tag="rS2Warforg"/>
-    <eval phase="First">
-      ~ +1 Natural AC Bonus
+    <eval phase="First">~ +1 Natural AC Bonus
       hero.child[ArmorClass].field[tACNatural].value += 1
       ~ Assign Unarmored tag to hero
       perform hero.assign[Warforged.Unarmored]</eval>
