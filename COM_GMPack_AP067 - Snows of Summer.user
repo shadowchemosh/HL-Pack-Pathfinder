@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_AP067 - Snows of Summer"/>
+  <thing id="rAP67TatzA" name="Tatzlwyrm, Arctic" compset="Race">
+    <fieldval field="rHitDice" value="3"/>
+    <fieldval field="rHPStart" value="19"/>
+    <fieldval field="rSTR" value="4"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rCON" value="2"/>
+    <fieldval field="rINT" value="-5"/>
+    <fieldval field="rWIS" value="4"/>
+    <fieldval field="rCHA" value="1"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rAC" value="3"/>
+    <fieldval field="rCR" value="2"/>
+    <usesource source="PathRgnWin"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="HasType" tag="tpDragon"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Helper" tag="Snaky"/>
+    <bootstrap thing="raGrab">
+      <autotag group="Target" tag="wBite"/>
+      </bootstrap>
+    <bootstrap thing="raPoisGasp"></bootstrap>
+    <bootstrap thing="raPounce"></bootstrap>
+    <bootstrap thing="xClimb">
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    <bootstrap thing="fNimbMove"></bootstrap>
+    <bootstrap thing="wRake">
+      <autotag group="wMain" tag="1d4_4"/>
+      <assignval field="livename" value="Rake (2 claws)"/>
+      </bootstrap>
+    <bootstrap thing="fStealthy"></bootstrap>
+    <bootstrap thing="lDraconic"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6_5"/>
+      </bootstrap>
+    <bootstrap thing="raPoiSTR">
+      <assignval field="abValue" value="2"/>
+      <assignval field="abValue2" value="1"/>
+      <assignval field="abDuration" value="2"/>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+      #skillinnate[skClimb] += 1
+      #skillinnate[skEscape] += 1
+      #skillinnate[skIntim] += 1
+      #skillinnate[skPercep] += 3
+      #skillinnate[skStealth] += 3
+
+      #racialsituational[hero.child[skStealth],"+6 in snow",field[name].text]]]></eval>
+    <eval phase="Final" index="3">
+      ~ adjust poison
+      perform hero.child[raPoiSTR].tagreplace[PoisonCat.?,PoisonCat.Inhaled]</eval>
+    </thing>
+  <thing id="tmAP67FstS" name="Skeleton, Frost" description="A frost skeleton is surrounded by an aura of cold that deals cold damage to those it strikes. In addition to the changes for the skeleton template, make the following adjustments to the base creature.\n{b}Challenge Rating{/b}: As a normal skeleton + 1.\n{b}Aura{/b}: Burning skeletons possess a cold aura.\n{b}Defensive Abilities{/b}: Frost skeletons lose gain immunity to cold. A frost skeleton gains vulnerability to fire damage.\n{b}Melee Attacks{/b}: A frost skeleton&apos;s melee attacks (including both those made with a natural weapon and those made with a manufactured weapon) deal an additional 1d6 points of cold damage.\n{b}Abilities{/b}: A burning skeleton&apos;s Charisma is 12.\n{b}Special Qualities{/b}: A burning skeleton gains frosty death." compset="Template" uniqueness="unique">
+    <fieldval field="tmCHA" value="2"/>
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="PathRgnWin"/>
+    <tag group="ClVaryName" tag="Prepend" name="Prepend" abbrev="Prepend"/>
+    <tag group="TemplHelp" tag="Acquired" name="Acquired" abbrev="Acquired"/>
+    <tag group="TemplHelp" tag="Inherited" name="Inherited" abbrev="Inherited"/>
+    <bootstrap thing="raAP67FSkA">
+      <autotag group="SpecSource" tag="tmAP67FstS"/>
+      </bootstrap>
+    <bootstrap thing="xImmCold">
+      <autotag group="SpecSource" tag="tmAP67FstS"/>
+      </bootstrap>
+    <bootstrap thing="xVulFire">
+      <autotag group="SpecSource" tag="tmAP67FstS"/>
+      </bootstrap>
+    <bootstrap thing="raAP67FSkD">
+      <autotag group="SpecSource" tag="tmAP67FstS"/>
+      </bootstrap>
+    <eval phase="First" priority="600" index="3"><![CDATA[
+      field[livename].text = "Frost"]]>
+      <before name="Template Name Modification"/>
+      </eval>
+    <eval phase="PreLevel" priority="10001" index="2"><![CDATA[
+      ~if we've been added to a skeleton, increase the force value on our CHA to 12
+      if (hero.tagis[Template.tmSkeleton] <> 0) then
+        hero.child[aCHA].field[aNormForce].value = 12
+        endif]]></eval>
+    <exprreq message="Skeleton or Skeletal Champion Template required."><![CDATA[hero.tagis[Template.tmSkeleton] + hero.tagis[Template.tmSkelCham] <> 0]]></exprreq>
+    </thing>
+  <thing id="raAP67FSkA" name="Cold Aura" description="Creatures adjacent to a burning skeleton take 1d6 points of cold damage at the start of their turn. Anyone striking a frost skeleton with an unarmed strike or natural attack takes 1d6 points of cold damage." compset="RaceSpec" summary="Deal 1d6 cold damage to adjacent creatures, and to foes that hit with natural weapons.">
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    </thing>
+  <thing id="raAP67FSkD" name="Frosty Death" description="A frost skeleton explodes into a burst of frost when it dies. Anyone adjacent to the skeleton when it is destroyed takes 1d6 points of cold damage per 2 Hit Dice the skeleton possessed (minimum 1d6). A Reflex save (DC = 10 + 1/2 the skeleton&apos;s Hit Dice + the skeleton&apos;s Cha bonus) halves this damage.\n\nA frost skeleton&apos;s melee attacks (including both those made with a natural weapon and those made with a manufactured weapon) deal an additional 1d6 points of cold damage." compset="RaceSpec" summary="Deal listed cold damage to adjacent creatures when destroyed (Ref half).">
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="StandardDC" tag="aCHA" name="Charisma" abbrev="Charisma"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      field[abValue].value += maximum(1, round(herofield[tHitDice].value/2,0,-1))
+
+      field[livename].text = field[thingname].text & " (" & field[abValue].value & "d6 cold)"
+
+      foreach pick in hero from BaseWep
+        #extradamage[eachpick,"+1d6 cold",field[livename].text]
+        nexteach]]></eval>
+    </thing>
+  <thing id="rcAP67AOIc" name="Ice" description="The object is made of ice. Its hardness is reduced to 0, and it gains vulnerability to fire and immunity to cold." compset="RaceCustom" uniqueness="useronce">
+    <usesource source="PathRgnWin"/>
+    <tag group="AllowRCust" tag="rAnimObjec"/>
+    <tag group="CustomCost" tag="1" name="1" abbrev="1"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xImmCold"></bootstrap>
+    <bootstrap thing="xVulFire"></bootstrap>
+    <eval phase="Final">
+      ~ set hardness to zero
+      perform hero.child[raHardness].delete[Value.?]</eval>
+    <eval phase="Final" priority="10001" index="2"><![CDATA[
+      hero.child[raHardness].field[livename].text = hero.child[raHardness].field[name].text & " 0"]]></eval>
+    </thing>
+  </document>

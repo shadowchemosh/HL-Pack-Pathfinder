@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_Frumple - Classes for Monsters, Monk"/>
+  <fileinfo>
+    <info_author>Jeff Hersh (frumple)</info_author>
+    <info_history><![CDATA[
+      July 17, 2012 - Tim Shadow
+      -Added in "pFlurryWea" adjustment from "PFRPG_Monk_FoB.user" and renamed to pJHFlurryW for now. This seems required for this file to work. But the Flurry of Blows addon makes too many crazy adjustments to be added at this time to such a popular downloaded data set.
+      -Removed Childlives test for fPiranStr feat.
+
+      Feb 21, 2012 - Jeff Hersh
+      Put together various racial abilities to copy a monk's class abilities. This is for creatures that have monk class abilities but do not have monk levels.]]></info_history>
+    </fileinfo>
+  <thing id="xRMnkACBn" name="AC Bonus" description="When unarmored and unencumbered, the monk adds his Wisdom bonus (if any) to his AC and his CMD. In addition, a monk gains a +1 bonus to AC and CMD at 4th level. This bonus increases by 1 for every four monk levels thereafter, up to a maximum of +5 at 20th level.\n\nThese bonuses to AC apply even against touch attacks or when the monk is flat-footed. He loses these bonuses when he is immobilized or helpless, when he wears any armor, when he carries a shield, or when he carries a medium or heavy load." compset="RaceSpec" summary="The Monk adds his Wisdom bonus to AC and CMD, more at higher levels.">
+    <comment>The Value field is used for the equivaluent monk level.</comment>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="SpecType" tag="Defense" name="Defense" abbrev="Defense"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ Get our encumbrance level - if we're encumbered by that, or if we're wearing
+      ~ armor or shield, we're disabled.
+      if (hero.tagis[Encumbered.Light] = 0) then
+        perform assign[Helper.SpcDisable]
+        done
+        endif
+
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      call TotalValue
+
+      var bonus as number
+      bonus = field[abValue].value
+      bonus = round(bonus/4,0,-1)
+
+      field[abValue].value = #attrbonus[aWIS] + bonus
+
+      field[livename].text = "AC Bonus +" & field[abValue].value
+
+      ~ If we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Apply our AC bonus to all our armor scores
+      hero.child[ArmorClass].field[Bonus].value+= field[abValue].value]]>
+      <after name="Encumber Final"/>
+      </eval>
+    </thing>
+  <thing id="xRMnkUnStk" name="Unarmed Strike" description="At 1st level, a monk gains Improved Unarmed Strike as a bonus feat. A monk&apos;s attacks may be with fist, elbows, knees, and feet. This means that a monk may make unarmed strikes with his hands full. There is no such thing as an off-hand attack for a monk striking unarmed. A monk may thus apply his full Strength bonus on damage rolls for all his unarmed strikes.\n\nUsually a monk&apos;s unarmed strikes deal lethal damage, but he can choose to deal nonlethal damage instead with no penalty on his attack roll. He has the same choice to deal lethal or nonlethal damage while grappling.\n\nA monk&apos;s unarmed strike is treated as both a manufactured weapon and a natural weapon for the purpose of spells and effects that enhance or improve either manufactured weapons or natural weapons.\n\nA monk also deals more damage with his unarmed strikes than a normal person would, as shown above on Table: Monk. The unarmed damage values listed on Table: Monk is for Medium monks. A Small monk deals less damage than the amount given there with his unarmed attacks, while a Large monk deals more damage." compset="RaceSpec">
+    <comment>The Value field is used for the equivaluent monk level.</comment>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <eval phase="PostLevel" priority="5000"><![CDATA[call TotalValue
+var lvl as number
+lvl = field[abValue].value
+
+      ~ Get our unarmed strike pick, delete the damage tag from it, and assign
+      ~ a new damage tag.
+      var dice as string
+      perform hero.child[wUnarmed].delete[wMain.?]
+      if (lvl < 4) then
+        perform hero.child[wUnarmed].assign[wMain.1d6_5]
+        dice = "1d6"
+      elseif (lvl < 8) then
+        perform hero.child[wUnarmed].assign[wMain.1d8_6]
+        dice = "1d8"
+      elseif (lvl < 12) then
+        perform hero.child[wUnarmed].assign[wMain.1d10_304]
+        dice = "1d10"
+      elseif (lvl < 16) then
+        perform hero.child[wUnarmed].assign[wMain.2d6_104]
+        dice = "2d6"
+      elseif (lvl < 20) then
+        perform hero.child[wUnarmed].assign[wMain.2d8_204]
+        dice = "2d8"
+      else
+        perform hero.child[wUnarmed].assign[wMain.2d10_205]
+        dice = "2d10"
+        endif
+      field[livename].text = field[name].text & " (" & dice & ")"]]></eval>
+    </thing>
+  <thing id="xRMnkStnFs" name="Stunning Fist" description="At 1st level, the monk gains Stunning Fist as a bonus feat, even if he does not meet the prerequisites. At 4th level, and every 4 levels thereafter, the monk gains the ability to apply a new condition to the target of his Stunning Fist. This condition replaces stunning the target for 1 round, and a successful saving throw still negates the effect. At 4th level, he can choose to make the target fatigued. At 8th level, he can make the target sickened for 1 minute. At 12th level, he can make the target staggered for 1d6+1 rounds. At 16th level, he can permanently blind or deafen the target. At 20th level, he can paralyze the target for 1d6+1 rounds. The monk must choose which condition will apply before the attack roll is made. These effects do not stack with themselves (a creature sickened by Stunning Fist cannot become nauseated if hit by Stunning Fist again), but additional hits do increase the duration." compset="RaceSpec">
+    <comment>This is for creatures that have monk abilities but do not have monk levels.  The Value field is used as its equivaluent monk level.
+
+The Stunning Fist feat needs to be boostraped serpeately but this handles the equivalent monk level.</comment>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[   call TotalValue
+
+      if (field[abValue].value >= 20) then
+        field[livename].text = "Stunning Fist (Stun, Fatigue, Sicken, Stagger, Blind, Deafen, Paralyze)"
+      elseif (field[abValue].value >= 16) then
+        field[livename].text = "Stunning Fist (Stun, Fatigue, Sicken, Stagger, Blind, Deafen)"
+      elseif (field[abValue].value >= 12) then
+        field[livename].text = "Stunning Fist (Stun, Fatigue, Sicken, Stagger)"
+      elseif (field[abValue].value >= 8) then
+        field[livename].text = "Stunning Fist (Stun, Fatigue, Sicken)"
+      elseif (field[abValue].value >= 4) then
+        field[livename].text = "Stunning Fist (Stun, Fatigue)"
+        endif]]></eval>
+    <eval phase="First" index="2">call TotalValue
+
+hero.childfound[fStunFist].field[trkMax].value += field[abValue].value - 4</eval>
+    </thing>
+  <thing id="xRMnkFstMv" name="Fast Movement" description="At 3rd level, a monk gains an enhancement bonus to his land speed. A monk in armor or carrying a medium or heavy load loses this extra speed.  By spending 1 point from his ki pool, he can increase his speed by 20 feet for 1 round." compset="RaceSpec">
+    <comment>The Value field is used for the equivaluent monk level.</comment>
+    <fieldval field="actName" value="Fast Movement: 1 Ki: +20&apos;"/>
+    <usesource source="PathJadeRe" parent="PathAdvent" name="Jade Regent"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[
+
+      ~ Get our encumbrance level - if we're encumbered by that, or if we're wearing
+      ~ armor or shield, we're disabled.
+      if (hero.tagis[Encumbered.Light] = 0) then
+        perform assign[Helper.SpcDisable]
+        done
+        endif
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+call TotalValue
+var lvl as number
+lvl = field[abValue].value
+lvl = round(lvl/3,0,-1)
+
+field[abValue].value = lvl * 10
+
+      ~if we're activated, add to our speed
+      if (field[abilActive].value <> 0) then
+        field[abValue].value += 20
+        endif
+
+      field[livename].text = field[thingname].text & " (+" & field[abValue].value & "')"
+
+      #enhancementbonus[container.child[Speed], field[abValue].value]]]>
+      <after name="Encumber Final"/>
+      </eval>
+    </thing>
+  <thing id="xRMnkKiPol" name="Ki Pool" description="At 4th level, a monk gains a pool of ki points, supernatural energy he can use to accomplish amazing feats. The number of points in a monk&apos;s ki pool is equal to 1/2 his monk level + his Wisdom modifier.\n\nA monk gains additional powers that consume points from his ki pool as he gains levels.\n\nThe ki pool is replenished each morning after 8 hours of rest or meditation; these hours do not need to be consecutive.\n\nFor a Ninja, the Ki Pool is based on Charisma, rather than Wisdom." compset="RaceSpec" summary="You have a ki pool equal to 1/2 monk level + your WIS modifier.">
+    <comment>The Value field is used for the equivaluent monk level.</comment>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="User" tag="Tracker" name="Modern Action Points" abbrev="Modern Action Points"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <eval phase="PostAttr" priority="10000">call TotalValue
+var lvl as number
+lvl = round(field[abValue].value/2,0,-1)
+
+field[trkMax].value = lvl + #attrbonus[aWIS]</eval>
+    </thing>
+  <thing id="xRMnkKiAdm" name="Ki Strike, Adamantine" description="At 16th level, a monk&apos;s unarmed attacks are treated as adamantine weapons for the purpose of overcoming damage reduction and bypassing hardness." compset="RaceSpec">
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+    <eval phase="Final" priority="20000"><![CDATA[      if (hero.childfound[xRMnkKiPol].field[trkLeft].value < 1) then
+        perform assign[Helper.SpcDisable]
+        endif]]></eval>
+    </thing>
+  <thing id="xRMnkKiLaw" name="Ki Strike, Lawful" description="At 10th level, a monk&apos;s unarmed attacks are also treated as lawful weapons for the purpose of overcoming damage reduction." compset="RaceSpec">
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+    <eval phase="Final" priority="20000"><![CDATA[      if (hero.childfound[xRMnkKiPol].field[trkLeft].value < 1) then
+        perform assign[Helper.SpcDisable]
+        endif]]></eval>
+    </thing>
+  <thing id="xRMnkKiMag" name="Ki Strike, Magic" description="At 4th level, ki strike allows a monk&apos;s unarmed attacks to be treated as magic weapons for the purpose of overcoming damage reduction." compset="RaceSpec">
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+    <eval phase="Final" priority="20000"><![CDATA[      if (hero.childfound[xRMnkKiPol].field[trkLeft].value < 1) then
+        perform assign[Helper.SpcDisable]
+        endif]]></eval>
+    </thing>
+  <thing id="xRMnkKiDef" name="Ki Defense" description="A monk can spend 1 point from his ki pool to give himself a +4 dodge bonus to AC for 1 round." compset="RaceSpec">
+    <fieldval field="actName" value="Ki Defense: 1 Ki: +4 AC"/>
+    <usesource source="PathJadeRe" parent="PathAdvent" name="Jade Regent"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~our bonus is +4 (stored in a variable in case an external thing wants to modify it
+      field[abValue].value +=4
+
+      ~if we're active, apply the bonus
+      if (field[abilActive].value <> 0) then
+        hero.child[ArmorClass].field[tACDodge].value += field[abValue].value
+        endif]]></eval>
+    </thing>
+  <thing id="xRMnkSlwFl" name="Slow Fall" description="At 4th level or higher, a monk within arm&apos;s reach of a wall can use it to slow his descent. When first gaining this ability, he takes damage as if the fall were 20 feet shorter than it actually is. The monk&apos;s ability to slow his fall (that is, to reduce the effective distance of the fall when next to a wall) improves with his monk level until at 20th level he can use a nearby wall to slow his descent and fall any distance without harm." compset="RaceSpec" summary="Treat a fall as shorter than normal if within arm&apos;s reach of a wall.">
+    <comment>The Value field is used for the equivaluent monk level.</comment>
+    <usesource source="PathJadeRe" parent="PathAdvent" name="Jade Regent"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[call TotalValue
+var lvl as number
+lvl = round(field[abValue].value/2,0,-1)
+
+      field[abValue].value = lvl * 10 
+      if (lvl >= 9) then
+        field[livename].text = "Slow Fall any distance"
+      else
+        field[livename].text = "Slow Fall " & field[abValue].value & "'"
+        endif]]></eval>
+    </thing>
+  <thing id="xRMnkHghJp" name="High Jump" description="At 5th level, a monk adds his level to all Acrobatics checks made to jump, both for vertical jumps and horizontal jumps. In addition, he always counts as having a running start when making jump checks using Acrobatics. By spending 1 point from his ki pool as a swift action, a monk gains a +20 bonus on Acrobatics checks made to jump for 1 round." compset="RaceSpec">
+    <comment>The Value field is used for the equivaluent monk level.</comment>
+    <fieldval field="actName" value="High Jump: 1 Ki: +20"/>
+    <usesource source="PathJadeRe" parent="PathAdvent" name="Jade Regent"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <eval phase="Render" priority="10000"><![CDATA[call TotalValue
+
+      if (field[abilActive].value <> 0) then
+        field[abValue].value +=20
+        endif
+
+      field[abSumm].text = "+" & field[abValue].value & " to Acrobatics checks made to jump."
+      field[livename].text &= " (+" & field[abValue].value & ")"]]></eval>
+    </thing>
+  <thing id="xRMnkQvPlm" name="Quivering Palm" description="Starting at 15th level, a monk can set up vibrations within the body of another creature that can thereafter be fatal if the monk so desires. He can use this quivering palm attack once per day, and he must announce his intent before making his attack roll. Creatures immune to critical hits cannot be affected. Otherwise, if the monk strikes successfully and the target takes damage from the blow, the quivering palm attack succeeds. Thereafter, the monk can try to slay the victim at any later time, as long as the attempt is made within a number of days equal to his monk level. To make such an attempt, the monk merely wills the target to die (a free action), and unless the target makes a Fortitude saving throw (DC 10 + 1/2 the monk&apos;s level + the monk&apos;s Wis modifier), it dies. If the saving throw is successful, the target is no longer in danger from that particular quivering palm attack, but it may still be affected by another one at a later time. A monk can have no more than 1 quivering palm in effect at one time. If a monk uses quivering palm while another is still in effect, the previous effect is negated." compset="RaceSpec" summary="Once a day, make an attack that can kill with your thought.">
+    <comment>The Value field is used for the equivaluent monk level.</comment>
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="PathJadeRe" parent="PathAdvent" name="Jade Regent"/>
+    <tag group="StandardDC" tag="aWIS" name="Wisdom" abbrev="Wisdom"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker" name="Modern Action Points" abbrev="Modern Action Points"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <eval phase="First">call TotalValue
+
+field[abDC].value = round(field[abValue].value/2,0,-1)</eval>
+    </thing>
+  <thing id="xRMnkWhlBd" name="Wholeness of Body" description="At 7th level or higher, a monk can heal his own wounds as a standard action. He can heal a number of hit points of damage equal to his monk level by using 2 points from his ki pool." compset="RaceSpec" summary="Self-heal monk level in damage for 2 Ki points.">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+call TotalValue
+
+      field[livename].text &= " (" & field[abValue].value & " HP/use)"]]></eval>
+    </thing>
+  <thing id="xRMnkFlrrB" name="Flurry of Blows" description="Starting at 1st level, a monk can make a flurry of blows as a full-attack action. When doing so he may make one additional attack using any combination of unarmed strikes or attacks with a special monk weapon (kama, nunchaku, quarterstaff, sai, shuriken, and siangham) as if using the Two-Weapon Fighting feat (even if the monk does not meet the prerequisites for the feat). For the purpose of these attacks, the monk&apos;s base attack bonus is equal to his monk level. For all other purposes, such as qualifying for a feat or a prestige class, the monk uses his normal base attack bonus.\n\nAt 8th level, the monk can make two additional attacks when he uses flurry of blows, as if using Improved Two-Weapon Fighting (even if the monk does not meet the prerequisites for the feat).\n\nAt 15th level, the monk can make three additional attacks using flurry of blows, as if using Greater Two-Weapon Fighting (even if the monk does not meet the prerequisites for the feat).\n\nA monk applies his full Strength bonus to his damage rolls for all successful attacks made with flurry of blows, whether the attacks are made with an off-hand or with a weapon wielded in both hands. A monk may substitute disarm, sunder, and trip combat maneuvers for unarmed attacks as part of a flurry of blows. A monk cannot use any weapon other than an unarmed strike or a special monk weapon as part of a flurry of blows. A monk with natural weapons cannot use such weapons as part of a flurry of blows, nor can he make natural attacks in addition to his flurry of blows attacks.\n\nBy spending 1 point from his ki pool, a monk can make one additional attack at his highest attack bonus when making a flurry of blows attack.\n\n{B}Note:{/b} By activating &quot;Flurry of Blows&quot; on the {B}In-Play{/b} tab will inform other feats to use your higher base attack bonus.  In example a level 4 monk that activates Flurry of Blows will gain -2/+4 from Power Attack." compset="RaceSpec" summary="Make Flurry of Blows attack as a full action.">
+    <comment><![CDATA[This uses the community Flurry of Blows routines.
+
+Requires the PGRPG_Monk_Fob.user file for the pJHFlurryW adjustment.
+
+Currently doesn't quite work. Cannot get attack flurry to display in basics tab.]]></comment>
+    <fieldval field="actName" value="Flurry of Blows: 1 Ki: Gain another attack"/>
+    <fieldval field="actName2" value="Flurry of Blows"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="1001" index="2"><![CDATA[     ~ Increase DC's on a number of feats requiring BAB
+
+     ~only run these calculations on the first copy
+     ~doneif (tagis[Helper.FirstCopy] = 0)
+
+     ~only run if Flurry is active
+     doneif (field[abilAct2].value = 0)
+
+     ~ These feats modify their DC at Final/1000
+     ~ Blinding/Cripling/Deafening/Staggering/Stunning Critical
+     ~ Dazing/Stunning Assault
+
+
+     var mb as number
+     mb = field[abValue2].value
+     ~add +mb to these feats
+     if (hero.childlives[fBlindCrit] <> 0) then
+           hero.childfound[fBlindCrit].field[abDC].value += mb
+     endif
+     if (hero.childlives[fCripCrit] <> 0) then
+           hero.childfound[fCripCrit].field[abDC].value += mb
+     endif
+     if (hero.childlives[fDeafCrit] <> 0) then
+           hero.childfound[fDeafCrit].field[abDC].value += mb
+     endif
+     if (hero.childlives[fStagCrit] <> 0) then
+           hero.childfound[fStagCrit].field[abDC].value += mb
+     endif
+     if (hero.childlives[fStunCrit] <> 0) then
+           hero.childfound[fStunCrit].field[abDC].value += mb
+     endif
+     if (hero.childlives[fStunAssa] <> 0) then
+           hero.childfound[fStunAssa].field[abDC].value += mb
+     endif
+     if (hero.childlives[fDazeAssa] <> 0) then
+           hero.childfound[fDazeAssa].field[abDC].value += mb
+     endif]]></eval>
+    <eval phase="Final" priority="10002"><![CDATA[      ~ Build Flurry Progression
+
+     ~only run these calculations on the first copy
+     ~doneif (tagis[Helper.FirstCopy] = 0)
+
+     ~copy bonus to apply to Flurry weapon
+     var ab as number
+     if (field[abValue3].value = 1) then
+          ab = hero.childfound[wUnarmed].field[wAttack].value
+     else
+          ab = hero.child[pJHFlurryW].field[pChosen].chosen.field[wAttack].value
+     endif
+
+     var mb as number
+     mb = field[abValue2].value
+
+     var i as number
+     var j as number
+ 
+     ~starting at BAB + Monk Difference - 2
+     j =  hero.child[Attack].field[tAtkBase].value + mb - 2
+     ~adjust for weapon by removing BAB
+     ab -= hero.child[Attack].field[tAtkBase].value
+
+     field[livename].text = "Flurry of Blows "
+     if (field[abValue3].value = 1) then
+         hero.child[wUnarmed].field[livename].text &= " FoB "
+     else
+         hero.child[pJHFlurryW].field[pChosen].chosen.field[livename].text &= " FoB "
+     endif
+
+     ~if we have the Ki Pool ability and active, the user has spent a       ~Ki point for an extra attack at the highest rating
+     if (hero.childlives[xRMnkKiPol] <> 0) then
+          i = hero.child[xRMnkKiPol].tagis[Helper.ShowSpec]
+          i += field[abilActive].value
+          if (i = 2) then
+               field[livename].text &= signed(j+ab) & "/"
+               if (field[abValue3].value = 1) then
+                  hero.child[wUnarmed].field[livename].text &= signed(j+ab) & "/"
+               else
+            hero.child[pJHFlurryW].field[pChosen].chosen.field[livename].text &= signed(j+ab) & "/"
+         endif
+          endif
+     endif
+
+     ~on the first pass through
+     i = 1
+
+     ~as long as our value remains above -2 (which would mean that our effective BAB remains above 0 - the normal requirement for getting an extra attack)
+     while (j > -2)
+          ~add a / if this isn't the first time through
+          if (i > 1) then
+               field[livename].text &= "/"
+               if (field[abValue3].value = 1) then
+                  hero.child[wUnarmed].field[livename].text &= "/"
+               else
+                  hero.child[pJHFlurryW].field[pChosen].chosen.field[livename].text &= "/"
+         endif
+          endif
+
+          ~append our bonus
+          field[livename].text &= signed(j+ab)
+          if (field[abValue3].value = 1) then
+             hero.child[wUnarmed].field[livename].text &= signed(j+ab)
+          else
+             hero.child[pJHFlurryW].field[pChosen].chosen.field[livename].text &= signed(j+ab)
+          endif
+
+
+          ~if we've been through this a number of times that's less than or equal to the number of Flurry abilities we've gained, add a second attack at this bonus 
+var numFlur as number
+numFlur = field[abValue].value - 1
+numFlur = round(numFlur/7,0,-1) + 1
+          if (i <= numFlur) then
+               field[livename].text &= "/" & signed(j+ab)
+               if (field[abValue3].value = 1) then
+                  hero.child[wUnarmed].field[livename].text &= "/" & signed(j+ab)
+               else
+            hero.child[pJHFlurryW].field[pChosen].chosen.field[livename].text &= "/" & signed(j+ab)
+         endif
+          endif
+
+          ~reduce our bonus by 5 and increase our pass count by 1, then go to the next loop
+          j -= 5
+          i += 1
+     loop
+
+     field[livename].text &= " BAB +" & mb
+
+     ~ Apply the bonus to our flurry of blows weapon
+     ~container.childfound[wFlurry].field[wAttack].value += bonus
+     ~var i as number
+     ~var result as number
+     ~for i = 1 to extra
+          ~perform hero.childfound[wFlurry].assign[Helper.ExtraHigh]
+     ~next]]></eval>
+    <eval phase="PostLevel" priority="1000" index="3"><![CDATA[     ~build static variables
+     ~abValue = Monk level equiv.
+     ~abValue2 = Monk BAB diff, abValue3 = use wUnarmed?
+     ~then check if Flurry enabled and if so handle CMB bonus
+
+     ~only run these calculations on the first copy
+     ~doneif (tagis[Helper.FirstCopy] = 0)
+
+call TotalValue
+
+     ~calculate Monk BAB Difference (Store in abValue2)
+     var mb as number
+     mb = field[abValue].value - int(field[abValue].value * 0.75)
+     field[abValue2].value = mb
+
+     ~verify Adjustment is present and has a Monk weap
+     ~ u = 1 (use wUnarmed) / u = 0 (use pJHFlurryW chosen)
+     var u as number
+     u = 1
+     if (hero.childlives[pJHFlurryW] <> 0) then
+          perform hero.childfound[pJHFlurryW].setfocus
+          if (focus.field[pIsOn].value <> 0) then
+               if (focus.field[pChosen].ischosen <> 0) then
+                    perform focus.field[pChosen].chosen.setfocus
+                    if (focus.tagis[wSpecial.Monk] <> 0) then
+                         u = 0
+                    elseif (focus.tagis[wFtrGroup.Monk] <> 0) then
+                         u = 0
+                    endif
+               endif
+          endif
+     endif
+
+     field[abValue3].value = u
+
+     ~only run if Flurry is active
+     doneif (field[abilAct2].value = 0)
+
+     ~if we don't have the Manuever Training and Flurry is active
+     ~then apply the benefits of the Maneuver Training except Grapple
+     if (hero.childlives[xRMnkManTr] <> 0) then
+          if (hero.child[xRMnkManTr].tagis[Helper.ShowSpec] <> 0) then
+               done
+          endif
+     endif
+
+     ~the difference between the medium attack progression and the good attack progression will be level / 4, rounded up, for any level
+     ~var bonus as number
+     ~bonus = field[xAllLev].value / 4
+
+     ~apply to CMB, subtract from Grapple (since you can't Flurry)
+     hero.child[Maneuver].field[tCMB].value += mb
+     hero.child[manGrapple].field[manCMB].value -= mb]]></eval>
+    <eval phase="PostLevel" priority="9999" index="4"><![CDATA[     ~ Account for PA/Piranha Strike/Deadly Aim/Combat Expertise
+
+     ~only run these calculations on the first copy
+     ~doneif (tagis[Helper.FirstCopy] = 0)
+
+     ~only run if Flurry is active
+     doneif (field[abilAct2].value = 0)
+
+     var ba as number
+     var bm as number
+     ba = hero.child[Attack].field[tAtkBase].value / 4
+     bm = ba + field[abValue2].value / 4
+
+     var b as number
+     b = round(bm,0,-1) - round(ba,0,-1)
+
+     if (field[abValue3].value = 1) then
+          ~focus on wUnarmed
+          perform hero.childfound[wUnarmed].setfocus
+     else
+          ~focus on chosen weapon
+          perform hero.childfound[pJHFlurryW].setfocus
+          perform focus.field[pChosen].chosen.setfocus
+     endif
+
+     ~reuse ba for apply PA/PS/DS bonus difference in b
+     ba = 0
+
+     if (hero.childlives[fDeadAim] <> 0) then
+          if (hero.child[fDeadAim].field[abilActive].value <> 0) then
+               ~weapon is Ranged?
+               if (focus.tagis[wCategory.Range?] <> 0) then
+                    ba = 1
+               endif
+          endif
+     endif 
+     ~if (hero.childlives[fPiranStr] <> 0) then
+     ~     if (hero.child[fPiranStr].field[abilActive].value <> 0) then
+               ~weapon is Light?
+     ~          if (focus.tagis[wClass.Light] <> 0) then
+     ~               ba = 2
+     ~          endif
+     ~     endif
+     ~endif
+     if (hero.childlives[fPowerAtt] <> 0) then
+          if (hero.child[fPowerAtt].field[abilActive].value <> 0) then
+               ~weapon is Melee?
+               if (focus.tagis[wCategory.Melee?] <> 0) then
+                    ba = 3
+               endif
+          endif
+     endif
+
+
+     if (ba > 1) then
+          ~hero.child[Attack].field[tAtkMelee].value -= b
+          ~hero.child[Damage].field[tDamPower].value += b
+          if (ba = 2) then
+               ~hero.child[fPiranStr].field[abValue].value += b
+          elseif (ba = 3) then
+               hero.child[fPowerAtt].field[abValue].value += b
+          endif
+     elseif (ba = 1) then
+          ~hero.child[Attack].field[tAtkRanged].value -= b
+          ~foreach pick in hero from BaseWep where "wCategory.Range?"
+               ~eachpick.field[wDamBonus].value += b
+          ~nexteach
+          hero.child[fDeadAim].field[abValue].value += b
+     endif
+
+     if (hero.childlives[fComExpert] <> 0) then
+          if (hero.child[fComExpert].field[abilActive].value<> 0) then
+               hero.child[fComExpert].field[abValue].value += b
+          endif
+     endif]]></eval>
+    </thing>
+  <thing id="xRMnkManTr" name="Maneuver Training" description="For the purpose of calculating CMB, you add your full monk levels, rather than 3/4 of your monk levels." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+call TotalValue
+
+      ~the difference between the medium attack progression and the good attack progression will be level / 4, rounded up, for any level
+      var bonus as number
+      bonus = field[abValue].value / 4
+      field[abValue].value += round(bonus,0,1)
+
+      hero.child[Maneuver].field[tCMB].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="xRMnkFlrBl" name="Flurry of Blows" description="Starting at 1st level, a monk can make a flurry of blows as a full-attack action. When doing so he may make one additional attack using any combination of unarmed strikes or attacks with a special monk weapon (kama, nunchaku, quarterstaff, sai, shuriken, and siangham) as if using the Two-Weapon Fighting feat (even if the monk does not meet the prerequisites for the feat). For the purpose of these attacks, the monk&apos;s base attack bonus is equal to his monk level. For all other purposes, such as qualifying for a feat or a prestige class, the monk uses his normal base attack bonus.\n\nAt 8th level, the monk can make two additional attacks when he uses flurry of blows, as if using Improved Two-Weapon Fighting (even if the monk does not meet the prerequisites for the feat).\n\nAt 15th level, the monk can make three additional attacks using flurry of blows, as if using Greater Two-Weapon Fighting (even if the monk does not meet the prerequisites for the feat).\n\nA monk applies his full Strength bonus to his damage rolls for all successful attacks made with flurry of blows, whether the attacks are made with an off-hand or with a weapon wielded in both hands. A monk may substitute disarm, sunder, and trip combat maneuvers for unarmed attacks as part of a flurry of blows. A monk cannot use any weapon other than an unarmed strike or a special monk weapon as part of a flurry of blows. A monk with natural weapons cannot use such weapons as part of a flurry of blows, nor can he make natural attacks in addition to his flurry of blows attacks.\n\nBy spending 1 point from his ki pool, a monk can make one additional attack at his highest attack bonus when making a flurry of blows attack." compset="RaceSpec" summary="Make Flurry of Blows attack as a full action.">
+    <comment><![CDATA[This uses the standard Flurry of Blows in HL.
+
+Currently doesn't quite work. Cannot get attack flurry to display in basics tab.]]></comment>
+    <fieldval field="actName" value="Flurry of Blows: 1 Ki: Gain another attack"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~only run these calculations on the first copy
+      ~doneif (tagis[Helper.FirstCopy] = 0)
+
+call TotalValue
+
+      var i as number
+      var j as number
+
+      ~starting at our Monk level - 2
+      j = field[abValue].value - 2
+      ~on the first pass through
+      i = 1
+      field[livename].text = "Flurry of Blows "
+
+      ~if we're active, the user has spent a Ki point for an extra attack at the highest rating
+      if (field[abilActive].value <> 0) then
+        field[livename].text &= signed(j) & "/"
+        endif
+
+      ~as long as our value remains above -2 (which would mean that our effective BAB remains above 0 - the normal requirement for getting an extra attack)
+      while (j > -2)
+        ~add a / if this isn't the first time through
+        if (i > 1) then
+          field[livename].text &= "/"
+          endif
+
+        ~append our bonus
+        field[livename].text &= signed(j)
+
+        ~if we've been through this a number of times that's less than or equal to the number of Flurry abilities we've gained, add a second attack at this bonus
+
+var numFlur as number
+numFlur = field[abValue].value - 1
+numFlur = round(numFlur/7,0,-1)+1
+
+        if (i <= numFlur) then
+          field[livename].text &= "/" & signed(j)
+          endif
+
+        ~reduce our bonus by 5 and increase our pass count by 1, then go to the next loop
+        j -= 5
+        i += 1
+        loop]]></eval>
+    </thing>
+  <thing id="pJHFlurryW" name="Flurry of Blows Weapon" description="Weapon you wish to use with your Flurry of Blows" compset="InPlay" uniqueness="unique">
+    <usesource source="srcCoBeAdj"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="OthAdjCat" tag="Misc"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Adjustment" tag="YourWep"/>
+    </thing>
+  </document>

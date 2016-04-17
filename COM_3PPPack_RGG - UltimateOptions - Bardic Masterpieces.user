@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_RGG - UltimateOptions - Bardic Masterpieces"/>
+  <fileinfo>
+    <info_author>Bill Birchler
+Asandir/Sethvir</info_author>
+    <info_history>Ver 1.0
+October - November 2012</info_history>
+    </fileinfo>
+  <thing id="cBMDrmWar" name="Drums of War" description="You create a rhythm that allows a martial force to work together without words or signals.\n\n{b}Prerequisites{/b}: Perform (dance or percussion) 5 ranks, Intimidate 5 ranks.\n\n{b}Cost{/b}: Feat or 2nd-level bard spell known.\n\n{b}Effect{/b}: You can use your body or a percussion instrument to create a rhythm that speaks of battle, warfare, and the glorious march of armies to defend their homes and strike down their foes. For each level of the spell you use to fuel this ability, select one teamwork feat known by an ally within 60 feet who is able to hear you. All your allies within 60 feet who are able to hear you are treated as having the teamwork feat for as long as you maintain a bardic performance. \n\n{b}Use{/b}: Bard spell slot of 1st level or higher \n\n{b}Action{/b}: Standard action to begin, maintained with any bardic performance." compset="CustomSpec" uniqueness="unique">
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Intimidate 5 or more ranks is required"><![CDATA[#skillranks[skIntim] >= 5]]></exprreq>
+    <prereq message="Perform (dance or percussion) 5 or more ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfDanc] >= 5)
+validif (#skillranks[skPerfPerc] >= 5)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMDvnGlor" name="Divine Glorification" description="You have created a performance piece for the glorification of your god that is so extraordinary and perfect that your god has rewarded your accomplishment with access to divine power.\n\n{b}Prerequisite{/b}: Knowledge (religion) 9 ranks, Perform (dance, keyboard, percussion, string, sing, or wind) 9 ranks, alignment matches your patron deity.\n\n{b}Cost{/b}: Feat and 1st level bard spell per day.\n\n{b}Effect{/b}: Select one domain granted by your patron deity. Add the 1st-6th level spells from that domain to your class list. You may select these spells as spells known, but doing so counts against your normal maximum spells known at each level." compset="CustomSpec" uniqueness="unique">
+    <comment>Need to figure out alignment deity problem and how to pick the Domain list of said deity.
+Also, figure out cost of Feat and 1st level bard spell</comment>
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="1" value="1st-level spell slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Knowledge (religion) 9 ranks."><![CDATA[#skillranks[skKnowRel] >= 9]]></exprreq>
+    <prereq message="Perform (dance, keyboard, percussion, string, sing, or wind) 9 ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfOrat] >= 9)
+validif (#skillranks[skPerfAct] >= 9)
+validif (#skillranks[skPerfDanc] >= 9)
+validif (#skillranks[skPerfKey] >= 9)
+validif (#skillranks[skPerfPerc] >= 9)
+validif (#skillranks[skPerfSing] >= 9)
+validif (#skillranks[skPerfStr] >= 9)
+validif (#skillranks[skPerfWind] >= 9)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMCllXRds" name="Call of the Crossroads" description="You can create an art performance so compelling, so otherworldly, you summon an outsider willing to discuss making a deal with you.\n\n{b}Prerequisite{/b}: Perform (any) 8 ranks\n\n{b}Cost{/b}: Feat or 3rd level spell known.\n\n{b}Effect{/b}: When you are at a crossroads (anyplace where two paths or trails cross, including river forks, street intersections, crossing wilderness trails, and even major nautical routes if they pass each other), you can create a performance over 10 minutes that summons an outsider. Drawn by your art, the outsider may be of any alignment of your choice, and is willing to discuss doing a task for you in return for some kind of payment. This functions as lesser planar ally, except as noted in this description. The magic power used to attract the outsider requires you to expend a spell slot of the highest-level bard spell slot available to a bard of your level. (If the spell slot is 5th level, this ability works as planar ally. If it is 6th level, it works as greater planar ally.) If you and the outsider do not make a deal, you regain the spell slot when you next refresh your spells per day. If you do make a deal, you do not get the spell slot back until 30 days after the task the outsider performs for you is completed.\n\nAlternatively, outsiders summoned by the call of the crossroads are always willing to accept a sliver of your artistic talent as payment. If you choose this option, you suffer a permanent -1 penalty to the bonus of the Perform skill you have the most ranks in at the time the deal is made. Nothing, not even a wish, miracle, or the direct intervention of a deity, can remove this penalty. A small fraction of your artistic talent is given away forever and the power of such a crossroads bargain is sacrosanct throughout the multiverse. If you select this option, you do not lose use of a spell slot.\n\n{b}Use{/b}: Highest-level bard spell slot available to a bard of your level. The spell slot does not become available again until 30 days after the negotiated task is completed. Alternatively, -1 to your highest Perform skill. (See text.) \n\n{b}Action{/b}: 10 minutes (100 uninterrupted fullround actions)" compset="CustomSpec" uniqueness="unique">
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <tag group="SpInfo" tag="spPlanAll6"/>
+    <tag group="SpInfo" tag="spPlanAll8"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SpInfo" tag="spPlanAll4"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <prereq message="Perform (any) 8 or more ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfCom] >= 8)
+validif (#skillranks[skPerfOrat] >= 8)
+validif (#skillranks[skPerfAct] >= 8)
+validif (#skillranks[skPerfDanc] >= 8)
+validif (#skillranks[skPerfKey] >= 8)
+validif (#skillranks[skPerfOth] >= 8)
+validif (#skillranks[skPerfPerc] >= 8)
+validif (#skillranks[skPerfSing] >= 8)
+validif (#skillranks[skPerfStr] >= 8)
+validif (#skillranks[skPerfWind] >= 8)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMGallBld" name="Galliard of Blades" description="You can dance a regimented, swift dance with a sword as your partner&#133; and anyone near you had best watch their step.\n\n{b}Prerequisites{/b}: Acrobatics 14 ranks, Perform (dance) 14 ranks.\n\n{b}Cost{/b}: Feat and 5th level spell known. \n\n{b}Effect{/b}: You can burst into a deadly martial dance, wheeling and spinning through a battlefield and weaving a blade into deadly arcs of attack. You must expend 7 rounds of bardic performance as a swift action to begin a galliard of blades,  and then 1 round of bardic performance as a swift action for each\nround you wish to maintain it. You gain a +4 enhancement bonus to Strength, Dexterity, and Constitution, a +4 dodge bonus to AC, a +5 competence bonus on Reflex saves, and a bonus to damage with light weapons (and any other melee weapon with which you are allowed to add your Dexterity bonus to\nbase attack bonus equals your character level (which may give you multiple attacks). While using this ability you lose your spellcasting ability, including your ability to use spell activation or spell completion magic items, just as if the spells were no longer on your class list.\n\n{b}Cost{/b}: 7 rounds of bardic performance to initiate, 1 per round to maintain.\n\n{b}Action{/b}: 1 swift action per round" compset="CustomSpec" uniqueness="unique">
+    <comment>Need to figure out how to do 2 cost charges, Feat and spell level.
+
+Need to add bonuses applied to character.</comment>
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="SpecType" tag="Resist"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Perform (dance) 14 ranks"><![CDATA[#skillranks[skPerfDanc] >= 14]]></exprreq>
+    <exprreq message="Acrobatics 14 ranks"><![CDATA[#skillranks[skAcrobat] >= 14]]></exprreq>
+    </thing>
+  <thing id="cBMGenrGen" name="Genre Genesis" description="You have created a whole new kind of performance. You may have invented a new style of music, written a novel using a structure no one has thought of before, created the latest noble dance, developed a kind of comedy previously unheard-of, or even invented a new musical instrument. The fame makes you well known among performers who are trained in such performances, and the insight you gained creating a whole new art form has allowed you to master other, more practical, talents.\n\n{b}Prerequisite{/b}: Perform (any one, see below) 6 ranks.\n\n{b}Cost{/b}: Feat or 1st level bard spell known.\n\n{b}Effect{/b}: Select any one Perform skill for which you have 6 or more ranks. You gain a +4 bonus on all Charisma-based skill and ability checks with anyone who has at least 1 rank in that Perform skill. Additionally, you may use your bonus in that skill in place of your bonus in one of the following associated skills: Appraise, Climb, Disable Device, Escape Artist, Heal, Knowledge (any one), Linguistics, Perception, Ride, Sleight of Hand, Spellcraft, Stealth, or Use Magic Device. Once this skill is selected, it cannot be changed. When substituting a skill bonus in this way, you use your total Perform skill bonus (including class skill bonus), in place of its associated skill&#146;s bonus, in the same way as with the versatile performance class feature.\n\n{b}Special{/b}: You may select this masterpiece more than once, but you must gain at least 6 bard levels between each selection. Its effects do not stack. Each time it is taken, you select a new associated skill you may replace with the bonus from a Perform skill of your choice." compset="CustomSpec">
+    <comment>Missing implementation of at least 6 levels between selects.</comment>
+    <arrayval field="usrArray" index="1" value="1st-level spell slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="NoAutoName"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <prereq message="Perform (any one, see below) 6 ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfCom] >= 6)
+validif (#skillranks[skPerfOrat] >= 6)
+validif (#skillranks[skPerfAct] >= 6)
+validif (#skillranks[skPerfDanc] >= 6)
+validif (#skillranks[skPerfKey] >= 6)
+validif (#skillranks[skPerfOth] >= 6)
+validif (#skillranks[skPerfPerc] >= 6)
+validif (#skillranks[skPerfSing] >= 6)
+validif (#skillranks[skPerfStr] >= 6)
+validif (#skillranks[skPerfWind] >= 6)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMHrtWild" name="Heartbeat of the Wild" description="You&#146;ve learned the music of nature, and can use it to bind one wild creature to you.\n\n{b}Prerequisite{/b}: Knowledge (nature) 5 ranks and Perform (percussion, sing, string, or wind) 5 ranks.\n\n{b}Cost{/b}: Feat and 1st level bard spell known.\n\n{b}Effect{/b}: You gain an animal companion. Treat your bard level as your druid level for determining the level and abilities of this companion." compset="CustomSpec" uniqueness="unique">
+    <comment>Need to figure out how to do feat and spell known cost.
+
+Added Animal Companion class feature, not sure if additional work to be done.</comment>
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="1" value="1st-level spell slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <bootstrap thing="dAniComp">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Knowledge (nature) 5 ranks"><![CDATA[#skillranks[skKnowNat] >= 5]]></exprreq>
+    <prereq message=" Perform (percussion, sing, string, or wind) 5 ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfPerc] >= 5)
+validif (#skillranks[skPerfSing] >= 5)
+validif (#skillranks[skPerfStr] >= 5)
+validif (#skillranks[skPerfWind] >= 5)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMInhHrmn" name="Inhuman Harmony" description="You can affect creatures of a specific type with spells not normally designed for them.\n\n{b}Prerequisite{/b}: Knowledge (see text) 7 ranks, Perform (keyboard, sing, string, or wind) 7 ranks.\n\n{b}Cost{/b}: Feat or 1st-level bard spell known.\n\n{b}Effect{/b}: Select one creature type. You must have 7 ranks in the Knowledge skill appropriate for determining lore about creatures of this type. As a swift action you can use a harmony symbolizing the selected creature type to modify a bard spell you cast that normally only targets creatures of a different type so that it affects creatures of the type selected. If the spell is mind-affecting, it can now affect creatures of a type normally immune to mind-affecting spells. Targets of the spell still receive any normal saving throw.\n\n{b}Special{/b}: You may select this masterpiece more than once. Each time it applies to creatures of a different type.\n\n{b}Use{/b}: 1 round of bardic performance. \n\n{b}Action{/b}: 1 swift round" compset="CustomSpec">
+    <comment>Need to be able to choose creature type to be able to identify lore.</comment>
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="1" value="1st-level spell slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <prereq message="Perform (keyboard, sing, string, or wind) 7 ranks.">
+      <validate><![CDATA[validif (#skillranks[skPerfKey] >= 7)
+validif (#skillranks[skPerfSing] >= 7)
+validif (#skillranks[skPerfStr] >= 7)
+validif (#skillranks[skPerfWind] >= 7)]]></validate>
+      </prereq>
+    <prereq message="Knowledge (see text) 7 ranks">
+      <validate><![CDATA[validif (#skillranks[skKnowArca] >= 7)
+validif (#skillranks[skKnowDun] >= 7)
+validif (#skillranks[skKnowNat] >= 7)
+validif (#skillranks[skKnowPlan] >= 7)
+validif (#skillranks[skKnowRel] >= 7)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMIrrDirg" name="Irresistible Dirge" description="You can play a haunting melody in honor of the dead that even the spirits of the fallen cannot ignore.\n\n{b}Prerequisite{/b}: Knowledge (religion) 8 ranks, Perform (wind) 8 ranks\n\n{b}Cost{/b}: Feat or 2nd level spell known\n\n{b}Effect{/b}: When you play an irresistible dirge, spirits arrive from those creatures who died within a radius of 10 feet per rank of Perform (wind) you possess, or whose bodies (including at elast the head) are currently within that radius. Questions may be asked of any of these creatures who died within 10 years per rank you have in Perform (wind).  Anyone you indicate may ask these questions, but only one question may be asked per round (you may not ask questions). Each round you maintain this ability after the first takes one more round of bardic performance than the round before it -- two rounds get used on the second round, three rounds on the third round and so on, so maintaining this ability for 4 rounds would take (1+2+3+4) 10 rounds of bardic\nperformance. Once you have used this ability in a specific place or to ask questions of a specific creature, you may not do so again until you have gained a bard level. \n\nExcept as noted above, this ability works as {i}speak with dead{/i}.\n\n{b}Use{/b}: Rounds of bardic performance (see text).\n\n{b}Action{/b}: 1 standard action to initiate, 1 move action to maintain." compset="CustomSpec" uniqueness="unique">
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpInfo" tag="spSpeaDea3"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Perform (wind) 8 ranks"><![CDATA[#skillranks[skPerfWind] >= 8]]></exprreq>
+    <exprreq message="Knowledge (religion) 8 ranks"><![CDATA[#skillranks[skKnowRel] >= 8]]></exprreq>
+    </thing>
+  <thing id="cBMLexExpr" name="Lexicon of Expressions" description="You can make yourself understood even when you can&#146;t speak, using extremely precise movements of your body to send subtle clues of expression and posture. In extreme cases, you can even convince others to do what you want them to without saying a word.\n\n{b}Prerequisite{/b}: Sleight of Hand 3 ranks, Linguistics 3 ranks, Perform (act, comedy, or oratory) 6 ranks, versatile performance (for the Bluff skill). \n\n{b}Cost{/b}: Feat or 1st-level bard spell known. \n\n{b}Effect{/b}: This extraordinary ability allows you to send a message using the Bluff skill with no need for a skill check, and no chance of the message being intercepted by others. It also allows you to make a Bluff check against a target that can see you, even if it cannot hear you, to convince the target that it should take one specific action. The action must be something the creature can perform in no more than one full round (though you could break up a more complex action into a series of steps), and must be an action that has no obvious harmful consequences for the target. When determining the DC, the GM should treat this as a Bluff check to convince the target that the statement &#147;You should (take the desired action)&#148; is true, and modify the DC for believability as normal. Each use of Lexicon of Expressions after the first to convince a creature to take an action in the same 24 hour period has its DC\nincreased by +2 (+4 for the third attempt, +6 for the fourth, and so on). \n\n{b}Use{/b}: 1 round of bardic performance. \n\n{b}Action{/b}: 1 standard round" compset="CustomSpec" uniqueness="unique">
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="1" value="1st-level spell slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Linquistics 3 ranks"><![CDATA[#skillranks[skLinguist] >= 3]]></exprreq>
+    <exprreq message="Sleight of Hand 3 ranks"><![CDATA[#skillranks[skSleight] >= 3]]></exprreq>
+    <prereq message="Versatile performance (for the Bluff skill). ">
+      <validate><![CDATA[validif (#hasability[cBrdVeAct] <> 0)
+validif (#hasability[cBrdVeSing] <> 0)
+validif (#hasability[cBrdVeStri] <> 0)
+validif (#hasability[cBrdVeCom] <> 0)]]></validate>
+      </prereq>
+    <prereq message="Perform (act, comedy, or oratory) 6 ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfCom] >= 6)
+validif (#skillranks[skPerfOrat] >= 6)
+validif (#skillranks[skPerfAct] >= 6)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMLmntRfr" name="Lament&#146;s Furious Refrain" description="You can add a repeating section of your music that calls to grief and rage, allowing your allies to choose to be moved by the emotions of your music rather than other influences.\n\n{b}Prerequisite{/b}: Perform (keyboard, sing, string, or wind) 6 ranks, at least one bard spell known with the emotion descriptor.\n\n{b}Effect{/b}: When you are using a bardic performance, you may add lament&#146;s furious refrain (increasing the cost of the performance to two rounds of the ability per round it is used). Anyone who gains bonuses from your performance may also choose to be moved by the emotions of the refrain. Characters that do this are in a carefully balanced state of anger and sadness, causing them to be unable to use any Charisma-, Dexterity-, or Intelligence-based skills (except Acrobatics, Fly, Intimidate, and Ride) or any ability that requires patience or concentration. They also gain a bonus to saves against all fear, despair, and emotion effects equal to half your bard level. If a creature is under the effect of such an  effect when it accepts the emotional impact of your lament&#146;s furious refrain, it receives one new save against the effect (with your bonus), ending the effect on a successful save. \n\n{b}Use{/b}: +1 round of bardic performance to begin, +1 round to maintain for 1 round. \n\n{b}Action{/b}: None (can only be added to other bardic performances)" compset="CustomSpec" uniqueness="unique">
+    <comment>Bard spell with emotion descriptor criteria.</comment>
+    <usesource source="Bard_Mstr"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <prereq message="Perform (keyboard, sing, string, or wind) 6 ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfKey] >= 6)
+validif (#skillranks[skPerfPerc] >= 6)
+validif (#skillranks[skPerfSing] >= 6)
+validif (#skillranks[skPerfStr] >= 6)
+validif (#skillranks[skPerfWind] >= 6)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMMstrCul" name="Maestro of Cultures" description="You know the rules, laws, traditions and loopholes of cultures worldwide, and can use them to bargain your way out of nearly any situation&#133; at least briefly. \n\n{b}Prerequisite{/b}: Knowledge (local) 6 ranks, Perform (act, comedy, or oratory) 6 ranks, versatile performance (for the Diplomacy skill).\n\n{b}Cost{/b}: Feat or 1st-level bard spell known.\n\n{b}Effect{/b}: This extraordinary ability is a bard&#146;s knack of knowing exactly what to say, and when to say it, allowing her to negotiate with groups that should be beyond mediation. This ability depends on knowing which rules and customs a group will honor (at least at first), and which are mostly ignoring. \n\nAs a full-round action you may make a Diplomacy check against a group or individual, even if they have a hostile attitude. Any direct offensive action taken by you or your allies ruins your efforts and ends this effect. The DC for the check is 15 + the CR of your target, or 10 + your target&#146;s Sense Motive bonus, whichever is higher. (If you use this ability on a group, the DC is +1 for a group of 2, and increases by +1 for every doubling of the group&#146;s size). \n\nOn a successful check, you use some rule or technicality to convince the group to act as if its attitude was one step more helpful that its true attitude &#150; hostile groups act as if merely unfriendly, unfriendly groups act as if neutral, and so on.\n\nYou may also use Diplomacy to make a  request of a group you have influenced with this ability, even if their attitude is unfriendly or hostile. Requests of unfriendly and hostile groups are largely limited to not harming you and your allies or proposing bargains that strongly favor the unfriendly or hostile group.\nLike most Diplomacy checks, the effects of Maestro of Cultures normally last 1d4 hours. You may continue to use this ability to extend the effect of any deal made, but the DC to do so increases by +2 each time, and a hostile or indifferent group must be given some new compensation each time the deal&#146;s duration is extended. \n\n{b}Use{/b}: 1 round of bardic performance.\n\n{b}Action{/b}: 1 full round" compset="CustomSpec" uniqueness="unique">
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="1" value="1st-level spell slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="User" tag="NoAutoName"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Knowledge (local) 6 ranks"><![CDATA[#skillranks[skKnowLoc] >= 6]]></exprreq>
+    <prereq message="Perform (act, comedy, or oratory) 6 ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfCom] >= 6)
+validif (#skillranks[skPerfOrat] >= 6)
+validif (#skillranks[skPerfAct] >= 6)]]></validate>
+      </prereq>
+    <prereq message="versatile performance (for the Diplomacy skill).">
+      <validate><![CDATA[validif (#hasability[cBrdVeKey] <> 0)
+validif (#hasability[cBrdVeOrat] <> 0)
+validif (#hasability[cBrdVeStri] <> 0)
+validif (#hasability[cBrdVeWind] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMMstrFcs" name="Maestro of Faces" description="You know how to read people like books, learning their basic drives, current thoughts, motivations, and fears through subtle clues. While this ability may seem magical to others, it is simply an advanced form of reading expressions and combining them with extremely subtle clues such as perspiration, \ndilated pupils, and body ticks. \n\n{b}Prerequisite{/b}: Heal 4 ranks, Perform (act, comedy, or oratory) 4 ranks, versatile performance (for the Sense Motive skill).\n\n{b}Cost{/b}: Feat or 2nd-level bard spell known.\n\n{b}Effect{/b}: This extraordinary ability allows you to gain details about a subject through pure observation. You must be able to see and hear the target. You must make a Sense Motive check with a DC equal to 10+ the target&#146;s Bluff bonus, or the target&#146;s CR +15, whichever is higher. This check should be made in secret by the GM. On a successful check you may determine one of the following things:\n*The subject&#146;s alignment on the chaos/ neutral/lawful axis.\n*The subject&#146;s alignment on the evil/neutral/good axis.\n*The subject&#146;s starting attitude toward one other creature present.\n\nIf you succeed, you may maintain this ability and make another check on the next round. Anytime your check fails, the subject becomes immune to your Maestro of Faces until you gain a level. If you maintain the ability for three rounds, on the fourth round you may force the subject to make a Will save (DC 10 + &#189; bard level + your Wisdom modifier) to determine the subject&#146;s surface thoughts. This functions as the detect thoughts spell but begins with the nformation gained in the third round of using that spell.It requires a Sense Motive check every round to maintain, and is an extraordinary ability.\n\n{b}Use{/b}: 1 round of bardic performance per round of information gained.\n\n{b}Action{/b}: 1 full round" compset="CustomSpec" uniqueness="unique">
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="SpInfo" tag="spDeteTho2"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="StandardDC" tag="aWIS"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Heal 4 ranks"><![CDATA[#skillranks[skHeal] >= 4]]></exprreq>
+    <prereq message="Perform (act, comedy, or oratory) 4 ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfCom] >= 4)
+validif (#skillranks[skPerfOrat] >= 4)
+validif (#skillranks[skPerfAct] >= 4)]]></validate>
+      </prereq>
+    <prereq message="versatile performance (for the Sense Motive skill)">
+      <validate><![CDATA[validif (#hasability[cBrdVeOrat] <> 0)
+validif (#hasability[cBrdVeSing] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMStirUnT" name="Satire of Unrelenting Truths" description="You can create a work of parody that ruthlessly satirizes one creature, forcing it to face the worst aspects of its true  nature. \n\n{b}Prerequisite{/b}: Knowledge (local) 11 ranks, Perform (act or comedy) 11 ranks.\n\n{b}Cost{/b}: Feat or 3rd-level bard spell known.\n\n{b}Effect{/b}: You can force a creature able to see and hear you to face its worst nature. Performing the satire takes only 3 rounds, but crafting it requires 1 day per level or hit die of the subject, and you must either meet the subject in person, or successfully learn at least 1 special power or vulnerability of the subject with an appropriate Knowledge check before you can begin crafting the satire. This is a mind-affecting, language-dependent effect. If the subject is exposed to your performance of the satire for 3 full rounds, it is affected as by an atonement spell. Whether or not the atonement has any effect on the subject it must also make a Will save (DC 10 + &#189; bard level + your charisma modifier) or be staggered for 1d4 rounds as it wrestles with the faults and\nflaws your performance reveals. \n\n{b}Use{/b}: 6 rounds of bardic performance.\n\n{b}Action{/b}: 3 full rounds" compset="CustomSpec" uniqueness="unique">
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <tag group="SpInfo" tag="spAtoneme5"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Knowledge (Local) 11 ranks"><![CDATA[#skillranks[skKnowLoc] >= 11]]></exprreq>
+    <prereq message="Perform (act or comedy) 11 ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfAct] >= 11)
+validif (#skillranks[skPerfCom] >= 11)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMUndEntc" name="Undulation of Enticements" description="{b}Prerequisites{/b}: Perform (act or dance) 5 ranks, Sense Motive 5 ranks.\n\n{b}Cost{/b}: Feat or 2nd-level bard spell known. \n\n{b}Effect{/b}: You can move in such a way as to inspire an aberration, dragon, humanoid, monstrous humanoid, or outsider able to see you to imagine you fulfilling its wishes (whatever they maybe), allowing you to draw upon the powers of seduction to forge a link between yourself and the subject. You must be free to move about for the entire 3 rounds it takes to use this ability, and the subject must be able to see you for the entire time. The creature must make a saving throw (DC 10 + &#189; bard level + Charisma modifier) or you know what your target wants, and, if you have the means to provide it, can force the creature to accept the fulfillment of that desire in exchange for a specific service. Creatures never agree if you offer services that are physically impossible or obviously suicidal, if you lie about having the means to fulfill the desire in question, or if the service of fulfillment of the creature&#146;s desire would violate its alignment. The service can never take more than a day to complete, and the affected creature gains a +2 bonus on its saving throw if the service requires more than an hour to complete. \n\n{b}Use{/b}: 3 bardic performance rounds. \n\n{b}Action{/b}: 3 full rounds." compset="CustomSpec" uniqueness="unique">
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Sense Motive 5 ranks"><![CDATA[#skillranks[skSenseMot] >= 5]]></exprreq>
+    <prereq message="Perform (act or dance) 5 ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfAct] >= 5)
+validif (#skillranks[skPerfDanc] >= 5)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMUnErthA" name="Unearthly Aria" description="You can create a perfect, more-than-mortal piece of music that inspires all who know you to do better than their best.\n\n{b}Prerequisite{/b}: Perform (keyboard, sing, string, or wind) 12 ranks.\n\n{b}Cost{/b}: Feat or 4th-level bard spell known.\n\n{b}Effect{/b}: You can inspire all allies within 60 feet able to hear you to exceed their own limitations. Each ally may either gain access to a class feature one level higher than their level in a base or core class they have levels in (not including spells known or spells per day), or may increase their effective class level (including caster level, if any) by +4 for determining the effectiveness of class features and spells.\n\n{b}Use{/b}: 6 rounds of bardic performance to begin, 2 rounds of bardic performance to maintain each round.\n\n{b}Action{/b}: 1 standard action, swift action to maintain." compset="CustomSpec" uniqueness="unique">
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <prereq message="Perform (keyboard, sing, string, or wind) 12 ranks">
+      <validate><![CDATA[validif (#skillranks[skPerfKey] >= 12)
+validif (#skillranks[skPerfSing] >= 12)
+validif (#skillranks[skPerfStr] >= 12)
+validif (#skillranks[skPerfWind] >= 12)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cBMWritImm" name="Writ of Bardic Immunity" description="You have earned the respect of even your enemies and detractors, and been granted a form of political immunity for everything you say &#150; though not other actions you might take. \n\n{b}Prerequisite{/b}: Knowledge (nobility) 9 ranks, Perform (oratory) 9 ranks, alignment that includes a neutral element.\n\n{b}Cost{/b}: Feat or 1st-level bard spell known. \n\n{b}Effect{/b}: This extraordinary ability represents a general agreement among the kingdoms of the land, including those not allied with you, that you are worthy of sufficient respect and consideration to be allowed to go into the common areas of all settlements and speak your opinion openly, without suffering legal repercussions. For any government where the primary spoken language is one in which you are fluent, you are not arrested for being in public areas (though this gives you no power to go into private citizens&#146; homes or secured areas such as prisons) or for any speech you make (as long as it does not call for the immediate commission of a crime, including treason, by those listening). A player and GM should discuss the limits of bardic immunity prior to this masterpiece being added to a campaign &#150; it won&#146;t be appropriate for all campaign styles." compset="CustomSpec" uniqueness="unique">
+    <arrayval field="usrArray" index="0" value="Feat Slot"/>
+    <arrayval field="usrArray" index="1" value="1st-level spell slot"/>
+    <arrayval field="usrArray" index="2" value="2nd-level spell slot"/>
+    <arrayval field="usrArray" index="3" value="3rd-level spell slot"/>
+    <arrayval field="usrArray" index="4" value="4th-level spell slot"/>
+    <arrayval field="usrArray" index="5" value="5th-level spell slot"/>
+    <arrayval field="usrArray" index="6" value="6th-level spell slot"/>
+    <usesource source="Bard_Mstr"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="cHelpBrd"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <tag group="AlgnReq" tag="AnyNeutral"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[~set a numerical variable equal to the text of the user's choice
+~that will mean that the variable comes out equal to the spell level
+~they chose, because HL will extract the first number it comes across
+~in the text to use as the value of the variable
+var spelllevel as number
+spelllevel = field[usrSelect].text
+
+
+~figure out which cost option the user chose
+if (compare(field[usrSelect].text,"Feat Slot") = 0) then
+  #resmax[resFeat] -= 1
+else
+  linkage[table].field[cKnowMax].arrayvalue[spelllevel] -= 1
+  endif]]></eval>
+    <exprreq message="Knowledge (nobility) 9 ranks"><![CDATA[#skillranks[skKnowNobl] >= 9]]></exprreq>
+    <exprreq message="Perform (oratory) 9 ranks"><![CDATA[#skillranks[skPerfOrat] >= 9]]></exprreq>
+    </thing>
+  </document>

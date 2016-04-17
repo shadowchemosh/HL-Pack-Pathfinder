@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_PathOfWarEx - Adjustments"/>
+  <fileinfo>
+    <info_author>TheIronGolem
+March 6, 2015</info_author>
+    <info_history><![CDATA[March 6, 2015 - TheIronGolem
+      -Created New
+    -Added "Shattered Mirror: Obsidian Reflection Stance"
+
+June 21, 2015 - TheIronGolem
+    -Added Mystic Elemental Glyph adjustments]]></info_history>
+    </fileinfo>
+  <thing id="pPWObRefSt" name="Shattered Mirror: Obsidian Reflection Stance" description="You gain a circumstance bonus or penalty to attack and damage as an effect of another character&apos;s Obsidian Reflection Stance." compset="InPlay">
+    <fieldval field="pMinimum" value="-10"/>
+    <fieldval field="pDuration" value="Stance"/>
+    <fieldval field="pMaximum" value="10"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="Helper" tag="AdjConfer" name="Conferred Ability Adjustment" abbrev="Conferred Ability Adjustment"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="OthAdjCat" tag="AttDam"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ Don't do anything if not active
+      doneif (field[pIsOn].value = 0)
+      ~ Stop now if we don't have an actual bonus or penalty to apply
+      doneif (field[pAdjust].value = 0)
+
+      ~ Apply modifier to attack and damage
+      if (field[pAdjust].value < 0) then
+        #applypenalty[ModCirc, hero.child[Attack], field[pAdjust].value]
+        #applypenalty[ModCirc, hero.child[Damage], field[pAdjust].value]
+      else
+        #applybonus[ModCirc, hero.child[Attack], field[pAdjust].value]
+        #applybonus[ModCirc, hero.child[Damage], field[pAdjust].value]
+      endif]]></eval>
+    </thing>
+  <thing id="pPWElGlAir" name="Mystic: Elemental Glyph (Air)" description="The glyph of air fills the mystic’s allies with energy and speed. \n• At 3rd level, each of the movement speeds of affected allies increases by 10 feet and they make up to one 90 degree turn while making charge attacks. This adjustment is treated as an enhancement bonus. \n• At 8th level, this bonus increases to 30 feet, and they may make Acrobatics checks to jump as if they had a running start.\n• At 13th level, allies affected by the glyph of air gain the ability to move up to 30 feet as a swift action. This movement provokes attacks of opportunity as normal. \n• At 19th level, whenever one of the mystic’s allies uses the glyph of air’s swift action movement ability, they can make a single attack with a weapon they are wielding at their highest base attack bonus at any point during this movement.\n\n{b}NOTE:{/b} To get the correct effect from this adjustment, select the Mystic&apos;s class level in the dropdown menu.  If the dropdown has no options, make sure to enable &quot;ShadowChemosh&apos;s Adjustments&quot; from the Configure Hero menu." compset="InPlay" uniqueness="unique">
+    <comment>abValue = 3rd-level speed bonus
+abValue2 = 8th-level speed bonus</comment>
+    <fieldval field="pCandExpr" value="component.SelectHelp &amp; Selection.S2ChrLevel"/>
+    <fieldval field="abValue" value="10"/>
+    <fieldval field="abValue2" value="30"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[      ~ Don't do anything if we're not activated
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+
+      var lvl as number
+      lvl = field[pChosen].chosen.tagvalue[Value.?]
+
+      ~ 3rd level: Speed bonus
+      if (lvl >= 3) then
+        #applybonus[BonEnhance, hero.childfound[Speed], field[abValue].value]
+      endif
+
+      ~ 8th level: Bigger speed bonus
+      if (lvl >= 8) then
+        #applybonus[BonEnhance, hero.childfound[Speed], field[abValue2].value]
+      endif]]></eval>
+    </thing>
+  <thing id="pPWElGlDrk" name="Mystic: Elemental Glyph (Darkness)" description="Though darkness often connotates evil, for the mystic its shroud offers both protection and insight, allowing the mystic’s allies tactical avenues that they would otherwise be unable to access. \n• At 3rd level, allies affected by the glyph of darkness gain concealment (20% miss chance).  \n• At 8th level, affected allies gain darkvision and the effects of a {i}see invisibility{/i} spell out to a range of 60 feet.\n• At 13th level, affected allies are shrouded in a pitch-black veil, gaining total concealment (50% miss chance).\n• At 19th level, affected allies gain the blindsight trait, with a range of 30-ft, when affected by this glyph.\n\n{b}NOTE:{/b} To get the correct effect from this adjustment, select the Mystic&apos;s class level in the dropdown menu.  If the dropdown has no options, make sure to enable &quot;ShadowChemosh&apos;s Adjustments&quot; from the Configure Hero menu." compset="InPlay" uniqueness="unique">
+    <comment>abValue5 = Reserved for bootstrap condition</comment>
+    <fieldval field="pCandExpr" value="component.SelectHelp &amp; Selection.S2ChrLevel"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <bootstrap thing="raDarkVis">
+      <containerreq phase="First" priority="400"><![CDATA[fieldVal:abValue5 >= 8]]></containerreq>
+      <assignval field="abValue" value="60"/>
+      </bootstrap>
+    <bootstrap thing="xCBSeeInvi">
+      <containerreq phase="First" priority="400"><![CDATA[fieldVal:abValue5 >= 8]]></containerreq>
+      <assignval field="abValue" value="60"/>
+      </bootstrap>
+    <bootstrap thing="rBlindSi">
+      <containerreq phase="First" priority="400"><![CDATA[fieldVal:abValue5 >= 19]]></containerreq>
+      <assignval field="abValue" value="30"/>
+      </bootstrap>
+    <eval phase="PostAttr" priority="10000"><![CDATA[      ~ Don't do anything if we're not activated
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+
+      var lvl as number
+      lvl = field[pChosen].chosen.tagvalue[Value.?]
+
+      ~ 3rd level: Partial concealment
+      if (lvl >= 3) then
+        perform hero.assign[Condition.pstConceal]
+      endif
+
+      ~ 13th level: Total concealment
+      if (lvl >= 13) then
+        perform hero.assign[Condition.pstConcTot]
+      endif]]></eval>
+    <eval phase="First" index="2">      ~ Store chosen value in abValue5 so that bootstrap conditions can find it
+      field[abValue5].value = field[pChosen].chosen.tagvalue[Value.?]</eval>
+    </thing>
+  <thing id="pPWElGlErt" name="Mystic: Elemental Glyph (Earth)" description="The dour, steadfast nature of earth allows the mystic’s allies to better stand their ground and weather assaults. \n• At 3rd level, this glyph makes allies more difficult to move against their will; affected allies gain a bonus to their CMD equal to the mystic’s Wisdom modifier. \n• At 8th level, affected allies gain DR/adamantine equal to the mystic’s Wisdom modifier.\n• At 13th level, affected allies gain resistance to all energy types equal to the mystic’s class level.\n• At 19th level, affected allies cannot die from hit point loss - when reduced to 0 or few hit points, they are instead stabilized at 0 hit points until the glyph’s effects expire.\n\n{b}NOTE:{/b} To get the correct effect from this adjustment, set the incrementer to match the Wisdom bonus of the Mystic who created the glyph, and select the Mystic&apos;s class level in the dropdown menu.  If the dropdown has no options, make sure to enable &quot;ShadowChemosh&apos;s Adjustments&quot; from the Configure Hero menu." compset="InPlay" uniqueness="unique">
+    <fieldval field="pMinimum" value="1"/>
+    <fieldval field="pMaximum" value="20"/>
+    <fieldval field="pCandExpr" value="component.SelectHelp &amp; Selection.S2ChrLevel"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ Don't do anything if we're not activated
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+
+      var lvl as number
+      lvl = field[pChosen].chosen.tagvalue[Value.?]
+
+      ~ 3rd level: CMD bonus
+      if (lvl >= 3) then
+        #applybonus[Bonus, hero.child[ManeuvDef], field[pAdjust].value]
+      endif
+
+      ~ 8th level: Damage reduction
+      if (lvl >= 8) then
+        #applydr[xDamRdAdam, field[pAdjust].value]
+      endif
+
+      ~ 13th level: Energy resistance
+      if (lvl >= 13) then
+        #applyresist[xDamRsAcid,lvl]
+        #applyresist[xDamRsCold,lvl]
+        #applyresist[xDamRsDivP,lvl]
+        #applyresist[xDamRsFire,lvl]
+        #applyresist[xDamRsElec,lvl]
+        #applyresist[xDamRsNeg,lvl]
+        #applyresist[xDamRsPos,lvl]
+        #applyresist[xDamRsSoni,lvl]
+      endif]]></eval>
+    </thing>
+  <thing id="pPWElGlFir" name="Mystic: Elemental Glyph (Fire)" description="The unquenchable flames of passion drive the mystic’s allies to feats of glory. \n• At 3rd level, affected allies gain a circumstance bonus to attack rolls equal to ¼ the mystic’s class level (minimum +1).\n• At 8th level, affected allies add ½ the mystic’s class level as fire damage to attacks they make.\n• At 13th level, affected allies’ attacks ignore a number of points of energy resistance  equal to the mystic’s class level.\n• At 19th level, whenever an affected ally is targeted by a melee attack, the attacker takes fire damage equal to the mystic’s class level, regardless of whether or not the attack hits\n\n{b}NOTE:{/b} To get the correct effect from this adjustment, select the Mystic&apos;s class level in the dropdown menu.  If the dropdown has no options, make sure to enable &quot;ShadowChemosh&apos;s Adjustments&quot; from the Configure Hero menu." compset="InPlay" uniqueness="unique">
+    <fieldval field="pCandExpr" value="component.SelectHelp &amp; Selection.S2ChrLevel"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ Don't do anything if we're not activated
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+
+      var lvl as number
+      lvl = field[pChosen].chosen.tagvalue[Value.?]
+
+      ~ Calculate 1/4 and 1/2 of class level
+      field[abValue].value = maximum(1,round(lvl/4,0,-1))
+      field[abValue2].value = maximum(1,round(lvl/2,0,-1))
+
+      ~ 3rd level: Circ bonus to attack
+      if (lvl >= 3) then
+        #applybonus[ModCirc,hero.childfound[Attack], field[abValue].value]
+      endif
+
+      ~ 8th level: Bonus fire damage
+      if (lvl >= 8) then
+        foreach pick in hero from BaseWep
+          #extradamage[eachpick, signed(field[abValue2].value) & " Fire", field[name].text]
+        nexteach
+      endif]]></eval>
+    </thing>
+  <thing id="pPWElGlIll" name="Mystic: Elemental Glyph (Illumination)" description="The light of the universe reveals truth wherever it hides.\n• At 3rd level, affected allies’ attacks ignore the miss chance granted to targets by anything less than total concealment\n• At 8th level, affected allies gain a bonus to Will saving throws against illusion spells and effects equal to the mystic’s Wisdom modifier .\n• At 13th level, affected allies gain the effects of a {i}true seeing{/i} spell out to a range of 30 feet.\n• At 19th level, affected allies are protected from any falsehood, gaining the effects of a {i}mind blank{/i} spell.\n\n{b}NOTE:{/b} To get the correct effect from this adjustment, set the incrementer to match the Wisdom bonus of the Mystic who created the glyph, and select the Mystic&apos;s class level in the dropdown menu.  If the dropdown has no options, make sure to enable &quot;ShadowChemosh&apos;s Adjustments&quot; from the Configure Hero menu." compset="InPlay" uniqueness="unique">
+    <comment>abValue5 = Reserved for bootstrap condition</comment>
+    <fieldval field="pCandExpr" value="component.SelectHelp &amp; Selection.S2ChrLevel"/>
+    <fieldval field="pMinimum" value="1"/>
+    <fieldval field="pMaximum" value="20"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raTrueSee">
+      <containerreq phase="First" priority="400"><![CDATA[fieldVal:pIsOn = 1 & fieldVal:abValue5 >= 13]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="pMindBlank">
+      <containerreq phase="First" priority="400"><![CDATA[fieldVal:pIsOn = 1 & fieldVal:abValue5 >= 19]]></containerreq>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ Don't do anything if we're not activated
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+
+      var lvl as number
+      lvl = field[pChosen].chosen.tagvalue[Value.?]
+
+      ~ 8th level: Will bonus vs. illusions
+      if (lvl >= 8) then
+        #situational[hero.child[svWill],signed(field[pAdjust].value) & " vs. illusions", field[name].text]
+      endif]]></eval>
+    <eval phase="First" index="2">      ~ Store chosen value in abValue5 so that bootstrap conditions can find it
+      field[abValue5].value = field[pChosen].chosen.tagvalue[Value.?]</eval>
+    </thing>
+  <thing id="pPWElGlMtl" name="Mystic: Elemental Glyph (Metal)" description="Sturdy and unyielding like the forged iron from which it takes its name, the glyph of metal imparts resolute strength to the mystic’s allies.\n• At 3rd level, affected allies increase their natural armor bonus to AC equal to ¼ the mystic’s class level (minimum +1).\n• At 8th level, affected allies gain a circumstance bonus to Fortitude saves equal to ¼ the mystic’s class level (minimum +1).\n• At 13th level, affected allies’ attacks ignore a number of points of damage reduction and hardness equal to the mystic’s Wisdom modifier.\n• At 19th level, affected allies gain DR/- equal to the mystic’s Wisdom modifier and gain spell resistance equal to 15 +  the mystic’s class level.\n\n{b}NOTE:{/b} To get the correct effect from this adjustment, set the incrementer to match the Wisdom bonus of the Mystic who created the glyph, and select the Mystic&apos;s class level in the dropdown menu.  If the dropdown has no options, make sure to enable &quot;ShadowChemosh&apos;s Adjustments&quot; from the Configure Hero menu." compset="InPlay" uniqueness="unique">
+    <fieldval field="pMinimum" value="1"/>
+    <fieldval field="pMaximum" value="99"/>
+    <fieldval field="pCandExpr" value="component.SelectHelp &amp; Selection.S2ChrLevel"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ Don't do anything if we're not activated
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+
+      var lvl as number
+      lvl = field[pChosen].chosen.tagvalue[Value.?]
+
+      ~ Calculate 1/4 of class level
+      field[abValue].value = maximum(1,round(lvl/4,0,-1))
+
+      ~ 3rd level: 
+      if (lvl >= 3) then
+        hero.child[mNatural].field[Bonus].value += field[abValue].value
+      endif
+
+      ~ 8th level: 
+      if (lvl >= 8) then
+        #applybonus[ModCirc, hero.child[svFort], field[abValue].value]
+      endif
+
+      ~ 19th level: DR and SR
+      if (lvl >= 19) then
+        #applydr[xDamRd,field[pAdjust].value]
+        #applysr[15 + lvl]
+      endif]]></eval>
+    </thing>
+  <thing id="pPWElGlWtr" name="Mystic: Elemental Glyph (Water)" description="Fluid and changeable, the glyph of water grants allies flexibility in both their movement and their thinking.\n• At 3rd level, affected allies gain a circumstance bonus to their CMB and to Swim checks equal to the mystic’s Wisdom modifier.\n• At 8th level, affected allies ignore difficult terrain when they move.\n• At 13th level, affected allies gain the effects of a {i}freedom of movement{/i} spell.\n• At 19th level, affected allies gain fast healing of 10 while under the effects of this glyph.\n\n{b}NOTE:{/b} To get the correct effect from this adjustment, set the incrementer to match the Wisdom bonus of the Mystic who created the glyph, and select the Mystic&apos;s class level in the dropdown menu.  If the dropdown has no options, make sure to enable &quot;ShadowChemosh&apos;s Adjustments&quot; from the Configure Hero menu." compset="InPlay" uniqueness="unique">
+    <comment>abValue5 = Reserved for bootstrap condition</comment>
+    <fieldval field="pMaximum" value="99"/>
+    <fieldval field="pCandExpr" value="component.SelectHelp &amp; Selection.S2ChrLevel"/>
+    <fieldval field="pMinimum" value="1"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <bootstrap thing="raFreeMove">
+      <containerreq phase="First" priority="400"><![CDATA[fieldVal:pIsOn = 1 & fieldVal:abValue5 >= 13]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="xFastHeal">
+      <containerreq phase="First" priority="400"><![CDATA[fieldVal:pIsOn = 1 & fieldVal:abValue5 >= 19]]></containerreq>
+      <assignval field="abValue" value="10"/>
+      </bootstrap>
+    <eval phase="First" index="2">      ~ Store chosen value in abValue5 so that bootstrap conditions can find it
+      field[abValue5].value = field[pChosen].chosen.tagvalue[Value.?]</eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ Don't do anything if we're not activated
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+
+      var lvl as number
+      lvl = field[pChosen].chosen.tagvalue[Value.?]
+
+      ~ 3rd level: CMB and Swim bonus
+      if (field[pAdjust].value >= 3) then
+        #applybonus[ModCirc,hero.child[ManeuvBon], field[pAdjust].value]
+        #applybonus[ModCirc,hero.child[skSwim], field[pAdjust].value]
+      endif]]></eval>
+    </thing>
+  </document>

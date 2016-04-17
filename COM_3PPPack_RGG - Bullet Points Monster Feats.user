@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_RGG - Bullet Points Monster Feats"/>
+  <fileinfo>
+    <info_history>Bullet Point #4: 10 Monster Feats added, many still need eval scripts and pre-reqs added in</info_history>
+    <info_todo>* Big Step - Add Reach Requirement
+* Cyclone of Claws - Add natural attack requirement.</info_todo>
+    </fileinfo>
+  <thing id="fMFAweDef" name="Awesome Defense" description="{b}Prerequisites{/b}: Con 25, Dodge, size Huge or larger.\n\n{b}Benefit{/b}: The monster&#146;s size bonus to CMD is doubled.\n\n[note: bonus is not auto added.  User will have to use as a permanent adjustment]" compset="Feat" summary="The monster is simply hard to defeat." uniqueness="useronce">
+    <usesource source="MnstrFeats"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Dodge required"><![CDATA[#hasfeat[fDodge] <> 0]]></exprreq>
+    <exprreq message="Constitution 25 required"><![CDATA[child[aCON].field[aFinalVal].value >= 25]]></exprreq>
+    <exprreq message="Huge size or higher required"><![CDATA[herofield[tSize].value >= 2]]></exprreq>
+    </thing>
+  <thing id="fMFBgStp" name="Big Step" description="{b}Prerequisites{/b}: Natural reach greater than 5 feet.\n\n{b}Benefit{/b}: When the monster takes a 5-foot step, it can actually move as far as its natural reach" compset="Feat" summary="The monster&#146;s size and long limbs let it shift a greater distance safely.\nease." uniqueness="useronce">
+    <usesource source="MnstrFeats"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Natural reach greater than 5 feet required"><![CDATA[herofield[tReach].value > 5]]></exprreq>
+    </thing>
+  <thing id="fMFCyclCl" name="Cyclone of Claws" description="{b}Prerequisites{/b}: Natural attack, base attack bonus +6\n\n{b}Benefit{/b}: When the monster takes a full attack action using only natural attacks, it may make one additional attack. This attack must be made with the natural attack with the highest base attack bonus, and suffers no penalty to its attack roll." compset="Feat" summary="The monster can unleash a rapid assault of natural attacks" uniqueness="useronce">
+    <comment>did not add extra attack as it is situational, instantaneous, and does not add bonus/penalty as with abilities like Flurry.</comment>
+    <usesource source="MnstrFeats"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="SG"/>
+    <tag group="fCategory" tag="General"/>
+    <exprreq message="Base attack bonus +6 required"><![CDATA[child[Attack].field[tAtkBase].value >= 6]]></exprreq>
+    <prereq message="natural weapon required">
+      <validate>perform findchild[BaseNatWep].setfocus
+        @valid = state.isfocus</validate>
+      </prereq>
+    </thing>
+  <thing id="fMFSpcAttk" name="Special Attack" description="{b}Prerequisite:{/b} Natural special attack with range.\n\n{b}Benefit:{/b} The selected special attack has its range (or range increment) increased by +50%.\n\n[note: does not automatically change special attack text]" compset="Feat" summary="Select one special attack of the creature. Its range is extended." uniqueness="useronce">
+    <comment>pre-req is all natural attacks. need to narrow down to ranged
+
+no eval script (is it even possible/needed?)</comment>
+    <fieldval field="usrCandid2" value="resRaceCus"/>
+    <usesource source="MnstrFeats"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ChooseSrc2" tag="Hero"/>
+    <prereq message="natural ranged attack required">
+      <validate>perform findchild[BaseNatWep].setfocus
+        @valid = state.isfocus</validate>
+      </prereq>
+    </thing>
+  <thing id="fMFImpTuff" name="Improved Toughness" description="{b}Prerequisites:{/b} 2 or more racial hit dice, Toughness.\n\n{b}Benefit:{/b} The monster gains 1 additional hit point per 2 hit dice.\n\n{b}Special:{/b} This feat may be selected more than once. Its effects stack" compset="Feat" summary="The monster is much hardier than most of its kind.">
+    <comment/>
+    <usesource source="MnstrFeats"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="UserPostLv" priority="5000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ If we are using the wounds and vigor variant we need to adjust for that
+      if (hero.tagis[source.UCWound] <> 0) then
+        ~ our bonus is our hit dice
+        field[abValue].value += round(herofield[tHitDice].value / 2,0,-1)
+
+        ~ add that bonus to our wounds total
+        container.child[Wounds].field[wndFeat].value += field[abValue].value
+
+        field[abSumm].text = "You gain +" & field[abValue].value & " wounds."
+      else
+        ~ our bonus is our hit dice or 3, whichever is higher
+        field[abValue].value += round(herofield[tHitDice].value / 2,0,-1)
+        ~ add that bonus to our hit points
+        container.child[Totals].field[tHP].value += field[abValue].value
+
+        field[abSumm].text = "You gain +" & field[abValue].value & " hit points."
+        endif
+
+      field[livename].text = "Improved Toughness +" & field[abValue].value]]></eval>
+    <exprreq message="2 or more racial Hit Dice required"><![CDATA[hero.findchild[BaseRace].field[rHitDice].value >= 2]]></exprreq>
+    <exprreq message="Toughness required"><![CDATA[#hasfeat[fToughness] <> 0]]></exprreq>
+    </thing>
+  <thing id="fMFPerfBlo" name="Perfect Blow" description="{b}Prerequisites:{/b} 16+ HD, natural reach of 15 feet or greater, Combat Reflexes\n\n{b}Benefit:{/b} Once per round, when a foe takes an action that would normally provoke an attack of opportunity from the monster, and no attack is provoked due to a skill check, feat, spell or other ability the foe possesses, the monster may make a CMB check against the target . On a successful check, the monster may take an attack of opportunity on the target." compset="Feat" summary="Efforts to avoid the monster&#146;s attacks of opportunity usually fail" uniqueness="useronce">
+    <usesource source="MnstrFeats"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="natural reach of 15 feet or greater required"><![CDATA[herofield[tReach].value >= 15]]></exprreq>
+    <exprreq message="16 or more racial hit dice required"><![CDATA[hero.findchild[BaseRace].field[rHitDice].value >= 16]]></exprreq>
+    <exprreq message="Combat Reflexes required"><![CDATA[#hasfeat[fComRef] <> 0]]></exprreq>
+    </thing>
+  <thing id="fMFReelIn" name="Reel In" description="{b}Prerequisite:{/b} Natural ranged attack (such as the manticore&#146;s spikes)\n\n{b}Benefit:{/b} Once a round when the monster hits a foe with a natural ranged attack it may make a CMB check as a free action. If the check meets or exceeds the target&#146;s CMD, the target is pulled to be adjacent to the attacking monster, and automatically takes damage from the ranged attack again. The target is then free to move normally." compset="Feat" summary="The monster has a natural tendril attached to its natural ranged attacks it can use to pull foes to\nit." uniqueness="useronce">
+    <comment>pre-req is all natural attacks. need to narrow down to ranged</comment>
+    <usesource source="MnstrFeats"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <prereq message="Natural ranged attack required">
+      <validate>perform findchild[BaseNatWep].setfocus
+        @valid = state.isfocus</validate>
+      </prereq>
+    </thing>
+  <thing id="fMFSimCast" name="Simulcast" description="{b}Prerequisites:{/b} 6 or more limbs (tentacles and wings count), or 2 or more heads (medusa snakes count), or 4 or more eyestalks, ability to cast 1st level spells.\n\n{b}Benefit:{/b} A limited number of times per day, the monster can use its extra appendages to cast a spell as a free action (while still taking a full round of other actions). It cannot do this on a round it casts another spell or uses a spell-like ability. It may do this once per day, plus once for every 5 HD it possesses." compset="Feat" summary="The monster can cast a spell while taking other actions." uniqueness="useronce">
+    <comment>used same prereq as multi attack prereq, as anything with this many limbs will likely have 3 or more natural attacks</comment>
+    <fieldval field="trkMax" value="1 per 5 HD"/>
+    <usesource source="MnstrFeats"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <exprreq message="Ability to cast 1st level spells required"><![CDATA[herofield[tMaxSpLev].value >= 1]]></exprreq>
+    <prereq message="6 or more limbs (tentacles and wings count), or 2 or more heads (medusa snakes count), or 4 or more eyestalks required">
+      <validate><![CDATA[
+        var total as number
+        var numattacks as number
+        foreach pick in hero from BaseNatWep
+
+          ~ If this weapon uses the number of hands of the race, add that
+          ~ number of attacks
+          if (eachpick.tagis[Helper.RaceHands] <> 0) then
+            total += herofield[tNumHands].value
+
+          ~ Otherwise, add the number of attacks the weapon has, which should
+          ~ always be at least 1
+          else
+            numattacks = eachpick.tagmax[Value.?]
+            numattacks = maximum(numattacks,1)
+            total += numattacks
+            endif
+          nexteach
+        if (total >= 3) then
+          @valid = 1
+          endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fMFShkwve" name="Shockwave" description="{b}Prerequisites:{/b} Str 27, Power Attack, size Large or larger.\n\n{b}Benefit:{/b} In place of one melee attack, the monster can slam the ground (or similar firm surface, such as the deck of a ship or cave wall) to create a shockwave. If this is done as part of a full attack action, the monster must use an attack with the highest attack bonus to launch this maneuver.  The monster makes a CMB check against all creatures on the surface struck, within a range equal to twice the monster&#146;s natural reach. Any creature with a CMD less than the monster&#146;s CMB check is knocked prone." compset="Feat" summary="The monster can slam the ground to knock over foes." uniqueness="useronce">
+    <usesource source="MnstrFeats"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Strength 27 required"><![CDATA[child[aSTR].field[aFinalVal].value >= 27]]></exprreq>
+    <exprreq message="Large Size or greater required"><![CDATA[herofield[tSize].value >= 1]]></exprreq>
+    <exprreq message="Power Attack required"><![CDATA[#hasfeat[fPowerAtt] <> 0]]></exprreq>
+    </thing>
+  <thing id="fMFAstBl" name="Astonishing Blow" description="{b}Prerequisites{/b}: Str 29, Power Attack, Improved Bull Rush, size Huge or larger.\n\n{b}Benefit{/b}: Once per round when the monster strikes a foe at least one size category smaller than itself, it may make a CMB check as a free action. On a successful check, the foe is sent 5 feet, +1 foot for every point by which the CMB check exceeded the target&#146;s CMD. The target lands prone unless it makes an Acrobatics check (as an immediate action) with a DC equal to the total of the CMB check." compset="Feat" summary="The monster can send opponents flying with ease." uniqueness="useronce">
+    <usesource source="MnstrFeats" parent="SGGBullet" name="Monster Feats (10)"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="General"/>
+    <exprreq message="Strength 29 required"><![CDATA[child[aSTR].field[aFinalVal].value >= 29]]></exprreq>
+    <exprreq message="Huge size or higher required"><![CDATA[herofield[tSize].value >= 2]]></exprreq>
+    <exprreq message="Power Attack required"><![CDATA[#hasfeat[fPowerAtt] <> 0]]></exprreq>
+    <exprreq message="Improved Bull Rush required"><![CDATA[#hasfeat[fImpBull] <> 0]]></exprreq>
+    </thing>
+  </document>

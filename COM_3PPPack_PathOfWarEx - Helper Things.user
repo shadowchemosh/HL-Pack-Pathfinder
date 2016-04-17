@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_PathOfWarEx - Helper Things"/>
+  <fileinfo>
+    <info_author>TheIronGolem
+      Email: mail@theirongolem.com</info_author>
+    <info_history>March 6, 2015 - TheIronGolem
+      -Created New
+      -Added the Cursed Razor Discipline
+      -Added the Shattered Mirror Discipline</info_history>
+    </fileinfo>
+  <thing id="mechPoWEx" name="Path of War Expanded Mechanic" description="Path of War Expanded" compset="Mechanics"></thing>
+  <thing id="arHdPWHarb" name="Harbinger" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Harbinger" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPW4"/>
+    </thing>
+  <thing id="arHdPWZeal" name="Zealot" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Zealot" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPW5"/>
+    </thing>
+  <thing id="arHdPWMyst" name="Mystic" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Mystic" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPW6"/>
+    </thing>
+  <thing id="zPWSlpGods" name="Sleeping Goddess" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="wFtrGroup" tag="BladeHeavy"/>
+    <tag group="wFtrGroup" tag="Monk"/>
+    <tag group="wFtrGroup" tag="Spears"/>
+    <tag group="wFtrGroup" tag="Flails"/>
+    <tag group="wFtrGroup" tag="WPMndBld"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skPUAhypno"/>
+    <eval phase="First" priority="10500"><![CDATA[      
+      ~ Find out how many Sleeping Goddess maneuvers (including stances) we have, 
+      ~ & stop if it's zero.
+      var numMans as number
+      numMans = tagcount[mLevel.?]
+      doneif (numMans = 0)
+
+      ~ Make the hero psionic, if they're not already
+      call SetHeroPsi
+
+      ~ Increase our total amount of Power Points by the level of our 
+      ~ highest-level Sleeping Goddess maneuver, plus one for every 
+      ~ Sleeping Goddess maneuver beyond the first.
+      #resmax[resPowerPt] += tagmax[mLevel.?] + (numMans - 1)]]></eval>
+    </thing>
+  <thing id="zPWRvnHgls" name="Riven Hourglass" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="RivnHglass"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="zPWMithCur" name="Mithral Current" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="MithCurr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="zPWCrsRazr" name="Cursed Razor" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="CurseRazor"/>
+    <tag group="wFtrGroup" tag="BladeHeavy"/>
+    <tag group="wFtrGroup" tag="Spears"/>
+    <tag group="wFtrGroup" tag="BladeLight"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skSpellcr"/>
+    </thing>
+  <thing id="zPWShaMirr" name="Shattered Mirror" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="ShaMirror"/>
+    <tag group="ClassSkill" tag="skCrafScul"/>
+    <tag group="ClassSkill" tag="skCrafGlas"/>
+    <tag group="ClassSkill" tag="skCrafPain"/>
+    <tag group="wFtrGroup" tag="BladeHeavy"/>
+    <tag group="wFtrGroup" tag="Close"/>
+    <tag group="wFtrGroup" tag="BladeLight"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="50"><![CDATA[
+      ~ TODO: Craft Skills are not currently "Unique" so linkage 
+      ~       can't be used. I have put in a bug report to LW &
+      ~       I am hoping they make the change in a future 
+      ~       release.
+      perform hero.childfound[skCrafScul].assign[Discipline.ShaMirror]
+      perform hero.childfound[skCrafGlas].assign[Discipline.ShaMirror]
+      perform hero.childfound[skCrafPain].assign[Discipline.ShaMirror]]]></eval>
+    </thing>
+  <thing id="zPWEtnGrdn" name="Eternal Guardian" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="EternGuard"/>
+    <tag group="wFtrGroup" tag="BladeHeavy"/>
+    <tag group="wFtrGroup" tag="Polearm"/>
+    <tag group="wFtrGroup" tag="Hammer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skIntim"/>
+    </thing>
+  <thing id="zPWElmFlux" name="Elemental Flux" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="ElemFlux"/>
+    <tag group="wFtrGroup" tag="BladeLight"/>
+    <tag group="wFtrGroup" tag="Monk"/>
+    <tag group="wFtrGroup" tag="Thrown"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fPWEFlxNrg"></bootstrap>
+    <link linkage="powDiscSk1" thing="skSpellcr"/>
+    </thing>
+  <thing id="zPWTmpGale" name="Tempest Gale" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="TmpGale"/>
+    <tag group="wFtrGroup" tag="Firearms"/>
+    <tag group="wFtrGroup" tag="Bows"/>
+    <tag group="wFtrGroup" tag="Crossbows"/>
+    <tag group="wFtrGroup" tag="Thrown"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skSleight"/>
+    </thing>
+  <thing id="zPWPrcThun" name="Piercing Thunder" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="PrcThun"/>
+    <tag group="wFtrGroup" tag="Polearms"/>
+    <tag group="wFtrGroup" tag="Spears"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skAcrobat"/>
+    </thing>
+  <thing id="pcnPWCurse" name="Cursed" description="Many techniques of Cursed Razor cause a creature to gain the cursed condition; cursed creatures suffer the influence of dark magics, becoming more vulnerable to some maneuvers. By itself the cursed condition has no further effects, but cursed creatures take additional damage from some maneuvers, or are vulnerable to maneuvers that cannot be used on creatures that are not cursed (see maneuver descriptions for additional information on how they interact with the cursed condition). In addition to the maneuvers and stances that render a creature cursed, any creature laboring under the effects of a spell with the [Curse] descriptor (such as bestow curse) is treated as cursed. Multiple applications of the cursed condition do not overlap; instead the duration of each new application of the condition (such as 1d4 rounds from the bad karma counter) is added to the remaining duration of the previous application. The cursed condition may be removed by the remove curse or break enchantment spells or similar effects." compset="Condition">
+    <usesource source="srcPOWEx"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="UserPostAt" priority="10000"><![CDATA[
+      ~ If we're in output mode, don't do anything
+      doneif (state.isoutput <> 0)
+
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value + hero.isidentity[Condition] = 0)]]></eval>
+    </thing>
+  <thing id="fPWEFlxNrg" name="Active Energy Type" compset="Feat" summary="Choose your active energy type" uniqueness="useronce">
+    <arrayval field="usrArray" index="0" value="Air (Electricity)"/>
+    <arrayval field="usrArray" index="1" value="Earth (Acid)"/>
+    <arrayval field="usrArray" index="2" value="Fire (Fire)"/>
+    <arrayval field="usrArray" index="3" value="Water (Cold)"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Hide" tag="Feat"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="thing" tag="skipprereq"/>
+    <eval phase="First" priority="10500" index="2"><![CDATA[      
+      ~ If we don't have any Elemental Flux maneuvers, disable 
+      ~ this feat and remove any tags it assigned
+      ~ We wait until First/10500 to do this because we need 
+      ~ the PWActNRG tags early for bootstraps but can't check 
+      ~ for maneuver presence until after First/10000
+      var hasAET as number
+      hasAET = 0
+      if (hero.childlives[zPWElmFlux] = 1) then
+        if (hero.childfound[zPWElmFlux].tagcount[mLevel.?] > 0) then
+          hasAET = 1
+        endif
+      endif
+
+      ~ We can also get an active energy type from Elemental Attunement
+      if (hasAET = 0) then
+        hasAET = hero.childlives[cPW6ElmAtt]
+      endif
+
+      if (hasAET = 0) then
+        perform assign[Helper.FtDisable]
+        perform delete[Helper.ActivMenu]
+        perform hero.delete[PWActNRG.?]
+      endif]]></eval>
+    <eval phase="First"><![CDATA[      
+      ~ If we're disabled, do nothing 
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      ~ Assign an energy type tag based on our selection
+      If (field[usrIndex].value = 0) Then
+         perform hero.assign[PWActNRG.Air]
+      ElseIf (field[usrIndex].value = 1) Then
+         perform hero.assign[PWActNRG.Earth]
+      ElseIf (field[usrIndex].value = 2) Then
+         perform hero.assign[PWActNRG.Fire]
+      ElseIf (field[usrIndex].value = 3) Then
+         perform hero.assign[PWActNRG.Water]
+      Endif]]></eval>
+    </thing>
+  </document>

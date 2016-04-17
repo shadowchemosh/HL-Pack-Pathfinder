@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_ModulePaizo - Tears at Bitter Manor"/>
+  <thing id="rCBEphEcho" name="Ephemeral Echo" description="Miserable remnants of souls who died in despair, ephemeral echoes are restless spirits who felt powerless or heartbroken at the moment of their death. They roam the Material Plane, lingering near a fetter they recognize as meaningful to them in life or death. Ephemeral echoes gain power and become corporeal as they sap the strength of personality from their victims, until their incorporeal menace becomes a dangerously tangible threat.\n\nEphemeral echoes exhibit a combination of jealousy and hatred for the living, whom they see as unfairly blessed with the continuation of their lives and potential. They generally attack those who demonstrate a particularly vibrant personality. Upon borrowing their victims&apos; will to take material shape, ephemeral echoes savagely attack the living in a flurry of brutal blows and violent sobs." compset="Race">
+    <fieldval field="rDescript" value="This ghostly image of a sad-eyed young woman hovers suspended in the air. Her face never loses is mournful expression."/>
+    <fieldval field="rEnviron" value="any"/>
+    <fieldval field="rOrgan" value="solitary"/>
+    <fieldval field="rTreasure" value="NPC gear"/>
+    <fieldval field="rHitDice" value="8"/>
+    <fieldval field="rHPStart" value="36"/>
+    <fieldval field="rDEX" value="6"/>
+    <fieldval field="rINT" value="1"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="12"/>
+    <fieldval field="rFeat" value="-4"/>
+    <fieldval field="srcPageNum" value="61"/>
+    <fieldval field="srcBookInf" value="Tears at Bitter Manor"/>
+    <fieldval field="rCR" value="7"/>
+    <usesource source="srcTearMan"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="HasType" tag="tpUndead"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="RaceRole" tag="Combat"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <bootstrap thing="wSlam">
+      <containerreq phase="First" priority="600">NoTypeAbil.stIncorpor</containerreq>
+      <autotag group="Value" tag="2"/>
+      <autotag group="wMain" tag="1d6_5"/>
+      </bootstrap>
+    <bootstrap thing="raCBStoPow"></bootstrap>
+    <bootstrap thing="fDodge"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="fMobility"></bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wSlam"/>
+      </bootstrap>
+    <bootstrap thing="wOtherMel">
+      <containerreq phase="First" priority="600">!NoTypeAbil.stIncorpor</containerreq>
+      <assignval field="livename" value="Incorporeal Touch"/>
+      <assignval field="wFixDamage" value="1d6 cold plus 1d4 Cha damage"/>
+      </bootstrap>
+    <bootstrap thing="xFly">
+      <containerreq phase="First" priority="600">!NoTypeAbil.stIncorpor</containerreq>
+      <autotag group="Value" tag="30"/>
+      <autotag group="Maneuver" tag="Perfect"/>
+      </bootstrap>
+    <bootstrap thing="stIncorpor"></bootstrap>
+    <bootstrap thing="xChanRes">
+      <autotag group="Value" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="raCBCorFor"></bootstrap>
+    <bootstrap thing="raCBBewGaz"></bootstrap>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we are incorporeal then we can't have a unarmed strike
+      if (hero.tagis[NoTypeAbil.stIncorpor] = 0) then
+        perform hero.childfound[wUnarmed].assign[Hide.Weapon]
+      endif]]></eval>
+    <eval phase="PreLevel" priority="4000" index="2">~ Set skills
+      #skillinnate[skFly] += 6
+      #skillinnate[skIntim] += 5
+      #skillinnate[skPercep] += 8
+      #skillinnate[skSenseMot] += 6
+      #skillinnate[skStealth] += 7
+      #racialbonus[skStealth] += 8</eval>
+    </thing>
+  <thing id="raCBCorFor" name="Corporeal Form" description="Whenever an ephemeral echo deals Charisma damage to a creature, it absorbs a portion of its victim&apos;s anguish and becomes more real. It loses the incorporeal subtype and gains a Strength score equal to its Charisma score. Its deflection bonus to AC becomes a natural armor bonus, and its incorporeal touch attack is replaced with two slam attacks. The ephemeral echo loses its fly speed and gains a land speed of 30 feet. These changes last for 1d4 rounds or until the ephemeral echo takes any Charisma damage, whichever comes first. The third time in a day an ephemeral echo deals Charisma damage, its corporeal form lasts for 24 hours or until it takes Charisma damage, whichever comes first." compset="RaceSpec">
+    <fieldval field="abValue" value="6"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreAttr" index="2">~ If ability not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      ~ Set the starting Str modifier to the same as the Cha score
+      hero.child[aSTR].field[aStartMod].value = hero.child[aCHA].field[aStartMod].value</eval>
+    <eval phase="First" priority="510">~ If ability active then we are corperal
+      if (field[abilActive].value = 1) then
+        root.field[rAC].value += field[abValue].value
+        ~ Remove the incorporal subtype
+        perform hero.assign[NoTypeAbil.stIncorpor]
+      else
+        #applybonus[tACDeflect,hero.child[ArmorClass],field[abValue].value]
+      endif</eval>
+    </thing>
+  <thing id="raCBStoPow" name="Stolen Power" description="Whenever an ephemeral echo deals Charisma damage or drain, it gains a +2 profane bonus on attack rolls, damage rolls, saving throws, skill checks, and ability checks until the end of its next turn. The echo also gains 5 temporary hit points that last for 1 hour." compset="RaceSpec">
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="5"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="PreLevel" priority="10000">~ If ability not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      #applybonus[BonProfane,hero.child[Attack],field[abValue].value]
+      #applybonus[BonProfane,hero.child[Damage],field[abValue].value]
+      #applybonus[BonProfane,hero.child[AllSkills],field[abValue].value]
+      #applybonus[BonProfane,hero.child[svAll],field[abValue].value]</eval>
+    </thing>
+  <thing id="raCBRejuve" name="Rejuvenation" description="Each ephemeral echo is tied to a unique fetter-some event, location, or object that reminds it of the sadness of its former life. Resolving this fetter (by consecrating the location or destroying the item, for example) destroys the ephemeral echo permanently. If the echo is physically injured or killed but its fetter remains unresolved, the echo rejuvenates fully in 1d10 days." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rCBAbanOne" name="Abandoned One" description="Abandoned ones are the vengeful remains of lost soldiers from the Taldan Armies of Explorationsoldiers who were left behind in the wild places of the world and forgotten as their armies moved on or retreated. Tethered to their own corpses by the fury of their perceived abandonment, abandoned ones seek to share their torment with any mortals they encounter.\n\nAn abandoned one resembles its living self, but its features are drawn and its skin leathery. Abandoned ones approach travelers in the darkness, magically disguised as lost soldiers or obliging guides, then attempt to draw victims off alone and kill them before their companions remember them." compset="Race">
+    <fieldval field="rDescript" value="This corpse of a soldier is twisted and ghoulish, its old:fashioned clothes are caked in mud, and its is expression lost and forlorn."/>
+    <fieldval field="rEnviron" value="any forest or swamp"/>
+    <fieldval field="rOrgan" value="solitary or pair"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rHitDice" value="5"/>
+    <fieldval field="rHPStart" value="22"/>
+    <fieldval field="rSTR" value="6"/>
+    <fieldval field="rDEX" value="4"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="7"/>
+    <fieldval field="rFeat" value="-3"/>
+    <fieldval field="rAC" value="5"/>
+    <fieldval field="rCR" value="4"/>
+    <fieldval field="srcPageNum" value="56"/>
+    <fieldval field="srcBookInf" value="Tears at Bitter Manor"/>
+    <usesource source="srcTearMan"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceRole" tag="Combat"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="HasType" tag="tpUndead"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="spAlteSel2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spZoneSil4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="raCBCurObl"></bootstrap>
+    <bootstrap thing="raCBForFri"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="raCBSelInv"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wClaw"/>
+      </bootstrap>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000">~ Set skills
+      #skillinnate[skBluff]    += 5
+      #skillinnate[skPercep]   += 5
+      #skillinnate[skSenseMot] += 5
+      #skillinnate[skStealth]  += 5</eval>
+    </thing>
+  <thing id="raCBCurObl" name="Curse of Oblivion" description="Three times per day as a standard action, an abandoned one can cause one creature within 60 feet to disappear (Will DC negates). Living creatures treat the victim as invisible and can&apos;t hear its voice. This is a curse effect and lasts for 12 hours or until the abandoned one is destroyed, whichever comes first. Only creatures that are within 100 feet of the target when the abandoned one uses this ability are unable to see and hear the target, and they remain unable to do so even if they go outside of this range. The target remains invisible for the entire duration, even if it attacks or takes other actions that would normally cause an invisible creature to become visible. It can speak and cast spells as normal, but only the abandoned one can hear its vocalizations. The target remains tangible, and can be detected by scent, touch, or the sound of its movement. The save DC is Charisma-based." compset="RaceSpec" summary="Cause one creature within 60 feet to disappear (Will DC negates).">
+    <fieldval field="trkMax" value="3"/>
+    <fieldval field="abRange" value="60"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="SpecType" tag="Attack"/>
+    </thing>
+  <thing id="raCBForFri" name="Forgotten Friend" description="When an abandoned one successfully uses its curse of oblivion, any creature within 100 feet of the cursed creature that has prior knowledge of it must succeed at a Will saving throw or lose all memory of the target&apos;s existence for the duration of that ability&apos;s effect, and ignore or explain away all evidence of the target&apos;s existence. Whether or not it succeeds at the save, a creature can only be affected by this ability once per day. This is a mind-affecting compulsion effect. The save DC is Charisma-based." compset="RaceSpec" summary="Lose all memory of the target of Curse of Oblivion existence for the duration.">
+    <fieldval field="abRange" value="100"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="SpecType" tag="Attack"/>
+    </thing>
+  <thing id="raCBSelInv" name="Selective Invisibility" description="This ability functions as {i}invisibility{/I} (CL 5th), but doesn&apos;t end when the abandoned one attacks a creature. Instead, any creature the abandoned one attacks can see through the abandoned one&apos;s {i}invisibility{/i} for 1 hour." compset="RaceSpec">
+    <fieldval field="trkMax" value="3"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="SpInfo" tag="spInvisib2"/>
+    </thing>
+  <thing id="rCBCaliban" name="Caliban" description="While an individual hag who has coupled with a human can only hope to birth a changeling (Path.finder RPG Bestiary 4 29 ), hag covens prove far more versatile in spawning monstrous progeny. The hags in such covens occasionally use their combined witchcraft to supernaturally create abominable male children-brutish monsters born of foul sanies and unholy ablutions that are stewed for days and then allowed to ferment into living creatures. These monsters go by many names among the hags who &quot;birth&quot; them, but among civilized races they are known by just one word: caliban.\n\nCalibans are free-willed but invariably inherit much of the vileness of their monstrous parents. Unlike changelings, calibans are usually raised among hags rather than in human settlements, since most societies would find a caliban&apos;s form too repulsive for any purpose other than obliteration. Thus calibans learn from an early age to trust only their mothers and to revile anyone else. Those calibans who for whatever reason find themselves apart from their hag mothers are the most likely to shed their evil ways and forge a path of their own, but such individuals are few and far between.\n\nJust as changelings are always female, calibans are always male, and since they are the result of hags&apos; foul magics it is impossible for them to reproduce. The average caliban is 7 feel tall and weighs about 260 pounds." compset="Race">
+    <fieldval field="rCR" value="2"/>
+    <fieldval field="rAC" value="2"/>
+    <fieldval field="rSTR" value="3"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rWIS" value="-2"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rEnviron" value="temperate and warm forests and marshes"/>
+    <fieldval field="rOrgan" value="solitary or brotherhood (2-6)"/>
+    <fieldval field="rTreasure" value="standard (handaxe, other treasure)"/>
+    <fieldval field="rDescript" value="This scaly, palefarred monstrosity has bul3in3 muscles, a short muzzle, and two small horns that erupt over its slopin3 brow."/>
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="22"/>
+    <fieldval field="srcPageNum" value="57"/>
+    <fieldval field="srcBookInf" value="Tears at Bitter Manor"/>
+    <usesource source="srcTearMan"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="RaceRole" tag="Combat"/>
+    <tag group="HasType" tag="tpMonHuman"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="WepProf" tag="wHandaxe"/>
+    <bootstrap thing="fAthletic"></bootstrap>
+    <bootstrap thing="fNimbMove"></bootstrap>
+    <bootstrap thing="raCBShaDef"></bootstrap>
+    <bootstrap thing="raCBUnsScr"></bootstrap>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d4_4"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="raLowLight"></bootstrap>
+    <eval phase="PreLevel" priority="4000" index="2">~ Set skills
+      #skillinnate[skAcrobat]  += 4
+      #skillinnate[skClimb]    += 4
+      #skillinnate[skIntim]    += 2
+      #skillinnate[skPercep]   += 4
+      #skillinnate[skSurvival] += 2</eval>
+    </thing>
+  <thing id="raCBShaDef" name="Share Deformity" description="Once per day as a standard action, a caliban can make a melee touch attack against a humanoid creature. If it hits, the opponent must succeed at a Fortitude save or have its form warped horribly. An affected creature takes 4 points of ability damage to Strength, Dexterity, or Constitution (caliban&apos;s choice). Until this ability damage is healed, the caliban gains a +4 bonus to that same ability score. This ability damage heals automatically after 24 hours. A creature can&apos;t be affected by more than one instance of this ability at a time. This is a curse effect, and the save DC is Charisma-based." compset="RaceSpec" summary="Melee touch attack and target must make Fort save or take 4 ability damage.">
+    <fieldval field="actName" value="+4 to Ability Score"/>
+    <fieldval field="usrCandid1" value="component.BaseAttr &amp; AttribCat.Physical"/>
+    <fieldval field="abValue" value="4"/>
+    <fieldval field="trkMax" value="1"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="abRange" tag="Touch"/>
+    <tag group="abSave" tag="FortNeg"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we are not activated get out now!
+      doneif (field[abilActive].value = 0)
+
+      field[usrChosen1].chosen.field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="raCBUnsScr" name="Unsettling Scream" description="As a standard action, a caliban can wail horribly. All non-caliban creatures within 60 feet that can hear must succeed at a Will save or be deafened for 1 round and shaken for 1 minute. A creature affected by this ability is immune to the unsettling scream of the same caliban for 24 hours, regardless of whether its save is successful. This is a sonic fear effect, and the save DC is Charisma-based." compset="RaceSpec" summary="All non-caliban creatures within 60 feet that can hear must succeed at a Will save or be deafened for 1 round and shaken for 1 minute.">
+    <fieldval field="abRange" value="60"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="abDuration" tag="Round"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Attack"/>
+    </thing>
+  <thing id="rCBDeaDwel" name="Deadfall Dweller" description="Deadfall dwellers are dangerous ambush predators most commonly encountered in the old forests and forgotten marshes of eastern Avistan. They make their homes among fallen stands of trees, where they take advantage of a unique form of camouflage. Hungry deadfall dwellers fold their many sticklike legs under themselves, collapsing against large tree trunks or simply lying on the ground. When a warm-blooded creature happens by, a deadfall dweller straightens its legs to pursue, and bellows out a spray of acidic mucus that paralyzes the victim in its tracks. The beast then advances to attack with its poisonous bite and sharp, scraping appendages.\n\nDeadfall dwellers reproduce by immobilizing prey with repeated applications of acidic spray, then implanting a clutch of eggs within the paralyzed host. The larval dwellers keep their host immobilized while they absorb moisture from its body. After the dwellers grow in size, they emerge from the husk of their host, whose flesh by that point resembles the shriveled bark of a dead tree.\n\nMost deadfall dwellers have a mottled green-brown carapace, the better to fit into their typical surroundings. A few have been reported in colder climates, with whitegray exoskeletons and freezing spittle. An average deadfall dweller stretches 11 feet long, stands 6 feet tall, and weighs 600 pounds." compset="Race">
+    <fieldval field="srcPageNum" value="58"/>
+    <fieldval field="srcBookInf" value="Tears at Bitter Manor"/>
+    <fieldval field="rAC" value="8"/>
+    <fieldval field="rHitDice" value="6"/>
+    <fieldval field="rHPStart" value="33"/>
+    <fieldval field="rSTR" value="11"/>
+    <fieldval field="rDEX" value="3"/>
+    <fieldval field="rCON" value="6"/>
+    <fieldval field="rINT" value="-5"/>
+    <fieldval field="rWIS" value="2"/>
+    <fieldval field="rFeat" value="-3"/>
+    <fieldval field="rEnviron" value="temperate forests and swamps"/>
+    <fieldval field="rOrgan" value="solitary, brood (2-5), or ruin (6-12)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rDescript" value="This creature resembles a fallen tree trunk that walks upon dozens of tiny, barbed branches and shambles like a spider."/>
+    <fieldval field="rReach" value="5"/>
+    <fieldval field="rCR" value="5"/>
+    <usesource source="srcTearMan"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Helper" tag="Snaky"/>
+    <tag group="HasType" tag="tpMagBeast"/>
+    <tag group="RaceRole" tag="Combat"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <bootstrap thing="wOtherMel">
+      <autotag group="wMain" tag="1d4"/>
+      <autotag group="Value" tag="2"/>
+      <autotag group="Helper" tag="NatOverSec"/>
+      <assignval field="livename" value="Limbs"/>
+      </bootstrap>
+    <bootstrap thing="raFreeze"></bootstrap>
+    <bootstrap thing="raEntrap">
+      <assignval field="livename" value="Entrap (1d4 rounds, hardness 3, hp 6)"/>
+      </bootstrap>
+    <bootstrap thing="raCBImplan"></bootstrap>
+    <bootstrap thing="xImmAcid"></bootstrap>
+    <bootstrap thing="xVulElec"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="raCBSpittl"></bootstrap>
+    <bootstrap thing="xClimb">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="hzCBPoiInj">
+      <autotag group="Target" tag="wBite"/>
+      <autotag group="PoisLasts" tag="Rounds"/>
+      <autotag group="PoisonAttr" tag="aDEX"/>
+      <autotag group="PoiDamTyp1" tag="Damage"/>
+      <assignval field="hzFreqNm2" value="6"/>
+      <assignval field="hzPriNmD1" value="1"/>
+      <assignval field="hzPriDie1" value="3"/>
+      </bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+      ~ Set skills
+      #skillinnate[skClimb]  += 1
+      #skillinnate[skPercep]  += 3
+      #skillinnate[skStealth] += 2
+      #racialsituational[hero.child[skStealth],"+8 Stealth in forests or swamps",field[name].text]]]></eval>
+    </thing>
+  <thing id="raCBImplan" name="Implant" description="A deadfall dweller can inject 1d3 larvae into a helpless creature as a full-round action. Excretions from these larvae have a paralyzing effect, leaving the host helpless until the larvae mature into young deadfall dwellers that erupt from the host&apos;s body, killing it. Each day, an impregnated host must attempt a Fortitude save. If the host succeeds at the saving throw, it is no longer helpless, but is still impregnated. If it fails, it takes 1 point of Constitution drain and remains helpless for another day. All of the larvae in an impregnated creature can be destroyed with a remove disease spell. Alternatively, a creature can take 10 minutes to attempt a DC 20 Heal check to remove a single larva. This check can be attempted multiple times, but each attempt deals 1d6 points of damage to the host. The save DC is Constitution-based." compset="RaceSpec" summary="Inject 1d3 larvae into a helpless creature as a full-round action.">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abAction" tag="FullRd"/>
+    <tag group="abRange" tag="Touch"/>
+    <tag group="abDuration" tag="Instant"/>
+    <tag group="abSave" tag="FortNeg"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="SpecType" tag="Attack"/>
+    </thing>
+  <thing id="raCBSpittl" name="Spittle" description="As a swift action, a deadfall dweller can emit a stream of corrosive spittle at one target within 30 feet. On a successful attack, the target takes 1d6 points of acid damage, and must save to avoid being entrapped by the solidifying mucus." compset="RaceSpec" summary="As a swift action, emit a stream of corrosive spittle at one target within 30 feet.">
+    <fieldval field="abRange" value="30"/>
+    <tag group="abAction" tag="Swift"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="abDuration" tag="Instant"/>
+    <tag group="abSave" tag="FortPart"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wMain" tag="1d6"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCritMult" tag="2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="WeaponSpec"/>
+    <tag group="Helper" tag="SingleAtt"/>
+    <tag group="Helper" tag="NoAttrDam"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Make damage acid
+      #extradamage[this," Acid and Entrap",field[name].text]]]></eval>
+    </thing>
+  <thing id="rCBDelgeth" name="Delgeth" description="The delgeth is a unique breed of ungulate native to magical forests and places where the line between the natural and the supernatural is blurred. Delgeths&apos; soaring core body temperature manifests in the elklike creatures&apos; flaming hooves and smoldering extremities, both of which the beasts use to defend themselves and mark their territory during mating season. Delgeths are unpredictable creatures, and are equally as likely to run from predators as they are to stand their ground and face off against aggre ssors. Either way, a delgeth is sure to leave a fiery reminder of its passing, the beast&apos;s flaming hooves blazing a telltale trail through the brush.\n\nTribal cultures and scholars of the supernatural alike hold the majestic delgeth in awe. Though it has an innate connection to flame, the delgeth lives in balance with the natural world, allowing natural fires to purge the forest of excess deadwood.\n\nA typical delgeth stands 4 feet tall at the shoulder and weighs 200 pounds." compset="Race">
+    <fieldval field="rCR" value="6"/>
+    <fieldval field="rAC" value="6"/>
+    <fieldval field="rHitDice" value="8"/>
+    <fieldval field="rHPStart" value="44"/>
+    <fieldval field="rSTR" value="9"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rCON" value="6"/>
+    <fieldval field="rINT" value="-6"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="4"/>
+    <fieldval field="rSpeed" value="50"/>
+    <fieldval field="rFeat" value="-4"/>
+    <fieldval field="rEnviron" value="temperate forests"/>
+    <fieldval field="rOrgan" value="solitary, pair, or family (3-5)"/>
+    <fieldval field="rTreasure" value="none"/>
+    <fieldval field="rDescript" value="The impressive rack ef antlers on this adult elk appears scorched and charred, as do the beast&apos;s le13s near its blackened hooves."/>
+    <fieldval field="srcPageNum" value="59"/>
+    <fieldval field="srcBookInf" value="Tears at Bitter Manor"/>
+    <usesource source="srcTearMan"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="HasType" tag="tpMagBeast"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="RaceRole" tag="Combat"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <bootstrap thing="wGore">
+      <autotag group="wMain" tag="1d8"/>
+      <assignval field="wDamExtra" value=" plus 1d6 fire"/>
+      </bootstrap>
+    <bootstrap thing="wHooves">
+      <autotag group="wMain" tag="1d4"/>
+      <autotag group="Value" tag="2"/>
+      <assignval field="wDamExtra" value=" plus 1d6 fire"/>
+      </bootstrap>
+    <bootstrap thing="raCBFigFir"></bootstrap>
+    <bootstrap thing="raCBFliFla"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="lSylvan"></bootstrap>
+    <bootstrap thing="xImmFire"></bootstrap>
+    <bootstrap thing="fMultiAtt"></bootstrap>
+    <bootstrap thing="xScent"></bootstrap>
+    <bootstrap thing="fRun"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000">~ Set skills
+      #skillinnate[skPercep]  += 4
+      #skillinnate[skStealth] += 4</eval>
+    </thing>
+  <thing id="raCBFigFir" name="Fight with Fire" description="A delgeth can strike at the ground with its flaming hooves as a swift action, causing blazing sparks to appear in a square of the delgeth&apos;s choosing within 30 feet. A creature in that square must succeed at a Reflex save or catch fire. The save DC is Charisma-based." compset="RaceSpec" summary="As a swift action cause blazing sparks in a square within 30 feet. A creature in square succeed at a Reflex or catch fire.">
+    <fieldval field="abRange" value="30"/>
+    <tag group="abAction" tag="Swift"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="abDuration" tag="Instant"/>
+    <tag group="abSave" tag="RefPart"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="raCBFliFla" name="Flight of Flames" description="A delgeth can use its smoldering hooves to ignite the ground and brush when it runs or withdraws, creating a blazing trail of fire behind it. The fire fills every square the delgeth moves through during its run or withdraw action. When the fire appears and on each of the delgeth&apos;s turns, the flames deal 2d6 points of fire damage to each creature in one of the squares of fire and 2d4 points of fire damage to each creature within 5 feet of such a square but not inside one. The flames gutter out after 3 rounds, but can be extinguished before then by any means that would extinguish normal nonmagical fires of their size. The flames can ignite flammable debris, but in normal forest conditions they rarely spread." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="rCBEmbBear" name="Embalming Bear" description="Though embalming bears could easily be mistaken for beasts brought back from the dead, these strange constructs are actually taxidermic bear corpses that have been modified so they can walk once again. Embalming bears employed as guardians are designed to deliver dangerous doses of embalming fluid with strikes from their powerful claws. Few of these creatures exist, and those that do are found where alchemy is widely practiced or where mummification of pets and guardians is a part of funereal tradition. Embalming bears are often created to guard over precious treasures, but some serve less significant functions, and are merely trophies preserved by taxidermists and animated to decorate macabre halls or guard remote locations.\n\nAn embalming bear is different from other animated objects in that the process of its creation includes a step that turns the chemicals that preserve the taxidermic animal into a weapon. This especially powerful embalming fluid is a deadly poison when inj ected into the injuries of living enemies. The main purpose of the liquid, though, is to provide the bear with a semifluid mobility normally not afforded to animated objects.\n\nMany embalming bears (such as the one described here) have armor plates bolted onto their bodies, typically disguised as pieces of ceremonial armor to make the creature look as if it had been used in battle. Though this is often just an affectation, some embalming bears actually are honored creatures that died in battle and were then turned into eternal servants. A typical embalming bear is 7 feet tall and weighs 300 pounds." compset="Race">
+    <fieldval field="srcPageNum" value="60"/>
+    <fieldval field="srcBookInf" value="Tears at Bitter Manor"/>
+    <fieldval field="rCR" value="7"/>
+    <fieldval field="rReach" value="5"/>
+    <fieldval field="rEnviron" value="any"/>
+    <fieldval field="rOrgan" value="solitary or pair"/>
+    <fieldval field="rTreasure" value="none"/>
+    <fieldval field="rDescript" value="This decaying taxidermic bear is held to!}ether with thick stitches, metal armor plates, and a punJ}ent chemical fluid."/>
+    <fieldval field="rAC" value="12"/>
+    <fieldval field="rHitDice" value="8"/>
+    <fieldval field="rHPStart" value="44"/>
+    <fieldval field="rSTR" value="12"/>
+    <fieldval field="rDEX" value="-2"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rCHA" value="-9"/>
+    <usesource source="srcTearMan"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="HasType" tag="tpConst"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Helper" tag="Quadruped"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="RaceRole" tag="Combat"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d8"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="raGrab">
+      <autotag group="Target" tag="wClaw"/>
+      </bootstrap>
+    <bootstrap thing="raHardness">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="wConstrict">
+      <autotag group="wMain" tag="1d6"/>
+      </bootstrap>
+    <bootstrap thing="hzCBPoiInj">
+      <autotag group="Target" tag="wClaw"/>
+      <autotag group="PoisLasts" tag="Rounds"/>
+      <autotag group="PoiDamTyp1" tag="Damage"/>
+      <autotag group="PoisonAttr" tag="aCON"/>
+      <autotag group="PoisonAttr" tag="aDEX"/>
+      <assignval field="hzPriNmD1" value="1"/>
+      <assignval field="hzPriDie1" value="2"/>
+      <assignval field="hzFreqNm2" value="6"/>
+      <assignval field="abDC" value="3"/>
+      <assignval field="hzExText" value="Potent embalming fluid"/>
+      </bootstrap>
+    </thing>
+  <thing id="rCBLeechro" name="Leechroot" description="The brutal Goblinblood Wars created the first leechroot, which emerged from the remains of plants drowned in the blood-drenched soils of Chitterwood. A chaotic intertwining of rotten roots, this monstrosity quickly spread its curse by soaking other dead plants in its sap. Moving underground, leechroots dispersed to forests all over Avistan, reaching as far as the Shudderwood in Ustalav.\n\nA leechroot is driven solely by its thirst for blood. It hides below the earth while waiting for prey and snatches victims with its razor-sharp tentacles, feeding directly from their wounds. The absorbed blood mutates into a thick red sap that runs through the leechroot&apos;s body.\n\nAn adult leechroot averages 12 feet across (not including its root appendages) and weighs 700 pounds." compset="Race">
+    <fieldval field="srcPageNum" value="62"/>
+    <fieldval field="srcBookInf" value="Tears at Bitter Manor"/>
+    <fieldval field="rCR" value="4"/>
+    <fieldval field="rHitDice" value="5"/>
+    <fieldval field="rHPStart" value="22"/>
+    <fieldval field="rSTR" value="10"/>
+    <fieldval field="rDEX" value="-2"/>
+    <fieldval field="rWIS" value="7"/>
+    <fieldval field="rCHA" value="5"/>
+    <fieldval field="rSpeed" value="5"/>
+    <fieldval field="rEnviron" value="any forest"/>
+    <fieldval field="rOrgan" value="solitary"/>
+    <fieldval field="rTreasure" value="none"/>
+    <fieldval field="rDescript" value="This tangle of rotten, lifeless roots resembles a mess of bodily organs, its visceral tendrils graspingfor sustenance."/>
+    <usesource source="srcTearMan"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="RaceRole" tag="Combat"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="HasType" tag="tpUndead"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="Helper" tag="Snaky"/>
+    <bootstrap thing="xChanRes">
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="wOtherMel">
+      <autotag group="wMain" tag="1d6"/>
+      <autotag group="Value" tag="2"/>
+      <assignval field="livename" value="Roots"/>
+      </bootstrap>
+    <bootstrap thing="xCBBleed">
+      <autotag group="Value" tag="2"/>
+      <autotag group="Target" tag="wOtherMel"/>
+      </bootstrap>
+    <bootstrap thing="xBurrow">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="raGrab">
+      <autotag group="Target" tag="wOtherMel"/>
+      </bootstrap>
+    <bootstrap thing="raCBBloodt"></bootstrap>
+    <bootstrap thing="raCBBloSap"></bootstrap>
+    <bootstrap thing="raCBDraUnd"></bootstrap>
+    <bootstrap thing="raCBEarBar"></bootstrap>
+    <bootstrap thing="xTremorsen">
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdS">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000">#racialbonus[skStealth] += 16</eval>
+    </thing>
+  <thing id="raCBBloodt" name="Bloodthirst" description="A leechroot can absorb blood directly from its victims&apos; cuts. The leechroot gains fast healing equal to the number of creatures with the bleed condition it is grappling (if any).\n\n{B}Note:{/b} You can set the number of grappled bleeding victims on the &quot;In-Play&quot; tab." compset="RaceSpec" summary="A leechroot can absorb blood directly from its victims&apos; cuts. The leechroot gains fast healing equal to the number of creatures with the bleed condition it is grappling (if any).">
+    <fieldval field="actUserMin" value="0"/>
+    <fieldval field="actIncrNam" value="Num Grappled"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Defense"/>
+    <bootstrap thing="xFastHeal"></bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #value[xFastHeal] += field[abValue].value + field[actUser].value]]></eval>
+    </thing>
+  <thing id="raCBBloSap" name="Bloody Sap" description="The viscous resin that exudes from a leechroot&apos;s tentacles is infused with negative energy, preventing both natural and magical healing. The DC of any Heal check to stop the bleeding caused by a leechroot&apos;s attacks is increased by 2 . Casting a cure spell on a creature bleeding because of a leechroot&apos;s attacks requires a successful caster level check (DC 15 + the spell&apos;s level) or the spell has no effect on the bleeding creature." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    </thing>
+  <thing id="raCBDraUnd" name="Drag Under" description="As part of an action to maintain a grapple, a leechroot can move the grappled creature up to 5 feet (within the leechroot&apos;s reach) and bury it partway into the ground. The buried creature is pinned and can&apos;t receive help to break free from the grapple. A buried opponent that escapes the grapple remains pinned unless it spends a move action to dig itself free and it succeeds at a DC 10 Strength check." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Attack"/>
+    </thing>
+  <thing id="raCBEarBar" name="Earth Barrier" description="A leechroot burrowing 5 feet below the surface is partially visible, can make attacks using its normal reach, and gains concealment and partial cover. It can be uprooted with a successful drag maneuver. It can burrow back under the earth as a move action that provokes attacks of opportunity." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Defense"/>
+    </thing>
+  <thing id="rCBTizheru" name="Tizheruk" description="The vicious tizheruk is a foul freshwater predator that wreaks havoc in the lakes and rivers it inhabits. To make matters worse, tizheruks also frequently travel far inland via smaller streams where animals and humanoids might think themselves safer. When a tizheruk swims upstream in such waters, it naturally compresses its muscles and organs, enabling it to remain in water less than a foot deep. It explodes to its full size as soon as it attacks, swallowing smaller prey or dragging larger creatures into the water before swimming away with its meal.\n\nThough tizheruks mostly subsist on aquatic prey, they supplement their diets with creatures on the shore, particularly sizeable mammals such as deer or wild boar. To capture such creatures, a tizheruk extends its tightly coiled, whiplike tongue to snare one of the prey&apos;s legs, then retracts the appendage to pull the creature to its mouth.\n\nA tizheruk&apos;s skin is nearly transparent, granting it a sort of natural camouflage beneath the water because its rust-colored organs and tissue can easily be mistaken for the floor of a creek or stream. After gorging itself on fish or on land animals that wander near the shore, the tizheruk compresses itself on the bottom of a lake or river while it slowly digests its prey.\n\nAn adult tizheruk is 8 feet long and weighs 180 pounds, though a tizheruk that has just fed may weigh up to two or three times as much." compset="Race">
+    <fieldval field="rAC" value="6"/>
+    <fieldval field="rReachNote" value="20 ft. with tongue"/>
+    <fieldval field="rHitDice" value="5"/>
+    <fieldval field="rHPStart" value="27"/>
+    <fieldval field="rSTR" value="14"/>
+    <fieldval field="rDEX" value="7"/>
+    <fieldval field="rCON" value="11"/>
+    <fieldval field="rINT" value="-8"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="-4"/>
+    <fieldval field="rSpeed" value="10"/>
+    <fieldval field="rDescript" value="This serpentine beast has transparent, scaly skin that reveals the creature&apos;s murky red-and-brown organs through its flesh."/>
+    <fieldval field="rEnviron" value="temperate rivers and marshes"/>
+    <fieldval field="rOrgan" value="solitary or pair"/>
+    <fieldval field="rTreasure" value="none"/>
+    <fieldval field="rFeat" value="-3"/>
+    <fieldval field="rCR" value="5"/>
+    <usesource source="srcTearMan"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceRole" tag="Combat"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="HasType" tag="tpMagBeast"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Helper" tag="Snaky"/>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="2d6"/>
+      </bootstrap>
+    <bootstrap thing="wTongue">
+      <assignval field="wFixDamage" value="-"/>
+      </bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skStealth"/>
+      </bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wBite"/>
+      </bootstrap>
+    <bootstrap thing="raGrab">
+      <autotag group="Target" tag="wBite"/>
+      <autotag group="Target" tag="wTongue"/>
+      </bootstrap>
+    <bootstrap thing="raSwallow">
+      <assignval field="abValue" value="1"/>
+      <assignval field="abValue2" value="3"/>
+      <assignval field="wFixDamage" value="1d6 Acid"/>
+      </bootstrap>
+    <bootstrap thing="stAquatic"></bootstrap>
+    <bootstrap thing="raPull">
+      <autotag group="Target" tag="wTongue"/>
+      <assignval field="abValue" value="15"/>
+      </bootstrap>
+    <bootstrap thing="raCBTizCom"></bootstrap>
+    <bootstrap thing="raCBSeeSki"></bootstrap>
+    <bootstrap thing="raCBTizTon"></bootstrap>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="40"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+      ~ Set skills
+      #skillinnate[skPercep]  += 3
+      #skillinnate[skStealth] += 1
+      #skillinnate[skSwim]    += 1
+      #racialsituational[hero.child[skStealth],"+8 Stealth in water",field[name].text]]]></eval>
+    </thing>
+  <thing id="raCBTizCom" name="Compression" description="A tizheruk can use its compression ability to remain in waterways as shallow as 8 inches deep. While compressing itself against the floor of a body of water, a tizheruk gains a +4 circumstance bonus on Stealth checks." compset="RaceSpec" summary="Compressing against the floor of a body of water, +4 circumstance bonus on Stealth checks.">
+    <fieldval field="abValue" value="4"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[ 
+     ~ If we're disabled, do nothing
+     doneif (tagis[Helper.SpcDisable] <> 0)
+     ~ If not activated get out now!
+     doneif (field[abilActive].value = 0)
+
+     #applybonus[ModCirc,hero.child[skStealth],field[abValue].value]]]></eval>
+    </thing>
+  <thing id="raCBSeeSki" name="See-Through Skin" description="Because so much of a tizheruk&apos;s body is transparent, a creature swallowed whole by it has line of sight to creatures outside the creature, and creatures outside the tizheruk can see anyone inside." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="raCBTizTon" name="Tongue" description="A tizheruk&apos;s tongue is a primary attack with a reach equal to double the tizheruk&apos;s normal reach (20 feet for a Large tizheruk). A tizheruk&apos;s tongue deals no damage on a hit, but can be used to grab a creature and pull it closer. A tizheruk doesn&apos;t gain the grappled condition while using its tongue in this manner." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="raCBBewGaz" name="Bewitching Gaze" description="1 point of Charisma drain, 30 feet, Fortitude negates. The save DC is Charisma-based." compset="RaceSpec" summary="1 point of Charisma drain, 30 feet, Fortitude negates.">
+    <fieldval field="abRange" value="30"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="abDuration" tag="Instant"/>
+    <tag group="abSave" tag="FortNeg"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SbNamePar" tag="IncRange"/>
+    <tag group="LvNamePar" tag="IncRange"/>
+    <tag group="SbNamePar" tag="IncDC"/>
+    </thing>
+  </document>

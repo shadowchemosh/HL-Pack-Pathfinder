@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack - Helper Things"/>
+
+  <!-- ============================================================================================ -->
+  <!-- Rogue Genius Games Mechanic                                                                  -->
+  <!-- ============================================================================================ -->
+  <!--
+  <thing id="mecCGTags" name="RGG Tags Mechanics" description="This thing is designed to hold tags at the highest level so that they are loaded first. This prevents the need from having to define tags at the individual Thing Level." compset="Mechanics">
+    <usesource source="pSGG"/>
+    <tag group="wSpecial"  tag="RGTalMnkAB" name="Specialty Attack Bonus"/>
+    <tag group="fCategory" tag="CGSinful"   name="Sinful"/>
+    </thing>
+  -->
+
+  <!-- ============================================================================================ -->
+  <!-- 3PP Pack Mechanic                                                                  -->
+  <!-- ============================================================================================ -->
+  <thing id="mec3PP" name="Mechanic, 3PP Pack" description="This thing is designed to hold tags at the highest level so that they are loaded first. This prevents the need from having to define tags at the individual Thing Level." compset="Mechanics">
+    <!-- Rogue Genius Games Tags -->
+    <tag group="wSpecial"  tag="RGTalMnkAB" name="Specialty Attack Bonus"/>
+    <tag group="fCategory" tag="CGSinful"   name="Sinful"/>
+
+    <!-- Legendary Game Text Appender -->
+    <bootstrap thing="3PLGText"></bootstrap>
+
+    </thing>
+
+
+  <!-- ============================================================================================ -->
+  <!-- Helper Objects                                                                               -->
+  <!-- ============================================================================================ -->
+  <thing id="3PLGText" 
+    name="Legendary Game - Text Append" 
+    description="This helper object appends specific text to Things for changes to core Things. This is source marked to the LG Parent Source." 
+    compset="Simple">
+    <usesource source="pLegeGames"/>
+    <eval phase="Render" priority="200"><![CDATA[
+      ~ Set text fields
+      var sText   as string
+      var sSource as string
+
+      ~ LG - Ultimate Battle
+      if (hero.tagis[source.srcLGUltBa] = 1) then
+        sSource = "{b}" & hero.tagnames[source.srcLGUltBa] & ":{/b} "
+      
+        ~ Army Tactics
+        foreach thing in Ability where "thingid.atSiegebr| thingid.atCavExp| thingid.bnHitRun| thingid.bnHoldLine| thingid.bnLoyalty| thingid.bnNoMercy| thingid.bnSharpSh"
+
+          ~ Siegebreaker
+          if (eachthing.tagcountstr["thingid.atSiegebr"] <> 0) then
+            sText = eachthing.field[descript].text & "{br}{br}" & sSource & "In addition, a unit using this tactic can try to circumvent the protection of a unit using the Screening Defense tactic if the unit it protects is equipped with siege weapons. If your attack against the screening unit succeeds, your attack deals half damage to that unit and you can make a second attack against the protected unit and its siege weapons. This attack also deals half damage."
+            perform eachthing.amendthing[description,sText]
+          endif
+
+          ~ Cavalry Experts
+          if (eachthing.tagcountstr["thingid.atCavExp"] <> 0) then
+            sText = eachthing.field[descript].text & "{br}{br}" & sSource & "As described in {b}{i}Pathfinder Roleplaying Game Ultimate Campaign,{/b}{/i} but moved to being a command boon rather than a Tactic, as command boons better represent the concept of training to develop expertise in a particular style of combat vs. tactics being a particular action or maneuver performed during a battle."
+            perform eachthing.amendthing[description,sText]
+          endif          
+
+          ~ Hit and Run Commander Boon
+          if (eachthing.tagcountstr["thingid.bnHitRun"] <> 0) then
+            sText = eachthing.field[descript].text & "{br}{br}" & sSource & "In addition, if an army with this boon attacks an army with which it is not engaged, it can attempt to disengage immediately after its attack by making a Morale check. {b}Requirement:{/b} The character granting this boon and soldiers must have the Flyby Attack, Improved Overrun, Ride-by Attack, or Spring Attack feat or the trample, vortex, or whirlwind special attack."
+            perform eachthing.amendthing[description,sText]
+          endif
+
+          ~ Hold the line Commander Boon
+          if (eachthing.tagcountstr["thingid.bnHoldLine"] <> 0) then
+            sText = eachthing.field[descript].text & "{br}{br}" & sSource & "{b}Requirement:{/b} The character granting this boon must have the aura of courage, bravery, inspire courage, or resolve class feature or the ability to cast {b}{i}remove fear.{/b}{/i}"
+            perform eachthing.amendthing[description,sText]
+          endif
+
+          ~ Loyalty Commander Boon
+          if (eachthing.tagcountstr["thingid.bnLoyalty"] <> 0) then
+            sText = eachthing.field[descript].text & "{br}{br}" & sSource & "In addition, as long as a commander with this boon and his army are active on the field, all allied armies gain a +1 bonus to Morale checks made to avoid routing or disbanding during the Rout phase. {b}{i}Requirement:{/b}{/i} The character providing this boon must have a Charisma score of 15 or higher."
+            perform eachthing.amendthing[description,sText]
+          endif
+
+          ~ Merciless Commander Boon
+          if (eachthing.tagcountstr["thingid.bnNoMercy"] <> 0) then
+            sText = eachthing.field[descript].text & "{br}{br}" & sSource & "In addition, if you reduce an enemy army to 0 hit points, it is automatically destroyed rather than merely defeated. {b}{i}Requirement:{/b}{/i} The character granting this boon must have at least 6 ranks in Intimidate, the Combat Reflexes feat, or an evil alignment."
+            perform eachthing.amendthing[description,sText]
+          endif
+
+          ~ Sharpshooter Commander Boon
+          if (eachthing.tagcountstr["thingid.bnSharpSh"] <> 0) then
+            sText = eachthing.field[descript].text & "{br}{br}" & sSource & "In addition, the army never deals friendly fire damage to allied armies.{br}{br}{b}{i}Requirement:{/b}{/i} The character granting this boon and the creatures comprising the army must have the Precise Shot feat."
+            perform eachthing.amendthing[description,sText]
+          endif
+        nexteach
+
+      endif
+      ]]></eval>
+    </thing>
+
+
+
+
+
+  </document>

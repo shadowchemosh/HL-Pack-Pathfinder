@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack - Helper Things"/>
+  <fileinfo>
+    <info_author>
+      Tim Shadow (ShadowChemosh)
+    </info_author>
+    <info_history><![CDATA[
+    January 28, 2015 - Tim Shadow
+    -Added logic for hidding community Deities.
+
+    January 3, 2015 - Tim Shadow
+    -Created New.
+    -Make a new mechanic to hold global helper things. Also move Power Resistance helper to here from UP.
+
+    ]]></info_history>
+    </fileinfo>
+
+
+  <!-- ============================================================================================ -->
+  <!-- Basic Pack Mechanic                                                               -->
+  <!-- ============================================================================================ -->
+  <thing id="mechBasic" name="Basic Pack Mechanic" compset="Mechanics">
+    <!-- Community Product ID tag -->   
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community"/>
+    <!-- Community Deity Tag -->   
+    <tag group="DeityCat" tag="CB" name="Community Deity"/>
+
+    <!-- Psionic Helper Objects -->
+    <bootstrap thing="xPwrRes"></bootstrap>
+    <!-- Simple Hide Community Deity Helper -->
+    <bootstrap thing="CBHideDeit"></bootstrap>
+    <!-- Simple Append source value to class name -->
+    <bootstrap thing="S2ClsSourc"></bootstrap>
+    <!-- Append Text Desc of Things -->
+    <bootstrap thing="S2Append"></bootstrap>
+
+    </thing>
+
+  <!-- ============================================================================================ -->
+  <!-- New Base Class Archetype Headers                                                             -->
+  <!-- ============================================================================================ -->
+
+
+
+
+  <!-- ============================================================================================ -->
+  <!-- Trait Headers                                                                                -->
+  <!-- ============================================================================================ -->
+  <thing id="trBPPsioni" name="Psionic" compset="Trait" isshowonly="yes">
+    <tag group="trCategory" tag="Psionic"/>
+    </thing>
+  <thing id="trBPCrimes" name="Crimes" compset="Trait" isshowonly="yes">
+    <tag group="trCategory" tag="Crimes"/>
+    </thing>
+  <thing id="trBPDream" name="Dream" compset="Trait" isshowonly="yes">
+    <tag group="trCategory" tag="Dream"/>
+    </thing>
+  <thing id="trBPTrain" name="Training" compset="Trait" isshowonly="yes">
+    <tag group="trCategory" tag="Training"/>
+    </thing>
+
+  <!-- ============================================================================================ -->
+  <!-- Helper Objects                                                                               -->
+  <!-- ============================================================================================ -->
+  <thing id="xPwrRes" name="Power Resistance" description="You have Power Resistance." compset="Ability" uniqueness="unique">
+    <fieldval field="shortname" value="PR"/>
+    <tag group="Helper"    tag="BaseAbil"/>
+    <tag group="Helper"    tag="ShowSpec"/>
+    <tag group="SpecType"  tag="Resist"/>
+    <tag group="Universal" tag="Universal"/>
+    <eval phase="Final" priority="20000"><![CDATA[
+      call CalcValue
+
+      ~ Use our value field as the quality of spell resistance
+      field[livename].text = field[name].text & " (" & field[abValue].value & ")"
+
+      ~ specify a shortname for consistency with other resistances
+      field[shortname].text &= " " & field[abValue].value
+      ]]></eval>
+    </thing>
+
+  <thing id="CBHideDeit" name="Hide Community Deities" description="Helper Thing to hide all deities associated with the Community." compset="Simple">
+    <usesource source="srcHideDei"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Hide all Community Bestiary deities
+      perform hero.assign[HideDeiCat.CB]
+      ]]></eval>
+    </thing>
+
+  <thing id="S2ClsSourc" name="Give Source Abbrevation to Classes" description="This helper object is designed to append the abbrev information to a class name if the specific tag PackHelper.ClsSrcAbr is found." compset="Simple">
+    <eval phase="Final" priority="10000"><![CDATA[    
+      ~ Check to see if specific sources are turned on
+      doneif (hero.tagcountstr["source.TomeOfSecr"] = 0)
+
+      var sName as string
+      
+      ~ Loop through all class Things
+      foreach thing in Class where "PackHelper.ClsSrcAbr"
+        sName = eachthing.field[name].text & eachthing.field[srcBookInf].text
+        perform eachthing.amendthing[name,sName]
+      nexteach
+      ]]></eval>
+    </thing>
+
+  <thing id="S2Append" name="Append Text" description="This helper object is to update specific text on class and Things to give information to gamers." compset="Simple">
+    <usesource source="srcS2Arche"/>
+    <eval phase="Final" priority="10000"><![CDATA[    
+      ~ Give note about how to add the companion for the Shadowdancer PrC
+      #appenddesc[cShnSumm,"{b}" & hero.tagnames[source.srcS2Arche] & ":{/b} The shadow companion can be added on the 'Other' tab."]      
+      ]]></eval>
+    </thing>
+
+  </document>

@@ -1,0 +1,1872 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_PackModern_SGG - Shadow Heroes"/>
+  <thing id="facMPAngOr" name="Angel Order" compset="Faction" summary="Angel Choirs" uniqueness="useronce">
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="CustomItem"/>
+    <pickreq thing="arMPSHAnge"/>
+    </thing>
+  <thing id="facMPWerWf" name="Werewolf Clan" compset="Faction" summary="Werewolf Clan" uniqueness="useronce">
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="CustomItem"/>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="facMPDemon" name="Demon Sect" compset="Faction" summary="Demon Sect" uniqueness="useronce">
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="CustomItem"/>
+    <pickreq thing="arMPSHDemo"/>
+    </thing>
+  <thing id="facMPVampC" name="Vampire Court" compset="Faction" uniqueness="useronce">
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="CustomItem"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <pickreq thing="arMPSHVamp"/>
+    </thing>
+  <thing id="pMPAmnesia" name="Amnesia" description="{b}Save{/b}: Will DC 20\n\n{b}Onset{/b}: Immediate\n\n{b}Effect{/b}: -4 penalty on Will saving throws and all skill checks; loss of memory (see below)\n\n{b}DESCRIPTION{/b}:  A character suffering from amnesia cannot remember things; his name, his skills, and his past are all equal mysteries. He can build new memories, but any memories that existed before he became an amnesiac are suppressed.\nWorse, the amnesiac loses all class abilities, feats, and skill ranks for as long as his amnesia lasts. He retains his base attack bonus, base saving throw bonuses, combat maneuver bonus, combat maneuver defense, total experience points, and hit dice (and hit points), but everything else is gone until the amnesia is cured. If a character gains a class level while suffering from amnesia, he may use any abilities gained by that class level normally. If the class level he gained was of a class he already possess levels in, he gains the abilities of a 1st-level character of that class, even though he is technically of a higher level in that class. If his amnesia is later cured, he regains all the full abilities of this class, including those gained from any levels taken while he was suffering from amnesia." compset="InPlay" summary="-4 penalty on Will saving throws and all skill checks; loss of memory">
+    <comment>PSRD</comment>
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="AdjCond"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+hero.child[svWill].field[Penalty].value -=4]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+
+foreach pick in hero from BaseSkill
+  if (eachpick.islinkage[skillattr] = 0) then
+    ~ do nothing
+  elseif (eachpick.linkage[skillattr].tagis[thingid.aSTR] + eachpick.linkage[skillattr].tagis[thingid.aDEX] + eachpick.linkage[skillattr].tagis[thingid.aCON]+ eachpick.linkage[skillattr].tagis[thingid.aINT]+ eachpick.linkage[skillattr].tagis[thingid.aWIS]+ eachpick.linkage[skillattr].tagis[thingid.aCHA] <> 0) then
+    eachpick.field[Penalty].value -= 4
+    endif
+  nexteach]]></eval>
+    </thing>
+  <thing id="pMPMultp" name="Multi Personal" description="Multi Personality\n\n{b}Save{/b}: Will DC 19\n\n{b}Onset{/b}: 2d6 days\n\n{b}Effect{/b}: -6 penalty on Will saving throws and Wisdom-based skill checks; multiple personalities (see below)\n\n{b}DESCRIPTION{/b}:  This is a complicated disorder that manifests as 1 or more distinct and different personalities within the same body and mind. The number of additional personalities the victim manifests equals the DC of the insanity divided by 10 (round down, minimum of 1 additional personality). Should the insanity worsen in some way (such as by the save DC increasing), the number of additional personalities increases as well. Likewise, the number of additional personalities decreases as the sufferer recovers and the insanity&apos;s DC decreases. The GM should develop these additional personalities.\nEvery morning, and each time the afflicted character is rendered unconscious, he must make a Will save against his insanity&apos;s DC. Failure indicates that a different personality takes over. A character&apos;s memories and skills remain unchanged, but the various personalities have no knowledge of each other and will deny, often violently, that these other personalities exist." compset="InPlay" summary="-6 penalty on Will saving throws and Wisdom-based skill checks; multiple personalities (see below)">
+    <comment>PSRD</comment>
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="AdjCond"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+hero.child[svWill].field[Penalty].value -=6]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+
+foreach pick in hero from BaseSkill
+  if (eachpick.islinkage[skillattr] = 0) then
+    ~ do nothing
+  elseif (eachpick.linkage[skillattr].tagis[thingid.aWIS] <> 0) then
+    eachpick.field[Penalty].value -= 6
+    endif
+  nexteach]]></eval>
+    </thing>
+  <thing id="pMPParanoi" name="Paranoia" description="{b}Save{/b}: Will DC 17\n\n{b}Onset{/b}: 2d6 days\n\n{b}Effect{/b}: -4 penalty on Will saves and Charisma-based skill checks; cannot receive benefit from or attempt the Aid Another action; cannot willingly accept aid (including healing) from another creature unless he makes a Will save against his insanity&apos;s DC\n\n{b}DESCRIPTION{/b}:  The paranoid character is convinced that the world and all that dwell within it are out to get him. Paranoid characters are typically argumentative or introverted." compset="InPlay" summary="-4 penalty on Will saves and Charisma-based skill checks">
+    <comment>PSRD</comment>
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="AdjCond"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+
+foreach pick in hero from BaseSkill
+  if (eachpick.islinkage[skillattr] = 0) then
+    ~ do nothing
+  elseif (eachpick.linkage[skillattr].tagis[thingid.aCHA] <> 0) then
+    eachpick.field[Penalty].value -= 4
+    endif
+  nexteach]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+hero.child[svWill].field[Penalty].value -=4]]></eval>
+    </thing>
+  <thing id="pMPPsychos" name="Psychosis" description="{b}Save{/b}: Will DC 20\n\n{b}Onset{/b}: 3d6 days\n\n{b}Effect{/b}: Character becomes chaotic evil; gains +10 competence bonus on Bluff checks to hide insanity\n\n{b}DESCRIPTION{/b}:  This complex insanity fills the victim with hate for the world. He may suppress his psychosis for a period of 1 day by making a Will save against the DC of his insanity, otherwise he cannot help but plot and plan the death and destruction of his friends and enemies alike. For the most part, the impact of psychosis must be roleplayed, although not all players find entertainment in roleplaying a lunatic who&apos;s trying to do in his friends. In such cases, the GM should assume control of the character whenever his psychosis is in control." compset="InPlay" summary="Character becomes chaotic evil; gains +10 competence bonus on Bluff checks to hide insanity">
+    <comment>PSRD</comment>
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="AdjCond"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+
+#skillbonus[skBluff] += 10]]></eval>
+    </thing>
+  <thing id="pMPSchizop" name="Schizophrenia" description="{b}Save{/b}: Will DC 16\n\n{b}Onset{/b}: 1d6 days\n\n{b}Effect{/b}: -4 penalty on all Wisdom and Charisma-based skill checks; cannot take 10 or take 20; chance of becoming confused (see below)\n\n{b}DESCRIPTION{/b}:  A schizophrenic character has lost his grip on reality, and can no longer tell the difference between what is real and what is not. These constant hallucinations cause the schizophrenic to appear erratic, chaotic, and unpredictable to others. Each time a schizophrenic character finds himself in a stressful situation (such as combat) he must make a Will save against his insanity&apos;s DC. Failure indicates that the character becomes confused for 1d6 rounds." compset="InPlay" summary="-4 penalty on all Wisdom and Charisma-based skill checks; cannot take 10 or take 20; chance of becoming confused">
+    <comment>PSRD</comment>
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="AdjCond"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+
+foreach pick in hero from BaseSkill
+  if (eachpick.islinkage[skillattr] = 0) then
+    ~ do nothing
+  elseif (eachpick.linkage[skillattr].tagis[thingid.aWIS] + eachpick.linkage[skillattr].tagis[thingid.aCHA] <> 0) then
+    eachpick.field[Penalty].value -= 4
+    endif
+  nexteach]]></eval>
+    </thing>
+  <thing id="pMPManic" name="Manic" description="{b}Save{/b}: Will DC 14\n\n{b}Onset{/b}: 1 day\n\n{b}Effect{/b}: Target is sickened as long as the source of the mania is obvious; chance of becoming fascinated (see below)\n\n{b}DESCRIPTION{/b}:  A mania is an irrational obsession with a (usually inappropriate) particular object or situation. Additionally, if a manic character is directly confronted by his obsession (requiring a standard action), he must make a Will save against the insanity or become fascinated by the object for 1d6 rounds." compset="InPlay" summary="The character takes a –2 penalty on all attack rolls, weapon damage rolls, saving throws, skill checks, and ability checks.">
+    <comment>PSRD</comment>
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="AdjCond" name="Condition" abbrev="Condition"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're in output mode, don't do anything
+      doneif (state.isoutput <> 0)
+
+      ~ If we're not enabled and haven't been activated externally, get out now
+      if (field[pIsOn].value = 0) then
+        doneif (hero.tagis[Condition.pcnSicken] = 0)
+        endif
+
+      ~ -2 Damage
+      hero.child[Damage].field[tDamBonus].value -= 2
+      ~ -2 Attack
+      hero.child[Attack].field[Penalty].value -= 2
+      ~ -2 Fort
+      hero.child[svFort].field[Penalty].value -= 2
+      ~ -2 Ref
+      hero.child[svRef].field[Penalty].value -= 2
+      ~ -2 Will
+      hero.child[svWill].field[Penalty].value -= 2
+      ~ -2 Skill Checks
+      hero.child[AllSkills].field[Penalty].value -= 2]]></eval>
+    </thing>
+  <thing id="pMPPhobic" name="Phobic" description="{b}Save{/b}: Will DC 14\n\n{b}Onset{/b}: 1 day\n\n{b}Effect{/b}: Target is shaken as long as the source of the phobia is obvious; chance of becoming frightened (see below)\n\n{b}DESCRIPTION{/b}:  A phobia is an irrational fear of a (usually commonplace) object or situation. Additionally, if a phobic character is directly confronted by his obsession (requiring a standard action), he must make a Will save against the insanity or become frightened by the object for 1d6 rounds." compset="InPlay" summary="A shaken character takes a –2 penalty on attack rolls, saving throws, skill checks, and ability checks. Shaken is a less severe state of fear than frightened or panicked.">
+    <comment>PSRD</comment>
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="AdjCond" name="Condition" abbrev="Condition"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're in output mode, don't do anything
+      doneif (state.isoutput <> 0)
+
+      ~ If we're not enabled and haven't been activated externally, get out now
+      if (field[pIsOn].value = 0) then
+        doneif (hero.tagis[Condition.pcnShaken] = 0)
+        endif
+
+      ~ If we've been added externally
+
+      ~ -2 Attack
+      hero.child[Attack].field[Penalty].value -= 2
+      ~ -2 Fort
+      hero.child[svFort].field[Penalty].value -= 2
+      ~ -2 Ref
+      hero.child[svRef].field[Penalty].value -= 2
+      ~ -2 Will
+      hero.child[svWill].field[Penalty].value -= 2
+      ~ -2 Skill Checks
+      hero.child[AllSkills].field[Penalty].value -= 2]]></eval>
+    </thing>
+  <thing id="pMPAddicti" name="Addiction" description="The creature is compelled to ingest, imbibe, or inhale the source. \n\nThe source must be within 5 feet of the creature to affect it. On a successful Will save, the creature negates the compulsion. On a failed save, the creature spends a full-round action indulging its addiction, then may resume normal actions while suffering one or more of the following effects (GM&apos;s choice):\n\no Creature takes a -2 penalty to Dexterity and Wisdom.\no Creature takes a -2 penalty on attack rolls and skill checks.\no Creature loses 10% of its current hit points.\no Blindness: The creature has a 50% miss chance in combat, loses any Dexterity bonus to Defense, moves at half speed, takes a -4 penalty on Strength and Dexterity-based skills, and cannot make Spot checks. Foes gain a +2 bonus on attack rolls to hit the creature.\no Deafness: The creature takes a -4 penalty to initiative checks and has a 20% chance of spell failure when casting spells with verbal components. The creature cannot make Listen checks.\no Creature loses one of its extraordinary, supernatural, or spell-like special qualities.\nEach effect lasts 1d4 hours. Even creatures immune to mind-affecting effects are susceptible to a source-induced addiction." compset="InPlay" summary="The creature is compelled to ingest, imbibe, or inhale the source.">
+    <comment>MSRD</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjCond"/>
+    </thing>
+  <thing id="pMPAttract" name="Attraction" description="The creature is compelled to move as fast as it can toward the source. \n\nOn a successful Will save, the creature resists the compulsion. On a failed save, the creature moves toward the source at its maximum speed, taking the safest and most direct route. Once it reaches the source, the compelled creature seeks to possess it. If the source isn&apos;t something the creature can easily possess, it gets a new save every round to break the compulsion.\n\nEven creatures immune to mind-affecting effects are susceptible to a source-induced attraction." compset="InPlay" summary="The creature is compelled to move as fast as it can toward the source.">
+    <comment>MSRD</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjCond"/>
+    </thing>
+  <thing id="pMPAversio" name="Aversion" description="The creature finds the source repellant. \n\nOn a failed save, the creature cannot approach or remain within 1d4 x10 feet of it. In the case of traveling sounds, the creature moves away from the source as fast as it can, stopping only when it can no longer hear it. On a successful Will save, the creature overcomes its aversion and may approach the source freely.\nA repelled creature that cannot move the requisite distance from the source suffers one or more of the following effects (GM&apos;s choice):\n\no Creature takes a -2 morale penalty to Strength and Dexterity.\no Creature takes a -2 morale penalty on attack rolls, damage rolls, and skill checks.\no Creature takes a -2 penalty to Defense.\no Blindness: See Addiction, above.\no Deafness: See Addiction, above.\no Creature loses one of its extraordinary, supernatural or spell-like special qualities.\n\nEach effect lasts until the creature leaves the affected area and for 1d4 rounds afterward. Even creatures immune to mind-affecting effects are susceptible to a source-induced aversion." compset="InPlay" summary="The creature finds the source repellant.">
+    <comment>MSRD</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjCond"/>
+    </thing>
+  <thing id="pMPFascina" name="Fascination" description="The creature finds the source fascinating and ceases all attacks and movement upon seeing, hearing, smelling, or otherwise perceiving it. \n\nOn a successful Will save, the creature negates the fascination and can act normally. \nOn a failed Will save, the creature can take no actions, and foes gain a +2 bonus on attack rolls against the creature. Any time the creature is attacked or takes damage, it gets a new save to negate the fascination. Otherwise, the fascination lasts as long as the creature can see, hear, smell, or otherwise perceive the source.\n\nEven creatures immune to mind-affecting effects are susceptible to a source-induced fascination." compset="InPlay" summary="The creature finds the source fascinating and ceases all attacks and movement upon seeing, hearing, smelling, or otherwise perceiving it.">
+    <comment>MSRD</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjCond"/>
+    </thing>
+  <thing id="pMPFear" name="Fear" description="The creature is frightened by the source. \n\nIf it fails its Will save, the creature flees from the source as fast as it can. If unable to flee, the creature takes a -2 morale penalty on attack rolls, weapon damage rolls, and saving throws. On a successful save, the creature overcomes the fear and can approach the source or otherwise act without penalty.\n\nEven creatures immune to mind-affecting effects are susceptible to a source-induced fear." compset="InPlay" summary="The creature is frightened by the source.">
+    <comment>MSRD</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjCond"/>
+    </thing>
+  <thing id="pMPHarm" name="Harm" description="Contact with the source or proximity to the source harms the creature in some fashion. \n\nOn a successful Fortitude save, the creature negates the effect or, in the case of instant death or disintegration, takes damage instead. GMs may choose one of the following effects or invent their own:\n\no Blindness and deafness: See Addiction, above. The blindness and deafness last 1d4 hours.\no Creature loses all of its supernatural and spell-like special qualities.\no Creature is turned to stone instantly.\no Creature loses 50% of its current hit points.\no Creature drops dead. On a successful save, the creature takes 3d6+15 points of damage instead.\no Creature is disintegrated. On a successful save, the creature takes 5d6 points of damage instead.\n\nEven creatures immune to effects that require Fortitude saves are susceptible to source-induced harm." compset="InPlay" summary="Contact with the source or proximity to the source harms the creature in some fashion.">
+    <comment>MSRD</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjCond"/>
+    </thing>
+  <thing id="mMPSilver" name="Silver" description="Silver ammunition is useful for dealing with some types of supernatural creatures. Silvered ammunition deals lethal damage to regular targets and bypasses the damage reduction of any creature that is vulnerable to silver. It is never mass-produced and must be made by hand, as reflected by its high cost. Because silvered ammunition must be manufactured by hand, it is not licensed. It requires a Craft (mechanical) check (DC 12) to manufacture a single silver bullet." compset="Material" summary="Silver ammunition is useful for dealing with some types of Shadow creatures.">
+    <fieldval field="mtName" value="Silver"/>
+    <fieldval field="mtDesc" value="Affects Silver-vulnerable creatures, reduced damage."/>
+    <fieldval field="mtCWAmmo" value="2"/>
+    <fieldval field="mtCW1Hand" value="6"/>
+    <fieldval field="mtCost" value="6"/>
+    <fieldval field="mtCostWep" value="6"/>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="MatWepOK" name="MatWepOK" abbrev="MatWepOK"/>
+    <tag group="Helper" tag="MatRqMetal" name="Requires Metal" abbrev="Requires Metal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cMPSHChPEn" name="Channel Energy" description="An Angel can release a wave of energy by channeling the power of her faith. This energy can be used to cause or heal damage, depending on the type of energy channeled and the creatures targeted." compset="CustomSpec" summary="You gain the Cleric class ability Channel Energy" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="HasAbility" tag="cClrChan" name="Channel Energy" abbrev="Channel Energy"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <tag group="ClassPanel" tag="Channel" name="Channeling Only" abbrev="Channeling Only"/>
+    <bootstrap thing="cClrChan">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="1000">~ Set our name properly
+      var v_turnname as string
+      call cClrTurnNm
+      field[livename].text = v_turnname
+
+      ~ Add our cleric level to our turning level.
+      hero.child[xChannel].field[abValue].value += field[xTotalLev].value</eval>
+    <eval phase="PreAttr" priority="10000" index="2">~we can turn undead 3 + WIS mod / day
+      hero.child[xChannel].field[trkMax].value += 3 + hero.child[aWIS].field[aModBonus].value</eval>
+    <pickreq thing="cMPGracePw"/>
+    </thing>
+  <thing id="cMHSHPalad" name="Angel Spells" description="You gain access to the Paladin spell list.\n\nFor spell progression use the same stats as the Mystic from the sample setting in the Modern Path.\n\nAngels can channel stored spell energy into healing spells that she did not prepare ahead of time. The Angel can “lose” any prepared spell that is not an orison or domain spell in order to cast any cure spell of the same spell level or lower (a cure spell is any spell with “cure” in its name)." compset="CustomSpec" summary="You gain access to the Paladin spell list" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="ClsCountAs" tag="cHelpPal"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <bootstrap thing="cClrSpont">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <eval phase="First" priority="500">perform hero.childfound[cHelpMdH].assign[sClass.cHelpPal]</eval>
+    <pickreq thing="cMPGracePw"/>
+    </thing>
+  <thing id="cMPSHAntiP" name="Demon Spells" description="You gain access to the Antipaladin spell list.\n\nFor spell progression use the same stats as the Mystic from the sample setting in the Modern Path.\n\nA demon can&apos;t convert prepared spells to cure spells but can convert them to inflict spells (an inflict spell is one with “inflict” in its name)." compset="CustomSpec" summary="You gain access to the Antipaladin spell list" uniqueness="useronce">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <tag group="ClsCountAs" tag="cHelpAPa"/>
+    <tag group="AbilType" tag="Super"/>
+    <bootstrap thing="cClrSpont">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <eval phase="First" priority="500">perform hero.childfound[cHelpMdH].assign[sClass.cHelpAPa]</eval>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMPSHRange" name="Werewolf Spells" description="You gain access to the Ranger spell list.\n\nFor spell progression use the same stats as the Mystic from the sample setting in the Modern Path." compset="CustomSpec" summary="You gain access to the Ranger spell list" uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="ClsCountAs" tag="cHelpRgr"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="First" priority="500">perform hero.childfound[cHelpMdH].assign[sClass.cHelpRgr]</eval>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="cMHSHBard" name="Vampire Spells" description="You gain access to the Sorcerer spell list.\n\nFor spell progression use the same stats as the Mystic from the sample setting in the Modern Path." compset="CustomSpec" summary="You gain access to the Bard spell list" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="HasAbility" tag="rauSpABdMg"/>
+    <tag group="ClsCountAs" tag="cHelpBrd"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <eval phase="First" priority="500">perform hero.childfound[cHelpMdH].assign[sClass.cHelpSor]</eval>
+    <pickreq thing="cMPSHVpBd"/>
+    </thing>
+  <thing id="cMPGracePw" name="Grace" description="Angles are any creature type of a celestial nature. These include the creature subtypes of Angel, Archon, Azatas and any celestial or divine influenced template or race.\n\nThe Angel has a new ability called Grace. Grace grants a +10 bonus to Hero Points in addition to the normal class bonuses. Additionally, for every Fame point gained in a celestial type Faction, the angel also gains a Hero Point. \n\nAngels regain 1 used Hero Point after invoking a supernatural ability that is divine in nature. A few examples are: Channel Positive Energy, paladin&apos;s Divine Grace or Mercy class abilities." compset="CustomSpec" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <tag group="AlgnReq" tag="Good"/>
+    <eval phase="Final" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[trkMax].value += 10]]></eval>
+    <eval phase="Final" priority="10500" index="2"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[livename].text = "Grace"]]></eval>
+    <pickreq thing="tpOutsider"/>
+    <exprreq message="Must have Creature Type: Outsider"><![CDATA[#hastype[tpOutsider] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMPSHAnStE" name="Smite Evil" description="Adds your Wisdom bonus to attack rolls and HD to your damage roll when used against an evil foe. This lasts until you rest or the targeted foe is dead.\n\nThis cost 1 Grace point." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <fieldval field="actName" value="Angel Smite Evil"/>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ Generate our damage bonus
+      field[abValue].value += herofield[tHitDice].value
+
+      ~ Generate our to-hit bonus
+      field[abValue2].value += maximum(hero.child[aWIS].field[aModBonus].value,0)
+
+      ~ Generate our summary
+      field[abSumm].text = "+" & field[abValue2].value & " to hit, +" & field[abValue].value & " to damage when used."
+
+      if (field[abilActive].value <> 0) then
+        hero.child[Attack].field[tAtk].value += field[abValue2].value
+        hero.child[Damage].field[tDamBonus].value += field[abValue].value
+        endif]]></eval>
+    <pickreq thing="cMPGracePw"/>
+    </thing>
+  <thing id="cMPSHAnDm" name="Domains" description="An Angel&apos;s deity influences her alignment, what magic she can perform, her values, and how others see her. An Angel chooses a domain from among those belonging to her deity. An Angel can select an alignment domain (Chaos, Good, or Law) only if her alignment matches that domain." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <eval phase="Final" priority="2147483647" index="3"><![CDATA[linkage[table].field[cCstS4Expr].text = "(SpecSource.cHelpClr) & !Helper.Secondary & !Helper.Tertiary"]]></eval>
+    <eval phase="PostLevel" priority="5000" index="2"><![CDATA[~modify our linked class to add cleric domains
+
+~we'll use the tertiary abilities slot for these
+
+linkage[table].field[cCustTeTot].arrayvalue[11] += 0
+linkage[table].field[cCustTeTot].arrayvalue[15] += 0
+linkage[table].field[cSpec4thSi].text = "Domain"]]></eval>
+    <eval phase="Level" priority="10000">hero.childfound[cHelpMdH].field[cGiveSp4th].value += 1</eval>
+    <pickreq thing="cMPGracePw"/>
+    </thing>
+  <thing id="cMPSHAgAur" name="Aura and Detection" compset="CustomSpec" uniqueness="useronce">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <bootstrap thing="cPalDtEvil">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPalAuraGd">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <pickreq thing="cMPGracePw"/>
+    </thing>
+  <thing id="cMPSHAgMer" name="Mercy" description="Each mercy cost 1 Grace point. A mercy can remove a condition caused by a curse, disease, or poison without curing the affliction. Such conditions return after 1 hour unless the mercy actually removes the affliction that causes the condition." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <eval phase="Final" priority="99999999" index="2"><![CDATA[~we'll overwrite the tertiary abilities' expression, since we need
+~to make them use primary paladin abilities
+
+linkage[table].field[cCstS3Expr].text = "(SpecSource.cHelpPal) & !Helper.Secondary & !Helper.Tertiary"]]></eval>
+    <eval phase="Level" priority="10000" index="3">hero.childfound[cHelpMdH].field[cGiveSp3rd].value += 1</eval>
+    <eval phase="PostLevel" priority="5000"><![CDATA[~modify our linked class to add paladin powers
+
+~we'll use the tertiary abilities slot for these
+
+linkage[table].field[cCustQuTot].arrayvalue[11] += 0
+linkage[table].field[cCustQuTot].arrayvalue[15] += 0
+linkage[table].field[cSpec3rdSi].text = "Mercy"]]></eval>
+    <pickreq thing="cMPGracePw"/>
+    </thing>
+  <thing id="cMPSHAgDW" name="Angel Weapon" description="Angels form a bond with the favored weapon of their deities. This bond allows an Angel to enhance her weapon as a standard action by calling upon the aid of a celestial spirit for 1 minute per level. When called, the spirit causes the weapon to shed light as a torch. At 5th level, this spirit grants the weapon a +1 enhancement bonus. For every three levels beyond 5th, the weapon gains another +1 enhancement bonus, to a maximum of +6 at 20th level. \n\nThese bonuses can be added to the weapon, stacking with existing weapon bonuses to a maximum of +5, or they can be used to add any of the following weapon properties: {i}axiomatic, brilliant energy, defending, disruption, flaming, flaming burst, holy, keen, merciful{/i}, and {i}speed{/i}. Adding these properties consumes an amount of bonus equal to the property&apos;s cost (see Table 15-9). These bonuses are added to any properties the weapon already has, but duplicate abilities do not stack. If the weapon is not magical, at least a +1 enhancement bonus must be added before any other properties can be added. The bonus and properties granted by the spirit are determined when the spirit is called and cannot be changed until the spirit is called again. The celestial spirit imparts no bonuses if the weapon is held by anyone other than the Angel but resumes giving bonuses if returned to the paladin. These bonuses apply to only one end of a double weapon. An Angel can use this ability once per day at 5th level, and one additional time per day for every four levels beyond 5th, to a total of four times per day at 17th level.\n\nIf a weapon bonded with a celestial spirit is destroyed, the Angel loses the use of this ability for 30 days, or until she gains a level, whichever comes first. During this 30-day period, the Angel takes a -1 penalty on attack and weapon damage rolls." compset="CustomSpec" summary="Weapon shines with light and gains enhancement bonuses or chosen properties." uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <fieldval field="shortname" value="Angel Wpn"/>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <tag group="Usage" tag="Day" name="/day" abbrev="/day"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="AbilType" tag="SpellLike" name="Spell-Like Ability" abbrev=" (Sp)"/>
+    <bootstrap thing="cClrDeiWep">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+      var bonus as number
+      bonus = linkage[table].field[cTotalLev].value - 2
+      field[abValue].value += round(bonus/3,0,-1)
+
+      if (linkage[table].field[cTotalLev].value >= 17) then
+        field[trkMax].value += 4
+      elseif (linkage[table].field[cTotalLev].value >= 13) then
+        field[trkMax].value += 3
+      elseif (linkage[table].field[cTotalLev].value >= 9) then
+        field[trkMax].value += 2
+      else
+        field[trkMax].value += 1
+        endif
+      
+      field[abDuration].value += linkage[table].field[cTotalLev].value
+      
+      field[livename].text = "Divine Bond (Weapon " & signed(field[abValue].value) & ") (" & field[abDuration].value & " minutes)"]]></eval>
+    <pickreq thing="cMPGracePw"/>
+    </thing>
+  <thing id="cMPSHAnLoH" name="Lay On Hands" compset="CustomSpec" uniqueness="useronce">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <bootstrap thing="cPalLayHnd">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <pickreq thing="cMPGracePw"/>
+    </thing>
+  <thing id="cMPSHBligh" name="Blight" description="The Demon has a new ability called Blight. Blight grants a +10 bonus to Hero Points in addition to the normal class bonuses. Additionally, for every Fame point gained in an infernal type Faction, the demon also gains a Hero Point. \n\nDemons regain 1 used Hero Point after invoking a supernatural ability that is evil in nature. \n\nA few examples are: Channel Negative Energy, anti-paladin&apos;s Touch of Corruption or Cruelty class abilities." compset="CustomSpec" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Final" priority="10500" index="2"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[livename].text = "Blight"]]></eval>
+    <eval phase="Final" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[trkMax].value += 10]]></eval>
+    <pickreq thing="tpOutsider"/>
+    <exprreq message="Must have Creature Type: Outsider"><![CDATA[#hastype[tpOutsider] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMPSHDomai" name="Domains" description="A demon&apos;s deity influences her alignment, what magic she can perform, her values, and how others see her. A demon chooses a domain from among those belonging to her deity. A demon can select an alignment domain (Chaos, evil, or Law) only if her alignment matches that domain." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <eval phase="Final" priority="2147483647" index="3"><![CDATA[linkage[table].field[cCstS4Expr].text = "(SpecSource.cHelpClr) & !Helper.Secondary & !Helper.Tertiary"]]></eval>
+    <eval phase="PostLevel" priority="5000" index="2"><![CDATA[~modify our linked class to add cleric domains
+
+~we'll use the tertiary abilities slot for these
+
+linkage[table].field[cCustTeTot].arrayvalue[11] += 0
+linkage[table].field[cCustTeTot].arrayvalue[15] += 0
+linkage[table].field[cSpec4thSi].text = "Domain"]]></eval>
+    <eval phase="Level" priority="10000">hero.childfound[cHelpMdH].field[cGiveSp4th].value += 1</eval>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMHSHChEn" name="Channel Energy" description="A demon can release a wave of energy by channeling the power of her faith. This energy can be used to cause or heal damage, depending on the type of energy channeled and the creatures targeted." compset="CustomSpec" summary="You gain the Cleric class ability Channel Energy" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="HasAbility" tag="cClrChan" name="Channel Energy" abbrev="Channel Energy"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <tag group="ClassPanel" tag="Channel" name="Channeling Only" abbrev="Channeling Only"/>
+    <bootstrap thing="cClrChan">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="1000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      perform hero.assign[Hero.ChanNeg]
+
+      ~ Add our cleric level to our turning level.
+      hero.child[xChannel].field[abValue].value += field[xTotalLev].value]]></eval>
+    <eval phase="PreAttr" priority="10000" index="2">~we can turn undead 3 + CON mod / day
+      hero.child[xChannel].field[trkMax].value += 3 + hero.child[aCON].field[aModBonus].value</eval>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMPSHCruel" name="Cruelty" description="Each Cruelty cost 1 Blight point. A cruelty can cause a condition like a curse, disease, or poison without curing the affliction. Such conditions last 1 hour unless the cruelty is removed." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <eval phase="Final" priority="99999999" index="2"><![CDATA[~we'll overwrite the tertiary abilities' expression, since we need
+~to make them use primary anti-paladin abilities
+
+linkage[table].field[cCstS3Expr].text = "(SpecSource.cHelpAPa) & !Helper.Secondary & !Helper.Tertiary"]]></eval>
+    <eval phase="Level" priority="10000" index="3">hero.childfound[cHelpMdH].field[cGiveSp3rd].value += 1</eval>
+    <eval phase="PostLevel" priority="5000"><![CDATA[~modify our linked class to add anti-paladin powers
+
+~we'll use the tertiary abilities slot for these
+
+linkage[table].field[cCustQuTot].arrayvalue[11] += 0
+linkage[table].field[cCustQuTot].arrayvalue[15] += 0
+linkage[table].field[cSpec3rdSi].text = "Crueltie"]]></eval>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMPSHDnToC" name="Touch of Corruption" description="A demon surrounds his hand with a fiendish flame, causing terrible wounds to open on those he touches. Each day he can use this ability a number of times equal to 1/2 his level + his Charisma modifier. As a touch attack, an antipaladin can cause 1d6 points of damage for every two levels he possesses. Using this ability is a standard action that does not provoke attacks of opportunity.\n\nAlternatively, a demon can use this power to heal undead creatures, restoring 1d6 hit points for every two levels the demon possesses. This ability is modified by any feat, spell, or effect that specifically works with the lay on hands paladin class feature. For example, the Extra Lay On Hands feat grants an demon 2 additional uses of the touch of corruption class feature." compset="CustomSpec" summary="You can harm by touch." uniqueness="useronce">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      var uses as number
+      uses = field[xTotalLev].value / 2
+      field[abValue].value += round(uses,0,-1)
+
+      field[trkMax].value += hero.child[aCHA].field[aModBonus].value + round(uses,0,-1)
+
+     
+    ~our bonus is level /2, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 2
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      
+      field[livename].text = "Touch of Corruption (" & field[abValue].value & "d6)"
+      field[abSumm].text = "You can inflict " & field[abValue].value & "d6 damage, " & field[trkMax].value & "/day"]]></eval>
+    <eval phase="PostLevel" priority="20000" index="2"><![CDATA[
+      var tagexpr as string
+      tagexpr = "SpecSource.cHelpMdH"
+      call ChanEnFind
+      doneif (state.isfocus = 0)
+
+      ~ Each use of channel takes up 2 uses of lay on hands, unless we have 
+      ~ Extra Channeling, in which case the first 2X are free.
+      var freeuse as number
+      freeuse = focus.tagcount[HasFeat.fExtraChan] * 2
+
+      var setmin as number
+      setmin = maximum(focus.field[trkUser].value - freeuse, 0)
+      setmin *= 2
+
+      field[trkMin].value += setmin]]></eval>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMPSHDnWpn" name="Demon Weapon" description="Demons form a bond with the favored weapon of their deities. \n\nThis bond allows the demon to enhance his weapon as a standard action by calling upon the aid of a fiendish spirit for 1 minute per level. When called, the spirit causes the weapon to shed unholy light as a torch. At 5th level, this spirit grants the weapon a +1 enhancement bonus. For every three levels beyond 5th, the weapon gains another +1 enhancement bonus, to a maximum of +6 at 20th level. These bonuses can be added to the weapon, stacking with existing weapon bonuses to a maximum of +5, or they can be used to add any of the following weapon properties: {i}anarchic, flaming, flaming burst, keen, speed, unholy, vicious, vorpal{/i}, and {i}wounding{/i}. Adding these properties consumes an amount of bonus equal to the property’s cost (see Table 15–9 in the Core Rulebook). These bonuses are added to any properties the weapon already has, but duplicate abilities do not stack. If the weapon is not magical, at least a +1 enhancement bonus must be added before any other properties can be added. The bonus and properties granted by the spirit are determined when the spirit is called and cannot be changed until the spirit is called again. The fiendish spirit imparts no bonuses if the weapon is held by anyone other than the demon but resumes giving bonuses if returned to the demon. These bonuses apply to only one end of a double weapon. A demon can use this ability once per day at 5th level, and one additional time per day for every four levels beyond 5th, to a total of four times per day at 17th level.\n\nIf a weapon bonded with a fiendish spirit is destroyed, the demon loses the use of this ability for 30 days, or until he gains a level, whichever comes first. During this 30-day period, the demon takes a –1 penalty attack and weapon damage rolls." compset="CustomSpec" summary="You can enhance your weapon for 1 minute per level one or more times per day." uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <fieldval field="shortname" value="Demon Wpn"/>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <tag group="Usage" tag="Day" name="/day" abbrev="/day"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="AbilType" tag="SpellLike" name="Spell-Like Ability" abbrev=" (Sp)"/>
+    <bootstrap thing="cClrDeiWep">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+      var bonus as number
+      bonus = linkage[table].field[cTotalLev].value - 2
+      field[abValue].value += round(bonus/3,0,-1)
+
+      if (linkage[table].field[cTotalLev].value >= 17) then
+        field[trkMax].value += 4
+      elseif (linkage[table].field[cTotalLev].value >= 13) then
+        field[trkMax].value += 3
+      elseif (linkage[table].field[cTotalLev].value >= 9) then
+        field[trkMax].value += 2
+      else
+        field[trkMax].value += 1
+        endif
+      
+      field[abDuration].value += linkage[table].field[cTotalLev].value
+      
+      field[livename].text = "Fiendish Boon (Weapon " & signed(field[abValue].value) & ") (" & field[abDuration].value & " minutes)"]]></eval>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMHSHDnStG" name="Smite Good" description="Adds your Int bonus to attack rolls and HD to your damage roll when used against a good foe. This lasts until you rest or the targeted foe is dead.\n\nThis cost 1 Blight point." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <fieldval field="actName" value="Angel Smite Good"/>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ Generate our damage bonus
+      field[abValue].value += herofield[tHitDice].value
+
+      ~ Generate our to-hit bonus
+      field[abValue2].value += maximum(hero.child[aINT].field[aModBonus].value,0)
+
+      ~ Generate our summary
+      field[abSumm].text = "+" & field[abValue2].value & " to hit, +" & field[abValue].value & " to damage when used."
+
+      if (field[abilActive].value <> 0) then
+        hero.child[Attack].field[tAtk].value += field[abValue2].value
+        hero.child[Damage].field[tDamBonus].value += field[abValue].value
+        endif]]></eval>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMPSHDnAD" name="Aura and Detection" compset="CustomSpec" uniqueness="useronce">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMPSHVpBd" name="Vampire Blood" description="The Vampire has a new ability called Blood. Blood grants a +10 bonus to Hero Points in addition to the normal class bonuses. \nAdditionally, for every 25 years of age, the Vampire also gains a Hero Point. \n\nVampires Hero Points are regained after draining blood from a Bite Attack on a humanoid. A vampire can drain blood from a grappled opponent; if the vampire establishes or maintains a pin, it drains blood, dealing 1d4 points of Constitution damage. The vampire regains one Hero Point for every one point of Constitution drained." compset="CustomSpec" summary="Every 25 years of age, the Vampire also gains a Hero Point" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <tag group="HasAbility" tag="crascbldpl"/>
+    <tag group="HasAbility" tag="crmgebldpl"/>
+    <tag group="HasAbility" tag="crwarbldpl"/>
+    <tag group="HasAbility" tag="ravambite"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Final" priority="10500" index="2"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[livename].text = "Blood"]]></eval>
+    <eval phase="Final" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[trkMax].value += 10]]></eval>
+    <exprreq message="Must have Creature Type: Undead"><![CDATA[#hastype[tpUndead] <> 0]]></exprreq>
+    </thing>
+  <thing id="pMPSHVpBP" name="Vampire Blood" description="The Vampire has a new ability called Blood. Blood grants a +10 bonus to Hero Points in addition to the normal class bonuses. \nAdditionally, for every 25 years of age, the Vampire also gains a Hero Point. \n\nVampires Hero Points are regained after draining blood from a Bite Attack on a humanoid. A vampire can drain blood from a grappled opponent; if the vampire establishes or maintains a pin, it drains blood, dealing 1d4 points of Constitution damage. The vampire regains one Hero Point for every one point of Constitution drained." compset="InPlay" summary="Every 25 years of age, the Vampire also gains a Hero Point.">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <eval phase="First" priority="1000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Add to Modern Hero Points
+      #trkmax[cMHHeroPB] += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pMPSHAgGP" name="Angel Grace" description="The Angel has a new ability called Grace. Grace grants a +10 bonus to Hero Points in addition to the normal class bonuses.\n\nAdditionally, for every Fame point gained in a celestial type Faction, the angel also gains a Hero Point. \n\nAngels regain 1 used Hero Point after invoking a supernatural ability that is divine in nature. A few examples are: Channel Positive Energy, paladin&apos;s Divine Grace or Mercy class abilities." compset="InPlay" summary="Every Fame point gained in a celestial type Faction, the angel also gains a Hero Point.">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <eval phase="First" priority="1000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Add to Modern Hero Points
+      #trkmax[cMHHeroPB] += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pMPSHDnBP" name="Demon Blight" description="The Demon has a new ability called Blight. Blight grants a +10 bonus to Hero Points in addition to the normal class bonuses. \n\nAdditionally, for every Fame point gained in an infernal type Faction, the demon also gains a Hero Point. \n\nDemons regain 1 used Hero Point after invoking a supernatural ability that is evil in nature. A few examples are: Channel Negative Energy, anti-paladin&apos;s Touch of Corruption or Cruelty class abilities." compset="InPlay" summary="Every Fame point gained in an infernal type Faction, the demon also gains a Hero Point.">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <eval phase="First" priority="1000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Add to Modern Hero Points
+      #trkmax[cMHHeroPB] += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pMPSHWwLP" name="Werewolf Lunar" description="The Werewolf has a new ability called Lunar. Lunar grants a +10 bonus to Hero Points in addition to the normal class bonuses. \n\nAdditionally, the phase of the moon also affects the Werewolf&apos;s Hero Points temporally.\n\nThe Werewolf&apos;s Hero Points temporally increase for the night depending on the phases of the Moon.\nNew Moon:           2 Point\nCrescent Moon:    4 Points\nQuarter Moon:      6 Points \nWaxing Moon:      8 Points\nFull Moon:            10 Points and double the character&apos;s total Hero Point pool." compset="InPlay" summary="The phase of the moon also affects the Werewolf&apos;s Hero Points temporally">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <eval phase="First" priority="1000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Add to Modern Hero Points
+      #trkmax[cMHHeroPB] += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="cMPSHDnAb" name="Abyssal Bloodline" description="Generations ago, a demon spread its filth into your heritage. While it does not manifest in all of your kin, for you it is particularly strong. You might sometimes have urges to chaos or evil, but your destiny (and alignment) is up to you.{br}{br}{b}Bloodline Arcana{/b}: Whenever you cast a spell of the summoning subschool, the creatures summoned gain DR/good equal to 1/2 your sorcerer level (minimum 1). This does not stack with any DR the creature might have.{br}{br}{b}Bloodline Powers{/b}: While some would say that you are possessed, you know better. The demonic influence in your blood grows as you gain power." compset="CustomSpec" uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="fInclude" tag="fCleave" name="Cleave" abbrev="Cleave"/>
+    <tag group="fInclude" tag="fEmpSpell" name="Empower Spell" abbrev="Empower Spell"/>
+    <tag group="fInclude" tag="fGreatFort" name="Great Fortitude" abbrev="Great Fortitude"/>
+    <tag group="fInclude" tag="fImpBull" name="Improved Bull Rush" abbrev="Improved Bull Rush"/>
+    <tag group="fInclude" tag="fImpSunder" name="Improved Sunder" abbrev="Improved Sunder"/>
+    <tag group="fInclude" tag="fPowerAtt" name="Power Attack" abbrev="Power Attack"/>
+    <tag group="fInclude" tag="fSkillFoc" name="Skill Focus" abbrev="Skill Focus"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ClassSkill" tag="skKnowPlan" name="Knowledge (planes)" abbrev="Knowledge (planes)"/>
+    <tag group="fInclude" tag="fAugSumm" name="Augment Summoning" abbrev="Augment Summoning"/>
+    <bootstrap thing="cSorSTRAby">
+      <autotag group="ClSpecWhen" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="cSorSTRAby">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cSorAddSum">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cSorDemMig">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="spCausFea1">
+      <autotag group="BonusSplAt" tag="3"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spBullStr2">
+      <autotag group="BonusSplAt" tag="5"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spRage3">
+      <autotag group="BonusSplAt" tag="7"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spStonesk4">
+      <autotag group="BonusSplAt" tag="9"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spDismiss5">
+      <autotag group="BonusSplAt" tag="11"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spTransfo6">
+      <autotag group="BonusSplAt" tag="13"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spTeleGre7">
+      <autotag group="BonusSplAt" tag="15"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spUnhoAur8">
+      <autotag group="BonusSplAt" tag="17"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spSummMon9">
+      <autotag group="BonusSplAt" tag="19"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="cSorClaws">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cSorDemRes">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cSorDemRes">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cSorSTRAby">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      field[abValue].value += maximum(round(field[xTotalLev].value/2,0,-1),1)
+        
+      field[abSumm].text = "Summoned creatures gain DR " & field[abValue].value & "/good."]]></eval>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMPSHDnDae" name="Daemon Bloodline" description="A daemon lurks somewhere along your family tree. Your powers derive from these soul-devouring fiends, whotake pleasure and gain power from manipulating mortal frailties like aging, pestilence, famine, and the horrors of war. Your lineage gives you great insight into how to exploit the weaknesses of living beings and how to use leeched soul energy to enhance your wicked abilities.\n\n{b}Bloodline Arcana{/b}: Whenever you cast a spell that kills one or more living creatures with an Intelligence score of 3 or higher, the caster level of any spell you cast in the next round increases by +1 for each creature your first spell killed. This ability does not stack with other effects that increase your effective caster level, and you cannot gain a bonus greater than 1/2 your Charisma modifier (minimum 1). The second spell you cast must be of an equal or lower level than the first one.\n\n{b}Bloodline Powers{/b}: Like that of a daemon, your magic derives from painful and lingering death." compset="CustomSpec" summary="+1 caster level of next spell when you slay a creature." uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="fInclude" tag="fDiehard"/>
+    <tag group="fInclude" tag="fEndure"/>
+    <tag group="fInclude" tag="fFastHeal"/>
+    <tag group="fInclude" tag="fGreatFort"/>
+    <tag group="fInclude" tag="fHeroicDef"/>
+    <tag group="fInclude" tag="fSickenSpl"/>
+    <tag group="fInclude" tag="fToughness"/>
+    <tag group="fInclude" tag="fHeroicRec"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <tag group="ClassSkill" tag="skHeal"/>
+    <bootstrap thing="spContagi4">
+      <autotag group="BonusSplAt" tag="9"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spBlight5">
+      <autotag group="BonusSplAt" tag="11"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spCircDea6">
+      <autotag group="BonusSplAt" tag="13"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spWaveExh7">
+      <autotag group="BonusSplAt" tag="15"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spVampTou3">
+      <autotag group="BonusSplAt" tag="7"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spHorrWil8">
+      <autotag group="BonusSplAt" tag="17"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spSoulBin9">
+      <autotag group="BonusSplAt" tag="19"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spRayEnf1">
+      <autotag group="BonusSplAt" tag="3"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spToucIdi2">
+      <autotag group="BonusSplAt" tag="5"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMPSHDnInB" name="Infernal Bloodline" description="Somewhere in your family&apos;s history, a relative made a deal with a devil, and that pact has influenced your family line ever since. In you, it manifests in direct and obvious ways, granting you powers and abilities. While your fate is still your own, you can&apos;t help but wonder if your ultimate reward is bound to the Pit.{br}{br}{b}Bloodline Arcana{/b}: Whenever you cast a spell of the charm subschool, increase the spell&apos;s DC by +2.{br}{br}{b}Bloodline Powers{/b}: You can draw upon the power of Hell, although you must be wary of its corrupting influence. Such power does not come without a price." compset="CustomSpec" summary="+2 DC on Charm spells." uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="fInclude" tag="fComExpert" name="Combat Expertise" abbrev="Combat Expertise"/>
+    <tag group="fInclude" tag="fDeceit" name="Deceitful" abbrev="Deceitful"/>
+    <tag group="fInclude" tag="fExtSpell" name="Extend Spell" abbrev="Extend Spell"/>
+    <tag group="fInclude" tag="fImpDis" name="Improved Disarm" abbrev="Improved Disarm"/>
+    <tag group="fInclude" tag="fIronWill" name="Iron Will" abbrev="Iron Will"/>
+    <tag group="fInclude" tag="fSkillFoc" name="Skill Focus" abbrev="Skill Focus"/>
+    <tag group="fInclude" tag="fSpellPen" name="Spell Penetration" abbrev="Spell Penetration"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ClassSkill" tag="skDiplo" name="Diplomacy" abbrev="Diplomacy"/>
+    <tag group="fInclude" tag="fBlindFgt" name="Blind-Fight" abbrev="Blind-Fight"/>
+    <bootstrap thing="cSorHellfi">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cSorHellfi">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cSorDarkWi">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cSorPowPit">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="spProtGoo1">
+      <autotag group="BonusSplAt" tag="3"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spScorRay2">
+      <autotag group="BonusSplAt" tag="5"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spSuggest3">
+      <autotag group="BonusSplAt" tag="7"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spCharMon4">
+      <autotag group="BonusSplAt" tag="9"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spDomiPer5">
+      <autotag group="BonusSplAt" tag="11"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spPlanBin6">
+      <autotag group="BonusSplAt" tag="13"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spTeleGre7">
+      <autotag group="BonusSplAt" tag="15"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spPoweStu8">
+      <autotag group="BonusSplAt" tag="17"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spMeteSwa9">
+      <autotag group="BonusSplAt" tag="19"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="cSorCorrTo">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cSorInfRes">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cSorInfRes">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cSorHellfi">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="1000">~add 2 to the DC of charm spells
+      hero.child[ssCharm].field[schDC].value += 2</eval>
+    <pickreq thing="cMPSHBligh"/>
+    </thing>
+  <thing id="cMPSHAnClB" name="Celestial Bloodline" description="Your bloodline is blessed by a celestial power, either from a celestial ancestor or through divine intervention. Although this power drives you along the path of good, your fate (and alignment) is your own to determine.{br}{br}{b}Bloodline Arcana{/b}: Whenever you cast a spell of the summoning subschool, the creatures summoned gain DR/evil equal to 1/2 your sorcerer level (minimum 1). This does not stack with any DR the creature might have.{br}{br}{b}Bloodline Powers{/b}: Your celestial heritage grants you a great many powers, but they come at a price. The lords of the higher planes are watching you and your actions closely." compset="CustomSpec" uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="fInclude" tag="fExtSpell" name="Extend Spell" abbrev="Extend Spell"/>
+    <tag group="fInclude" tag="fIronWill" name="Iron Will" abbrev="Iron Will"/>
+    <tag group="fInclude" tag="fMobility" name="Mobility" abbrev="Mobility"/>
+    <tag group="fInclude" tag="fMountCom" name="Mounted Combat" abbrev="Mounted Combat"/>
+    <tag group="fInclude" tag="fRideBy" name="Ride-by Attack" abbrev="Ride-by Attack"/>
+    <tag group="fInclude" tag="fSkillFoc" name="Skill Focus" abbrev="Skill Focus"/>
+    <tag group="fInclude" tag="fWepFin" name="Weapon Finesse" abbrev="Weapon Finesse"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ClassSkill" tag="skHeal" name="Heal" abbrev="Heal"/>
+    <tag group="fInclude" tag="fDodge" name="Dodge" abbrev="Dodge"/>
+    <bootstrap thing="cSorConvic">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cSorAscens">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="spBless1">
+      <autotag group="BonusSplAt" tag="3"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spResiEne2">
+      <autotag group="BonusSplAt" tag="5"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spMagiaga3">
+      <autotag group="BonusSplAt" tag="7"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spRemoCur4">
+      <autotag group="BonusSplAt" tag="9"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spFlamStr5">
+      <autotag group="BonusSplAt" tag="11"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spDispMag6">
+      <autotag group="BonusSplAt" tag="13"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spBanishm7">
+      <autotag group="BonusSplAt" tag="15"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spSunburs8">
+      <autotag group="BonusSplAt" tag="17"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="spGate9">
+      <autotag group="BonusSplAt" tag="19"/>
+      <autotag group="SpellType" tag="cHelpMdH"/>
+      </bootstrap>
+    <bootstrap thing="cSorHeaFir">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cSorCelRes">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cSorCelRes">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cSorWingHe">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      field[abValue].value += maximum(round(field[xTotalLev].value/2,0,-1),1)
+      field[abSumm].text = "Summoned creatures gain DR " & field[abValue].value & "/evil."]]></eval>
+    <pickreq thing="cMPGracePw"/>
+    </thing>
+  <thing id="cMPSHVSNAt" name="Death Attack" compset="CustomSpec" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <bootstrap thing="cAsnDeath">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <pickreq thing="cMPSHVpSAt"/>
+    </thing>
+  <thing id="cMPSHVpSAt" name="Sneak Attack" description="The Vampire gains the Rogue&apos;s Sneak Attack class feature.\n\nIf an Vampire can catch an opponent when he is unable to defend himself effectively from her attack, she can strike a vital spot for extra damage.\n\nThe Vampire&apos;s attack deals extra damage anytime her target would be denied a Dexterity bonus to AC (whether the target actually has a Dexterity bonus or not), or when the Vampire flanks her target. This extra damage is 1d6, and increases by 1d6 every two levels thereafter. \n\nShould the Vampire score a critical hit with a sneak attack, this extra damage is not multiplied. \n\nRanged attacks can&apos;t count as sneak attacks.\n\nWith a weapon that deals nonlethal damage (like a sap, whip, or an unarmed strike), an Infiltrator can make a sneak attack that deals nonlethal damage instead of lethal damage. She cannot use a weapon that deals lethal damage to deal nonlethal damage in a covert attack, not even with the usual -4 penalty.\n\nThe Infiltrator must be able to see the target well enough to pick out a vital spot and must be able to reach such a spot. An Infiltrator cannot covert attack while striking a creature with concealment.\n\n More information on Sneak Attack can be found in the Pathfinder Roleplaying Game Core Rules" compset="CustomSpec" summary="Gains the Rogue&apos;s Sneak Attack class feature" uniqueness="useronce">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHVamp" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="HasAbility" tag="cSneakAtt" name="Sneak Attack" abbrev="Sneak Attack"/>
+    <eval phase="Final" priority="10000"><![CDATA[   ~our bonus is level /2, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 2
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = "Sneak Attack +" & field[abValue].value & "d6"
+      field[abSumm].text = "+" & field[abValue].value & "d6 damage if you flank your target or your target is flat-footed."]]></eval>
+    <pickreq thing="cMPSHVpBd"/>
+    </thing>
+  <thing id="cMPSHVpQDt" name="Quiet Death" description="Whenever an vampire kills a creature, he can also make a Stealth check, opposed by Perception checks of those in the vicinity to prevent them from identifying him as the assailant. If successful, those nearby might not even notice that the target is dead for a few moments, allowing the vampire to avoid detection." compset="CustomSpec" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <bootstrap thing="cAsnDeath">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <pickreq thing="cMPSHVpBd"/>
+    </thing>
+  <thing id="cMPSHVpHPS" name="Stealth" description="A vampire can use the Stealth skill even while being observed. As long as she is within 10 feet of an area of dim light, a vampire can hide herself from view in the open without anything to actually hide behind. She cannot, however, hide in her own shadow." compset="CustomSpec" summary="A vampire can use the Stealth skill even while being observed." uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <pickreq thing="cMPSHVpBd"/>
+    </thing>
+  <thing id="cMPSHVpFas" name="Fascinate" description="A vampire can use a Blood point to cause one or more creatures to become fascinated with the vampire. This acts as the fascinate bardic perform ability, except the save DC is 10 + 1/2 your level + your Charisma bonus, and it lasts 1 round/level. \n\nA vampire can cause one or more creatures to become fascinated with him. Each creature to be fascinated must be within 90 feet, able to see and hear the vampire, and capable of paying attention to him. The vampire must also be able to see the creatures affected. The distraction of a nearby combat or other dangers does not prevent the ability from working. For every Blood point spent, he can target one additional creature with this ability.\n\nEach creature within range receives a Will save (DC 10 + 1/2 level + Cha modifier) to negate the effect. If a creature&apos;s saving throw succeeds, the vampire cannot attempt to fascinate that creature again for 24 hours. If its saving throw fails, the creature sits quietly and observes the vampire for as long as the vampire continues to maintain it. While fascinated, a target takes a -4 penalty on skill checks made as reactions, such as Perception checks. \n\nFascinate is an enchantment (compulsion), mind-affecting ability. Fascinate relies on audible and visual components in order to function." compset="CustomSpec" summary="Blood point to cause one or more creatures to become fascinated" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <pickreq thing="cMPSHVpBd"/>
+    </thing>
+  <thing id="cMPSHVpSug" name="Suggestion" description="A vampire can use a Blood point to make a suggestion (as per the spell) to a creature that he has already fascinated (see Vampire Fascinate). Using this ability does not disrupt the fascinate effect, but it does require a standard action to activate (in addition to the free action to continue the fascinate effect). A vampire can use this ability more than once against an individual creature during an individual performance.\n\nA Will saving throw (DC 10 + 1/2 level + Cha modifier) negates the effect. This ability affects only a single creature (but see below). Suggestion is an enchantment (compulsion), mind-affecting, language-dependent ability and relies on audible components.\n\nFor each Blood point spent, the vampire can use this ability against another fascinated creature." compset="CustomSpec" summary="Make a Suggestion to one Fascinated creature" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <pickreq thing="cMPSHVpFas"/>
+    </thing>
+  <thing id="cMPSHVpImG" name="Improved Grab" description="To use this ability, a vampire must hit with any one of its natural attacks. It can then attempt to start a grapple as a free action without provoking an attack of opportunity. If it wins the grapple check, it establishes a hold and can use its draining blood from a Bite Attack ability." compset="CustomSpec" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <pickreq thing="cMPSHVpBd"/>
+    </thing>
+  <thing id="cMPSHVpADs" name="Aura of Despair" description="For one Blood Point, you radiate an aura of fear causing all enemies within 30 feet to take a –2 penalty on all saving throws for 1 round per level." compset="CustomSpec" summary="All enemies within 10 feet to take a –2 penalty on all saving throws" uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <eval phase="Final" priority="10000"><![CDATA[field[livename].text = "Aura of Despair (30 ft.)"]]></eval>
+    <pickreq thing="cMPSHVpBd"/>
+    </thing>
+  <thing id="cMPSHWwLn" name="Werewolf Lunar" description="The Werewolf has a new ability called Lunar. Lunar grants a +10 bonus to Hero Points in addition to the normal class bonuses. \n\nAdditionally, the phase of the moon also affects the Werewolf&apos;s Hero Points temporally.\n\nThe Werewolf&apos;s Hero Points temporally increase for the night depending on the phases of the Moon.\nNew Moon:           2 Point\nCrescent Moon:    4 Points\nQuarter Moon:      6 Points \nWaxing Moon:      8 Points\nFull Moon:            10 Points and double the character&apos;s total Hero Point pool." compset="CustomSpec" summary="The phase of the moon also affects the Werewolf&apos;s Hero Points temporally." uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="HasAbility" tag="cBbnRage"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Final" priority="10500" index="2"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[livename].text = "Lunar"]]></eval>
+    <eval phase="Final" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[trkMax].value += 10]]></eval>
+    <exprreq message="Must have Creature Type: Shapechanger"><![CDATA[#hassubtype[stShapecha] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMPSHWwRag" name="Rage Powers" description="The werewolf can use his Lunar points the same as the Barabarian Rage." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <fieldval field="actName" value="Raging"/>
+    <usesource source="SHModPath"/>
+    <tag group="HasAbility" tag="cdRage"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="First" priority="450" index="4"><![CDATA[
+      ~if we're curently raging, forward a tag to the hero.
+      ~note the timing is just before First/500, which is when the containerreqs on the rage powers will look for this tag
+      if (field[abilActive].value <> 0) then
+        perform hero.assign[Hero.Raging]
+        endif]]></eval>
+    <eval phase="PostLevel" priority="10000" index="5"><![CDATA[ ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~ If we're enraged, apply the stat modifiers for that
+      var level as number
+      level = field[xTotalLev].value
+      if (level >= 20) then
+        field[abValue].value += 8
+        field[abValue2].value += 4
+      elseif (level >= 11) then
+        field[abValue].value += 6
+        field[abValue2].value += 3
+      else
+        field[abValue].value += 4
+        field[abValue2].value += 2
+        endif
+
+      var conbonus as number
+      conbonus = field[abValue].value
+
+      if (field[abilActive].value <> 0) then
+        #applybonus[BonMorale, hero.child[aSTR], field[abValue].value]
+        conbonus += 2 * hero.tagcount[HasFeat.fRagVital]
+        #applybonus[BonMorale, hero.child[aCON], conbonus]
+        #applybonus[BonMorale, hero.child[svWill], field[abValue2].value]
+        hero.child[ArmorClass].field[Penalty].value -= 2
+        endif
+
+      ~ Set up our text fields
+      field[CustDesc].text = "Fly into a rage, giving you +" & field[abValue].value & " Str, +" & conbonus & " Con, +" & field[abValue2].value & " to Will saves and -2 to Armor Class. Many skills and abilities cannot be used while the character is enraged.{br}{br}Rage lasts for 3 rounds + Con bonus."
+      if (level < 17) then
+        field[CustDesc].text = field[CustDesc].text & " At the end of the rage, the Hero becomes fatigued (-2 Str, -2 Dex, can't charge or run) for the rest of the encounter."
+        endif
+      field[abSumm].text = "+" & field[abValue].value & " Str, +" & field[abValue].value & " Con, +" & field[abValue2].value & " to Will saves, -2 to AC when enraged."]]></eval>
+    <eval phase="PostLevel" priority="10000" index="6"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~if we're L17 and active, apply the penalties
+      if (field[xTotalLev].value < 17) then
+        field[actName2].text = "Fatigued"
+        if (field[abilAct2].value <> 0) then
+          hero.child[aSTR].field[Penalty].value -= 2
+          hero.child[aDEX].field[Penalty].value -= 2
+          perform assign[Helper.ChgDisab1]
+          endif
+        endif]]></eval>
+    <eval phase="PostLevel" priority="5000" index="2"><![CDATA[linkage[table].field[cSpec3rdSi].text = "Rage Power"]]></eval>
+    <eval phase="Level" priority="10000">hero.childfound[cHelpMdH].field[cGiveSp3rd].value += 1</eval>
+    <eval phase="Final" priority="2147483647" index="3"><![CDATA[linkage[table].field[cCstS3Expr].text = "(SpecSource.cHelpBbn) & !Helper.Secondary & !Helper.Tertiary"]]></eval>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="cMPSHWwAoC" name="Aura of Chaos" description="A werewolf can surround it&apos;s self with a field wild energies. The energies manifest as a 30-foot aura of chaos for a number of rounds per day equal to your  level. All enemies within this aura must declare one type of action at the start of their turn (attack, cast a spell, move, use an item, or activate a special ability) and make a Will save. Creatures that fail the Will save must take an action other than their declared action. If they succeed, they must take the declared action. Creatures cannot select actions that they cannot perform.\n\nThis cost 1 Lunar point to activate." compset="CustomSpec" summary="Enemies within a 30&apos; aura must save or perform a different type of action than they wanted to." uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="StandardDC" tag="aSTR"/>
+    <tag group="AbilType" tag="Super"/>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="cMPSHWwWSt" name="Woodland Stride" compset="CustomSpec" uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="AbilType" tag="Super"/>
+    <bootstrap thing="cWoodStrid">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="cMPSHWwBat" name="Battle Enchant" description="As a swift action, you enchant a natural weapon. The enchanted weapon lasts for 1 round per level and has a +1 enhancement bonus on attack and damage rolls for every four Lunar points you use." compset="CustomSpec" uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="AbilType" tag="Super"/>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="cMPSHWwFre" name="Frenzy" description="You are too tough to die, and may continue to fight until your negative hit points exceed your Constitution score. You remain conscious and can continue fighting even if its hit point total is below 0. While your nit point total is negative you are still staggered and lose 1 hit point each round. You still die when you hit point total reaches a negative amount equal to your Constitution score.\n\nAditionally you gain Diehard as a bonus feat." compset="CustomSpec" uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="AbilType" tag="Super"/>
+    <bootstrap thing="fDiehard">
+      <autotag group="ClSpecWhen" tag="1"/>
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="cMPSHWwGRg" name="Greater Rage" description="For 2 Lunar points, when the werewolf  enters rage, the morale bonus to her Strength and Constitution increases to +6 and the morale bonus on her Will saves increases to +3." compset="CustomSpec" uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="HasAbility" tag="cBbnRageGt"/>
+    <tag group="AbilType" tag="Super"/>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="cMPSHWwIdW" name="Indomitable Will" description="A werewolf gains a +4 bonus on Will saves to resist enchantment spells. This bonus stacks with all other modifiers, including the morale bonus on Will saves she also receives during her rage." compset="CustomSpec" uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="HasAbility" tag="cBbnIndomW"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      
+      #situational[hero.child[svWill],"+4 vs. enchantments",field[name].text]]]></eval>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="cMPSHWwFCh" name="Furious Charge" description="A werewolf with this ability deals an additional 2 points of damage on every attack made at the end of a charge. The werewolf can  increased the damage by 1 point for every Lunar point spent." compset="CustomSpec" uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="pMPSHMPNw" name="New Moon" description="The phase of the moon also affects the Werewolf&apos;s Lunar Points temporally.\n\nThe Werewolf&apos;s Lunar Points temporally increase for the night depending on the phases of the Moon.\nNew Moon:           2 Point\nCrescent Moon:    4 Points\nQuarter Moon:      6 Points \nWaxing Moon:      8 Points\nFull Moon:            10 Points and double the character&apos;s total Lunar Point pool." compset="InPlay" summary="The phase of the moon also affects the Werewolf&apos;s Hero Points temporally">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Helper" tag="AdjCond"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <eval phase="Final" priority="10000"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[trkMax].value += 2]]></eval>
+    </thing>
+  <thing id="pMPSHMPCrM" name="Crescent Moon" description="The phase of the moon also affects the Werewolf&apos;s Lunar Points temporally.\n\nThe Werewolf&apos;s Lunar Points temporally increase for the night depending on the phases of the Moon.\nNew Moon:           2 Point\nCrescent Moon:    4 Points\nQuarter Moon:      6 Points \nWaxing Moon:      8 Points\nFull Moon:            10 Points and double the character&apos;s total Lunar Point pool." compset="InPlay" summary="The phase of the moon also affects the Werewolf&apos;s Hero Points temporally">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Helper" tag="AdjInfo"/>
+    <tag group="Helper" tag="AdjCond"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <eval phase="Final" priority="10000"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[trkMax].value += 4]]></eval>
+    </thing>
+  <thing id="pMPSHMPQtM" name="Quarter Moon" description="The phase of the moon also affects the Werewolf&apos;s Lunar Points temporally.\n\nThe Werewolf&apos;s Lunar Points temporally increase for the night depending on the phases of the Moon.\nNew Moon:           2 Point\nCrescent Moon:    4 Points\nQuarter Moon:      6 Points \nWaxing Moon:      8 Points\nFull Moon:            10 Points and double the character&apos;s total Lunar Point pool." compset="InPlay" summary="The phase of the moon also affects the Werewolf&apos;s Hero Points temporally">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Helper" tag="AdjCond"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <eval phase="Final" priority="10000"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[trkMax].value += 6]]></eval>
+    </thing>
+  <thing id="pMPSHMPWxM" name="Waxing Moon" description="The phase of the moon also affects the Werewolf&apos;s Lunar Points temporally.\n\nThe Werewolf&apos;s Lunar Points temporally increase for the night depending on the phases of the Moon.\nNew Moon:           2 Point\nCrescent Moon:    4 Points\nQuarter Moon:      6 Points \nWaxing Moon:      8 Points\nFull Moon:            10 Points and double the character&apos;s total Lunar Point pool." compset="InPlay" summary="The phase of the moon also affects the Werewolf&apos;s Hero Points temporally">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Helper" tag="AdjCond"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <eval phase="Final" priority="10000"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[trkMax].value += 8]]></eval>
+    </thing>
+  <thing id="pMPSHMPFlM" name="Full Moon" description="The phase of the moon also affects the Werewolf&apos;s Lunar Points temporally.\n\nThe Werewolf&apos;s Lunar Points temporally increase for the night depending on the phases of the Moon.\nNew Moon:           2 Point\nCrescent Moon:    4 Points\nQuarter Moon:      6 Points \nWaxing Moon:      8 Points\nFull Moon:            10 Points and double the character&apos;s total Lunar Point pool." compset="InPlay" summary="The phase of the moon also affects the Werewolf&apos;s Hero Points temporally">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Helper" tag="AdjCond"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <eval phase="Final" priority="10000"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[trkMax].value += 10]]></eval>
+    <eval phase="Final" priority="10500" index="2"><![CDATA[~if we're not active, just get out now
+doneif (field[pIsOn].value = 0)
+
+~add 1 uses to our Hero Point Max
+      hero.childfound[cMHHeroPB].field[trkMax].value *= 2]]></eval>
+    </thing>
+  <thing id="flMPSHCrtW" name="Creature Weaknesses" description="{b}Penalty{/b}:  Although a creature’s type and species determine many of its traits and abilities, GMs are encouraged to alter a creature’s physiology, behavior, abilities, tactics, and defenses when it serves the story or to confound players who think they know everything about their opponents. \n\nThe rules provided allow GMs to build custom monsters and ascribe special qualities to them. When designing a creature, the GM should also think of ways the creature can be defeated. From the heroes’ point of view, a creature’s weaknesses are more important than its abilities. Assigning weaknesses to creatures gives under-powered or poorly equipped heroes a fighting chance. \n\nTable: Sources of Weakness lists many sources to which a creature may be vulnerable. A source can be a specific object, location, substance, sound, sensation, or activity. How the creature interacts with a source of weakness is left up to the GM, although most sources must be in close proximity to the creature (if not touching the creature) to affect it. GMs may roll randomly on the table, choose a source that suits the creature, or devise their own. \n\nhttp://www.dandwiki.com/wiki/Researching_Creature_Weaknesses_(MSRD)" compset="Flaw">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="SpecType" tag="Weakness" name="Weakness" abbrev="Weakness"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    </thing>
+  <thing id="arMPSHVamp" name=" Modern Hero {Vampire}" description="The chosen attribute will provide his Hit Dice, Skill Ranks per Level, Base Attack Bonus, and Saving Throws to the Modern Hero class." compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Modern Hero"]]></comment>
+    <fieldval field="cvHitDice" value="8"/>
+    <fieldval field="cvSpecName" value="Talents"/>
+    <fieldval field="cvSpecSing" value="Talents"/>
+    <fieldval field="cvSpec2ndN" value="Archetype Training"/>
+    <fieldval field="cvSpec2ndS" value="Archetype Training"/>
+    <fieldval field="cvSkillPts" value="6"/>
+    <arrayval field="cvBonFtMod" index="3" value="1"/>
+    <arrayval field="cvBonFtMod" index="7" value="2"/>
+    <arrayval field="cvBonFtMod" index="11" value="3"/>
+    <arrayval field="cvBonFtMod" index="15" value="4"/>
+    <arrayval field="cvBonFtMod" index="19" value="5"/>
+    <arrayval field="cvCustSTot" index="1" value="1"/>
+    <arrayval field="cvCustSTot" index="5" value="2"/>
+    <arrayval field="cvCustSTot" index="9" value="3"/>
+    <arrayval field="cvCustSTot" index="13" value="4"/>
+    <arrayval field="cvCustSTot" index="17" value="5"/>
+    <arrayval field="cvCustTot" index="0" value="1"/>
+    <arrayval field="cvCustTot" index="2" value="2"/>
+    <arrayval field="cvCustTot" index="6" value="3"/>
+    <arrayval field="cvCustTot" index="10" value="4"/>
+    <arrayval field="cvCustTot" index="14" value="5"/>
+    <arrayval field="cvCustTot" index="18" value="6"/>
+    <usesource source="SHModPath"/>
+    <tag group="cWill" tag="Good"/>
+    <tag group="fCategory" tag="General" name="General" abbrev="General"/>
+    <tag group="ClVaryName" tag="Replace" name="Replace" abbrev="Replace"/>
+    <tag group="cRef" tag="Good"/>
+    <tag group="cFort" tag="Poor"/>
+    <tag group="SplAttr" tag="aCHA" name="Charisma" abbrev="Charisma"/>
+    <tag group="AllowCust" tag="cHelpAGr"/>
+    <tag group="AllowCust" tag="cHelpPTa"/>
+    <tag group="AllowCust" tag="cHelpSoD"/>
+    <tag group="AllowCust" tag="arClrUnLor"/>
+    <tag group="AllowCust" tag="arPalUndea"/>
+    <tag group="AllowCust" tag="arSumBlGDi"/>
+    <tag group="AllowCust" tag="arFGBldOhS"/>
+    <tag group="AllowCust" tag="arWitGrave"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="fCategory" tag="Metamagic"/>
+    <tag group="cAttack" tag="Medium"/>
+    <bootstrap thing="tmVampire">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    <eval phase="First" index="2"><![CDATA[perform hero.assignstr["Race.rDhampir"]
+perform hero.assignstr["IsRace.rDhampir"]
+perform hero.assignstr["RaceEquip.rDhampir"]
+perform hero.assignstr["wGroup.rDhampir"]]]></eval>
+    <eval phase="First" index="3"><![CDATA[perform hero.assignstr["Template.tmPFNosfer"]]]></eval>
+    <eval phase="First" index="4"><![CDATA[perform hero.assignstr["Template.tmVampJian"]]]></eval>
+    <eval phase="PostAttr" priority="10000">var hp as number
+hp = hero.child[aCHA].field[aModBonus].value
+hero.childfound[cMHHeroPB].field[trkMax].value += hp</eval>
+    </thing>
+  <thing id="cMPSHPVamp" name="{Path of the Vampire}" description="The chosen attribute will provide his Hit Dice, Skill Ranks per Level, Base Attack Bonus, and Saving Throws to the Modern Hero class." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="Helper" tag="Quintenary" name="Quintenary" abbrev="Quintenary"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <bootstrap thing="arMPSHVamp"></bootstrap>
+    </thing>
+  <thing id="arMPSHAnge" name=" Modern Hero {Angel}" description="The chosen attribute will provide his Hit Dice, Skill Ranks per Level, Base Attack Bonus, and Saving Throws to the Modern Hero class." compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Modern Hero"]]></comment>
+    <fieldval field="cvSpecName" value="Talents"/>
+    <fieldval field="cvSpecSing" value="Talents"/>
+    <fieldval field="cvSpec2ndN" value="Archetype Training"/>
+    <fieldval field="cvSpec2ndS" value="Archetype Training"/>
+    <fieldval field="cvSkillPts" value="2"/>
+    <fieldval field="cvHitDice" value="10"/>
+    <arrayval field="cvBonFtMod" index="11" value="3"/>
+    <arrayval field="cvBonFtMod" index="15" value="4"/>
+    <arrayval field="cvBonFtMod" index="19" value="5"/>
+    <arrayval field="cvCustSTot" index="1" value="1"/>
+    <arrayval field="cvCustSTot" index="5" value="2"/>
+    <arrayval field="cvCustSTot" index="9" value="3"/>
+    <arrayval field="cvCustSTot" index="13" value="4"/>
+    <arrayval field="cvCustSTot" index="17" value="5"/>
+    <arrayval field="cvCustTot" index="0" value="1"/>
+    <arrayval field="cvCustTot" index="2" value="2"/>
+    <arrayval field="cvCustTot" index="6" value="3"/>
+    <arrayval field="cvCustTot" index="10" value="4"/>
+    <arrayval field="cvCustTot" index="14" value="5"/>
+    <arrayval field="cvCustTot" index="18" value="6"/>
+    <arrayval field="cvBonFtMod" index="3" value="1"/>
+    <arrayval field="cvBonFtMod" index="7" value="2"/>
+    <usesource source="SHModPath"/>
+    <tag group="cRef" tag="Poor"/>
+    <tag group="cFort" tag="Good"/>
+    <tag group="SplAttr" tag="aWIS"/>
+    <tag group="cAttack" tag="Medium"/>
+    <tag group="cWill" tag="Good"/>
+    <tag group="AllowCust" tag="cHelpCav"/>
+    <tag group="AllowCust" tag="cHelpJst"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="fCategory" tag="Divine"/>
+    <tag group="fCategory" tag="General" name="General" abbrev="General"/>
+    <tag group="ClVaryName" tag="Replace" name="Replace" abbrev="Replace"/>
+    <bootstrap thing="rAasimar">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="chfCeObed"></bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    <eval phase="First" index="2"><![CDATA[perform hero.assignstr["Race.stAngel"]
+perform hero.assignstr["IsRace.stAngel"]
+perform hero.assignstr["Subtype.stAngel"]]]></eval>
+    <eval phase="PostAttr" priority="10000">var hp as number
+hp = hero.child[aWIS].field[aModBonus].value
+hero.childfound[cMHHeroPB].field[trkMax].value += hp</eval>
+    </thing>
+  <thing id="cMPSHAngel" name="{Path of the Angel}" description="The chosen attribute will provide his Hit Dice, Skill Ranks per Level, Base Attack Bonus, and Saving Throws to the Modern Hero class." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="Helper" tag="Quintenary" name="Quintenary" abbrev="Quintenary"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <bootstrap thing="arMPSHAnge"></bootstrap>
+    </thing>
+  <thing id="arMPSHDemo" name=" Modern Hero {Demon}" description="The chosen attribute will provide his Hit Dice, Skill Ranks per Level, Base Attack Bonus, and Saving Throws to the Modern Hero class." compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Modern Hero"]]></comment>
+    <fieldval field="cvSpecName" value="Talents"/>
+    <fieldval field="cvSpecSing" value="Talents"/>
+    <fieldval field="cvSpec2ndN" value="Archetype Training"/>
+    <fieldval field="cvSpec2ndS" value="Archetype Training"/>
+    <fieldval field="cvSkillPts" value="2"/>
+    <fieldval field="cvHitDice" value="10"/>
+    <arrayval field="cvBonFtMod" index="11" value="3"/>
+    <arrayval field="cvBonFtMod" index="15" value="4"/>
+    <arrayval field="cvBonFtMod" index="19" value="5"/>
+    <arrayval field="cvCustTot" index="0" value="1"/>
+    <arrayval field="cvCustTot" index="2" value="2"/>
+    <arrayval field="cvCustTot" index="6" value="3"/>
+    <arrayval field="cvCustTot" index="10" value="4"/>
+    <arrayval field="cvCustTot" index="14" value="5"/>
+    <arrayval field="cvCustTot" index="18" value="6"/>
+    <arrayval field="cvBonFtMod" index="3" value="1"/>
+    <arrayval field="cvBonFtMod" index="7" value="2"/>
+    <arrayval field="cvCustSTot" index="1" value="1"/>
+    <arrayval field="cvCustSTot" index="5" value="2"/>
+    <arrayval field="cvCustSTot" index="9" value="3"/>
+    <arrayval field="cvCustSTot" index="13" value="4"/>
+    <arrayval field="cvCustSTot" index="17" value="5"/>
+    <usesource source="SHModPath"/>
+    <tag group="cWill" tag="Good"/>
+    <tag group="AllowCust" tag="arBrdDemag"/>
+    <tag group="AllowCust" tag="cHelpDem"/>
+    <tag group="AllowCust" tag="arClrDemAp"/>
+    <tag group="AllowCust" tag="cHelpDIn"/>
+    <tag group="AllowCust" tag="cHelpDia"/>
+    <tag group="AllowCust" tag="arFtrDirty"/>
+    <tag group="AllowCust" tag="arBbnFiend"/>
+    <tag group="AllowCust" tag="arClrFienV"/>
+    <tag group="AllowCust" tag="cHelpHKn"/>
+    <tag group="AllowCust" tag="cHelpHkS"/>
+    <tag group="AllowCust" tag="arInqHeret"/>
+    <tag group="AllowCust" tag="arInqSiEat"/>
+    <tag group="AllowCust" tag="cHelpSoD"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="fCategory" tag="Divine"/>
+    <tag group="SplAttr" tag="aCON"/>
+    <tag group="fCategory" tag="General" name="General" abbrev="General"/>
+    <tag group="ClVaryName" tag="Replace" name="Replace" abbrev="Replace"/>
+    <tag group="cRef" tag="Poor"/>
+    <tag group="cFort" tag="Good"/>
+    <tag group="AllowCust" tag="arAlcPlagu"/>
+    <tag group="cAttack" tag="Medium"/>
+    <bootstrap thing="cfgDeBoon"></bootstrap>
+    <bootstrap thing="rTiefling">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    <eval phase="PostAttr" priority="10000">var hp as number
+hp = hero.child[aCON].field[aModBonus].value
+hero.childfound[cMHHeroPB].field[trkMax].value += hp</eval>
+    <eval phase="First" index="2"><![CDATA[
+perform hero.assignstr["Race.stDemon"]
+perform hero.assignstr["IsRace.stDemon"]
+perform hero.assignstr["Subtype.stDemon"]]]></eval>
+    </thing>
+  <thing id="cMPSHDemon" name="{Path of the Demon}" description="The chosen attribute will provide his Hit Dice, Skill Ranks per Level, Base Attack Bonus, and Saving Throws to the Modern Hero class." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="Helper" tag="Quintenary" name="Quintenary" abbrev="Quintenary"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <bootstrap thing="arMPSHDemo"></bootstrap>
+    </thing>
+  <thing id="arMPSHWrWf" name=" Modern Hero {Werewolf}" description="The chosen attribute will provide his Hit Dice, Skill Ranks per Level, Base Attack Bonus, and Saving Throws to the Modern Hero class." compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Modern Hero"]]></comment>
+    <fieldval field="cvHitDice" value="12"/>
+    <fieldval field="cvSpecName" value="Talents"/>
+    <fieldval field="cvSpecSing" value="Talents"/>
+    <fieldval field="cvSpec2ndN" value="Archetype Training"/>
+    <fieldval field="cvSpec2ndS" value="Archetype Training"/>
+    <fieldval field="cvSkillPts" value="4"/>
+    <arrayval field="cvBonFtMod" index="3" value="1"/>
+    <arrayval field="cvBonFtMod" index="7" value="2"/>
+    <arrayval field="cvBonFtMod" index="11" value="3"/>
+    <arrayval field="cvBonFtMod" index="15" value="4"/>
+    <arrayval field="cvBonFtMod" index="19" value="5"/>
+    <arrayval field="cvCustSTot" index="1" value="1"/>
+    <arrayval field="cvCustSTot" index="5" value="2"/>
+    <arrayval field="cvCustSTot" index="9" value="3"/>
+    <arrayval field="cvCustSTot" index="13" value="4"/>
+    <arrayval field="cvCustSTot" index="17" value="5"/>
+    <arrayval field="cvCustTot" index="0" value="1"/>
+    <arrayval field="cvCustTot" index="2" value="2"/>
+    <arrayval field="cvCustTot" index="6" value="3"/>
+    <arrayval field="cvCustTot" index="10" value="4"/>
+    <arrayval field="cvCustTot" index="14" value="5"/>
+    <arrayval field="cvCustTot" index="18" value="6"/>
+    <usesource source="SHModPath"/>
+    <tag group="cFort" tag="Good"/>
+    <tag group="cAttack" tag="Good"/>
+    <tag group="cWill" tag="Poor"/>
+    <tag group="ClVaryName" tag="Replace" name="Replace" abbrev="Replace"/>
+    <tag group="cRef" tag="Poor"/>
+    <tag group="AllowCust" tag="arWitBeast"/>
+    <tag group="AllowCust" tag="arRgrGuide"/>
+    <tag group="AllowCust" tag="arCavHuntm"/>
+    <tag group="AllowCust" tag="arBbnInvul"/>
+    <tag group="AllowCust" tag="arBbnMadDo"/>
+    <tag group="AllowCust" tag="arDrdMoonc"/>
+    <tag group="AllowCust" tag="arBbnMount"/>
+    <tag group="AllowCust" tag="arDrdPaLor"/>
+    <tag group="AllowCust" tag="arRgrSkirm"/>
+    <tag group="AllowCust" tag="arTotemGui"/>
+    <tag group="AllowCust" tag="arBbnTrPri"/>
+    <tag group="AllowCust" tag="arDrdWolf"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="fCategory" tag="Teamwork"/>
+    <tag group="fCategory" tag="Wild"/>
+    <tag group="SplAttr" tag="aSTR"/>
+    <bootstrap thing="tmLyWolfA">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    <eval phase="First" index="2"><![CDATA[perform hero.assignstr["Race.rSknwalker"]
+perform hero.assignstr["IsRace.rSknwalker"]]]></eval>
+    <eval phase="First" priority="10000" index="3"><![CDATA[perform hero.assignstr["HasAbility.rcSknWolf"]]]></eval>
+    <eval phase="PostAttr" priority="10000">var hp as number
+hp = hero.child[aSTR].field[aModBonus].value
+hero.childfound[cMHHeroPB].field[trkMax].value += hp</eval>
+    </thing>
+  <thing id="cMPSHWrWf" name="{Path of the Werewolf}" description="The chosen attribute will provide his Hit Dice, Skill Ranks per Level, Base Attack Bonus, and Saving Throws to the Modern Hero class." compset="CustomSpec">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="Helper" tag="Quintenary" name="Quintenary" abbrev="Quintenary"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <bootstrap thing="arMPSHWrWf"></bootstrap>
+    </thing>
+  <thing id="cMPSHUndBl" name="Undead Bloodline" description="The taint of the grave runs through your family. Perhaps one of your ancestors became a powerful lich or vampire, or maybe you were born dead before suddenly returning to life. Either way, the forces of death move through you and touch your every action.{br}{br}{b}Bloodline Arcana{/b}: Some undead are susceptible to your mind-affecting spells. Corporeal undead that were once humanoids are treated as humanoids for the purposes of determining which spells affect them.{br}{br}{b}Bloodline Powers{/b}: You can call upon the foul powers of the afterlife. Unfortunately, the more you draw upon them, the closer you come to joining them." compset="CustomSpec" summary="Some undead are susceptible to your mind-affecting spells. Corporeal undead that were once humanoids are treated as humanoids for the purposes of determining which spells affect them." uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="fInclude" tag="fComCast" name="Combat Casting" abbrev="Combat Casting"/>
+    <tag group="fInclude" tag="fDiehard" name="Diehard" abbrev="Diehard"/>
+    <tag group="fInclude" tag="fEndure" name="Endurance" abbrev="Endurance"/>
+    <tag group="fInclude" tag="fIronWill" name="Iron Will" abbrev="Iron Will"/>
+    <tag group="fInclude" tag="fSkillFoc" name="Skill Focus" abbrev="Skill Focus"/>
+    <tag group="fInclude" tag="fSpellFoc" name="Spell Focus" abbrev="Spell Focus"/>
+    <tag group="fInclude" tag="fStillSpl" name="Still Spell" abbrev="Still Spell"/>
+    <tag group="fInclude" tag="fToughness" name="Toughness" abbrev="Toughness"/>
+    <tag group="ClassSkill" tag="skKnowRel" name="Knowledge (religion)" abbrev="Knowledge (religion)"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <bootstrap thing="cSorGraspD">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cSorGraspD">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cSorGraspD">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cSorIncorp">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cSorOneofU">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="spChilTou1">
+      <autotag group="BonusSplAt" tag="3"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spFalsLif2">
+      <autotag group="BonusSplAt" tag="5"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spVampTou3">
+      <autotag group="BonusSplAt" tag="7"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spAnimDea4">
+      <autotag group="BonusSplAt" tag="9"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spWaveFat5">
+      <autotag group="BonusSplAt" tag="11"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spUndeto6">
+      <autotag group="BonusSplAt" tag="13"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spFingDea7">
+      <autotag group="BonusSplAt" tag="15"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spHorrWil8">
+      <autotag group="BonusSplAt" tag="17"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spEnerDra9">
+      <autotag group="BonusSplAt" tag="19"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="cSorGraveT">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cSorDeathG">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cSorDeathG">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    </thing>
+  <thing id="cMPSHWfDes" name="Destined" description="Your family is destined for greatness in some way. Your birth could have been foretold in prophecy, or perhaps it occurred during an especially auspicious event, such as a solar eclipse. Regardless of your bloodline&apos;s origin, you have a great future ahead.{br}{br}{b}Bloodline Arcana{/b}: Whenever you cast a spell with a range of &quot;personal,&quot; you gain a luck bonus equal to the spell&apos;s level on all your saving throws for 1 round.{br}{br}{b}Bloodline Powers{/b}: You are destined for great things, and the powers that you gain serve to protect you." compset="CustomSpec" summary="When you cast a Personal spell, gain a save bonus of its level for 1 round." uniqueness="unique">
+    <fieldval field="actUserMin" value="0"/>
+    <fieldval field="actUserMax" value="0"/>
+    <fieldval field="actName" value="Destined Bloodline Arcana: Has cast a &quot;Personal&quot; spell"/>
+    <usesource source="SHModPath"/>
+    <tag group="fInclude" tag="fDiehard" name="Diehard" abbrev="Diehard"/>
+    <tag group="fInclude" tag="fEndure" name="Endurance" abbrev="Endurance"/>
+    <tag group="fInclude" tag="fLeader" name="Leadership" abbrev="Leadership"/>
+    <tag group="fInclude" tag="fLightRef" name="Lightning Reflexes" abbrev="Lightning Reflexes"/>
+    <tag group="fInclude" tag="fMaxSpell" name="Maximize Spell" abbrev="Maximize Spell"/>
+    <tag group="fInclude" tag="fSkillFoc" name="Skill Focus" abbrev="Skill Focus"/>
+    <tag group="fInclude" tag="fWepFoc" name="Weapon Focus" abbrev="Weapon Focus"/>
+    <tag group="ClassSkill" tag="skKnowHist" name="Knowledge (history)" abbrev="Knowledge (history)"/>
+    <tag group="Helper" tag="UserAdjust" name="UserAdjust" abbrev="UserAdjust"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="fInclude" tag="fArcStrike" name="Arcane Strike" abbrev="Arcane Strike"/>
+    <bootstrap thing="cSorFated">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <bootstrap thing="cSorFated">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cSorFated">
+      <autotag group="ClSpecWhen" tag="19"/>
+      </bootstrap>
+    <bootstrap thing="cSorMeantT">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cSorMeantT">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cSorWithRe">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cSorDeReal">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="spAlarm1">
+      <autotag group="BonusSplAt" tag="3"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spBlur2">
+      <autotag group="BonusSplAt" tag="5"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spProtfro3">
+      <autotag group="BonusSplAt" tag="7"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spFreeMov4">
+      <autotag group="BonusSplAt" tag="9"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spBreaEnc5">
+      <autotag group="BonusSplAt" tag="11"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spMislead6">
+      <autotag group="BonusSplAt" tag="13"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spSpelTur7">
+      <autotag group="BonusSplAt" tag="15"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spMomePre8">
+      <autotag group="BonusSplAt" tag="17"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="spForesig9">
+      <autotag group="BonusSplAt" tag="19"/>
+      <autotag group="SpellType" tag="cHelpSor"/>
+      </bootstrap>
+    <bootstrap thing="cSorToDest">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cSorFated">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cSorFated">
+      <autotag group="ClSpecWhen" tag="7"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~apply the bonuses if we're activated
+      if (field[abilActive].value <> 0) then
+        #applybonus[BonLuck, hero.child[svAll], field[actUser].value]
+        endif]]></eval>
+    <eval phase="PostLevel" priority="500"><![CDATA[
+      ~if we're added by the Eldritch Heritage feat, we won't be able to figure
+      ~out the maximum level of spells, so just use 9th level.
+      if (tagis[CustTaken.cfgEldrHer] <> 0) then
+        field[actUserMax].value = 9
+        done
+        endif
+
+      var ourlevel as number
+      var i as number
+      ourlevel = field[xTotalLev].value - 1
+      i = 9
+
+      ~going from 9th level spells down to 0-level spells
+      while (i > -1)
+        ~figure out if the character can cast this level of spells
+        if (linkage[table].field[cKnowTot].matrixvalue[ourlevel,i] <> 0) then
+          ~if so, that's the maximum of our adjustment
+          field[actUserMax].value = i
+
+          ~and set a condition that will exit the loop
+          i = -1
+          endif
+        ~otherwise, check the next level down
+        i -= 1
+        loop]]></eval>
+    </thing>
+  <thing id="cMPSHCOLBn" name="Celestial Obedience, Lesser Boon" description="{b}Benefit{/b}: You gain a lesser Celestial Obedience" compset="CustomSpec" summary="You gain a lesser Celestial Obedience">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <eval phase="PostAttr" priority="10000">hero.childfound[chfCeObed].field[cfgMax1].value += 1</eval>
+    </thing>
+  <thing id="cMPSHCOGBn" name="Celestial Obedience, Greater Boon" description="{b}Benefit{/b}: You gain a greater Celestial Obedience" compset="CustomSpec" summary="You gain a Greater Celestial Obedience">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <eval phase="PostAttr" priority="10000">hero.childfound[chfCeObed].field[cfgMax2].value += 1</eval>
+    <pickreq thing="cMPSHCOLBn"/>
+    </thing>
+  <thing id="cMPSHCOSBn" name="Celestial Obedience, Superior Boon" description="{b}Benefit{/b}: You gain a superior Celestial Obedience" compset="CustomSpec" summary="You gain a Superior Celestial Obedience">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHAnge"/>
+    <eval phase="PostAttr" priority="10000">hero.childfound[chfCeObed].field[cfgMax3].value += 1</eval>
+    <pickreq thing="cMPSHCOGBn"/>
+    </thing>
+  <thing id="cMPSHDOLBn" name="Demonic Obedience, Lesser Boon" description="{b}Benefit{/b}: You gain a lesser Demonic Obedience" compset="CustomSpec" summary="You gain a lesser Demonic Obedience">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <eval phase="PostAttr" priority="10000">hero.childfound[cfgDeBoon].field[cfgMax1].value += 1</eval>
+    </thing>
+  <thing id="cMPSHDOGBn" name="Demonic Obedience, Greater Boon" description="{b}Benefit{/b}: You gain a greater Demonic Obedience" compset="CustomSpec" summary="You gain a Greater Demonic Obedience">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <eval phase="PostAttr" priority="10000">hero.childfound[cfgDeBoon].field[cfgMax2].value += 1</eval>
+    <pickreq thing="cMPSHDOLBn"/>
+    </thing>
+  <thing id="cMPSHDOSBn" name="Demonic Obedience, Superior Boon" description="{b}Benefit{/b}: You gain a superior Demonic Obedience" compset="CustomSpec" summary="You gain a Superior Demonic Obedience">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <usesource source="SHModPath"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="SpecSource" tag="arMPSHDemo"/>
+    <eval phase="PostAttr" priority="10000">hero.childfound[cfgDeBoon].field[cfgMax3].value += 1</eval>
+    <pickreq thing="cMPSHDOGBn"/>
+    </thing>
+  <thing id="cMPSHWwHow" name="Werewolf Howl" description="For one Lunar point, as a standard action, a Werewolf can unleash a bloodcurdling howl. All creatures within a 30-foot-radius burst must succeed at a Will save or become dazed for 1 round and then shaken for an additional 1d6 rounds. Any creature that makes a successful save against a Werewolf&apos;s howl is immune to the same Werewolfh&apos;s howl for 24 hours. This is a sonic mind-affecting fear effect. The save DC is Stremgth-based." compset="CustomSpec" summary="Werewolf can unleash a bloodcurdling howl" uniqueness="unique">
+    <usesource source="SHModPath"/>
+    <tag group="SpecSource" tag="arMPSHWrWf"/>
+    <tag group="StandardDC" tag="aSTR"/>
+    <tag group="AbilType" tag="Super"/>
+    <pickreq thing="cMPSHWwLn"/>
+    </thing>
+  <thing id="cMPSHBldFr" name="Blood Frenzy" description="For one Blood Point, the vampire can fly into a frenzy. It gains +2 Dex and +2 Strength, and a +2 to its AC. The frenzy lasts as long as the battle or 1 minute, whichever is shorter." compset="CustomSpec" summary="For one Blood Point, the vampire can fly into a frenzy." uniqueness="unique">
+    <comment>The Modern Path - Heroes of the Modern World
+
+Game Room Creations
+WWW.GAMEROOMCREATIONS.COM</comment>
+    <fieldval field="actName" value="Blood Frenzy"/>
+    <usesource source="SHModPath"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="SpecSource" tag="arMPSHVamp"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~if we're not activated, just get out
+      doneif (field[abilActive].value = 0)
+
+      hero.child[aSTR].field[Bonus].value += 2
+      hero.child[aDEX].field[Bonus].value += 2
+      hero.child[ArmorClass].field[Bonus].value += 2]]></eval>
+    <pickreq thing="cMPSHVpBd"/>
+    </thing>
+  </document>

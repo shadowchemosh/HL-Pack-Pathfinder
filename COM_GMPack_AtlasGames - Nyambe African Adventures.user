@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_AtlasGames - Nyambe African Adventures"/>
+  <fileinfo>
+    <info_author><![CDATA[
+      Frumple
+      Jeffrey Hersh <jeffrey.m.hersh@gmail.com>]]></info_author>
+    <info_history><![CDATA[
+      10/21/2012 - Jeff Hersh
+      Updated for PF7.0
+
+      3/18/2012 - Lord Magus
+      -Changed some races to NPC race type so they are not marked as normal playable races.
+
+      Feb 5, 2012 - Tim Shadow
+      -Renamed from "Nyambe.user" to "PFRPG_Nyambe_African_Adventures.user"
+      -Fixed the source as already in .1st file.
+      -Added Product ID to everything in the .user file.
+      -Added File Author info and history notes.]]></info_history>
+    </fileinfo>
+  <thing id="tmuTerkow" name="Terkow" description="Terkow are variant vampires. They appear as skinless humans, and are also known as &#147;skinwalkers,&#148; &#147;skinchangers,&#148; &#147;skinshifters,&#148; and a variety of related names. As skinless creatures, terkow are constantly losing blood and must suck the blood from living beings to replenish their supply.\n\nThough weaker than vampires in many ways, a terkow&apos;s ability to operate under direct sunlight and disguise itself by wearing the skins of its victims makes it a very dangerous opponent." compset="Template" uniqueness="unique">
+    <fieldval field="tmInfHD" value="All racial HD become d8s"/>
+    <fieldval field="tmReplRaHD" value="8"/>
+    <fieldval field="tmSTR" value="4"/>
+    <fieldval field="tmDEX" value="4"/>
+    <fieldval field="tmINT" value="2"/>
+    <fieldval field="tmWIS" value="2"/>
+    <fieldval field="tmCHA" value="4"/>
+    <fieldval field="tmAC" value="4"/>
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="srcNyambe"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <tag group="TypeAndAug" tag="tpUndead"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raDarkVis"></bootstrap>
+    <bootstrap thing="typUndead"></bootstrap>
+    <bootstrap thing="fAlertness"></bootstrap>
+    <bootstrap thing="fDodge"></bootstrap>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d4_4"/>
+      <autotag group="Value" tag="2"/>
+      <assignval field="wDamExtra" value=" plus energy drain"/>
+      </bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="xChanRes">
+      <autotag group="Value" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdMgSi">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsAcid">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsCold">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsElec">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xSplRs"></bootstrap>
+    <bootstrap thing="rauTrkStWa"></bootstrap>
+    <bootstrap thing="rauTrkBdDr"></bootstrap>
+    <bootstrap thing="rauTrkCtSp"></bootstrap>
+    <bootstrap thing="raEnDrain">
+      <assignval field="livename" value="Energy Drain (2)"/>
+      </bootstrap>
+    <bootstrap thing="rauTrkBdLo"></bootstrap>
+    <bootstrap thing="rauTrkFySk"></bootstrap>
+    <bootstrap thing="fLightRef"></bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="raGrab">
+      <autotag group="Target" tag="wClaw"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">
+      ~ We have bonuses to many skills
+      #skillbonus[skBluff] += 8
+      #skillbonus[skStealth] += 8
+      #skillbonus[skPercep] += 8
+      #skillbonus[skSenseMot] += 8</eval>
+    <eval phase="Final" priority="11000" index="2">
+      var damage as number
+
+      ~ Set up our spell resistance
+      damage = herofield[tCR].value + 11
+      damage = minimum(damage, 35)
+      #applysr[damage]</eval>
+    <prereq message="Living creature required." iserror="no">
+      <validate><![CDATA[
+        ~once we've been selected, we're fine (since this makes the creature undead).
+        validif (@ispick <> 0)
+
+        ~we're valid if the hero is not unliving
+        validif (hero.tagis[NotLiving.?] = 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rauTrkStWa" name="Salt Water Vulnerability" description="Terkow suffer agonizing pain and take 4d6 points of damage per round of total immersion in salt water. Smaller quantities of salt water inflict 1d6 points of damage per round of contact with the creature (no saving throw)." compset="RaceSpec">
+    <usesource source="srcNyambe"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Weakness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="20000"><![CDATA[
+    ~find our swim pick, then see if it has a swim speed of 0
+    if (hero.child[xSwim].field[abValue].value <> 0) then
+      ~if so, hide and disable ourself
+      perform assign[Hide.Special]
+      perform assign[Helper.SpcDisable]
+    endif]]></eval>
+    </thing>
+  <thing id="rauTrkBdDr" name="Blood Drain" description="The terkow can suck blood from a living victim with its fangs by making a successful grapple check. If it pins the foe, it drains blood, inflicting 1d4 points of Constitution damage each round the pin is maintained. For every Constitution point drained, the terkow heals itself 5 hit points, up to its normal maximum." compset="RaceSpec" summary="Drain blood to inflict 1d4 Con dam to foe grappled at end of your turn.">
+    <usesource source="srcNyambe"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="rauTrkCtSp" name="Create Spawn" description="A terkow can create spawn out of those it slays with blood drain or energy drain, provided that the slain creature is of the same creature type as the terkow&apos;s base creature type. The terkow must skin its victim after slaying it. The victim then rises from death in 1d4 days, returning as a rawbones if it had 4 or fewer Hit Dice, and as a terkow if it had 5 or more Hit Dice. In either case, the new creature is under the command of the terkow that created it, and remains enslaved until its master is destroyed. A terkow may have enslaved spawn totaling no more than twice its own Hit Dice; any spawn it creates that would exceed this limit become free-willed undead." compset="RaceSpec" summary="Opponents killed by blood drain or energy drain rise 1d4 days after burial.">
+    <usesource source="srcNyambe"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="rauTrkBdLo" name="Blood Loss" description="A terkow continually oozes blood. This causes it to lose hit points at the rate of 2 per day. Terkow do not heal naturally; they can only restore lost hit points by draining blood or through negative energies designed to heal the undead." compset="RaceSpec">
+    <usesource source="srcNyambe"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="rauTrkFySk" name="Flay Skin" description="After a terkow drains a humanoid victim of blood, it flays the victim&apos;s skin and wears it to replace its own (provided the terkow and the victim are of the same creature type and size). This provides the terkow with several benefits. Wearing a skin allows the terkow to disguise itself as its victim, giving it a +10 circumstance bonus on Disguise checks. While wearing a skin, the terkow also gains fast healing 5. The stolen skin only remains viable for 24 hours, after which the skin rots and sloughs off, revealing the monster beneath." compset="RaceSpec">
+    <usesource source="srcNyambe"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="ruGeier" name="Geier" compset="Race">
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="18"/>
+    <fieldval field="rSTR" value="10"/>
+    <fieldval field="rDEX" value="3"/>
+    <fieldval field="rCON" value="10"/>
+    <fieldval field="rINT" value="-8"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="5"/>
+    <fieldval field="rSpeed" value="15"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rCR" value="3"/>
+    <fieldval field="rAC" value="4"/>
+    <usesource source="srcNyambe"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="HasType" tag="tpAnimal"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raS2SavDis"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Average"/>
+      <autotag group="Value" tag="40"/>
+      </bootstrap>
+    <bootstrap thing="fHover"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="1"/>
+      </bootstrap>
+    <eval phase="First">perform hero.childfound[wUnarmed].assign[Hide.Weapon]</eval>
+    <eval phase="PreLevel" priority="4000" index="2">
+      #skillinnate[skFly] += 2
+      #skillinnate[skPercep] += 2</eval>
+    </thing>
+  <thing id="raS2SavDis" name="Disease Resistant" description="Geiers gain a +4 racial bonus on saving throws against diseases." compset="RaceSpec">
+    <usesource source="srcNyambe"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final"><![CDATA[#situational[hero.child[svAll],"+4 vs. disease",field[name].text]]]></eval>
+    </thing>
+  </document>

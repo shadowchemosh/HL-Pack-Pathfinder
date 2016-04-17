@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_ModulePaizo - Tomb of the Iron Medusa"/>
+  <thing id="tmTIMInfVm" name="Vampire, Infernal Origin" description="Infernal origin vampires were given unlife by infernal powers. They are not required to return to her coffin unless they are reduced to 0 hit points. They lose the children of the night, change self, and create spawn abilities, but gain slay living as a spell-like ability and the ability to summon barbed devils (level 7, 2 barbed devils) to aid them, along with immunity to fire." compset="Template" uniqueness="unique">
+    <fieldval field="tmInfHD" value="All racial HD become d8s"/>
+    <fieldval field="tmReplRaHD" value="8"/>
+    <fieldval field="tmSTR" value="6"/>
+    <fieldval field="tmDEX" value="4"/>
+    <fieldval field="tmINT" value="2"/>
+    <fieldval field="tmWIS" value="2"/>
+    <fieldval field="tmCHA" value="4"/>
+    <fieldval field="tmAC" value="6"/>
+    <arrayval field="tmCRArray" index="0" value="2"/>
+    <usesource source="srcTombIrM"/>
+    <tag group="TemplHelp" tag="Acquired" name="Acquired" abbrev="Acquired"/>
+    <tag group="TypeAndAug" tag="tpUndead" name="Undead" abbrev="Undead"/>
+    <tag group="AlgnReq" tag="Evil" name="Any Evil" abbrev="Any Evil"/>
+    <bootstrap thing="fAlertness"></bootstrap>
+    <bootstrap thing="fDodge"></bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="fLightRef"></bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="raDarkVis"></bootstrap>
+    <bootstrap thing="xVamBlood"></bootstrap>
+    <bootstrap thing="xVamDom"></bootstrap>
+    <bootstrap thing="raVampWeak"></bootstrap>
+    <bootstrap thing="raShadowle"></bootstrap>
+    <bootstrap thing="raEnDrain">
+      <assignval field="abValue" value="2"/>
+      </bootstrap>
+    <bootstrap thing="xFastHeal">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="xVamGas"></bootstrap>
+    <bootstrap thing="xVamClimb"></bootstrap>
+    <bootstrap thing="xChanRes">
+      <autotag group="Value" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdMag">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdSil">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsCold">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsElec">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="typUndead"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d4_4"/>
+      </bootstrap>
+    <bootstrap thing="spSlayLiv5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="xImmFire"></bootstrap>
+    <bootstrap thing="raSummon">
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      <assignval field="livename" value="Summon (level 7, 2 barbed devils)"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ We have bonuses to many skills
+      #skillbonus[skBluff] += 8
+      #skillbonus[skStealth] += 8
+      #skillbonus[skPercep] += 8
+      #skillbonus[skSenseMot] += 8</eval>
+    <exprreq message="Base creature 5 HD required."><![CDATA[herofield[tHitDice].value >= 5]]></exprreq>
+    <prereq message="Living creature required." iserror="no">
+      <validate><![CDATA[
+        ~once we've been selected, we're fine (since this makes the creature undead).
+        validif (@ispick <> 0)
+
+        ~we're valid if the hero is not unliving
+        validif (hero.tagis[NotLiving.?] = 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcAOEyeRay" name="Eye Ray" description="Once per round, as a swift action, the animated object may shoot a ray of fire from its eyes at a target within 30 feet as a ranged touch attack that deals 4d6 points of fire damage on a successful hit. This ability costs 2 Construction Points." compset="RaceCustom" uniqueness="useronce">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcTombIrM"/>
+    <tag group="CustomCost" tag="2" name="2" abbrev="2"/>
+    <tag group="AllowRCust" tag="rAnimObjeH"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="Usage" tag="Round"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="PostLevel" priority="10000">~+2 natural AC
+      hero.child[mNatural].field[Bonus].value += 2
+
+      ~set our hardness
+      perform hero.childfound[raHardness].assign[Value.10]</eval>
+    </thing>
+  <thing id="rcAOSelfDe" name="Self Destruct" description="When reduced to 0 or fewer hit points, the animated object explodes in a rain of adamantine shrapnel, dealing 4d8 slashing damage to all within a 20-foot radius (DC 13 Reflex save for half ). This ability costs 2 Construction Points." compset="RaceCustom" uniqueness="useronce">
+    <usesource source="srcTombIrM"/>
+    <tag group="CustomCost" tag="2" name="2" abbrev="2"/>
+    <tag group="AllowRCust" tag="rAnimObjeH"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <eval phase="PostLevel" priority="10000">~+2 natural AC
+      hero.child[mNatural].field[Bonus].value += 2
+
+      ~set our hardness
+      perform hero.childfound[raHardness].assign[Value.10]</eval>
+    </thing>
+  </document>

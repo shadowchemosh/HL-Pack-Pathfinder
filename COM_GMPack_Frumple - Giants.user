@@ -1,0 +1,1112 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_Frumple - Giants"/>
+  <fileinfo>
+    <info_history>
+      This file is for community versions of giants and other rock throwers. The main difference is how they handle rock throwing. These versions bootstrap a rock with the appropiate bonuses.
+
+      May 21, 2014 - Tim Shadow
+      -Changed raInvGCRun to be raCBRunes2.
+      -Changed raInvGClaw to be raCBInvGCl.
+      -Changed raShaMilit to be raCBMilita.
+      -Changed raShaShadC to be raCBShaClo
+
+      </info_history>
+    </fileinfo>
+  <thing id="xCBRockThr" name="Rock Throwing" description="This creature is an accomplished rock thrower and has a +1 racial bonus on attack rolls with thrown rocks. A creature can hurl rocks up to two categories smaller than its size; for example, a Large hill giant can hurl Small rocks. A &quot;rock&quot; is any large, bulky, and relatively regularly shaped object made of any material with a hardness of at least 5. The creature can hurl the rock up to five range increments. The size of the range increment varies with the creature. Damage from a thrown rock is generally twice the creature&apos;s base slam damage plus 1-1/2 its Strength bonus." compset="RaceSpec" summary="You can throw big rocks. They hurt." uniqueness="useronce">
+    <comment>use wRangeInc tag for range</comment>
+    <usesource source="CB_Variant"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Universal" tag="Universal"/>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <eval phase="First" priority="10000" index="3"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Use our value field as throw distance
+      call CalcValue
+      field[wRangeInc].value = field[abValue].value
+      field[livename].text = field[name].text & " (" & field[wRangeInc].value & " ft.)"]]></eval>
+    <eval phase="PreLevel" priority="2000"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ give wCBRock our range.
+      perform hero.childfound[wCBRock].pushtags[wRangeInc.?]]]></eval>
+    <eval phase="First" priority="20000" index="4"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ add bonuses and tags to rock
+      hero.childfound[wCBRock].field[atrBonus].value += 1
+      perform hero.childfound[wCBRock].assign[Helper.NatTwoHand]]]></eval>
+    </thing>
+  <thing id="rCBFireGia" name="Giant, Fire (CB)" description="Dwelling in underground strongholds next to subterranean rivulets of white-hot magma, the towering warriors known as fire giants are both renowned and feared for their unceasing lust for battle and remarkable skill at the forge. These traits, combined with their stocky builds, cause many to liken fire giants to dwarves, albeit at a much more massive and violent scale. Males typically sport wiry beards, rarely bothering to comb or take care of their facial hair outside of minor decorations such as plaiting it or weaving metal rings and chains throughout. Fire giants equip themselves in self-made plates of heavy armor and don open-faced helms in battle, wielding either immense greatswords or other massive bladed weapons in their pursuit of doling out destruction. Their skin ranges from the deep red of scorched brick to the sooty black of a crematory chimney, while their hair is usually a fiery orange that-according to numerous folk legends-glows like a blown ember when their volatile tempers are tried. Some lighter-skinned giants have hair the color of hammered lead, and a few are crowned with hair of burnished black, but all have eyes of red, gold, or orange, their jet pupils easily lost in their blazing irises.\n\nBoth female and male fire giants are almost uniformly unsightly in the eyes of other races. Warty, psoriatic, and often afflicted with humps, hunches, and misshapen or uneven limbs, these goliaths possess a strength that is as hideous as their appearances. Among fire giants, misshapen or deformed females are regarded as possessing strong blood and divine favor. The ugliest of fire giantesses usually find their way to crowns and thrones, either as rulers in their own right or wooed as consorts or potential queens by fire giant kings.\n\nFire giants command considerable respect among other races, not only for their strength, but also for their talent at smithing and ironmongery. The best-known fire giant smiths often find their work sought after by other giant-kin, who show off the maker's mark of their purchases with pride and view it as a point of boasting to own so fine a piece of steel. Their ironworks are less renowned among humans and other smaller humanoids, as fire giants rarely dabble in crafting items for the tinier races. Rarely, a particularly impressive non-giant warrior might garner the attention of a fire giant blacksmith, and some civilizations manage to establish tentative trade agreements with fire giants, though such dealings are risky for all involved, and fire giants usually find it easier to simply instigate war and exact tribute from the conquered peoples. Fire giants inclined to trade inflame the rage of dwarf-holds and clans in particular, who not only despise giants of all kinds with historical, cultural, and even religious enmity, but also brook no rivals in the sale and supply of ironworks. Countless skirmishes, battles, and even wars have been waged between dwarves and fire giants above and below the earth for blood, for honor, and for the primacy of their industry and trade.\n\n{b}Ecology{/b}\nFire giants dwell in mountainous regions rife with volcanic activity. The noxious fumes and sulfurous stink of fumaroles, mudpots, and lava pools are sweet savors to fire giants, though visitors to their demesnes might gag, choke, or even asphyxiate from the heavy smoke and exhaust of their furnace fires. Fire giants wade rivers of liquid-hot magma as easily as a human might ford a babbling brook of cool water, and they often sculpt their lairs to feature abundant geothermal and pyroclastic hazards. Such molten features are not only chosen for fire giants' personal comfort, but also for their intimidation value and the entirely practical security they provide against intruders and unwanted visitors. Fire giants never miss an opportunity to remind other races that they are not like such puny creatures, and things that would kill others are their meat and drink and the very air they breathe.\n\nFire giants eat the same foods that most humans do, but their digestive systems are as powerful and undiscerning as incinerators, converting every iota of what they consume into nourishment. At need, fire giants can subsist on lichen or even ashes, extracting trace nutrients from almost any organic matter. Of course, digesting base matter is far less efficient than consuming more practical sources of food, causing indigestion and distress in fire giants forced to eat such scraps. Since they live in areas where food supplies are often scarce, however, fire giants are prone to delving deep into the earth and cultivating vast fungal gardens tended by ettin or troll thralls, or using trade or tribute agreements with those living on the surface nearby to supplement their food stores.\n\nFire giants marry for life, and upon wedding, each partner welds a steel ring around one of the other's left fingers to symbolize their union. If a spouse perishes, that spouse's wedding band (if it can be recovered) is removed and refastened to one of the right fingers of the widow or widower. Widows and widowers are free to remarry, forging a new wedding band on the left hand for each spouse; some older, ill-fated fire giants may accumulate half a dozen marriage bands throughout the course of their lives, each hand bedecked in numerous metal keepsakes.\n\nAt birth, fire giant children are roughly the size of an adult dwarf, and they grow slowly to full maturity over the course of 50 years, topping well over a dozen feet in height and weighing 7,000 pounds. Fire giant infants are girded with forged armor as soon as they can walk, the plate armaments remolded and replaced as the babes grow, ensuring that they become used to the feel of steel against skin. Youths' wrought-iron playthings are scarcely distinguishable from deadly weapons, and by the age of 5, fire giant toddlers are as tall as humans and passably proficient with crude clubs and daggers. Rigorous and brutal training regimens make up the majority of fire giants' adolescence, and all are taught the art of war from an early age. Such barbarous childrearing fortifies their natural endowments, fostering the prodigious strength of fire giants and ensuring they will be ready to fight when they are old enough to go to war.\n\n{b}Habitat &amp; Society{/b}\nFire giants are very different from most of their enormous kin for one simple reason: their communal unity of purpose as a race. Whereas most giants are loners or clannish at best, lairing in isolated family holds and allying only rarely in times of war, nearly all fire giants uphold the brutal virtues of battle, and embrace the order wrought by violence and forcing creatures to submit to their will. Fire giants almost universally worship Zursvaater, the Prince of Steel, as their creator and patron deity. The story goes that nearly 10,000 years ago, Zursvaater offered a tribe of stone giants the powers of the blade and forge in exchange for their unfaltering worship and complete dominion over their souls. When the stone giants agreed, the Prince of Steel transformed them into fire giants, and bestowed upon them the gifts of fire, steel, and slaves, as well as the ominous and secretive prophecy of the Sword of Twilight.\n\nThe Prophecy of Twilight is just one of the numerous social structures implemented by fire giants to reinforce their warlike tendencies. The prophecy foretells the final fiery end of the world, its ruin brought about by the avenging and annihilating flame of fire giants. Fire giants believe it is their birthright to let the thunderous blows of their swords and hammers be heard throughout the world, for every cleaving blow struck in battle, every ringing stroke of hammer on anvil, and every slave laboring to its last exhausted breath over the scorching heat of giant furnaces is echoed in Zursvaater's eternal fires and the forging of the Sword of Twilight. When the doom of the universe is at hand, the Prince of Steel will take up the Sword of Twilight and shatter the arc of the heavens, unleashing the eternal conflagration to consume all that is, was, and ever shall be. These apocalyptic prophecies, handed down from elders to adolescents (and recounted in veiled legends to children), are little known outside of fire giant society, since the colossal smiths and warriors have little desire to see their destructive goals obstructed by outsiders.\n\nFire giants are cautious and crafty tacticians on the battlefield, more than happy to let others charge forward recklessly while they strike with overwhelming force at the point of their enemy's weakness. They tend to look down on most of their giant-kin, seeing the barbaric tribes and clans of less powerful giants as too wild at heart to accomplish any lasting glory. As far as companions go, fire giants generally prefer the company of creatures they can bully without accidentally killing, such as creatures immune to their fiery attacks (including hell hounds, pyrohydras, or young red dragons) and those they can intimidate into submission with their fires, such as trolls.\n\nWhile beholden to few, fire giants are fiercely loyal to their kings and the generals these kings appoint, and at their leaders' command have been known to form alliances with other giant races as part of a grand campaign. Fire giants have occasionally been manipulated by the crafty and powerful, from drow to dragons to devils and others, but rarely will they agree to any extensive plans until properly paid, and woe betide an erstwhile ally that betrays them, for one of the only things more frightening than fire giants' masterfully crafted blades is their ability to exact dreadful, flaming retribution.\n\nConsonant with their calculating nature, fire giants much prefer enslaving captives to wholesale slaughter, as a thrall has far greater value than a corpse. They rarely torment their captives for pleasure; far better to simply work them to death, feeding and tending them just enough to maintain the strength of these living tools, and using them as food when they finally collapse from exhaustion. To a fire giant, the sweetest of meats is the flesh of a slave marinated in the sweat of its own fatal labors." compset="Race">
+    <fieldval field="rHitDice" value="15"/>
+    <fieldval field="rHPStart" value="67"/>
+    <fieldval field="rSTR" value="21"/>
+    <fieldval field="rDEX" value="-1"/>
+    <fieldval field="rCON" value="11"/>
+    <fieldval field="rWIS" value="4"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-8"/>
+    <fieldval field="rAC" value="8"/>
+    <fieldval field="rCR" value="10"/>
+    <fieldval field="rDescript" value="This lumbering giant has short stumpy legs and powerful, muscular arms. Its hair and beard seem to be made of fire."/>
+    <fieldval field="rEnviron" value="warm mountains"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-5), band (6-12 plus 35% noncombatants and 1 adept or cleric of 1st-2nd level), raiding party (6-12 plus 1 adept or sorcerer of 3rd-5th level, 2-5 hell hounds, and 2-3 trolls or ettins), or tribe (20-30 plus 1 adept, cleric, or sorcerer of 6th-7th level; 1 fighter or ranger of 8th-9th level as king; and 17-38 hell hounds, 12-22 trolls, 7-12 ettins, and 1-2 young red dragons)"/>
+    <fieldval field="rTreasure" value="tandard (half-plate, greatsword, other treasure)"/>
+    <usesource source="CB_Variant"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Alignment" tag="Lawful"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <tag group="Race" tag="rFireGiant"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <bootstrap thing="fCleave"></bootstrap>
+    <bootstrap thing="fGreatClv"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="fImpOver"></bootstrap>
+    <bootstrap thing="fImpSunder"></bootstrap>
+    <bootstrap thing="stFire"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="120"/>
+      </bootstrap>
+    <bootstrap thing="raCBHeatRo"></bootstrap>
+    <bootstrap thing="lCommon"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="fArmHeavy"></bootstrap>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="fArmMedium"></bootstrap>
+    <bootstrap thing="fWepMart"></bootstrap>
+    <bootstrap thing="fArmShield"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="aaLowLiVis"></bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="fMartial">
+      <autotag group="Target" tag="wGreatswd"/>
+      </bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wGreatswd"/>
+      </bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="1d8_6"/>
+      </bootstrap>
+    <eval phase="First" index="2"><![CDATA[
+      field[livename].text = "Fire Giant"]]></eval>
+    <eval phase="PreLevel" priority="4000">
+      #skillinnate[skClimb] += 8
+      #skillinnate[skIntim] += 8
+      #skillinnate[skPercep] += 9
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="raCBHeatRo" name="Heated Rock" description="Fire giants transfer the heat of their bodies to rocks as part of an attack action when they throw rocks. A heated rock deals 1d6 points of additional fire damage on a hit." compset="RaceSpec" summary="Add 1d6 fire damage to thrown rocks">
+    <usesource source="CB_Variant"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      #extradamage[hero.child[wCBRock],"+1d6 fire",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="rCBCloudGi" name="Giant, Cloud (CB)" description="Perhaps nothing defines the whimsical and powerful cloud giants so well as the philosophical rift dividing their kind. Split almost evenly between good and evil, they behave in many ways like two separate races. Evil cloud giants lead reclusive lives, only coming down from their mountain peaks for vicious raids and brutal reprisals, while their good-aligned cousins seek out friendly contact and act as mentors for other species. The victims of attacks view cloud giants as brutal monsters, while the beneficiaries of their aid speak in awed tones of the benevolent colossi. Wise mountain communities hail the approach of one or two cloud giants as cause for welcome and perhaps even celebration, while the thundering approach of more than a couple is often regarded as the harbinger of despair.\n\nOther than their great size, cloud giants closely resemble slender humans. They tend toward muted coloration, with skin of milky white, pale gray, or powder blue. Their hair ranges from ash white to bluish gray, or even pale blond with a hint of red, and most individuals' eyes are gray, violet, or piercing blue. Regardless of the exact combination of features, all cloud giants possess an ethereal beauty and unearthly grace that seems contrary to their massive size and brute strength.\n\nCloud giants reject the notion of a common ancestor for giants. They acknowledge faint kinship with what they view as lesser giant species (generally, any giant shorter than themselves), but for themselves claim descent purely from the blood of titans and the gods themselves. Though their powers may have been diluted over the generations from the admixture of lesser species, cloud giants believe their strength still derives from a divine lineage. As evidence, they point to their stature, their superior mental development, and their inherent magical powers, all lacking in more common breeds of giants. Other giants, for their part, view the cloud giants' overbearing egos as perhaps their most titanic attribute.\n\nLegends speak of cloud giant cities that float high above the world on the very clouds themselves, and of cloud giants who tread the surfaces of these clouds as though they were solid ground. If such cities exist, few have seen them, and even most cloud giants dismiss them as idle fantasies. Yet some among their kind see a glimmer of truth buried within these myths, and comb the world for signs of the legendary floating cities and their cloud-dwelling kin.\n\n{b}Ecology{/b}\nA typical adult male cloud giant stands fully 18 feet in height and weighs 5,000 pounds. Females are a bit shorter and lighter, though particularly monumental warrior giants of both sexes exist. These individuals are usually respected among their peers as ideal specimens of their kind, and quickly rise to positions of power in their tribes. Such warrior giants can reach heights of up to 21 feet, and with their lavish garb and jewelry weigh up to 8,000 pounds-they are sometimes so bedecked in ornaments that they must rely on their levitation power to get around more easily.\n\nCloud giants were never a fecund race, and the breeding of new generations of cloud giants weighs heavily on the minds of their ruling oligarchs. Referencing moldering genealogies that suggest ideal partnerships, these leaders strive to arrange advantageous couplings between far-flung communities, at times even between tribes of opposite moral standing. Youth being what it is, many cloud giants ignore the guidance of their leaders and instead follow their hearts. While monogamy is a strict and strongly enforced tradition in most cloud giant societies, this doesn't necessarily extend to times when the population is at risk of irreparably dwindling. Thus, some individuals must sacrifice their partnership's sanctity for the needs of their tribe, and consent to bear or father the child of a different mate.\n\nYoung cloud giants learn to speak and walk as young as 2 years of age, but otherwise mature slowly, taking more than 6 decades to reach adulthood. Their magical powers develop relatively early, at about 8 years of age, though such abilities manifest clumsily at best until individuals reach maturity. Nonetheless, the sight of an ogre-sized toddler hovering in mid-air can be startling to humanoids living near a cloud giant settlement; most onlookers either perceive such an anomaly as a boon to be praised or a curse to be heeded. Cloud giants spend the majority of their youths adventuring or warring with their morally opposed brethren, then trail into old age and gradually declining health as they reach their third century, at which point most individuals retire to more scholastic endeavors or become wise elders among their tribespeople.\n\nCloud giants fancy themselves true epicures. To the palettes of cloud giants, rarer and more complicated dishes simply taste better, and they favor meals with small portions and numerous courses. Fruits, vegetables, grains, and cheeses dominate their tables, with meat (typically mountain-dwelling fowl) playing only a minor part in feasts. Spices and sauces from all manner of culinary techniques find their way into cloud giant kitchens. They wash meals down with chilled nectars, fine wine, and expensive liquors. Good-aligned cloud giants frequently employ at least one humanoid chef, while their evil kin are more likely to kidnap and enslave numerous servants to cook for them.\n\n{b}Habitat &amp; Society{/b}\nLike many other giants, cloud giants favor mountains, often dwelling at altitudes inhospitable to lesser creatures. Good-aligned cloud giants favor grand mansions or castles of gigantic scale. Their evil kin eschew such ostentatious structures as wasted effort, their abodes often little more than crude shelters of rough-hewn stone.\n\nCloud giants thrive on spirited debate regarding all manner of issues material or philosophical, with such discussions often turning temporarily acrimonious even between fast friends. Occasionally, particularly heated arguments turn to violence, though such disputes usually end before blood is drawn as rivals agree to disagree after an invigorating brawl. However, such rivalries were not always so peaceful, as the greatly opposed moral outlooks of cloud giants suggests.\n\nFor countless centuries, a great philosophical divide has sundered the cloud giants into two camps. Though scholars remain unsure as to exactly what debate or feud split them so diametrically, most agree that the argument was over a question of altruism versus pragmatism. The altruistic cloud giants maintained that as an enlightened people, it fell to them to guide and uplift other, less gifted races for the betterment of all. The pragmatic cloud giants, however, believed such treatment to be no gift at all, but rather theft of opportunity to attain one's full potential. Enlightenment cannot be given, they maintained, only earned. Matters turned darker when a splinter group of pragmatists brought forth the idea that it was the right of the cloud giants, blessed as they were, to take whatever they wished, for those who could not hold their own belongings didn't deserve to keep them. Bitter argument raged throughout cloud giant society, escalating first into bloodshed, then the murder of the most eminent scholars of both camps. Each blamed the other for resorting to violence first, and the rift between them remains unhealed to this day.\n\nRegardless of their alignment, almost all cloud giants bend to the rule of the wealthiest and most powerful of their kind, leaders known as oligarchs. Cloud giants go through a lengthy diplomatic process to determine the tribe's oligarch. Every 50 years, each family selects a speaker to represent them. All the speakers of the tribe take part in a voting process in which each speaker can cast a number of votes proportional to the value of her family holdings. In the end, the speaker who receives the most votes becomes oligarch of the tribe for that half-century, and has the greatest influence in matters that regard the tribe. When a particularly dire situation affects a whole region, the oligarchs of neighboring like-minded communities gather together to make joint decisions. Oftentimes, these matters relate to declaring war against morally opposed cloud giants, though particularly drastic circumstances may bring such feuding tribes together to combat a greater foe.\n\nCloud giants have a great love of all creatures of the sky, small or large. Birds in particular are sacred to their people, and individuals who are particularly gifted with such avian creatures, such as druids or rangers, are often referred to as &#147;bird mavens,&#148; a position of honor among cloud giants of either alignment. Cloud giants train and breed birds of all sizes, even rocs, along with other aerial beasts such as griffins and hippogriffs. Good-aligned cloud giants likewise keep pegasi and occasionally even dragon horses, while evil-aligned tribes harbor fiercer creatures like harpies and mihstu. Despite the fact that cloud giants often live in close proximity to dragons, most shy away from imposing upon such beasts, finding them too dangerous and independent.\n\nReligion isn't central to cloud giant life, but most individuals-whether good or evil-venerate Gozreh in his male air aspect to some degree. Many tribes worship him as Ioz'om, the Sky Father, a cloud giant of great beauty and stature. They credit Ioz'om with bringing their titan ancestors to the world from the Great Beyond, and with teaching the nascent cloud giant race the ways of civilization. Some evil tribes instead honor Rovagug, patron of destruction, while those individuals with a particular interest in magic sometimes take to worshiping Nethys." compset="Race">
+    <fieldval field="rHitDice" value="16"/>
+    <fieldval field="rHPStart" value="72"/>
+    <fieldval field="rSTR" value="25"/>
+    <fieldval field="rDEX" value="3"/>
+    <fieldval field="rCON" value="13"/>
+    <fieldval field="rINT" value="2"/>
+    <fieldval field="rWIS" value="6"/>
+    <fieldval field="rCHA" value="2"/>
+    <fieldval field="rSpeed" value="50"/>
+    <fieldval field="rFeat" value="-8"/>
+    <fieldval field="rAC" value="12"/>
+    <fieldval field="rCR" value="11"/>
+    <fieldval field="rSpCastLev" value="16"/>
+    <fieldval field="rDescript" value="This towering giant has finely chiseled features. Her skin is pale and smooth, and her long wispy hair flutters as if in a breeze."/>
+    <fieldval field="rEnviron" value="temperate mountains"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-5), family (2-5 plus 35% noncombatants plus 1 sorcerer or cleric of 4th-7th level and 2-5 griffons), or tribe (6-20 plus 1 sorcerer or cleric oracle of 7th-12th level and 2-5 griffons)"/>
+    <fieldval field="rTreasure" value="standard (chain shirt, morningstar, other treasure)"/>
+    <usesource source="CB_Variant"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="wRangeInc" tag="140"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Race" tag="rClouGiant"/>
+    <tag group="RaceSize" tag="Huge2"/>
+    <bootstrap thing="fIntProw"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="aaScent"></bootstrap>
+    <bootstrap thing="aaLowLiVis"></bootstrap>
+    <bootstrap thing="raCloOverW"></bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="140"/>
+      </bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="spFogClo2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spLevitat2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      <assignval field="livename" value="Levitate (self plus 2,000 lb.)"/>
+      </bootstrap>
+    <bootstrap thing="spObscMis1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="fAwesomeBl"></bootstrap>
+    <bootstrap thing="fCleave"></bootstrap>
+    <bootstrap thing="fGreatClv"></bootstrap>
+    <bootstrap thing="fImpBull"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="fImpOver"></bootstrap>
+    <bootstrap thing="lCommon"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="fArmShield"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="2d6_104"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="2d6_104"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000">
+      #skillinnate[skClimb] += 6
+      #skillinnate[skDiplo] += 8
+      #skillinnate[skIntim] += 10
+      #skillinnate[skPercep] += 11</eval>
+    <eval phase="First" index="2"><![CDATA[
+      field[livename].text = "Cloud Giant"]]></eval>
+    </thing>
+  <thing id="rCBFrostGi" name="Giant, Frost (CB)" description="Deep in the frostbitten realms of the north, a race borne of ice and steely hatred lays claim to the frozen lands through conquest and domination. Their brutality knows no bounds, and with each town or small city crushed by their axes and hammers, these raging behemoths threaten to overwhelm the natives of the tundra and establish themselves as the rightful inhabitants of the northlands. These towering, relentless warriors are known to those who fear them as frost giants.\n\nThe civilized folk of Golarion know frost giants as horrific brutes bent on murder and ruinous plunder, barbarians whose thunderous war cries deafen the ears as they chill the bone. In their pursuit to claim the land and establish themselves as the strongest inhabitants of the icy northlands, frost giants would first extinguish the plague of humanity that has swept over the world. In frost giant culture, humans and their ilk are viewed as little better than vermin, and are hardly worthy of the crops they grow and the cities they build. Just as a human might give little regard to an insect crushed underfoot, so too does a frost giant view the realms of humanity. In the chillingly ruthless minds of frost giants, if all the nations of the world must be ravaged to claim the lands that are rightfully theirs, so be it.\n\n{b}Ecology{/b}\nEven among their equally massive giantkin, frost giants are intimidating to behold. They stand about 15 feet tall, their thick, muscular frames weighing in at approximately 2,800 pounds. Most have soft blue or frost-white skin, and their flesh is always cold to the touch, despite the hot blood that courses beneath it. A frost giant's hair typically grows in shades of dirty yellow, white, or light blue, which both sexes often wear long and braided. Their eyes match their hair, ranging from hues of bestial amber to icy cyan. Frost giant males usually grow their beards several feet long, and more than a few intentionally soak their beards with water before battle, so as to encase their facial hair in fearsome daggers of ice.\n\nPhysiologically, frost giants are similar to other humanoids, though their eyes are particularly sensitive to the higher end of the visible spectrum, which helps them navigate and identify friend from foe in blinding snowstorms and during the bright, nightless summers of the north. Immune to the blustery cold of their mountain habitat, frost giants have little need for the heavy winter garb most humanoids require in order to survive the harsh climate, and instead prefer to wear animal skins and pelts, along with unassuming jewelry-usually symbolic to the peoples of their clan. Frost giant warriors don chain shirts and steel helmets of their own making, their armor festooned with horns, feathers, and skulls of their prey and enemies. Some choose to eschew armor altogether, instead painting their bare faces and torsos in intricate tribal designs with dyes of woad.\n\nFrost giants fuel their enormous bodies and exhausting rampages primarily with a diet of meat complemented by vegetables and hearty grains. Much of their caloric intake comes from herds of elk and fallow deer, though arctic fauna such as highland tubers and truffles suffice in particularly lean times. Perhaps one of the more abhorrent traditions practiced by a growing number of frost giant tribes is the act of eating their own kind in order to cull the weak from their ranks. Such cannibalistic tribes have devolved beyond even the barbarism of most frost giants, believing that the strength of others can be absorbed by eating their flesh, and tend to worship foul demon lords or nature spirits in place of traditional giant gods.\n\nFrost giants can live to be 250 years old, but most are lucky to reach their second century, thanks in no small part to their violent lifestyles and the harsh environs they inhabit. Youths reach sexual maturity at about the age of 50, though they are often driven into combat at even younger ages by their fellow tribespeople; older frost giants steadfastly believe that adolescence and inexperience are hardly excuses for prolonging the invigorating joys of war. Both males and females are taken onto the battlefield to taste the blood of their enemies and to feel the rush of victory. Romances between frost giants tend to be as short and passionate as their bloody brawls, and females are expected to do most of the child-rearing within a tribe, though particularly domineering frost giant mothers have been known to pass the burden of parenting onto the male. Thankfully for the impatient frost giants, their young become mostly self-sufficient after only a few years, able to hunt small game and care for themselves among the encampment by their first decade.\n\n{b}Habitat &amp; Society{/b}\nFrost giants dwell amid frigid mountains or in the bitter hinterlands of the north. Many subsist in small tribes roaming the frozen wastes, hunting large game, and pillaging remote settlements for spoils. For these itinerate wanderers, glacial caves or earthen dugouts serve as temporary shelters from which they can attack unwary groups of adventurers and tundra-spanning caravans that wander too close to the icy hillsides. Just as many frost giant tribes instead prefer to abide in makeshift settlements year-round, lairing in either abandoned stone castles or crude fortresses carved out of glacial ice. From these holds, frost giants hunt game and raid for slaves and provisions, trekking back to their bases between raids to recuperate and divvy their plunder. Some frost giants even make their homes in vast ruins, carving out meager sovereignties in hopes of one day restoring the fabled kingdoms of their ancestors.\n\nFrost giants are brutal, superstitious warriors among whom only might makes right. The title of jarl inevitably falls to the strongest and most worthy warrior of the tribe, who leads her people to glory through intimidation and violence. At any time, a jarl may be challenged in combat by one of her peers. The winner of such fatal duels is deemed the rightful ruler of the tribe-at least until the next challenger approaches.\n\nThe influence of a particularly charismatic jarl can often extend to clans outside her own tribe. In such cases, the leaders of the lesser tribes are typically known simply as chieftains or warlords. These allied tribes often meet to trade goods and arrange marriages, and especially organized collaborations have been known to form massive war bands for devastating campaigns that can span entire mountain ranges before disbanding.\n\nA few frost giants have magical powers and can use runes, sorcery, or foul rituals to cast divinations or bring ruin to their enemies from afar. Such individuals serve their tribes as shamans, earning great standing among their peers second only to the jarl herself. Frost giants take a serious view of their heritage, and in addition to their more oracular duties, shamans are responsible for teaching the tribe's children about their ancestry and the tribe's oral history.\n\nGiven their generally warlike nature, frost giants show unusual reverence for their dead. Warriors are buried beneath icy cairns on the battlefield where they met their end, and are placed in their grave alongside their favored weapons. Particularly favored chieftains and jarls are taken back to the frost giants' encampment or base, where a small ceremony is performed before the deceased is buried next to grave offerings such as gold and even live slaves, tributes meant to ensure she is given proper station in the afterlife. In contrast, those who challenge their current jarl in combat and lose the duel are treated as little better than traitors, their bodies desecrated and some part of their skeleton mounted on the jarl's throne or the hilt of her weapon.\n\nFrost giants possess a particular fondness for slavery, and whenever possible take captives from their destructive raids. Bands of frost giants usually keep at least one or two humanoid slaves shackled to a slave handler-a feared and respected position of authority within frost giant society. Slave handlers are responsible for making sure slaves don't escape, as well as arranging slave trades between other tribes and warlike cultures or divvying out slaves for meals in lean times.\n\nIn addition to humanoid thralls, frost giants are quite fond of monstrous pets, including winter wolves and young white dragons, though virtually any creature native to their preferred domain are prone to capture and crude domestication. Mammoths, yetis, and even remorhazes and linnorms can sometimes be found battling alongside frost giant barbarians, as well as guarding frost giant encampments when their masters are out pillaging." compset="Race">
+    <fieldval field="rHitDice" value="14"/>
+    <fieldval field="rHPStart" value="63"/>
+    <fieldval field="rSTR" value="19"/>
+    <fieldval field="rDEX" value="-1"/>
+    <fieldval field="rCON" value="11"/>
+    <fieldval field="rWIS" value="4"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-7"/>
+    <fieldval field="rAC" value="9"/>
+    <fieldval field="rCR" value="9"/>
+    <fieldval field="rDescript" value="This giant looks like a thick, muscular human. It has frost-white skin and long, light blue hair that it wears braided."/>
+    <fieldval field="rEnviron" value="cold mountains"/>
+    <fieldval field="rOrgan" value="solitary, gang (3-5), band (6-12 plus 35% noncombatants and 1 adept or cleric of 1st-2nd level), raiding party (6-12 plus 35% noncombatants, 1 adept or sorcerer of 3rd-5th level, 1-4 winter wolves, and 2-3 ogres), or tribe (21-30 plus 1 adept, cleric, or sorcerer of 6th-7th level; 1 barbarian or ranger jarl of 7th-9th level; and 15-36 winter wolves, 13-22 ogres, and 1-2 young white dragons)"/>
+    <fieldval field="rTreasure" value="standard (chain shirt, greataxe, other treasure)"/>
+    <usesource source="CB_Variant"/>
+    <tag group="Race" tag="rFrosGiant"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <bootstrap thing="stCold"></bootstrap>
+    <bootstrap thing="fCleave"></bootstrap>
+    <bootstrap thing="fGreatClv"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="120"/>
+      </bootstrap>
+    <bootstrap thing="aaLowLiVis"></bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="fMartial">
+      <autotag group="Target" tag="wGreataxe"/>
+      </bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="fImpOver"></bootstrap>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="lCommon"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="fImpSunder"></bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="1d8_6"/>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+
+field[livename].text ="Frost Giant"]]>
+      <before name="Template Name Modification"/>
+      </eval>
+    <eval phase="PreLevel" priority="4000" index="2"><![CDATA[
+#skillinnate[skClimb] += 3
+#skillinnate[skIntim] += 4
+#skillinnate[skPercep] += 5
+#skillinnate[skStealth] += 12
+
+
+#racialsituational[hero.child[skStealth],"+4 in snow",field[name].text]]]>
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="rCBHillGia" name="Giant, Hill (CB)" description="Hill giants are towering brutes of frightening strength, heartless selfishness, and alarming stupidity. Dwelling in the temperate, rolling regions that give them their name, hill giants prove a constant menace to hillside communities, which suffer the brunt of the monstrous giants' unswayable brutality. Though hill giants raid primarily for food and resources, their depredations are not without a sizeable share of entirely extraneous, meaningless destruction, often as a result of their voracious appetite for mayhem and their insatiable bloodlust. For though they are dull-witted, hill giants are still smart enough to derive pleasure from chaos, and their overwhelming greed and ravenous hunger ensure that as long as there is something within reach that can be smashed, stolen, or eaten, a hill giant will gladly deliver such services.\n\nHill giants learn at an early age that violence is a universal problem-solver, a notion constantly reinforced within hill giant tribes. From the first disagreement won or lost by a beating, a hill giant quickly realizes that strength is power, and everything else is merely auxiliary. Concepts such as beauty, intelligence, and forethought are nothing short of laughable to hill giants; they rely only on their brutish muscles to find and acquire food or resources, muscles that prove unsettlingly well suited for such purposes. As much as hill giants prize their strength, however, almost all lack the ambition to utilize their power for anything more than personal or tribal gain. They are lazy, and strength is easy. Hill giants toss aside whoever and whatever stand in their way, and make few alliances, trusting to their own strength and primitive superstitions to get them through even the toughest times.\n\n{b}Ecology{/b}\nMost hill giants stand between 10 and 11 feet tall, although towering individuals of up to 13 feet have been known to lead their tribes. Both males and females weigh between 1,000 pounds and 1,300 pounds, their weight fluctuating greatly depending on the availability of food. The smallest hill giants-fewer than one in every hundred or so-stand about 8-1/2 feet tall. Such relatively short individuals are called &#147;guffs&#148; by their peers, who regard them as the giant equivalent of runts. Being called a guff is a terrible insult among hill giants, who regard stature as directly correlating to strength, and the term is usually reserved for the mockery of humans and similarly puny creatures. Guffs are given the same responsibilities within the tribe as their taller hill giant brethren, and succeed about as often; still, such individuals never fully live down the stigma of their stature.\n\nHill giants' skin ranges from tan to dusky brown, more as a result of their inclination toward the sunny outdoors than any genetic trait. Their indifference for aesthetics or even personal health often leads them to sit or stand under the sun for hours on end, and most-male and female-burn their scalps to such an extent that the majority of their hair falls out. Even in thick forests, the tops of hill giants' heads are often exposed to direct sunlight, baking their skin during the day. Their robust upper torsos tend to overcast their lower bodies, denying direct sunlight to their ever-pasty legs even on the brightest summer days. In temperate climates, hill giants' skin is red or bronze from the shoulder up and pale pink or light gray from the waist down. Hill giants in warmer climes often have copper skin tones thanks to decades of year-round exposure to the sun.\n\nHill giants are nearly as fecund as they are violent, a trait that makes them all the more dangerous to those unfortunate enough to live near their roving bands. Mating within hill giant society is as disorganized as anything else, the only social stricture set in place being that the chieftain gets the first pick from among potential mates. Beyond this, hill giants' sexual activity and promiscuity are limited only by how much stamina the giants can afford to squander between raids. Inbreeding is relatively common in hill giant tribes, though even hill giants are smart enough to realize that too many generations of indiscriminate incest can lead to a weakened tribe. Gestation is similar to that of humans, and rare is the occasion when a female hill giant isn't with child. Unlike humans, however, hill giants have little regard for the condition of their infants upon birth, and a heavily pregnant hill giant will take part in raids and other strenuous activities with little or no thought for the child she carries. Due in part to this recklessness, the rate of live births among hill giants is extremely low, with only about one in every three births resulting in a living child, and even fewer hill giants make it to adolescence. Regardless, their lengthy lifespans and unabashed libidos ensure that more than enough children are born to maintain an individual tribe's population.\n\nThough they can live upward of 200 years, hill giants' brutal and unhygienic lifestyles mean that few-if any-individuals live long enough to die of old age; most perish within their first century as a result of violence, disease, or starvation. Rather than garnering the respect of younger tribesfolk, elderly hill giants are tolerated at best and ridiculed as resource-drains at worst. The chieftain's word is usually enough to keep other hill giants from tormenting their elders, but during particularly harsh winters or in times when food is sparse, even their leader's decree won't stop most hill giants from taking older individuals out to the wilds and abandoning them.\n\nHill giants primarily subsist on meat and whatever food they can steal. During raids on industrious villages or traveling caravans, hill giants are sure to grab as much food as possible before taking the feast back to their tribe. When they find roving herd animals or livestock, hill giants tend to simply club a beast and bring its entire body back to camp to be cooked whole and served hot. Though they can digest raw meat better than humans, hill giants suffer indigestion if it makes up the majority of their daily diet. Vegetables, particularly starchy ones like potatoes and corn, are also popular when available. Hill giants have a largely indiscriminate pallet, and often cook stews made up of entirely incongruous food combinations to celebrate particularly successful raids or times of prosperity. The mishmash of flavors hill giants call a meal birthed the common expression &#147;hill giant ragout,&#148; a saying used in reference to particularly foul-tasting stews and soups.\n\n{b}Habitat &amp; Society{/b}\nHill giant tribes are largely nomadic, and claim their meager settlements like most other things they do: loudly, lazily, and with surprising swiftness. Granted, &#147;settlement&#148; is a generous word for the places they dump their belongings for a few months. Dwellings consist mostly of found shelters like caves and captured wagons, though in the warm season hill giants occasionally spread animal pelts across trees to act as hammocks on fair nights and roofs in the rain. A chieftain often forces her tribe to build her a private shelter in which to sleep and guard the tribe's treasures. These crude structures typically consist of little more than shabbily constructed huts built over large mud holes. Treasures are tossed in the hole, beside which the chieftain makes her crude bed on the rough ground; whatever family members the chieftain trusts are sometimes permitted to sleep in the shanty as well.\n\nAmong the highly fertile and promiscuous hill giants, family ties are complicated. Though hill giants openly practice polygamous and often incestuous partnerships, they nonetheless remain somewhat territorial regarding their favored mates. Only in the case of the chieftain is such covetousness allowed; any other members of the tribe who show signs of possessiveness over a mate are quickly reprimanded by their peers. The responsibility of taking care of hill giant children largely falls upon the women of the tribe, who nonetheless remain blundering and neglectful in their duties, a contributing factor to the high infant mortality rate among hill giants.\n\nThough births are common in even small tribes, the arrival of a living hill giant baby is often marked with a great feast. The feast is not a celebration of birth, but rather a measurement of the tribe's resources as the giants make preparations for another mouth to feed. If the tribe still has an abundant store or reliable source of food after the feast, the baby is celebrated and ritualistically scarified to symbolize its allegiance to the tribe. If after the meal the chieftain determines the tribe cannot sustain another member, the baby is killed. The chieftain kills the baby publicly to remind the tribe that its future depends on the hunt, and the corpse is used as bait to attract game so the tribe might have more food when the next child is born. This brutal tradition is often so ingrained in hill giant society that the mothers of sacrificed children hardly bat an eye at the barbaric act, and all accept the ceremony as a necessary part of hill giant life, oftentimes reveling in the bloodshed.\n\nHill giants hold strength above all other concepts, and learn to respect brawn early in their lives. Shows of strength need not necessarily entail spilt blood, and in raids or conflicts hill giants know that accepting the surrender of others can be as beneficial to the tribe as slaughtering such opponents. Rivals who surrender often regret their decision, as most victims are captured and taken back to the hill giant encampment as slaves, where they are forced to build structures, grow food, and commingle to produce even more servants for their ruthless masters. Hill giants apply their simple ideals to what they look for in a slave, and when possible take back only the strongest specimens. Even though their greatest need is for laborers in large numbers, hill giant tribes particularly enjoy enslaving enemy warriors for use in their own battles. Such enslaved fighters are the first to be sacrificed in frontal assaults and hastily planned raids, and are often set loose as distractions before the tribe makes a more organized attack. Slaves who show their prowess in the fight and manage to live through more than a couple battles may eventually be adopted into the hill giant tribe, though such instances are incredibly rare, and few non-hill giants desire such an allegiance. If a creature showcases power other than strength, such as spectacular magic or cunning tactics, hill giants give the captive no more respect than any other creature of like physical prowess, and set it to work as a common laborer.\n\nHill giants are barely more intelligent than animals, and their animalistic nature is particularly evident in battle. They intimidate opponents with bearlike posturing, and possess wolf like tactics, often chasing their victims for a short time to wear them down before killing them. It is perhaps unsurprising, then, that hill giants commonly raise wolves as hunting companions, as well as other beasts native to the region that prove both loyal and useful.\n\nReligion is a relatively unimportant fixture in hill giant society, though each tribe tends to have its own origin story. Those tribes that do practice religion usually do so in the form of shamanism or through primitive superstitions, and many make living sacrifices to their brutal gods. Hill giants capable of understanding the concept of divinity usually worship Fandarra, Norgorber, Rovagug, or Urazra, favoring these violent deities for their aid in battle and the hunt.\n\nParticularly independent and wise hill giants have been known to stray from their tribes, seeking something more to life than the brutal and meaningless destruction inherent within the hill giant tribal structure. Such hill giants either wander for the rest of their days as dreamy loners or eventually come into contact with more peaceful races of humanoids; in the latter case, such reformed hill giants may adapt the habits of their new allies, and some individuals have even managed to rise completely above the baser desires of other members of their race. Among other hill giants, independent-minded loners of this sort are shunned at best and hunted down at worst, and a hill giant seen associating with the &#147;puny races&#148; is regarded as worse than a traitor by members of his old tribe." compset="Race">
+    <fieldval field="rHitDice" value="10"/>
+    <fieldval field="rHPStart" value="45"/>
+    <fieldval field="rSTR" value="15"/>
+    <fieldval field="rDEX" value="-2"/>
+    <fieldval field="rCON" value="9"/>
+    <fieldval field="rINT" value="-4"/>
+    <fieldval field="rCHA" value="-3"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-5"/>
+    <fieldval field="rAC" value="9"/>
+    <fieldval field="rCR" value="7"/>
+    <fieldval field="rDescript" value="This hunched giant exudes power and a crude, stupid anger, its filthy fur clothing bespeaking a brutish and backwoods lifestyle."/>
+    <fieldval field="rEnviron" value="temperate hills"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-5), band (6-8), raiding party (9-12 plus 1d4 dire wolves), or tribe (13-30 plus 35% noncombatants plus 1 barbarian or fighter chief of 4th-6th level, 11-16 dire wolves, 1-4 ogres, and 13-20 orc slaves)"/>
+    <fieldval field="rTreasure" value="standard (hide armor, greatclub, other treasure)"/>
+    <usesource source="CB_Variant"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Race" tag="rHillGiant"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="120"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wGreatclub"/>
+      </bootstrap>
+    <bootstrap thing="fCleave"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="aaLowLiVis"></bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="fIntProw"></bootstrap>
+    <bootstrap thing="fArmMedium"></bootstrap>
+    <bootstrap thing="fMartial">
+      <autotag group="Target" tag="wGreatclub"/>
+      </bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="1d8_6"/>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+
+field[livename].text = "Hill Giant"]]>
+      <before name="Template Name Modification"/>
+      </eval>
+    <eval phase="PreLevel" priority="4000" index="2">#skillinnate[skClimb] += 3
+#skillinnate[skIntim] += 4
+#skillinnate[skPercep] += 3</eval>
+    </thing>
+  <thing id="rCBStoneGi" name="Giant, Stone (CB)" description="To outsiders, stone giants may seem more elemental than truly alive, enigmatic beings of stony silence whose flesh seems hewn from living rock and whose demeanors are as unchanging and tough as the earth itself. Yet the chiseled faces of stone giants are flesh, not rock; their hardened bodies skin, rather than granite; and in their veins runs blood as red as any other, not sand or dust. Myths about stone giants abound, and ignorant travelers in the mountains blame them for landslides, washed out roads, and even thunderstorms. Many flee at the first glimpse of a stone giant, believing such beings to be no better than some of their more destructive cousins.\n\nIf others tell tall tales of their kind, the stone giants have only themselves to blame, for they wear enigma as comfortably as their stone-colored hides. Reclusive by nature, stone giants generally avoid contact with outsiders. Those few who do mingle with other societies rarely discuss their own kind or traditions. They make no apologies for their isolationist ways, as the mixing of stone giant culture with those of others has never brought joy to their solemn people.\n\nStone giants claim to be among the oldest of giantkind, their clay molded by the gods to set precedent for many to follow. Stone giant elders and storytellers say that in ancient times, when they were the only giants, they stayed true to their ancestors and their traditions. That lasted until they encountered humans. The humans coveted their skill with earth and stone, and bent the stone giants to their will. The enslaved giants built countless great structures, architectural wonders destined to be buried and forgotten. In time, these stone giants escaped the yoke of slavery, but the lessons they learned stuck. No more were they simple herders and cave dwellers. They had learned the ways of iron and stonemasonry. Some had even turned from revering their ancestors to the worship of human gods. These modern stone giants find themselves torn between two paths: the crafters and builders who reshape the world with newfound knowledge, and the spiritual giants who respect their ancestors and adhere to the old ways.\n\n{b}Ecology{/b}\nFrom a distance, stone giants resemble statues and golems rather than living creatures. Their gray skin, complete lack of hair, and angular faces make them look more like the product of a sculptor's chisel than actual flesh. Even their eyes, with wide, gray irises and little white, resemble stone carvings. Stone giants view their rocky countenances as a blessing from their ancestors, and have nothing but pity for the thin skin and unmanageable hair of less fortunate beings.\n\nThough a typical stone giant stands 12 feet in height and weighs 1,500 pounds, individuals of both shorter and taller stature are not unheard of. Both male and female stone giants tend toward lanky but muscular builds. Their oversized bones are surprisingly light for their size, which allows stone giants to move much more quickly than one might anticipate. Within the bones themselves, an extensive honeycombing structure helps reduce the weight of the skeleton while maintaining structural integrity and strength. Stone giants have massive chests, prodigious lung capacity, and prominent nostrils, all well suited to the rarefied oxygen of the soaring mountain heights at which they dwell.\n\nStone giant hides are dusty gray in color and thick enough to turn a blade, hence the stories that their flesh is made of stone. As they age, their hardened skin develops deep cracks and creases and their muscles bulge like rocky nodules-the oldest individuals frequently boasting calluses up to 2 inches thick in some places. Some stories say that young stone giants grow patches of moss on their bodies, but this is a scurrilous rumor likely spawned by the clever mossy camouflage occasionally worn by stone giant scouts. In fact, even without such disguises, stone giants blend in with rock well enough to elude casual observation. Stone giant sentries excel at standing or crouching almost completely motionless for hours on end, and often allow small groups of intruders to pass right by, only confronting the unwanted visitors once they've closed off all avenues of escape and secured their tactical position.\n\nA long-lived species, stone giants live as long as 800 years, and those who develop the magical talents of their elders live even longer. Stone giant youths mature at a similarly glacial rate, with individuals being accepted as adults at the age of 120 for males and 90 for females. The prime of stone giant life lasts from their second century into their fourth or fifth, after which their youthful vigor slowly declines into senescence. Stone giants are only intermittently fertile, despite having a long reproductive lifespan. Couples typically experience only one or two pregnancies a century; thankfully for them, fraternal twins are extremely common, making up nearly half of stone giant births.\n\nOmnivores by inclination, stone giants are expert herders, and tend droves of hardy mountain animals such as sheep and goats, even sharing their homes with their animals during inclement weather or threat of invasion. Stone giants supplement their diet with wild game and gathered vegetation during the warm seasons. They disdain anything more complex than the most rudimentary agriculture, save for growing grapes, which they cultivate for the sour, tannic wines favored by their people. They flavor their food with a mixture of salt and finely ground digestible minerals, making stone giant meals rather gritty fare for weaker teeth and stomachs.\n\n{b}Habitat &amp; Society{/b}\nStone giant clans are ruled by their eldest couple. This couple claims no special title and receives few privileges, but is responsible for numerous matters that directly affect the well-being of the clan. Both must reach agreement on matters before presenting their decision to the clan, insulating their people from rash decisions and despotic rule. Should one or both members of the ruling couple pass away, stewardship of the clan passes to the next most senior couple, whether they desire the burden of rule or not. Widows and widowers of past couples retain positions of respect as advisors within the clan for the remainder of their days, and it is not uncommon for an elder couple to have several such advisors during their rule.\n\nThough a stone giant clan is ruled by only one elderly couple, many tribes recognize numerous stone giant elders, a title given to individuals both in recognition of their advanced age and their spiritual prowess. Such ancient beings often possess sorcerous powers over earth and stone, taught to them either by previous elders before their passing or by communing with their ancestral mountain and the spirits of their forebears. The distinction between such elders and the ruling eldest couple can be a tricky one for outsiders to grasp. The oldest couple rules the tribe, but are not necessarily elders. Likewise, although old, elders might not be the oldest members of their tribe. Instead, to a stone giant, the term elder denotes an individual who has passed beyond youth, adulthood, and even old age into a fullness of maturity and enlightenment few achieve. In theory, the words of the elders carry no weight of law, but in practice stone giants follow the requests of their elders with little question.\n\nThe elders refer to their calling as &#147;hearing the voice of stone.&#148; Each elder bears a responsibility to train promising young giants in the ways of shaping and understanding stone as well as in the history and ideals of their clan. Despite these teachings, few students hear even a whisper of the voice of stone during their lifetimes. Some leave their tribe and wander alone until the stone speaks to them; others join communities of smaller races for a time and find the voice there. Many never return from their spiritual journey. Though most tribes have at least one elder, mishap or violence occasionally leaves a tribe bereft of an elder's guidance. Such tribes rarely prosper, and often turn from their peaceful traditions to more violent ways.\n\nStone giant society organizes itself into clans, each clan consisting of a number of interrelated families (usually a dozen or fewer) living in the same region. &#147;One mountain, one clan&#148; goes the stone giant saying. Two clans rarely share the same mountain, and larger clans sometimes claim multiple peaks. Clans with a common bond of blood or history usually have cordial relations and may even share grazing grounds, while unrelated clans rarely cooperate. Regardless, wars between clans are almost unheard of. Any violent feuds that do arise are swiftly decided, and the weaker clan usually concedes to the demands of the stronger rather than perpetuate bloodshed.\n\nMost stone giants worship and revere the spirits of their ancestors rather than venerating gods. Those tribes that have largely abandoned the old ways worship Erastil under the name Estig the Hunter, along with the giant gods Fandarra the Blood Mother and Minderhal. Of late, stone giants of evil nature have increasingly turned from Minderhal to the worship of Urazra, Breaker of Bones. A violent god who speaks to the most bestial aspects of giant nature, Urazra demands frequent sacrifice. Oracles and druids are common among tribes who practice ancestor worship, clerics among those who follow the more peaceful gods, and barbarians among those who pray to Urazra." compset="Race">
+    <fieldval field="rHitDice" value="12"/>
+    <fieldval field="rHPStart" value="54"/>
+    <fieldval field="rSTR" value="17"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rCON" value="9"/>
+    <fieldval field="rWIS" value="2"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rAC" value="11"/>
+    <fieldval field="rCR" value="8"/>
+    <fieldval field="rDescript" value="This giant has chiseled, muscular features and a flat, forwardsloping head, looking almost as if it were carved of stone."/>
+    <fieldval field="rEnviron" value="temperate mountains"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-5), band (4-8), hunting party (9-12 plus 1 elder), or tribe (13-30 plus 35% noncombatants, 1-3 elders, and 4-6 dire bears)"/>
+    <fieldval field="rTreasure" value="standard (greatclub, other treasure)"/>
+    <fieldval field="rFeat" value="-6"/>
+    <usesource source="CB_Variant"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="Race" tag="rStonGiant"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <bootstrap thing="fMartial">
+      <autotag group="Target" tag="wGreatclub"/>
+      </bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="180"/>
+      </bootstrap>
+    <bootstrap thing="aaLowLiVis"></bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="fPrecShot"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="fQuickDraw"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="raCBImpRkC">
+      <autotag group="Value" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="fPointBlnk"></bootstrap>
+    <bootstrap thing="lCommon"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="1d8_6"/>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+field[livename].text = "Stone Giant"]]></eval>
+    <eval phase="PreLevel" priority="4000" index="2"><![CDATA[
+      #skillinnate[skClimb] += 1
+      #skillinnate[skIntim] += 9
+      #skillinnate[skPercep] += 8
+      #skillinnate[skStealth] += 6
+
+#racialsituational[hero.child[skStealth],"+8 in rocky terrain",field[name].text]
+
+perform hero.child[wCBRock].delete[Helper.SingleAtt]]]>
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="raCBImpRkC" name="Improved Rock Catching" description="Gain a racial bonus on its Reflex save when attempting to catch a thrown rock with rock catching. This ability otherwise works like the rock catching ability." compset="RaceSpec" summary="You can catch rocks that are thrown at you with a successful Reflex save." uniqueness="unique">
+    <usesource source="CB_Variant"/>
+    <tag group="SpecType" tag="Defense" name="Defense" abbrev="Defense"/>
+    <tag group="Universal" tag="Universal" name="Universal Monster Ability or Core Rulebook ability" abbrev="Universal Monster Ability or Core Rulebook ability"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <eval phase="Final"><![CDATA[doneif (tagis[Helper.SpcDisable] <> 0)
+
+call CalcValue
+
+field[livename].text = "Improved Rock Catching (" & signed(field[abValue].value) & ")"]]></eval>
+    </thing>
+  <thing id="rCBMarshGi" name="Giant, Marsh (CB)" description="The swamps hold numerous perils known to experienced vagabonds and novice adventurers alike. Quicksand, creeper vines, giant stirges, and worse await the unwary, but these dangers pale in comparison to the deformed brutes that lurk in bogs and fens near the sea: marsh giants, the misbegotten offshoots of long-forgotten hill giant tribes.\n\nWith their slimy and hairless bodies, their webbed fingers and toes, and their bulbous black eyes, marsh giants resemble a grotesque cross between fish, frogs, and humanoids. Standing 11 feet tall and weighing around 1,500 pounds, these swamp-dwellers convey both sloth and power with their towering, fat bodies. Occasionally, they cover parts of their bare flesh with animal skins or hides, both for decoration and to show off their kills, but most simply disregard clothing completely, as their thick, blubbery skin provides all the protection they need from the stinging insects and harsh elements of their environment.\n\nMarsh giants' moss-green coloring allow them to move stealthily through the swamp without being seen, despite their girth. When they emerge from the muck to attack, the giants prove surprisingly agile for their size, more like lumbering cats than swift cattle. While not as strong as most of their giant cousins, they can hurl logs and tree stumps the way other giants throw rocks, striking with devastating force and accuracy.\n\nTo casual observers, all marsh giants are equally ugly; their breasts and genitals being the only ways to tell females from males. Yet inbreeding among tribes and families pollutes their gene pool with deformities and mutations leading to a wide range of appearances and abilities. Some legends among the peoples of swamp-neighboring communities claim that the race is a bastard branch of the giants' evolutionary tree. They say that a tribe of hill giants in the ancient past committed an unpardonable sin against all of giantkind, one serious enough to unite the other giants against them. The desperate hill giants fled far before settling in remote swamps where they were safe from reprisals. Over the centuries, their bodies adapted to life in the filthy mire, and only their language served as a remnant of their former lives-they still speak Giant, though their dialect is colored with bits of Boggard and the languages of other swamp races.\n\nEven if such folklore is true, marsh giants are not to be pitied. They are hateful, violent, repulsive creatures that desire only to fill their bellies, mate, and revel in the degenerate worship of Dagon, their Abyssal patron. Tribes carry out awful rituals to the demon lord and make bloody sacrifices in the open water, part of the reason they prefer to live near coasts or rivers that run to the sea. This vulgar fealty to the lord of deformities is common to all marsh giants on Golarion and is the central force that binds them together in mutual perversion.\n\n{b}Ecology{/b}\nMarsh giants settle in all kinds of wetlands, including swamps, bogs, fens, marshes, and the like, though they often prefer brackish areas near coastlines. They prefer temperate, moist regions but can adapt to colder and warmer locations as well. They stay away from population centers and stick to their remote, stagnant turf as much as possible. Marsh giants are mostly immune to the diseases that infest their gloomy mires, but might be susceptible to the foreign contamination of other swamps. Thus, few marsh giant clans interact with one another, and such isolation inevitably leads to inbreeding, one of the main causes of their vile deformities and relative stupidity.\n\nMarsh giants are lazy and eat whatever is most readily available: roots, tubers, fungi, and a smorgasbord of bitesized creatures that crawl or fly within reach of their grasping paws. It can take hours to gather enough small plants or prey to make a satisfying meal, so the males slosh through the fetid waters hunting giant crocodiles, slugs, anacondas, and tougher opponents such as catoblepas and infirm froghemoths. They eat their catches raw and sometimes don't even kill the prey first (though they go out of their way to kill giant leeches and giant mosquitoes, which feed on the bloated brutes at every opportunity). Hunger can drive the tribes into the countryside to raid tiny humanoid villages, which frequently hire mercenaries to defend them or to clean out the swamps. And in times of need-or simply whenever the urge strikes them-the degenerate creatures eat their own kind.\n\nDrinking is easier: the marsh giants crouch just about anywhere and gulp filthy swamp water, not noticing or caring about the sludge (and worse) they ingest. While it may seem like just another of their many disgusting behaviors, such consumption is actually linked to marsh giants' practice of animism, their belief that everything in the world has a spiritual essence. What's more, they believe that they absorb the spirit of whatever they consume-whether living or otherwise-and thus even mud can transmit &#147;the strength of the swamp.&#148; Similarly, when marsh giants eat their kin, they are motivated not just by hunger, but by a desire to grow by ingesting the spirits of powerful creatures. In this way, eating and drinking nourishes their spirits just as it strengthens their bodies.\n\nThis belief in the concrete value of spiritual essence leads most marsh giants to despise rearing children, thinking that giving birth saps power from the mother and to an extent the father-thus, marsh giant babes are treated with the utmost contempt, making their youths' mortality rates extremely high. Regardless, marsh giants often lack the foresight to consider that their frequent bouts of lust precede the births they so despise. A female's gestation period lasts about 3 months, during which time her belly distends to enormous size and oozes slime (sought by poisoners as a key ingredient in corrosive toxins). A typical litter has two to five young, many of which die within weeks because of their parents' carelessness, hostility, or appetite. Marsh giants are somewhat unique in that, though they are huge and dwell in brutal environments, they lack the longevity of most giant races. Children who survive their brutal upbringing reach adulthood at the age of 5 and can live for about 60 more years, given ample food and a lack of violence. However, the swamp-and the tribe-rarely offers either.\n Brineborn\n\nMost marsh giant tribes worship Dagon, the Shadow in the Sea. High priests direct their tribe's profane rituals and lead the dancing and chanting, though these rites usually degenerate into orgiastic frenzies of violence and rutting. The giants also sink wooden idols, animals, and live captives into the sea (or rivers leading to it) to honor the demon lord. Mass sacrifices, held on the unholiest nights, darken the waters with enough blood to summon abominations that emerge from the sea the following night to receive the devotion of the giants. These freakish horrors bless the tribe with good hunting and fishing, and they bring deranged prophecies and unearthly gold jewelry to the worshipers. Female marsh giants consort with the beasts, and the resultant offspring befoul the tribe with stranger deformities than usual. These spawn, known as &#147;brineborn,&#148; possess myriad mutations, such as tentacles, scales, and other aquatic features, which mark them as different from the rest of the tribe's members, and are regarded as blessed by their dark lord and greatly revered.\n\nBrineborn are advanced marsh giants with the aquatic subtype, a swim speed of 40 feet, the amphibious special quality, and the following additional spell-like abilities: constant-speak with animals; 3/day-confusion (DC 14), contagion (DC 15), quench (DC 14).\n\n{b}Habitat &amp; Society{/b}\nMarsh giants gather in tribes of roughly two dozen for mutual defense, though they don't seem to care much for each other's company. Swamp predators, infighting, and the giants' cannibal urges keep the population low. Within a tribe, small and distant families take shelter in filthy, mold-ridden shacks made of branches, ropy vines, and hardened mud slathered around rocks and bones. Many hovels are built directly in the shallow parts of the swamp, with interiors a foot deep in fetid muck.\n\nNeither parent shows much concern for their children, and the young die (and are replaced) frequently. Females tend haphazardly to their offspring or gorge on toxic fungus while the males gather food and bring home whatever portion they don't eat on the spot. When they capture intelligent prey such as a humanoid, they might cage it so the victim can be tortured or sacrificed to Dagon, though just as often the brutes simply eat the unfortunate souls.\n\nOther giants regard marsh giants as foul and reprehensible, with only hill giants attempting brutish alliances on occasion. Such treaties inevitably fall apart, as marsh giants have little love for their own kind, let alone outsiders who don't share their religious beliefs and grotesque features. Most giants simply give marsh giants the wide birth they desire, leaving the crude beings to their swamps and rituals.\n\nWhen a marsh giant dies, the whole tribe consumes its body, each member trying to gain a small part of its spiritual essence. If a marsh giant breaks a tribal taboo, however, the offender is not killed or eaten. Instead, its tainted spirit is considered poisonous to others and to the swamp itself, so the tribe's leader-called a high priest-drives the transgressor away. These exiles wander the land until they find a small pond or lagoon they can dominate, capturing a mate from a nearby tribe to start a new tribe of their own.\n\nAll marsh giants learn to fight with a gaff-a hooked club that can pierce the thick hides of their enemies and swamp-dwelling prey. The dirty hook of this weapon is usually tainted with some disease, imparting virulent illness into any wound it tears open. In a pinch, the giants fight with their meaty fists or use improvised weapons, such as jagged logs studded with dire crocodile teeth.\n\nBrutality is a given in the swamp, but the marsh giants have learned to coexist with other wetlands races of equally primitive bents. They get along well with boggards, many of which also worship Dagon, though this doesn't stop the giants from eating one now and then. The unobservant brutes sometimes mistake lizardfolk or grippli for boggards at first, but bloodshed against these relatively civilized peoples is never far away. A particularly powerful tribe of marsh giants might temporarily ally with (or be dominated by) formidable neighbors, such as sea hags, spirit nagas, or black dragons." compset="Race">
+    <fieldval field="rHitDice" value="12"/>
+    <fieldval field="rHPStart" value="54"/>
+    <fieldval field="rSTR" value="17"/>
+    <fieldval field="rDEX" value="7"/>
+    <fieldval field="rCON" value="9"/>
+    <fieldval field="rINT" value="-2"/>
+    <fieldval field="rWIS" value="5"/>
+    <fieldval field="rCHA" value="2"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-6"/>
+    <fieldval field="rAC" value="9"/>
+    <fieldval field="rCR" value="8"/>
+    <fieldval field="rSpCastLev" value="12"/>
+    <fieldval field="rDescript" value="Cold, black eyes stare out from the fish-like face of this hideous green-skinned, web-fingered, and obese giant."/>
+    <fieldval field="rEnviron" value="temperate marshes"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-6), or tribe (7-22, plus 20% noncombatants plus 1 cleric or witch leader of 4th-8th level, 1-3 barbarian or fighter champions of 2nd-5th level, 2-12 merrows, 10-20 boggards, and 6-12 giant frogs)"/>
+    <fieldval field="rTreasure" value="standard (gaff, other treasure)"/>
+    <usesource source="CB_Variant"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="WepProf" tag="wGaff"/>
+    <tag group="WepProf" tag="wBoardGaff"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <tag group="Race" tag="rPFMarshGi"/>
+    <tag group="RaceType" tag="NPC"/>
+    <bootstrap thing="spFogClo2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="fImpIronWi"></bootstrap>
+    <bootstrap thing="fImpSunder"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="aaLowLiVis"></bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="lBoggard"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="120"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="fVitStr"></bootstrap>
+    <bootstrap thing="spAugury2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spBestCur3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="2d6_104"/>
+      </bootstrap>
+    <eval phase="First" index="2"><![CDATA[
+
+field[livename].text = "Marsh Giant"]]>
+      <before name="Template Name Modification"/>
+      </eval>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+#skillinnate[skPercep] += 6
+#skillinnate[skStealth] += 6
+
+#racialsituational[hero.child[skStealth],"+8 in swamps",field[name].text]
+
+perform hero.child[wCBRock].delete[Helper.NatTwoHand]]]></eval>
+    </thing>
+  <thing id="rCBBrineGi" name="Giant, Brineborn Marsh (CB)" description="Most marsh giant tribes worship Dagon, the Shadow in the Sea. High priests direct their tribe's profane rituals and lead the dancing and chanting, though these rites usually degenerate into orgiastic frenzies of violence and rutting. The giants also sink wooden idols, animals, and live captives into the sea (or rivers leading to it) to honor the demon lord. Mass sacrifices, held on the unholiest nights, darken the waters with enough blood to summon abominations that emerge from the sea the following night to receive the devotion of the giants. These freakish horrors bless the tribe with good hunting and fishing, and they bring deranged prophecies and unearthly gold jewelry to the worshipers. Female marsh giants consort with the beasts, and the resultant offspring befoul the tribe with stranger deformities than usual. These spawn, known as &#147;brineborn,&#148; possess myriad mutations, such as tentacles, scales, and other aquatic features, which mark them as different from the rest of the tribe's members, and are regarded as blessed by their dark lord and greatly revered." compset="Race">
+    <fieldval field="rHitDice" value="12"/>
+    <fieldval field="rHPStart" value="54"/>
+    <fieldval field="rSTR" value="21"/>
+    <fieldval field="rDEX" value="11"/>
+    <fieldval field="rCON" value="13"/>
+    <fieldval field="rINT" value="2"/>
+    <fieldval field="rWIS" value="9"/>
+    <fieldval field="rCHA" value="4"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-6"/>
+    <fieldval field="rAC" value="11"/>
+    <fieldval field="rCR" value="8"/>
+    <fieldval field="rSpCastLev" value="13"/>
+    <fieldval field="rDescript" value="Cold, black eyes stare out from the fish-like face of this hideous green-skinned, web-fingered, and obese giant."/>
+    <fieldval field="rEnviron" value="temperate marshes"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-6), or tribe (7-22, plus 20% noncombatants plus 1 cleric or witch leader of 4th-8th level, 1-3 barbarian or fighter champions of 2nd-5th level, 2-12 merrows, 10-20 boggards, and 6-12 giant frogs)"/>
+    <fieldval field="rTreasure" value="standard (gaff, other treasure)"/>
+    <usesource source="CB_Variant"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="WepProf" tag="wGaff"/>
+    <tag group="WepProf" tag="wBoardGaff"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <tag group="Race" tag="rPFBrinebo"/>
+    <tag group="RaceType" tag="NPC"/>
+    <bootstrap thing="spFogClo2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="40"/>
+      </bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="fImpIronWi"></bootstrap>
+    <bootstrap thing="fImpSunder"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="aaLowLiVis"></bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="lBoggard"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="120"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="stAquatic"></bootstrap>
+    <bootstrap thing="raAmphib"></bootstrap>
+    <bootstrap thing="spConfusi4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spContagi4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spQuench3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spSpeawit1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <bootstrap thing="fVitStr"></bootstrap>
+    <bootstrap thing="spAugury2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spBestCur3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="2d6_104"/>
+      </bootstrap>
+    <eval phase="First" index="2"><![CDATA[
+
+field[livename].text = "Brineborn Marsh Giant"]]>
+      <before name="Template Name Modification"/>
+      </eval>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+#skillinnate[skPercep] += 12
+#skillinnate[skStealth] += 12
+#skillinnate[skSwim] += 12
+
+#racialsituational[hero.child[skStealth],"+8 in swamps",field[name].text]]]></eval>
+    </thing>
+  <thing id="rCBTaigaGi" name="Giant, Taiga (CB)" description="Taiga giants are towering, gray-skinned nomads, standing 20 feet tall and weighing 5 tons when fully grown. With skin tones that range the palette of gray from pale dove to slate and sooty charcoal, taiga giants naturally blend into the shadows, mists, and squalls of their hilly forest homelands. Their hair runs from flaming red to auburn, and is typically worn long and loose, or pulled up in a headband or tie fashioned from braided strips of hide and beads of polished wood, bone, stone, or metal. They wear garments of natural materials, cured hides and layered furs in particular, often decorating their garb with beaded tassels. They sometimes go unarmored, or wear simple breastplates or breeches of darkened leather, though in times of war they may don full suits of hide armor and mount great wooden shields, usually painted with the sigil of their totem animal. Their primary weapons are long-hafted spears, which they wield in melee as well as hurl at distant foes, and they are equally adept at tearing up the landscape around them and raining rocky debris on their enemies. While their lower jaws bear sharp, tusklike canines that protrude even when their lips are closed, their teeth are for eating, not fighting, and are only useful in combat for the purposes of intimidating enemies.\n\nTaiga giants build few permanent habitations and tend to live in deep wilderness areas, particularly in the depths of the vast boreal forests that blanket many subpolar regions. From these woodland realms, they venture across the rolling tundra to the high ice; along seacoasts; and into the cold ranges of hills, badlands, and mountain peaks that dominate the chilly landscape. Few have seen taiga giants' homes, for most have no lasting home at all; even those ancestral lodges they build are more places of pilgrimage, retreat, and occasional gatherings rather than permanent lodgings, with only the very old retiring to dwell there near the ends of their lives. To most subarctic nomads and highland peoples, taiga giants are regarded with equal parts fear and respect, and canny travelers passing through their hunting ranges hope only to avoid the unpredictable goliaths' notice, lest the sacred omens in which taiga giants trust portend ill for those strangers they happen across.\n\n{b}Ecology{/b}\nTaiga giants live primarily in subarctic boreal forests, hunting elk, megaloceros, moose, and big predators like bears, wolves, and even dragons. From their evergreen fastnesses, they roam into cold hills and badlands and the endless windswept tundra. Those near seacoasts tramp the icy shallows hunting seals and walrus, taking hides for cloaks and tusks for their intricate scrimshaw. In the summer, when the migratory herds they hunt for food turn northward, some taiga giants follow them as far as the High Ice, but most return to their woodlands to hunt smaller, more local game. Entirely nomadic, taiga giants live under the stars in their forest cathedrals, using hide tents to keep out severe weather.\n\nWhile taiga giants are travelers first and foremost, most families maintain ancestral lodges of hewn planks and logs somewhere in the great forests and hills they wander. They surround these great wooden houses with monolithic poles carved and painted with their individual, familial, and tribal totems. Such giant lodges usually incorporate the original hall of their first ancestor as a shrine adjacent to or directly within a great central hall. Each new generation within the clan builds onto the lodge, expanding the common hall or constructing separate longhouses connected by living arbors, the pine canopies overhead woven together by the mystical songs of clan shamans. While not great gardeners, taiga giants cultivate berry fields and beehives near their lodges, eating the produce and hunting the game their fields attract. Still, they never linger long at their lodges, lest their voracious appetites exhaust the local food supply.\n\nTaiga giants are born the size of an adult human and grow slowly over their first decade. By age 10, they are able to walk and learn the skills of woodcraft and the spear, being taught to kill only what is needed-when game is scarce, nothing can go to waste. Taiga giants learn the manifold uses of every part of an animal: skin, bones, hide, hair, and so on, not merely its flesh. Among a people with little interest in judgment and reproach, waste is the one great sin.\n\nYouths reach physical maturity between age 50 and 70, and even families of taiga giants with young children roam hundreds of miles, never staying in one place for long. Their peripatetic nature is not due to mere wanderlust; taiga giants simply realize that too many mouths in one area requires far too much food for the environment to sustain. Families migrate across large swaths of wilderness in constant search of new prey, crisscrossing the cold lands and only occasionally returning to their ancestral lodges for certain ceremonies or when their wanderings take them nearby. Elderly taiga giants weary of traveling may settle in the clan's lodge; here, they spend their waning years carving massive totem poles that recount their lives, and crafting intricate wooden spirit icons to decorate the longhouses of the lodge. Taiga giants typically live for up to 400 years, though rare ancient elders may linger a century beyond this, their souls hovering on the threshold of the spirit world as their physical bodies gradually wither.\n\n{b}Habitat &amp; Society{/b}\nTaiga giants gather in family groups encompassing both their local family and extended family members related by blood or intermarriage. Individual taiga giants each have a small pair of totems that they carry on their persons at all times, one representing anakot (&#147;child-self&#148;) and the other qanukot (&#147;adult-self&#148;). In addition, they may bear totems of a familial ulakot (&#147;family-self&#148;) and a clan's nomakot (&#147;tribe-self&#148;), and most adopt one or more inuvakot (&#147;life-self&#148;) totems that represent things they have achieved throughout their lives. A totem is typically a wooden, stone, or bone figurine that represents an animal or living creature, but some clans and families may take sacred mountains, hot springs, canyons, waterfalls, islands, or other natural features as their totems.\n\nAncestry and family lines are sacred to taiga giants, who keep extensive oral histories and fervently believe in the enduring presence of their ancestors, whom they call tikshutseen, &#147;the great cloud of witnesses.&#148; These ancients are said to linger near their descendants, revealing their counsel through portents and omens. Taiga giants are constantly on the lookout for such signs, using a variety of oracular rituals to discern omens and their meaning in the phenomena of the natural world, such as the sudden appearance of one of their totems. Their religion is most closely likened to spiritual animism, with druids or oracles leading their faithful to build upon communion with the natural world and the spirit world. Some taiga giants venerate more traditional nature deities such as Gozreh, or rarely deities of dreams, hunting, natural disasters, prophecy, or spirits, such as Desna or Pharasma. A few venerate Erastil as master of the hunt, or even the Eldest of the First World.\n\nTaiga giants are ambivalent toward smaller races- some are hostile, some are friendly, and most simply avoid them. As long as these diminutive creatures do not disrupt the taiga giants' hunting grounds with their &#147;civilization&#148; of roads, farms, and towns, the giants usually treat them with indifference. Taiga giants tend to act more hostilely toward other giant races that constitute rivals for territory and prey. A few of the more savage taiga giants may bully ogres, trolls, ettins, and hill giants into serving them, becoming petty kings and warlords, but for the most part they disdain the company of these crude races and may even fight wars of extermination to prevent such beings from despoiling their territory.\n\nRelations are usually more cordial with stone and cloud giants for those taiga giants living in the highlands, or with frost giants for those in the highest arctic reaches. While skirmishing does break out at times, taiga giants rarely desire to war at the fringes of their domain, usually simply ceding control of other giants' favored territory and returning to their own hunting ranges. Taiga giants despise fire giants, however, for their destructive pillaging of the natural world, transforming pristine wild lands into toxic slag-heaps, scouring the land of game, and enslaving all they encounter. Taiga giants also hate fire giants because it was they whom taiga giants were forced to breed with when both races were made thralls by an ancient sorcerous empire, their seed stolen and corrupted into a splinter race designed to rule all giantkind-the rune giants. Even after the fall of the empire that created them, surviving rune giants still descend from their alpine abodes to hunt and enslave taiga giants and other races as well. The communal remembrance and shame regarding this enslavement and the continued existence of the hateful half-breed race they were forced to sire drives taiga giants to feel lingering bitterness toward both fire giants and rune giants." compset="Race">
+    <fieldval field="rHitDice" value="15"/>
+    <fieldval field="rHPStart" value="67"/>
+    <fieldval field="rSTR" value="21"/>
+    <fieldval field="rDEX" value="4"/>
+    <fieldval field="rCON" value="12"/>
+    <fieldval field="rINT" value="2"/>
+    <fieldval field="rWIS" value="7"/>
+    <fieldval field="rCHA" value="5"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-8"/>
+    <fieldval field="rAC" value="8"/>
+    <fieldval field="rCR" value="12"/>
+    <fieldval field="rDescript" value="This muscular giant has dark gray skin and fiery red hair. Its lower jaw bears sharp fangs, and it wields a huge, primitive spear"/>
+    <fieldval field="rEnviron" value="cold mountains or forests"/>
+    <fieldval field="rOrgan" value="solitary, warband (2-7), or tribe (20-50 plus 30% noncombatants, 1 druid or oracle of 3rd-5th level, 2-4 barbarian or ranger hunters of 3rd-5th level, 1 chieftain barbarian or fighter of 4th-7th level, 2-6 dire bears, 2-6 dire tigers, and 8-12 stone giants)"/>
+    <fieldval field="rTreasure" value="standard (hide armor, spear, other treasure)"/>
+    <usesource source="CB_Variant"/>
+    <tag group="RaceSize" tag="Huge2"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <tag group="Race" tag="rTaigGiant"/>
+    <tag group="RaceType" tag="NPC"/>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="140"/>
+      </bootstrap>
+    <bootstrap thing="fShotRun">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fAlertness"></bootstrap>
+    <bootstrap thing="fCleave"></bootstrap>
+    <bootstrap thing="fEndure"></bootstrap>
+    <bootstrap thing="fVitStr"></bootstrap>
+    <bootstrap thing="fLightRef"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="fArmMedium"></bootstrap>
+    <bootstrap thing="fSelfSuff"></bootstrap>
+    <bootstrap thing="raTaiSpirS"></bootstrap>
+    <bootstrap thing="lCommon"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="2d6_104"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000" index="2"><![CDATA[
+#skillinnate[skClimb] += 5
+#skillinnate[skPercep] += 5
+#skillinnate[skStealth] += 15
+#skillinnate[skSurvival] += 10
+
+
+#racialsituational[hero.child[skStealth],"+6 in undergrowth",field[name].text]]]></eval>
+    <eval phase="First"><![CDATA[
+field[livename].text = "Taiga Giant"]]></eval>
+    </thing>
+  <thing id="rCBAshGian" name="Giant, Ash (CB)" description="Whether because of disruptive magic, unearthed deep elements, or alien technology that fell calamitously from the sky, ash giants are victims of their barren terrains. Yet they somehow survive and even thrive in these desperate lands. Ash giants have an uncanny ability to bond with the enormous and often mutated vermin they share the landscape with, and sometimes use the largest of these creatures as mounts.\n\nAsh giants are brash and violent, and their humor is incredibly dark. Killing someone through a prank is just as funny as tripping a friend while on a hunt. While not inherently evil, lifetimes of being antagonized by other tribes have practically bred violence into their minds.\n\nAsh giants are 10 feet tall and weigh 1,200 pounds." compset="Race">
+    <fieldval field="rHitDice" value="14"/>
+    <fieldval field="rHPStart" value="63"/>
+    <fieldval field="rSTR" value="23"/>
+    <fieldval field="rDEX" value="4"/>
+    <fieldval field="rCON" value="13"/>
+    <fieldval field="rINT" value="-1"/>
+    <fieldval field="rWIS" value="2"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-7"/>
+    <fieldval field="rAC" value="10"/>
+    <fieldval field="rCR" value="11"/>
+    <fieldval field="rDescript" value="Towering above a typical human, this misshapen giant's pale flesh is covered in purulent sores and bulbous tumors."/>
+    <fieldval field="rEnviron" value="any wastelands"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-5), band (6-9), raid (9-12 plus 1d4 giant vermin), or tribe (13-30 plus 35% noncombatants, plus 1 barbarian or fighter chief of 6th-8th level and 6-8 giant vermin)"/>
+    <fieldval field="rTreasure" value="standard (hide armor, Huge club, other treasure)"/>
+    <usesource source="CB_Variant"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Race" tag="rAshGiant"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="fArmMedium"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="fCatchOff"></bootstrap>
+    <bootstrap thing="fCleave"></bootstrap>
+    <bootstrap thing="fGreatClv"></bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="120"/>
+      </bootstrap>
+    <bootstrap thing="xImmDis"></bootstrap>
+    <bootstrap thing="xImmPois"></bootstrap>
+    <bootstrap thing="raAshOverW"></bootstrap>
+    <bootstrap thing="raWildEmp">
+      <autotag group="Value" tag="4"/>
+      <assignval field="livename" value="Vermin Empathy"/>
+      </bootstrap>
+    <bootstrap thing="raAshDisea"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="fPrecShot"></bootstrap>
+    <bootstrap thing="fSelfSuff"></bootstrap>
+    <bootstrap thing="fPointBlnk"></bootstrap>
+    <bootstrap thing="lCommon"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="1d8_6"/>
+      <assignval field="wDamExtra" value=" plus disease"/>
+      </bootstrap>
+    <eval phase="First" index="3"><![CDATA[
+
+field[livename].text = "Ash Giant"]]></eval>
+    <eval phase="Final"><![CDATA[
+doneif (hero.child[raAshDisea].tagis[Helper.SpcDisable] <> 0)
+
+foreach pick in hero from BaseWep
+  #extradamage[eachpick," plus disease",field[thingname].text]
+nexteach]]></eval>
+    <eval phase="PreLevel" priority="4000" index="2">#skillinnate[skClimb] += 3
+#skillinnate[skHeal] += 1
+#skillinnate[skIntim] += 3
+#skillinnate[skPercep] += 4
+#skillinnate[skSurvival] += 3
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="rCBCaveGia" name="Giant, Cave (CB)" description="Stooped over in a perpetual crouch, cave giants move as if they had never mastered walking erect. Their faces mix the worst features of ogre and feral orc. The largest would measure 10 feet in height if they ever stood straight. The typical cave giant weighs 1,000 pounds. Though few survive past 60 years, cave giants can live as long as 150 years.\n\nWhile they prove remarkably adept with axes of all varieties, cave giants lack the patience to work metal. What metal a cave giant possesses was likely stolen from other giants or worked by enslaved subterranean smiths.\n\nSlaves such as dwarves, orcs, and troglodytes do most of the labor in cave giant settlements. Poor treatment and the need for meat keep slave populations small and ever-rotating. New slaves are brought in whenever raiding parties remember to reign in their blood lust. Any prisoners who fail to submit to their new masters find themselves served on the dinner table or tossed screaming into the giant's cave lizard pens.\n\nGiant lizards of all types serve as both guard beasts and sport for the cave giants. Giant frilled lizards are rarely pets, as most cave giants opt to keep less dangerous monitor lizards instead. Kept in check only by fear and brutal beatings, such pets turn on their handlers at the first sign of weakness. At feeding time, live captives are tossed into the pens, a festive event filled with boisterous cheers and spirited betting." compset="Race">
+    <fieldval field="rHitDice" value="9"/>
+    <fieldval field="rHPStart" value="40"/>
+    <fieldval field="rSTR" value="13"/>
+    <fieldval field="rCON" value="7"/>
+    <fieldval field="rINT" value="-4"/>
+    <fieldval field="rCHA" value="-3"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-5"/>
+    <fieldval field="rAC" value="6"/>
+    <fieldval field="rCR" value="6"/>
+    <fieldval field="rDescript" value="Bestial tusks jut from the jaw of this hunched-over giant. It is clad in armor patched together from the bones of past victims."/>
+    <fieldval field="rEnviron" value="any underground"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-5), band (6-8 plus 1-2 monitor lizards), raiding party (9-12 plus 1-4 monitor lizards), or tribe (13-20 plus 30% noncombatants, plus 1 barbarian, fighter, or ranger chief of 3rd-5th level; 2-9 monitor lizards; 1-4 giant frilled lizards; and 10-15 dwarf, orc, or troglodyte slaves)"/>
+    <fieldval field="rTreasure" value="standard (battleaxe, hide armor, other treasure)"/>
+    <usesource source="CB_Variant"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Race" tag="rCaveGiant"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="WepProf" tag="wBattleaxe"/>
+    <tag group="WepProf" tag="wGreataxe"/>
+    <tag group="WepProf" tag="wHandaxe"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <bootstrap thing="fArmMedium"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wBattleaxe"/>
+      </bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="raLightSen"></bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="120"/>
+      </bootstrap>
+    <bootstrap thing="raCavAxeW"></bootstrap>
+    <bootstrap thing="fCleave"></bootstrap>
+    <bootstrap thing="fImpSunder"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="aaFerocity"></bootstrap>
+    <bootstrap thing="aaLowLiVis"></bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="100"/>
+      </bootstrap>
+    <bootstrap thing="fVitStr"></bootstrap>
+    <bootstrap thing="raFerocity"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="1d8_6"/>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+
+field[livename].text = "Cave Giant"]]></eval>
+    <eval phase="PreLevel" priority="4000" index="2">#skillinnate[skClimb] += 1
+#skillinnate[skIntim] += 6
+#skillinnate[skPercep] += 2</eval>
+    <eval phase="PostAttr" index="3">perform hero.childfound[wCBRock].delete[Helper.NatTwoHand]</eval>
+    </thing>
+  <thing id="rCBDesertG" name="Giant, Desert (CB)" description="Desert giants rove the stark and majestic sands, rarely dwelling in permanent camps. They roam from oasis to oasis, sleeping beneath the stars or in easily dismantled yurts, breaking camp as whim strikes or when food sources grow scarce.\n\nDesert giants stand 15 feet tall on average, but have slender builds and rarely weigh more than 2,000 pounds, a fact that greatly contributes to their grace and speed. The giants favor loose robes with keffiyehs for protection from the scouring desert winds, as well as traveling leathers worn beneath the robes. They require little water, and are able to survive for as long as 2 weeks on food alone. When such goods are available, they drink water, milk, and juices in prodigious amounts, but they spurn beer, wine, and stronger spirits. The bulk of their diet comes from figs, olives, and similar bounty of the oases, supplemented by meat if required. The eldest desert giants live as long as 300 years.\n\nDespite their nomadic ways, desert giants guard their territory fiercely, driving away all interlopers, whether intelligent or bestial." compset="Race">
+    <fieldval field="rHitDice" value="13"/>
+    <fieldval field="rHPStart" value="58"/>
+    <fieldval field="rSTR" value="16"/>
+    <fieldval field="rDEX" value="7"/>
+    <fieldval field="rCON" value="11"/>
+    <fieldval field="rINT" value="3"/>
+    <fieldval field="rWIS" value="2"/>
+    <fieldval field="rSpeed" value="50"/>
+    <fieldval field="rAC" value="9"/>
+    <fieldval field="rCR" value="9"/>
+    <fieldval field="rDescript" value="Loose robes conceal the sand-etched features of this lanky giant. In each hand he grips a scimitar nearly the length of a human."/>
+    <fieldval field="rEnviron" value="warm desert"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-4), band (5-8), raiding party (9-12 plus 1 fighter of 1st-3rd level), or tribe (10-30 plus 35% noncombatants, 1-3 clerics of 2nd-4th level, 2-4 fighters of 1st-3rd level, and 1 fighter sheik of 4th-6th level, 50% chance of 10-20 human slaves)"/>
+    <fieldval field="rTreasure" value="standard (2 masterwork scimitars, leather armor, other treasure)"/>
+    <fieldval field="rFeat" value="-7"/>
+    <usesource source="CB_Variant"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Alignment" tag="Lawful"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Race" tag="rDeseGiant"/>
+    <tag group="WepProf" tag="wScimitar"/>
+    <tag group="SaveGood" tag="svRef"/>
+    <bootstrap thing="fTwoWep"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="fDodge"></bootstrap>
+    <bootstrap thing="xImmFire"></bootstrap>
+    <bootstrap thing="aaLowLiVis"></bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="raDesSandw"></bootstrap>
+    <bootstrap thing="raDesScimT"></bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wScimitar"/>
+      </bootstrap>
+    <bootstrap thing="fMobility"></bootstrap>
+    <bootstrap thing="lCommon"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="fImpTwoWep"></bootstrap>
+    <bootstrap thing="fImpCrit">
+      <autotag group="Target" tag="wScimitar"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="fArmShield"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="Value" tag="1"/>
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="wRangeInc" tag="100"/>
+      </bootstrap>
+    <bootstrap thing="wCBRock"></bootstrap>
+    <eval phase="PreLevel" priority="4000" index="2">#skillinnate[skAcrobat] += 13
+#skillinnate[skIntim] += 8
+#skillinnate[skPercep] += 5
+#skillinnate[skSurvival] += 13
+
+~ remove NatTwoHand from Rock
+perform hero.child[wCBRock].delete[Helper.NatTwoHand]
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    <eval phase="First"><![CDATA[
+field[livename].text = "Desert Giant"]]></eval>
+    </thing>
+  <thing id="rCBInvertG" name="Giant, Inverted (CB)" description="Before the Starstone fell and obliterated Thassilon, many of the runelords and their servants enchanted their inverted giant minions, freezing the tormented creatures in stasis so that centuries later they would continue to protect their masters' holdings, their mutilated organs providing sensory information among cunningly-looped entrails and viscera preserved by rune magic. Those who find themselves exploring Thassilonian dungeons and ruins sometimes stumble upon such horrors, inadvertently releasing the monsters and restoring them to raging life and madness, the pain of their mutilated bodies having long since driven them to insanity and burning hatred.\n\nNo two inverted giants look the same, though some features remain fairly consistent between them. Instead of a head, most possess little more than a gaping maw the size of their neck, jagged bones and bits of skull serving as teeth for a monstrous mouth. They have no true eyes-what oracular systems they once had are now embedded somewhere near their sternums-but instead possess an innate sense of direction, and through the dark arcana that surges through their beings they can sense the location of their prey perfectly. Their moist, splotched bodies are marked with runes, and their muscles and bones are often visible through their translucent flesh.\n\nInverted giants understand speech, but their deformed mouths rarely work well enough for them to be understood by others. The average inverted giant is over 20 feet tall and weighs 1,400 pounds." compset="Race">
+    <fieldval field="rHitDice" value="16"/>
+    <fieldval field="rHPStart" value="72"/>
+    <fieldval field="rSTR" value="19"/>
+    <fieldval field="rDEX" value="4"/>
+    <fieldval field="rCON" value="10"/>
+    <fieldval field="rINT" value="-1"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rCHA" value="6"/>
+    <fieldval field="rFeat" value="-8"/>
+    <fieldval field="rAC" value="15"/>
+    <fieldval field="rCR" value="11"/>
+    <fieldval field="rEnviron" value="any"/>
+    <fieldval field="rOrgan" value="solitary"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <usesource source="CB_Variant"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Huge2"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Race" tag="rGntInvert"/>
+    <bootstrap thing="lPFThassil"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="2d8_204"/>
+      </bootstrap>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d8_6"/>
+      <assignval field="wDamExtra" value=" plus 1d6 energy"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsCold">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsElec">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsFire">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xFastHeal">
+      <autotag group="Value" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="rBlindSi">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="raFearAura">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="raGrab">
+      <autotag group="Target" tag="wBite"/>
+      </bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="Value" tag="120"/>
+      <autotag group="wMain" tag="1d8_6"/>
+      </bootstrap>
+    <bootstrap thing="xCBSwallow"></bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="fAwesomeBl"></bootstrap>
+    <bootstrap thing="fCleave"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="fVitStr"></bootstrap>
+    <bootstrap thing="fImpBull"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="fCritFoc"></bootstrap>
+    <bootstrap thing="raCBInvGCl"></bootstrap>
+    <bootstrap thing="raCBRunes2"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="2d6_104"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000" index="3">#skillinnate[skClimb] += 5
+#skillinnate[skIntim] += 5
+#skillinnate[skPercep] += 6
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    <eval phase="First" index="2"><![CDATA[
+
+field[livename].text = "Inverted Giant"]]></eval>
+    <eval phase="Final" priority="1000">~ remove lowlight
+
+perform hero.child[raLowLight].assign[Helper.SpcDisable]
+perform hero.child[raLowLight].assign[Hide.Special]</eval>
+    </thing>
+  <thing id="rCBShadGia" name="Giant, Shadow (CB)" description="Though their kind originated on the Plane of Shadow, several families of shadow giants have relocated to the wilder regions of Nidal at the invitation of the Umbral Court.\n\nThey serve as a company of elite shock troops, kept a close secret and only used in operations where they are not expected to leave any survivors to tell the tale.\n\nMost shadow giants are especially taciturn and keep to themselves when not called to duty by the Umbral Court. They keep their own counsel and practice their own mysterious religion, whose bloody rituals of autosacrifice and cannibalism are presided over by their bone-and-feather-adorned shamans atop short-stepped pyramids constructed of dark basalt blocks. On the Shadow Plane, families of shadow giants have been known to combine together to form greater tribes when times of war are at hand. Such an army arrayed upon the field of battle is often enough to make enemies sue for peace with offers of gold and prisoners for sacrifice." compset="Race">
+    <fieldval field="rHitDice" value="19"/>
+    <fieldval field="rHPStart" value="85"/>
+    <fieldval field="rSTR" value="24"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rCON" value="14"/>
+    <fieldval field="rWIS" value="2"/>
+    <fieldval field="rCHA" value="5"/>
+    <fieldval field="rFeat" value="-10"/>
+    <fieldval field="rCR" value="13"/>
+    <fieldval field="rDescript" value="This giant's skin is dead black, and it wears a gold-inlaid breastplate, a headdress, and armbands decorated with skulls."/>
+    <fieldval field="rEnviron" value="any (Plane of Shadow)"/>
+    <fieldval field="rOrgan" value="solitary, gang (2&#150;5), family (6&#150;13 plus 35% noncombatants, 1 cleric or witch shaman of 5th&#150;8th level, and 1 fighter or barbarian chief of 7th&#150;10th level), or company (14&#150;33 plus 1 fighter or barbarian chief of 7th&#150;10th level)"/>
+    <fieldval field="rTreasure" value="standard (+1 gold breastplate, masterwork great terbutje, gold jewelry and adornments worth 500 gp, other treasure)"/>
+    <usesource source="CB_Variant"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <tag group="Race" tag="rShadGiant"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Alignment" tag="Lawful"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassSkill" tag="skStealth"/>
+    <bootstrap thing="fImpBull"></bootstrap>
+    <bootstrap thing="fImpCrit">
+      <autotag group="Target" tag="wRock"/>
+      </bootstrap>
+    <bootstrap thing="lGiant"></bootstrap>
+    <bootstrap thing="lShadowton"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="120"/>
+      </bootstrap>
+    <bootstrap thing="raEnDrain">
+      <assignval field="abValue" value="1"/>
+      </bootstrap>
+    <bootstrap thing="raCBMilita"></bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <bootstrap thing="xCBRockThr">
+      <autotag group="wRangeInc" tag="180"/>
+      </bootstrap>
+    <bootstrap thing="raCBShaClo"></bootstrap>
+    <bootstrap thing="stGiant"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="fTwoWep"></bootstrap>
+    <bootstrap thing="fCleave"></bootstrap>
+    <bootstrap thing="aaRockCatc"></bootstrap>
+    <bootstrap thing="aaRockThro"></bootstrap>
+    <bootstrap thing="fVitStr"></bootstrap>
+    <bootstrap thing="fImpCrit">
+      <autotag group="Target" tag="wTerbutGre"/>
+      </bootstrap>
+    <bootstrap thing="fDblSlice"></bootstrap>
+    <bootstrap thing="fGreatClv"></bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="fArmMedium"></bootstrap>
+    <bootstrap thing="fArmShield"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="stExtrapla"></bootstrap>
+    <bootstrap thing="wCBRock">
+      <autotag group="wMain" tag="1d8_6"/>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+field[livename].text = "Shadow Giant"]]>
+      <before name="Template Name Modification"/>
+      </eval>
+    <eval phase="Final" index="2"><![CDATA[~ add energy drain to melee weapons
+doneif (hero.child[raEnDrain].tagis[Helper.SpcDisable] <> 0)
+
+foreach pick in hero from BaseWep where "wCategory.Melee"
+  #extradamage[eachpick," plus energy drain",field[name].text]
+nexteach]]></eval>
+    <eval phase="PreLevel" priority="4000" index="3"><![CDATA[
+#skillinnate[skClimb] += 11
+#skillinnate[skIntim] += 10
+#skillinnate[skPercep] += 10
+#skillinnate[skStealth] += 8
+
+#racialsituational[hero.child[skPercep],"+4 in dim light",field[name].text]
+#racialsituational[hero.child[skStealth],"+8 in dim light",field[name].text]
+
+perform hero.child[wCBRock].delete[Helper.NatTwoHand]]]>
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="wCBRock" name="Rock" description="Rock for rock throwing." compset="RaceSpec" summary="Rock for rock throwing.">
+    <usesource source="CB_Variant"/>
+    <tag group="Helper" tag="SingleAtt"/>
+    <tag group="wCategory" tag="RangeThrow"/>
+    <tag group="wType" tag="B"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCritMult" tag="2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="WeaponSpec"/>
+    <eval phase="Render" priority="1000"><![CDATA[doneif (tagis[Helper.SpcDisable] <> 0)
+
+call CalcValue
+
+~ change wCBRock name with number of attacks
+
+var raceName as string
+raceName = hero.findchild[BaseRace].field[name].text
+
+if (field[abValue].value <= 1) then
+  hero.child[wCBRock].field[livename].text = "Rock (" & raceName & ")"
+else
+  hero.child[wCBRock].field[livename].text = "Rock x" & field[abValue].value & " (" & raceName & ")"
+endif
+
+field[abRange].value = field[wRangeInc].value]]></eval>
+    </thing>
+  </document>

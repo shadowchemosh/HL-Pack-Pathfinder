@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_ModulePaizo - Clash of the Kingslayers"/>
+  <thing id="tmuDoomgui" name="Doomguide" description="The doomguides are a dark order of female dwarven knights, recruited from the ranks of widows, orphans, and ill-favored women with low status in dwarven society. Several chapters of this order exist on Golarion, rarely spoken of by decent dwarven folk, a shameful secret they'd rather forget. Enlisted during times of hopelessness, the young girls fanatically swear fealty to the order's unnamed and mysterious infernal mistresses and benefit from unspeakable blessings. They appear as harbingers of war, famine, and disease, and when they leave, they take the souls of the slain with them to nourish their malign leaders. They are easily recognizable by their devil-tainted features and their dragon-winged rams." compset="Template" uniqueness="unique">
+    <fieldval field="tmSTR" value="2"/>
+    <fieldval field="tmDEX" value="2"/>
+    <fieldval field="tmCON" value="2"/>
+    <fieldval field="tmINT" value="2"/>
+    <fieldval field="tmWIS" value="2"/>
+    <fieldval field="tmCHA" value="2"/>
+    <fieldval field="tmAC" value="1"/>
+    <fieldval field="tmSkillPls" value="6"/>
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <arrayval field="tmCRArray" index="5" value="2"/>
+    <arrayval field="tmCRArray" index="11" value="3"/>
+    <usesource source="srcClshKS"/>
+    <tag group="AlgnReq" tag="Evil" name="Any Evil" abbrev="Any Evil"/>
+    <tag group="TemplHelp" tag="Acquired" name="Acquired" abbrev="Acquired"/>
+    <tag group="TemplHelp" tag="Inherited" name="Inherited" abbrev="Inherited"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TypeNoEff" tag="tpOutsider" name="Outsider" abbrev="Outsider"/>
+    <bootstrap thing="raAttr2Exc"></bootstrap>
+    <bootstrap thing="raAttr2Exc"></bootstrap>
+    <bootstrap thing="raAttr2Exc"></bootstrap>
+    <bootstrap thing="raDarkVis"></bootstrap>
+    <bootstrap thing="xDamRsAcid">
+      <autotag group="SpecSource" tag="tmHlFiend"/>
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsCold">
+      <autotag group="SpecSource" tag="tmHlFiend"/>
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsElec">
+      <autotag group="SpecSource" tag="tmHlFiend"/>
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsFire">
+      <autotag group="SpecSource" tag="tmHlFiend"/>
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdMag">
+      <autotag group="SpecSource" tag="tmHlFiend"/>
+      </bootstrap>
+    <bootstrap thing="xSplRs">
+      <autotag group="SpecSource" tag="tmHlFiend"/>
+      </bootstrap>
+    <bootstrap thing="xImmPois">
+      <autotag group="SpecSource" tag="tmHlFiend"/>
+      </bootstrap>
+    <bootstrap thing="stNative"></bootstrap>
+    <bootstrap thing="stNative"></bootstrap>
+    <bootstrap thing="xHaFiSmite"></bootstrap>
+    <bootstrap thing="rauHarvDoo"></bootstrap>
+    <bootstrap thing="rauDmterCh"></bootstrap>
+    <bootstrap thing="rauDmEbonS"></bootstrap>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ Set up our damage reduction
+      var damage as number
+      if (herofield[tHitDice].value < 12) then
+        damage = 5
+      else
+        damage = 10
+        endif
+      #applydr[xDamRdMag, damage]]]></eval>
+    <eval phase="Final" priority="11000" index="3">var damage as number
+
+      ~ Set up our spell resistance
+      damage = herofield[tCR].value + 11
+      damage = minimum(damage, 35)
+      #applysr[damage]</eval>
+    <exprreq message="Intelligence 4 required." iserror="no"><![CDATA[#attrvalue[aINT] >= 4]]></exprreq>
+    <prereq message="Female gender required.">
+      <validate>validif (hero.child[background].field[bGender].value = 1)</validate>
+      </prereq>
+    <prereq message="Dwarf subtype required.">
+      <validate><![CDATA[
+        ~once we've been selected, we're fine
+        validif (@ispick <> 0)
+
+        ~we're valid if the dwarf special is present
+        validif (#hassubtype[stDwarf] <> 0)]]></validate>
+      </prereq>
+    <prereq message="Living creature required." iserror="no">
+      <validate><![CDATA[
+        ~once we've been selected, we're fine (since an undead template might be added later).
+        validif (@ispick <> 0)
+
+        ~we're valid if the hero is not unliving
+        validif (hero.tagis[NotLiving.?] = 0)]]></validate>
+      </prereq>
+    <prereq message="Corporeal creature required." iserror="no">
+      <validate><![CDATA[
+        ~once we've been selected, we're fine
+        validif (@ispick <> 0)
+
+        ~we're valid if the incorporeal special isn't present
+        validif (#hasability[raIncorpor] = 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rauHarvDoo" name="Harvest the Doomed" description="A doomguide is constantly surrounded by an invisible vortex that draws fragments of souls into Hell. Anytime a living creature within 60 feet of a doomguide dies, this vortex severs a piece of the creature's soul and sends it to the doomguide's patron. If the dead creature was intelligent and had at least 1 HD , the nearest injured doomguide heals 5 hit points per HD of the dead creature." compset="RaceSpec">
+    <usesource source="srcClshKS"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="rauDmterCh" name="Terrifying Charge" description="When charging into the fray, a doomguide is fueled by divine wrath that strikes terror into the hearts of her enemies. The target of her first attack during a charge must make a Will save (DC equal to her attack roll) or be panicked for 1 round. This is a mind-affecting fear effect." compset="RaceSpec">
+    <usesource source="srcClshKS"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="rauDmEbonS" name="Ebon Steed" description="A doomguide gains an ebon flying ram as a steed." compset="RaceSpec">
+    <usesource source="srcClshKS"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="ruEbonRam" name="Ebon Ram" compset="Race">
+    <fieldval field="rSTR" value="6"/>
+    <fieldval field="rDEX" value="4"/>
+    <fieldval field="rCON" value="7"/>
+    <fieldval field="rINT" value="-8"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="-3"/>
+    <fieldval field="rSpeed" value="50"/>
+    <fieldval field="rFeat" value="-1"/>
+    <fieldval field="rHitDice" value="2"/>
+    <fieldval field="rHPStart" value="9"/>
+    <fieldval field="rCR" value="1"/>
+    <fieldval field="rSpace" value="10"/>
+    <fieldval field="rEnviron" value="Temperate plains"/>
+    <fieldval field="rOrgan" value="Solitary, pair, or herd (3-30)"/>
+    <fieldval field="rTreasure" value="None"/>
+    <usesource source="srcClshKS"/>
+    <tag group="HasType" tag="tpAnimal" name="Animal" abbrev="Animal"/>
+    <tag group="Helper" tag="Quadruped" name="Quadruped" abbrev="Quadruped"/>
+    <tag group="Hero" tag="NoDefComm" name="NoDefComm" abbrev="NoDefComm"/>
+    <tag group="RaceSize" tag="Large1" name="Large" abbrev="Large"/>
+    <tag group="RaceType" tag="NPC" name="NPC Race" abbrev="NPC Race"/>
+    <tag group="Alignment" tag="NeutralGE" name="Neutral" abbrev="N"/>
+    <tag group="Alignment" tag="NeutralLC" name="Neutral" abbrev="N"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raDocile"></bootstrap>
+    <bootstrap thing="wHooves">
+      <autotag group="wMain" tag="1d4_4"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="xScent"></bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Good"/>
+      <autotag group="Value" tag="50"/>
+      </bootstrap>
+    <bootstrap thing="fImpBull"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="tmAdvAnim"></bootstrap>
+    <bootstrap thing="triComRide"></bootstrap>
+    <eval phase="PreLevel" priority="4000">#skillinnate[skPercep] += 2
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  </document>

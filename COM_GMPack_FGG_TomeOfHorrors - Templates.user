@@ -1,0 +1,2043 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_FGG_TomeOfHorrors - Templates"/>
+  <thing id="tmuThorny" name="Thorny" description="Thornies are the pets and companions of the vegepygmies. They are rarely encountered outside of a vegepygmy tribe or hunting party. Vegepygmies often use them to hunt prey. Although the most common thorny is dog-like, vegepygmies have managed to cultivate other types of thornies that resemble other animals in form and manner of attack.\n\nThornies reproduce by planting egg-like seeds (that the female lays) in the ground. Three to six months later, a small tree sprouts and buds, and from these buds are born the thornies. An average thorny tree is capable of producing 1d6+4 thornies. The tree dies once it buds and the thornies hatch." compset="Template" uniqueness="unique">
+    <fieldval field="tmAC" value="1"/>
+    <fieldval field="tmInfHD" value="Racial hit dice changed to d8."/>
+    <fieldval field="tmHitDice" value="2"/>
+    <fieldval field="tmHDSides" value="8"/>
+    <fieldval field="tmTmSklPls" value="2"/>
+    <fieldval field="tmTmSklMul" value="2"/>
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="OverType" tag="tpPlant"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="AddHitDice"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="wOtherMel">
+      <autotag group="wType" tag="P"/>
+      <assignval field="livename" value="Thorns"/>
+      </bootstrap>
+    <bootstrap thing="rauThThorn"></bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="8"/>
+      <assignval field="livename" value="in swampy or forested areas"/>
+      </bootstrap>
+    <eval phase="PreAttr" priority="10000"><![CDATA[      if (hero.childfound[xFly].field[abValue].value <> 0) then
+        hero.childfound[xFly].field[abValue].value = 0
+        endif
+
+      if (hero.childfound[xSwim].field[abValue].value <> 0) then
+        hero.childfound[xSwim].field[abValue].value = 0
+        endif
+
+      if (hero.childfound[xClimb].field[abValue].value <> 0) then
+        hero.childfound[xClimb].field[abValue].value = 0
+        endif
+
+      if (hero.childfound[xBurrow].field[abValue].value <> 0) then
+        hero.childfound[xBurrow].field[abValue].value = 0
+        endif]]></eval>
+    <eval phase="First" index="5"><![CDATA[
+      ~ remove all movement types except base
+      var searchexpr as string
+      searchexpr = "SpecType.Movement"
+
+      foreach pick in hero from Ability where searchexpr
+         perform eachpick.assign[Helper.SpcDisable]
+         perform eachpick.assign[Hide.Special]
+      nexteach
+
+      ~ make natural weapons nat two handed
+      foreach pick in hero from BaseNatWep where "!thingid.wOtherMel"
+         perform eachpick.assign[Helper.NatTwoHand]
+      nexteach]]></eval>
+    <eval phase="PreLevel" priority="4000" index="2">#skillbonus[skPercep] = 4
+      #skillbonus[skStealth] = 4
+
+      ~ Increase our speed by 10
+      hero.child[Speed].field[tSpeed].value += 10</eval>
+    <eval phase="PreLevel" priority="9900" index="4"><![CDATA[
+      ~ Change thorn damage due to size
+
+      ~ Fine or smaller
+      if (herofield[tSize].value <= -4) then
+         perform hero.child[wOtherMel].tagreplace[wMain.?,wMain.1_1]
+         perform hero.child[wOtherMel].delete[Helper.DamageUp]
+         perform hero.child[wOtherMel].delete[Helper.NatSizeDmg]
+      ~ Dimuntive
+      elseif (herofield[tSize].value = -3) then
+         perform hero.child[wOtherMel].tagreplace[wMain.?,wMain.1d2_2]
+         perform hero.child[wOtherMel].delete[Helper.DamageUp]
+         perform hero.child[wOtherMel].delete[Helper.NatSizeDmg]
+      ~ Tiny
+      elseif (herofield[tSize].value = -2) then
+         perform hero.child[wOtherMel].tagreplace[wMain.?,wMain.1d3_3]
+         perform hero.child[wOtherMel].delete[Helper.DamageUp]
+         perform hero.child[wOtherMel].delete[Helper.NatSizeDmg]
+      ~ Small
+      elseif (herofield[tSize].value = -1) then
+         perform hero.child[wOtherMel].tagreplace[wMain.?,wMain.1d4_4]
+         perform hero.child[wOtherMel].delete[Helper.DamageUp]
+         perform hero.child[wOtherMel].delete[Helper.NatSizeDmg]
+      ~ Medium
+      elseif (herofield[tSize].value = 0) then
+         perform hero.child[wOtherMel].tagreplace[wMain.?,wMain.1d6_5]
+         perform hero.child[wOtherMel].delete[Helper.DamageUp]
+         perform hero.child[wOtherMel].delete[Helper.NatSizeDmg]
+      ~ Large
+      elseif (herofield[tSize].value = 1) then
+         perform hero.child[wOtherMel].tagreplace[wMain.?,wMain.1d8_6]
+         perform hero.child[wOtherMel].delete[Helper.DamageUp]
+         perform hero.child[wOtherMel].delete[Helper.NatSizeDmg]
+      ~ Huge
+      elseif (herofield[tSize].value = 2) then
+         perform hero.child[wOtherMel].tagreplace[wMain.?,wMain.2d6_104]
+         perform hero.child[wOtherMel].delete[Helper.DamageUp]
+         perform hero.child[wOtherMel].delete[Helper.NatSizeDmg]
+      ~ Gargantuan
+      elseif (herofield[tSize].value = 3) then
+         perform hero.child[wOtherMel].tagreplace[wMain.?,wMain.2d8_305]
+         perform hero.child[wOtherMel].delete[Helper.DamageUp]
+         perform hero.child[wOtherMel].delete[Helper.NatSizeDmg]
+      ~ Colossal or bigger
+      elseif (herofield[tSize].value >= 4) then
+         perform hero.child[wOtherMel].tagreplace[wMain.?,wMain.3d8_306]
+         perform hero.child[wOtherMel].delete[Helper.DamageUp]
+         perform hero.child[wOtherMel].delete[Helper.NatSizeDmg]
+      endif]]></eval>
+    <prereq message="Animal type required." iserror="no">
+      <validate><![CDATA[
+        ~once we've been selected, we're fine (since a template might be added later.
+        validif (@ispick <> 0)
+
+        validif (#hastype[tpAnimal] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuCorpsSp" name="Corpsespun" description="Corpsespun are undead creatures formed when a living creature is slain by a corpsespinner. The poison of the corpsespinner interacts with the slain creature&apos;s body and animates it as a corpsespun creature; a zombie-like automaton sheathed in webs whose insides have been replaced with thousands of tiny spiders. The creature retains no memories of its former life, and while free-willed, the corpsespun rarely wanders far from the corpsespinner that created it.\n\nThe creature appears as a zombie shrouded in thick webs with hundreds of spiders (of all sizes, shapes, and colors) crawling over its body and into and out of its ears, eyes, and mouth.\n\nCorpsespun creatures do not understand or speak any languages they knew in life." compset="Template" uniqueness="unique">
+    <fieldval field="tmSTR" value="2"/>
+    <fieldval field="tmDEX" value="-2"/>
+    <fieldval field="tmCHA" value="4"/>
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TypeAndAug" tag="tpUndead"/>
+    <tag group="AlgnReq" tag="NeutEvil"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <tag group="Helper" tag="NoTypeAbil" name="No Type Abilities" abbrev="No Type Abilities"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="Append"/>
+    <bootstrap thing="rauCrSpTrs"></bootstrap>
+    <bootstrap thing="typUndead"></bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="SpecSource" tag="tmuCorpsSp"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdMag">
+      <autotag group="Value" tag="1"/>
+      <autotag group="SpecSource" tag="tmuCorpsSp"/>
+      </bootstrap>
+    <bootstrap thing="raPoiSTR">
+      <assignval field="abDuration" value="4"/>
+      <assignval field="abValue" value="4"/>
+      <assignval field="abValue2" value="1"/>
+      </bootstrap>
+    <bootstrap thing="xChanRes">
+      <autotag group="Value" tag="2"/>
+      <autotag group="SpecSource" tag="tmuCorpsSp"/>
+      </bootstrap>
+    <bootstrap thing="fToughness">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="rauCrSpSpr"></bootstrap>
+    <eval phase="Final" priority="9000" index="2">~ Make flight clumsy 
+      perform hero.childfound[xFly].delete[Maneuver.?]
+      perform hero.childfound[xFly].assign[Maneuver.Clumsy]</eval>
+    <eval phase="First" index="5"><![CDATA[~ Convert Dr x/Magic or y to DR x/Magic and Remove DR as long as it is not DR x/Magic
+~ first add NaturalDR.Magic to DR magics that are missing those tags
+perform hero.childfound[xDamRdEvMa].assign[NaturalDR.Magic]
+perform hero.childfound[xDamRdArro].assign[NaturalDR.Magic]
+
+~ remove all DRs that arent magic
+var searchexpr as string
+searchexpr = "!NaturalDR.Magic & SpecType.DR & !thingid.xDamRdMag"
+        foreach pick in hero from Ability where searchexpr
+          perform eachpick.assign[Helper.SpcDisable]
+          perform eachpick.assign[Hide.Special]
+        nexteach
+
+~ go through each DR magic and assign value to DR x/magic using the best one then remove other DRs
+var srExp as string
+srExp = "NaturalDR.Magic & SpecType.DR & !thingid.xDamRdMag"
+   foreach pick in hero from Ability where srExp
+     #applydr[xDamRdMag, eachpick.tagvalue[Value.?]]
+     perform eachpick.assign[Helper.SpcDisable]
+     perform eachpick.assign[Hide.Special]
+   nexteach]]></eval>
+    <eval phase="Final" priority="10000" index="7"><![CDATA[~ Remove languages
+
+foreach pick in hero where "component.BaseLang"
+ perform eachpick.assign[Hide.Language]
+nexteach
+
+perform hero.delete[SpeakLang.?]
+perform hero.assign[Hero.CantSpeak]
+
+herofield[tLangsSta].value = 0
+herofield[tLangsSpk].value = 0]]></eval>
+    <eval phase="PreLevel" priority="9000" index="8"><![CDATA[~ Change slam damage due to size
+
+~ Fine or smaller
+if (hero.tagis[Size.Fine] <> 0) then
+   perform hero.childfound[wSlam].tagreplace[wMain.?,wMain.1_1]
+~ Dimuntive
+elseif (hero.tagis[Size.Diminutive] <> 0) then
+   perform hero.childfound[wSlam].tagreplace[wMain.?,wMain.1d2_2]
+~ Tiny
+elseif (hero.tagis[Size.Tiny] <> 0) then
+   perform hero.childfound[wSlam].tagreplace[wMain.?,wMain.1d3_3]
+~ Small
+elseif (hero.tagis[Size.Small] <> 0) then
+   perform hero.childfound[wSlam].tagreplace[wMain.?,wMain.1d4_4]
+~ Medium
+elseif (hero.tagis[Size.Medium] <> 0) then
+     perform hero.childfound[wSlam].tagreplace[wMain.?,wMain.1d6_5]
+~ Large
+elseif (hero.tagis[Size.Large] <> 0) then
+   perform hero.childfound[wSlam].tagreplace[wMain.?,wMain.1d8_6]
+~ Huge
+elseif (hero.tagis[Size.Huge] <> 0) then
+   perform hero.childfound[wSlam].tagreplace[wMain.?,wMain.2d6_104]
+~ Gargantuan
+elseif (hero.tagis[Size.Gargantuan] <> 0) then
+   perform hero.childfound[wSlam].tagreplace[wMain.?,wMain.2d8_305]
+~ Colossal or bigger
+elseif (hero.tagis[Size.Colossal] <> 0) then
+   perform hero.childfound[wSlam].tagreplace[wMain.?,wMain.3d8_306]
+endif
+
+   perform hero.childfound[wSlam].delete[Helper.DamageUp]
+   perform hero.childfound[wSlam].delete[Helper.DamageDown]
+   perform hero.childfound[wSlam].delete[Helper.NatSizeDmg]]]></eval>
+    <eval phase="PreAttr" priority="1000"><![CDATA[~ INT score is 1
+  hero.child[aINT].field[aNormForce].value = 1
+~ DEX is a min of 10
+  hero.child[aDEX].field[aNormMin].value = 10
+
+~ +4 natural armor bonus if creature's armor bonus is less than 4
+if (hero.child[mNatural].field[Bonus].value <= 4) then
+        hero.child[mNatural].field[Bonus].value = 4
+        endif]]></eval>
+    <eval phase="PostLevel" priority="1000" index="4"><![CDATA[var hd as number
+hd = hero.tagcount[Hero.HitDice] - hero.tagcount[Classes.?]
+
+
+~ Set up the amount the DR
+  var resist as number
+  if (herofield[tHitDice].value <= 3) then
+    resist = 0    
+  elseif (herofield[tHitDice].value <= 9) then
+    resist = 5
+  else
+    resist = 10
+  endif
+
+~ Set up our damage reduction
+  #applydr[xDamRdMag, resist]]]></eval>
+    <eval phase="UserFinal" index="3"><![CDATA[~disable all subtypes timing takes care of racial subtypes
+var expr as string
+expr = "!(Race.stAir | Race.stEarth | Race.stWater)"
+foreach pick in hero from Subtype where expr
+  eachpick.activated = 0
+nexteach
+
+
+~ Disable and Hide all supernatural, spell-like, psi-like special abilities and non-extraordinaty special attack 
+var searchexpr as string
+searchexpr = "!component.BaseFeat & (AbilType.SpellLike | AbilType.Super | AbilType.PsiLike | !(AbilType.Extra & SpecType.Attack)) & !thingid.typUndead & !SpecType.Movement & !SpecSource.tmuCorpsSp "
+        foreach pick in hero from Ability where searchexpr
+          perform eachpick.assign[Helper.SpcDisable]
+          perform eachpick.assign[Hide.Special]
+          nexteach
+
+~ remove spells
+
+perform hero.delete[Hero.Caster]
+
+foreach pick in hero where "component.BaseSpell"
+  ~perform eachpick.assign[Helper.SpOverLev]
+  perform eachpick.assign[Hide.Spell]
+  ~perform eachpick.delete[KnowSpell.?]
+nexteach
+
+~ remove spell-like ability spells
+
+foreach pick in hero where "Helper.SpellLike"
+ perform eachpick.assign[Helper.SpcDisable]
+ perform eachpick.assign[Hide.Special]
+nexteach]]></eval>
+    <prereq message="Corporeal creature required." iserror="no">
+      <validate><![CDATA[
+        ~once we've been selected, we're fine
+        validif (@ispick <> 0)
+
+        ~we're valid if the incorporeal special isn't present
+        validif (#hasability[raIncorpor] = 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuThesmon" name="Thessalmonster" description="Thessalmonsters are nocturnal predators that resemble a cross between an eight-headed hydra and another monster. The true origin of the thessalmonster lies shrouded in mystery, but many sages speculate the creature is the result of an arcane experiment gone awry involving an ancient thessalhydra and other monsters.\n\nThessalmonsters are a combination of a thessalhydra and another creature. Thessalmonsters resemble hydras, complete with reptilian torso and eight serpentine heads in front. Some thessalmonsters retain the base creature&apos;s head while others lose it and have it replaced with a central maw filled with serrated teeth." compset="Template" uniqueness="unique">
+    <arrayval field="tmCRArray" index="0" value="3"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="TypeNoEff" tag="tpAberr"/>
+    <tag group="AlgnReq" tag="NeutralGE"/>
+    <tag group="AlgnReq" tag="NeutralLC"/>
+    <tag group="Custom" tag="thessHeads"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="rauThsHyTr"></bootstrap>
+    <bootstrap thing="xImmAcid"></bootstrap>
+    <bootstrap thing="raGrab">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="rauThsStAc">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="Custom" tag="thessHeads"/>
+      <autotag group="Custom" tag="thessAttck"/>
+      <autotag group="Helper" tag="NatOverSec"/>
+      <assignval field="livename" value="Serpentine Bite"/>
+      <assignval field="wDamExtra" value=" plus 1d6 acid"/>
+      </bootstrap>
+    <bootstrap thing="cfguThesMo"></bootstrap>
+    <bootstrap thing="xFastHeal"></bootstrap>
+    <bootstrap thing="fComRef">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="xBonusPerc">
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <eval phase="UserPreAt" priority="1000"><![CDATA[~ lose fly
+
+if (hero.childfound[xFly].field[abValue].value <> 0) then
+  hero.childfound[xFly].field[abValue].value = 0
+endif
+
+perform hero.childfound[xFly].assign[Helper.SpcDisable]
+perform hero.childfound[xFly].assign[Hide.Special]
+
+~ base speed is at least 40
+if (hero.child[Speed].field[tSpeed].value < 40) then
+   hero.child[Speed].field[tSpeed].value = 40
+endif]]></eval>
+    <eval phase="First" priority="2000" index="2"><![CDATA[~ change creature size
+var basesize as number
+basesize = herofield[tSize].value
+~ change stats
+~ fine to large
+if (basesize <= -4) then
+  hero.child[aSTR].field[aStartMod].value += 18
+  hero.child[aDEX].field[aStartMod].value -= 10
+  hero.child[aCON].field[aStartMod].value += 6
+  hero.child[ArmorClass].field[tACNatural].value += 2
+~ diminutive to large
+elseif (basesize = -3) then
+  hero.child[aSTR].field[aStartMod].value += 18
+  hero.child[aDEX].field[aStartMod].value -= 8
+  hero.child[aCON].field[aStartMod].value += 6
+  hero.child[ArmorClass].field[tACNatural].value += 2
+~tiny to large
+elseif (basesize = -2) then
+  hero.child[aSTR].field[aStartMod].value += 16
+  hero.child[aDEX].field[aStartMod].value -= 6
+  hero.child[aCON].field[aStartMod].value += 6
+  hero.child[ArmorClass].field[tACNatural].value += 2
+~small to large
+elseif (basesize = -1) then
+  hero.child[aSTR].field[aStartMod].value += 12
+  hero.child[aDEX].field[aStartMod].value -= 4
+  hero.child[aCON].field[aStartMod].value += 6
+  hero.child[ArmorClass].field[tACNatural].value += 2
+~medium to large
+elseif (basesize = 0) then
+  hero.child[aSTR].field[aStartMod].value += 8
+  hero.child[aDEX].field[aStartMod].value -= 2
+  hero.child[aCON].field[aStartMod].value += 4
+  hero.child[ArmorClass].field[tACNatural].value += 2
+~large to huge
+elseif (basesize = 1) then
+  hero.child[aSTR].field[aStartMod].value += 8
+  hero.child[aDEX].field[aStartMod].value = maximum(hero.child[aDEX].field[aFinalVal].value - 2, 3)
+  hero.child[aCON].field[aStartMod].value += 4
+  hero.child[ArmorClass].field[tACNatural].value += 3
+~huge to gargantuan
+elseif (basesize = 2) then
+  hero.child[aSTR].field[aStartMod].value += 8
+  hero.child[aCON].field[aStartMod].value += 4
+  hero.child[ArmorClass].field[tACNatural].value += 4
+~gargantuan to colossal
+elseif (basesize = 3) then
+  hero.child[aSTR].field[aStartMod].value += 8
+  hero.child[aCON].field[aStartMod].value += 4
+  hero.child[ArmorClass].field[tACNatural].value += 5
+endif
+
+var sizemod as number
+~ medium or smaller
+if (herofield[tSize].value <= 0) then
+   sizemod = 1 - herofield[tSize].value
+~ Colossal
+elseif (herofield[tSize].value >= 4) then
+   sizemod = 0
+~ Large thru Gargantuan
+else 
+   sizemod = 1
+endif
+call SizeChange]]></eval>
+    <eval phase="PreLevel" priority="10000" index="5"><![CDATA[~ assign damage to thesselmonster attacks
+
+foreach pick in hero where "Custom.thessAttck"
+   perform eachpick.delete[wMain.?]
+   perform eachpick.delete[Helper.DamageUp]
+   perform eachpick.delete[Helper.NatSizeDmg]
+~ Assign damage based on size. 
+~ Large
+if (herofield[tSize].value <= 1) then
+   perform eachpick.assign[wMain.1d8_6]
+~ Huge
+elseif (herofield[tSize].value = 2) then
+   perform eachpick.assign[wMain.2d6_104]
+~ Gargantuan
+elseif (herofield[tSize].value = 3) then
+   perform eachpick.assign[wMain.2d8_204]
+~ Colossal or bigger
+elseif (herofield[tSize].value >= 4) then
+   perform eachpick.assign[wMain.4d6_106]
+endif
+
+nexteach]]></eval>
+    <eval phase="Final" priority="1000" index="3">~ set size and reach
+
+if (herofield[tSize].value = 1) then
+ herofield[tSpace].value = 10
+ herofield[tReach].value = 5
+elseif (herofield[tSize].value = 2) then
+ herofield[tSpace].value = 15
+ herofield[tReach].value = 10
+elseif (herofield[tSize].value = 3) then
+ herofield[tSpace].value = 20
+ herofield[tReach].value = 15
+else
+ herofield[tSpace].value = 30
+ herofield[tReach].value = 20
+endif</eval>
+    <eval phase="First" index="4"><![CDATA[~ assign fast healing 5 if we don't have fast healing or fast healing less than 5
+~#applydr[xFastHeal,5]]]></eval>
+    <eval phase="First" priority="600" index="6"><![CDATA[field[livename].text = "Thessal"]]>
+      <before name="Template Name Modification"/>
+      </eval>
+    <exprreq message="Magical Beast type required." iserror="no"><![CDATA[#hastype[tpMagBeast] <> 0]]></exprreq>
+    </thing>
+  <thing id="tmuTenebro" name="Tenebrous" description="Tenebrous creatures are native to the Plane of Shadow and are rarely encountered elsewhere. On occasion, a momentary tear in the fabric of the planes allows these creatures access to other planes of existence, such as the Prime Material. Tenebrous creatures enjoy attacking and devouring living creatures, but generally do not attack prey larger than themselves. Tenebrous creatures look much like the base creature except that its body is dark gray to black in color and covered in thick coat of dull, black, coarse bristles. Tenebrous creatures have a pair of sharp mandibles flanking their mouth and large, compound eyes." compset="Template" uniqueness="unique">
+    <fieldval field="tmSTR" value="2"/>
+    <fieldval field="tmCON" value="4"/>
+    <fieldval field="tmCHA" value="2"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="TypeNoEff" tag="tpOutsider"/>
+    <tag group="Custom" tag="tenHasBite" name="tenebrous_HasBite"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="rauTeneBri"></bootstrap>
+    <bootstrap thing="rauTeneAcd"></bootstrap>
+    <bootstrap thing="wBite">
+      <containerreq phase="First" priority="200">!hero#Custom.tenHasBite</containerreq>
+      <autotag group="wMain" tag="1_1"/>
+      </bootstrap>
+    <bootstrap thing="stExtrapla"></bootstrap>
+    <eval phase="First"><![CDATA[~ +6 natural armor bonus
+hero.child[mNatural].field[Bonus].value += 6
+
+doneif (hero.childexists[wBite] = 0)
+
+~ if base creature has bite attack assign tag
+if (hero.childexists[wBite] <> 0) then
+    perform hero.assign[Custom.tenHasBite]
+endif]]></eval>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[~ CR depends on HD
+var hd as number
+hd = hero.tagcount[Hero.HitDice] - hero.tagcount[Classes.?]
+
+~ Use the number of HD to calculate CR
+      var cr as number
+      if (hd <= 3) then
+        cr = 1
+      elseif (hd <= 9) then
+        cr = 2
+      else
+        cr = 3
+        endif
+      herofield[tCR].value += cr]]></eval>
+    <eval phase="PreLevel" priority="10000" index="3"><![CDATA[if (hero.tagis[Custom.tenHasBite] <> 0) then
+  ~ if creature already has bite attack
+   foreach pick in hero from BaseNatWep where "thingid.wBite"
+        ~ Upgrade damage of this weapon
+        perform eachpick.assign[Helper.DamageUp]
+   nexteach
+else
+  ~ creature gains bite attack and assign damage
+  ~ Tiny or smaller
+    if (herofield[tSize].value <= -2) then
+      perform hero.childfound[wBite].tagreplace[wMain.?,wMain.1d3_3]
+  ~ Small
+    elseif (herofield[tSize].value = -1) then
+     perform hero.childfound[wBite].tagreplace[wMain.?,wMain.1d4_4]
+  ~ Medium
+    elseif (herofield[tSize].value = 0) then
+     perform hero.childfound[wBite].tagreplace[wMain.?,wMain.1d6_5]
+  ~ Large
+    elseif (herofield[tSize].value = 1) then
+     perform hero.childfound[wBite].tagreplace[wMain.?,wMain.1d8_6]
+  ~ Huge
+    elseif (herofield[tSize].value = 2) then
+     perform hero.childfound[wBite].tagreplace[wMain.?,wMain.2d6_104]
+  ~ Gargantuan
+    elseif (herofield[tSize].value = 3) then
+     perform hero.childfound[wBite].tagreplace[wMain.?,wMain.2d8_305]
+  ~ Colossal or bigger
+    elseif (herofield[tSize].value >= 4) then
+     perform hero.childfound[wBite].tagreplace[wMain.?,wMain.4d6_106]
+   endif  
+endif]]></eval>
+    <prereq message="Corporeal creature required.">
+      <validate><![CDATA[        ~once we've been selected, we're fine
+        validif (@ispick <> 0)
+
+        ~we're valid if the incorporeal special isn't present
+        validif (#hasability[raIncorpor] = 0)]]></validate>
+      </prereq>
+    <prereq message="Living creature required.">
+      <validate><![CDATA[
+
+        ~we're valid if the hero is living
+        validif (#hastype[tpUndead] = 0)]]></validate>
+      </prereq>
+    <prereq message="Non-Outsider type required">
+      <validate><![CDATA[
+        ~once we've been selected, we're fine (since a template might be added later.
+        validif (@ispick <> 0)
+
+        validif (#hastype[tpOutsider] = 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuUndeadL" name="Undead Lord" description="For every type of undead, there exists an undead lord, a being of great power that commands the lesser of its kind. They are powerful creatures that inspire awe and fear in those they rule.\n\nUndead lords are extremely dangerous opponents. They are stronger, tougher, and more intelligent than the ones they command. As such, they are rarely encountered by chance (and rarely encountered alone). Most maintain a lair far away from civilization where they plot and plan, sending their minions on missions to further their goals.\n\nUndead lords appear as normal undead of their type, though there seems to be a strong aura of evil and power resonating about them." compset="Template" uniqueness="unique">
+    <fieldval field="tmHDSides" value="8"/>
+    <fieldval field="tmDEX" value="2"/>
+    <fieldval field="tmINT" value="2"/>
+    <fieldval field="tmWIS" value="2"/>
+    <fieldval field="tmCHA" value="4"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="ClVaryName" tag="AppNoComma"/>
+    <bootstrap thing="fCommandUn">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="xChanRes"></bootstrap>
+    <bootstrap thing="rauULCreSp"></bootstrap>
+    <bootstrap thing="rauULSumUd"></bootstrap>
+    <bootstrap thing="raULUndTel"></bootstrap>
+    <bootstrap thing="rauULDesAu"></bootstrap>
+    <bootstrap thing="spDarknes2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spFear3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdMag"></bootstrap>
+    <eval phase="PreLevel" priority="10000"><![CDATA[var hd as number
+hd = hero.tagcount[Hero.HitDice] - hero.tagcount[Classes.?]
+
+~ bring hd up to 5 if hd is less than 5 and +1 CR
+if (hd < 5) then
+  perform assign[TemplHelp.AddHitDice]
+  field[tmHitDice].value += 5 - hd
+  herofield[tCR].value += 3
+else
+  herofield[tCR].value += 2
+endif
+
+if (hero.child[aINT].tagcount[Helper.NoScore] <> 0) then
+  perform hero.child[aINT].delete[Helper.NoScore]
+endif
+
+foreach pick in hero where "component.BaseAttr"
+  eachpick.field[aNormForce].value = 0
+nexteach]]></eval>
+    <eval phase="Final" index="2"><![CDATA[var hd as number
+hd = hero.tagcount[Hero.HitDice] - hero.tagcount[Classes.?]
+
+~ DR x/magic
+if (hd <= 7) then 
+   hero.child[xDamRdMag].field[abValue].value = maximum(5,hero.child[xDamRdMag].field[abValue].value)
+else 
+   hero.child[xDamRdMag].field[abValue].value = maximum(10,hero.child[xDamRdMag].field[abValue].value)
+endif
+
+~ CR 4 or base if better
+hero.child[xChanRes].field[abValue].value = maximum(4,hero.child[xChanRes].field[abValue].value)]]></eval>
+    <eval phase="PreAttr" index="3"><![CDATA[~ if incorporeal gain additional +2 Dex, else gain additional +4 natural AC
+
+if (#hassubtype[stIncorpor] <> 0) then
+  hero.child[aDEX].field[aStartMod].value += 2
+else
+  hero.child[ArmorClass].field[tACNatural].value += 4
+endif]]></eval>
+    <eval phase="First" index="4"><![CDATA[~ allow classes
+foreach pick in hero
+  if (eachpick.tagcount[TemplHelp.NoClasses] <> 0) then
+    perform eachpick.delete[TemplHelp.NoClasses]
+  endif
+nexteach
+
+var searchexpr as string
+      searchexpr = "!component.BaseFeat & !SpecType.Movement & !thingid.typUndead"
+
+foreach pick in hero 
+   perform eachpick.delete[Helper.SpcDisable]
+   perform eachpick.delete[Helper.FtDisable]
+nexteach]]></eval>
+    <prereq message="Undead type required.">
+      <validate><![CDATA[validif (#hastype[tpUndead] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuVegpyCh" name="Vegepygmy Chief" description="Vegepygmy chiefs gain a special spore attack." compset="Template" uniqueness="unique">
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <bootstrap thing="rauVgpSpor"></bootstrap>
+    <exprreq message="Vegepygmy race required."><![CDATA[#hasrace[rVegepygmy] <> 0]]></exprreq>
+    </thing>
+  <thing id="tmuBstofCh" name="Beast of Chaos" description="A beast of chaos is a creature that has been warped when the demonic forces of the Abyss reach into the Material Plane. A beast of chaos vaguely resembles the animal it once was. Its skin and fur become leprous and patchy; its color fades to a dull sheen; its teeth become razor-sharp and more pronounced; its eyes turn to a bright golden yellow.\n\n&#147;Beast of Chaos&#148; is an inherited or acquired template that can be added to any normal or dire animal (referred to hereafter as the base creature). It retains all the base creature&apos;s statistics and special abilities except as noted here." compset="Template" uniqueness="unique">
+    <fieldval field="tmSTR" value="2"/>
+    <fieldval field="tmCHA" value="4"/>
+    <fieldval field="tmAC" value="4"/>
+    <fieldval field="tmReplRaHD" value="10"/>
+    <arrayval field="tmCRArray" index="0" value="2"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <tag group="TypeAndAug" tag="tpMagBeast"/>
+    <tag group="AlgnReq" tag="ChaotNeut"/>
+    <tag group="ClVaryName" tag="AppNoComma"/>
+    <bootstrap thing="xScent"></bootstrap>
+    <bootstrap thing="raFrightPr"></bootstrap>
+    <bootstrap thing="rauBChRage"></bootstrap>
+    <bootstrap thing="xImmConfus"></bootstrap>
+    <bootstrap thing="xImmFear"></bootstrap>
+    <bootstrap thing="xImmHold"></bootstrap>
+    <bootstrap thing="xuImmSlow"></bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000" index="2">#racialbonus[skPercep] += 8
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    <eval phase="Final" priority="10000">~ Spell Resistance
+
+var sr as number
+sr = minimum(11 + herofield[tCR].value, 25)
+
+#applysr[sr]</eval>
+    <prereq message="Animal type required." iserror="no">
+      <validate><![CDATA[        ~once we've been selected, we're fine (since a template might be added later.
+        validif (@ispick <> 0)
+
+        validif (#hastype[tpAnimal] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuBleedHo" name="Bleeding Horror" description="Created by the axe of blood, these foul creatures drip with the blood they were so willing to sacrifice to the hungry blade. Though undead, bleeding horrors are not intrinsically evil and retain the alignment they had in life. They are, however, filled with the unquenchable desire for blood to feed the weapon that created them. Bleeding horrors appear as skeletons or sunken corpses covered in and continuously dripping thick red blood. Their eyes glow with a desire for blood. They may wear armor and wield weapons.\n\n&#147;Bleeding Horror&#148; is an acquired template that can be added to humanoid, monstrous humanoid, magical beast, or outsider (referred to hereafter as the base creature) that dies as a result of feeding the axe of blood. A bleeding horror retains all the base creature&apos;s statistics and special abilities except as noted here." compset="Template" uniqueness="unique">
+    <fieldval field="tmCHA" value="8"/>
+    <fieldval field="tmAC" value="5"/>
+    <fieldval field="tmReplRaHD" value="8"/>
+    <fieldval field="tmInfHD" value="Repalce with d8s."/>
+    <arrayval field="tmCRArray" index="0" value="3"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TypeAndAug" tag="tpUndead"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <tag group="Custom" tag="bldHr_Claw"/>
+    <tag group="ClVaryName" tag="AppNoComma"/>
+    <bootstrap thing="rauBldHCrS"></bootstrap>
+    <bootstrap thing="rauBdHFndT"></bootstrap>
+    <bootstrap thing="rauBdHHorA"></bootstrap>
+    <bootstrap thing="spuBldstm3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="wClaw">
+      <containerreq phase="First" priority="450">hero#Custom.bldHr_Claw</containerreq>
+      <autotag group="wMain" tag="1_1"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdMag"></bootstrap>
+    <bootstrap thing="xChanRes">
+      <autotag group="Value" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="fToughness">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="typUndead"></bootstrap>
+    <bootstrap thing="rauBdHBldC"></bootstrap>
+    <eval phase="Final" index="4">~ apply SR
+#applysr[11 + herofield[tCR].value]</eval>
+    <eval phase="PreLevel" priority="10000" index="2"><![CDATA[~ DR x/magic depends on HD
+var hd as number
+hd = hero.tagcount[Hero.HitDice] - hero.tagcount[Classes.?]
+
+~ Use the number of HD to calculate CR
+      var dr as number
+      if (hd <= 5) then
+        dr = 5
+      elseif (hd <= 10) then
+        dr = 10
+      else
+        dr = 15
+      endif
+
+perform hero.child[xDamRdMag].assignstr["Value." & dr]]]></eval>
+    <eval phase="PreLevel" priority="10000" index="3"><![CDATA[~ change damage for each natural attack
+
+foreach pick in hero from BaseNatWep
+  
+if (hero.tagis[Size.Fine] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1_1]
+elseif (hero.tagis[Size.Diminutive] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d2_2]
+elseif (hero.tagis[Size.Tiny] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d3_3]
+elseif (hero.tagis[Size.Small] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d4_4]
+elseif (hero.tagis[Size.Medium] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d6_5]
+elseif (hero.tagis[Size.Large] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d8_6]      
+elseif (hero.tagis[Size.Huge] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.2d6_104]
+elseif (hero.tagis[Size.Gargantuan] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.2d8_305]     
+elseif (hero.tagis[Size.Colossal] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.4d6_106]     
+endif
+
+perform eachpick.delete[Helper.DamageUp]
+perform eachpick.delete[Helper.DamageDown]
+perform eachpick.delete[Helper.NatSizeDmg]
+
+nexteach]]></eval>
+    <eval phase="First"><![CDATA[~ assign tag if we need a claw attack
+
+if (hero.childcount[wClaw] <= 1) then
+   perform hero.assign[Custom.bldHr_Claw]
+endif
+
+~ defelction bonus to AC
+
+hero.child[ArmorClass].field[tACDeflect].value += 2]]></eval>
+    <prereq message="Humanoid, Monstrous Humanoid, Magical Beast, or Outsider type required.">
+      <validate><![CDATA[~once we've been selected, we're fine (since a template might be added later.
+validif (@ispick <> 0)
+
+validif (#hastype[tpOutsider] + #hastype[tpMagBeast] + #hastype[tpHumanoid] + #hastype[tpMonHuman] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuCheitan" name="Cheitan" description="During construction of the City of Brass, the efreet employed all manner of races. Most were slaves kept by the efreet in their palaces. When the City was finished most of these slaves were killed; some however were taken as consorts and concubines by the great nobles of the City. The resulting offspring of such a mating was a creature that had traits of both parents. Many efreet killed the offspring at birth seeing them as a mark on their society. Some saw the potential for a new race-pawns to be used in their wars against the djinn.\n\nOver the years many efreet have taken non-efreeti mates and spawned children that they unleash on the rest of the multiverse. Cheitans are raised to be cruel, uncaring, and unforgiving-traits the efreet both possess and admire. Sometimes, a cheitan turns from its heritage and sees the good in life and embraces such things. These cheitans usually don&apos;t live very long, especially in the presence of another cheitan or an efreeti." compset="Template" uniqueness="unique">
+    <fieldval field="tmSTR" value="6"/>
+    <fieldval field="tmDEX" value="4"/>
+    <fieldval field="tmCON" value="2"/>
+    <fieldval field="tmWIS" value="2"/>
+    <fieldval field="tmCHA" value="2"/>
+    <fieldval field="tmAC" value="3"/>
+    <fieldval field="tmReplRaHD" value="10"/>
+    <fieldval field="tmInfHD" value="Change to d10s."/>
+    <fieldval field="tmSkillPls" value="6"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <tag group="TypeNoEff" tag="tpOutsider"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Custom" tag="cheit_Slam"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="stNative"></bootstrap>
+    <bootstrap thing="spDeteMag0">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spGaseFor3">
+      <containerreq phase="First" priority="750"><![CDATA[count:Hero.HitDice >= 9]]></containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spPlanShi4">
+      <containerreq phase="First" priority="750"><![CDATA[count:Hero.HitDice >= 13]]></containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="livename" value="Plane Shift (elemental, Astral, or Material planes only)"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spProdFla1">
+      <containerreq phase="First" priority="750"><![CDATA[count:Hero.HitDice >= 3]]></containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spPyrotec2">
+      <containerreq phase="First" priority="750"><![CDATA[count:Hero.HitDice >= 5]]></containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spScorRay2">
+      <containerreq phase="First" priority="750"><![CDATA[count:Hero.HitDice >= 9]]></containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="livename" value="Scorching Ray (1 ray)"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spWallFir3">
+      <containerreq phase="First" priority="750"><![CDATA[count:Hero.HitDice >= 7]]></containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="rauHeat">
+      <assignval field="abValue" value="1"/>
+      <assignval field="abValue2" value="3"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsFire">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <containerreq phase="First" priority="450">hero#Custom.cheit_Slam</containerreq>
+      <autotag group="Value" tag="2"/>
+      <autotag group="wMain" tag="1_1"/>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000"><![CDATA[~ CR depends on HD
+var hd as number
+hd = hero.tagcount[Hero.HitDice] - hero.tagcount[Classes.?]
+
+~ Use the number of HD to calculate CR
+      var cr as number
+      if (hd <= 4) then
+        cr = 1
+      elseif (hd <= 10) then
+        cr = 2
+      else
+        cr = 3
+        endif
+      herofield[tCR].value += cr]]></eval>
+    <eval phase="Final" index="2"><![CDATA[if (hero.child[xFly].field[abValue].value <= 40) then
+  hero.child[xFly].field[abValue].value = 40
+endif
+
+if (hero.child[xFly].tagis[Maneuver.Perfect] = 0) then
+  perform hero.child[xFly].tagreplace[Maneuver.?,Maneuver.Perfect]
+endif]]></eval>
+    <eval phase="PreLevel" priority="10000" index="4"><![CDATA[~ change damage for eslam attack
+
+if (hero.tagis[Size.Fine] <> 0) then
+  perform hero.child[wSlam].tagreplace[wMain.?,wMain.1_1]
+elseif (hero.tagis[Size.Diminutive] <> 0) then
+  perform hero.child[wSlam].tagreplace[wMain.?,wMain.1d2_2]
+elseif (hero.tagis[Size.Tiny] <> 0) then
+  perform hero.child[wSlam].tagreplace[wMain.?,wMain.1d3_3]
+elseif (hero.tagis[Size.Small] <> 0) then
+  perform hero.child[wSlam].tagreplace[wMain.?,wMain.1d4_4]
+elseif (hero.tagis[Size.Medium] <> 0) then
+  perform hero.child[wSlam].tagreplace[wMain.?,wMain.1d6_5]
+elseif (hero.tagis[Size.Large] <> 0) then
+  perform hero.child[wSlam].tagreplace[wMain.?,wMain.1d8_6]      
+elseif (hero.tagis[Size.Huge] <> 0) then
+  perform hero.child[wSlam].tagreplace[wMain.?,wMain.2d6_104]
+elseif (hero.tagis[Size.Gargantuan] <> 0) then
+  perform hero.child[wSlam].tagreplace[wMain.?,wMain.2d8_305]     
+elseif (hero.tagis[Size.Colossal] <> 0) then
+  perform hero.child[wSlam].tagreplace[wMain.?,wMain.4d6_106]     
+endif
+
+perform hero.child[wSlam].delete[Helper.DamageUp]
+perform hero.child[wSlam].delete[Helper.DamageDown]
+perform hero.child[wSlam].delete[Helper.NatSizeDmg]]]></eval>
+    <eval phase="First" index="3"><![CDATA[~ assign tag if we need a slam attack
+
+if (hero.childcount[wSlam] <= 1) then
+   perform hero.assign[Custom.cheit_Slam]
+endif]]></eval>
+    <exprreq message="Base race cannot be an effreti.">#hasrace[rEfreeti] + #hasrace[rEfreMalik] = 0</exprreq>
+    <prereq message="Corporeal creature required.">
+      <validate><![CDATA[        ~once we've been selected, we're fine
+        validif (@ispick <> 0)
+
+        ~we're valid if the incorporeal special isn't present
+        validif (#hasability[raIncorpor] = 0)]]></validate>
+      </prereq>
+    <prereq message="Humanoid, Monstrous Humanoid or Outsider type required.">
+      <validate><![CDATA[~once we've been selected, we're fine (since a template might be added later.
+validif (@ispick <> 0)
+
+validif (#hastype[tpOutsider] + #hastype[tpHumanoid] + #hastype[tpMonHuman] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuDire" name="Dire" description="Dire creatures are large, feral-looking animals. They are not just bigger versions of normal animals, however. On the whole, dire creatures are bigger, stronger, faster, and more aggressive than their normal counterparts.\n\nNo one is certain what causes a dire creature to be born. Some druids maintain that Nature creates dire creatures as a direct response to some environmental threat, or as an adaptation to the magic and monsters that share the world with her creations. Others insist that, rather than an evolutionary step forward, dire creatures are a regression to more savage and prehistoric days. The majority of druids are not in the habit of questioning or explaining Nature&apos;s motives, however, and simply state that dire creatures exist and that is all that need be known.\n\n&#147;Dire&#148; is an inherited template that can be added to any animal that is not already dire (referred to hereafter as the base creature). A dire creature retains all the base creature&apos;s statistics and special abilities except as noted here. Some dire creatures were not created using this template and may be the exception to the rules presented here having predated the creation of this monster template.\n\n{b}Note{b}: Since most animals are &quot;long&quot; vs. &quot;tall&quot; the template uses the long values for reach. For exceptions, adjust via the adjuments tab." compset="Template" uniqueness="unique">
+    <fieldval field="tmSTR" value="8"/>
+    <fieldval field="tmDEX" value="2"/>
+    <fieldval field="tmCON" value="8"/>
+    <fieldval field="tmWIS" value="4"/>
+    <fieldval field="tmCHA" value="4"/>
+    <fieldval field="tmSkillPls" value="2"/>
+    <fieldval field="tmHDSides" value="8"/>
+    <fieldval field="tmAC" value="5"/>
+    <fieldval field="tmTmSklPls" value="2"/>
+    <arrayval field="tmCRArray" index="0" value="2"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TemplHelp" tag="AddHitDice"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="Custom" tag="SizeSelect"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="OverType" tag="tpAnimal"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <eval phase="PostLevel" index="3">~ increase damage of all natural attack
+
+foreach pick in hero from BaseNatWep
+  perform eachpick.assign[Helper.DamageUp]
+nexteach</eval>
+    <eval phase="PostAttr" index="6">~ skill points
+
+#resmax[resSkill] += field[tmHitDice].value * maximum(1,2 + hero.child[aINT].field[aModBonus].value)</eval>
+    <eval phase="First" priority="530" index="7"><![CDATA[perform hero.findchild[BaseRace].setfocus
+doneif (state.isfocus = 0)
+
+~ get base hd
+var hd as number
+hd = focus.tagcount[Hero.HitDice]
+
+~ get size
+var racesize as number
+racesize = focus.tagvalue[RaceSize.?]
+if (racesize > 10) then
+  racesize = (racesize - 10) * -1
+endif
+
+racesize += focus.field[rSizeMod].value
+
+
+~ increase size
+if (racesize < -1) then
+  racesize = -1
+else
+  racesize += 1
+endif
+
+if (racesize = -1) then
+  perform assign[RaceSize.Small11]
+elseif (racesize = 0) then
+  perform assign[RaceSize.Medium0]
+elseif (racesize = 1) then
+  perform assign[RaceSize.Large1]
+elseif (racesize = 2) then
+  perform assign[RaceSize.Huge2]
+elseif (racesize = 3) then
+  perform assign[RaceSize.Gargant3]
+else
+  perform assign[RaceSize.Colossal4]
+endif
+
+
+~ add new hd
+if (racesize <= -1) then
+  field[tmHitDice].value += 1
+  if (hd + field[tmHitDice].value < 2) then
+     field[tmHitDice].value = 2 - hd
+  endif
+elseif (racesize = 0) then
+  field[tmHitDice].value += 3
+  if (hd + field[tmHitDice].value < 4) then
+     field[tmHitDice].value = 4 - hd
+  endif
+else
+  field[tmHitDice].value += hd
+  if (hd + field[tmHitDice].value < 6) then
+     field[tmHitDice].value = 6 - hd
+  endif
+endif
+
+~ speed increase
+hero.child[Speed].field[tSpeed].value += 10
+
+
+perform state.clearfocus]]></eval>
+    <eval phase="PostLevel" priority="10000" index="5"><![CDATA[~ adjust size
+~ note since most animals are long vs. tall we use the long reach values
+
+perform hero.findchild[BaseRace].setfocus
+
+if (hero.tagis[Size.Small] <> 0) then
+  focus.field[rSpace].value = 5
+  focus.field[rReach].value = 5
+elseif (hero.tagis[Size.Medium] <> 0) then
+  focus.field[rSpace].value = 5
+  focus.field[rReach].value = 5
+elseif (hero.tagis[Size.Large] <> 0) then
+  focus.field[rSpace].value = 10
+  focus.field[rReach].value = 5
+elseif (hero.tagis[Size.Huge] <> 0) then
+  focus.field[rSpace].value = 15
+  focus.field[rReach].value = 10
+elseif (hero.tagis[Size.Gargantuan] <> 0) then
+  focus.field[rSpace].value = 20
+  focus.field[rReach].value = 15
+elseif (hero.tagis[Size.Colossal] <> 0) then
+  focus.field[rSpace].value = 30
+  focus.field[rReach].value = 20
+
+endif
+
+perform state.clearfocus]]></eval>
+    <prereq message="Animal type required.">
+      <validate><![CDATA[~once we've been selected, we're fine (since a template might be added later.
+validif (@ispick <> 0)
+
+validif (#hastype[tpAnimal] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuDeathle" name="Deathleech" description="Spawned by an unhealthy interest in the necromantic arts or perhaps a lifetime of proximity to significant necromantic energies, the deathleech is the bane of living creatures. Driven by an insatiable hunger for death, these malign horrors stalk the living, preying on the weak to boost their own power through foul and twisted means. Deathleeches are most often powerful necromancers, liches, or other intelligent and powerful undead. However, other creatures have become tainted with these evil powers from time to time. Deathleeches frequently live lives in secret, preying on the stragglers and easier marks until their powers are such that they can make themselves known. They hate all that is good and are willing to destroy its emissaries whenever possible.\n\nDeathleeches appear much the same as the base creatures, only their countenances radiate a strange and unnerving energy. There is often a faint chill in the air within 5 feet of a deathleech." compset="Template" uniqueness="unique">
+    <fieldval field="tmSTR" value="2"/>
+    <fieldval field="tmDEX" value="2"/>
+    <fieldval field="tmCON" value="2"/>
+    <fieldval field="tmCHA" value="4"/>
+    <arrayval field="tmCRArray" index="0" value="3"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <tag group="Custom" tag="dthlch_sla"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="xuImmEvil"></bootstrap>
+    <bootstrap thing="stEvil"></bootstrap>
+    <bootstrap thing="xImmAbilDm"></bootstrap>
+    <bootstrap thing="xImmAbilDr"></bootstrap>
+    <bootstrap thing="rauDhlDths"></bootstrap>
+    <bootstrap thing="rauDhlAura"></bootstrap>
+    <bootstrap thing="xChanRes"></bootstrap>
+    <bootstrap thing="xImmNegEn"></bootstrap>
+    <bootstrap thing="wSlam">
+      <containerreq phase="First" priority="150">hero#Custom.dthlch_sla</containerreq>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="raEnDrain">
+      <autotag group="Usage" tag="Round"/>
+      <autotag group="User" tag="Tracker"/>
+      <assignval field="trkMax" value="1"/>
+      <assignval field="abValue" value="1"/>
+      </bootstrap>
+    <bootstrap thing="raDaemDKne"></bootstrap>
+    <bootstrap thing="rauDthLGDK"></bootstrap>
+    <bootstrap thing="xImmCold"></bootstrap>
+    <eval phase="First" index="2"><![CDATA[if (hero.childcount[wSlam] <= 1) then
+   perform hero.assign[Custom.dthlch_sla]
+endif]]></eval>
+    <eval phase="PreLevel" priority="10000" index="3"><![CDATA[foreach pick in hero from BaseNatWep where "thingid.wSlam"
+  
+if (hero.tagis[Size.Fine] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d2_2]
+elseif (hero.tagis[Size.Diminutive] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d2_2]
+elseif (hero.tagis[Size.Tiny] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d2_2]
+elseif (hero.tagis[Size.Small] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d4_4]
+elseif (hero.tagis[Size.Medium] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d6_5]
+elseif (hero.tagis[Size.Large] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d8_6]      
+elseif (hero.tagis[Size.Huge] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.2d6_104]
+elseif (hero.tagis[Size.Gargantuan] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.2d8_305]     
+elseif (hero.tagis[Size.Colossal] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.4d6_106]     
+endif
+
+perform eachpick.delete[Helper.DamageUp]
+perform eachpick.delete[Helper.DamageDown]
+perform eachpick.delete[Helper.NatSizeDmg]
+
+nexteach]]></eval>
+    <eval phase="Final"><![CDATA[var sr as number
+sr = minimum(35,8 + hero.tagcount[Hero.HitDice])
+
+#applysr[sr]
+
+var cr as number
+hero.child[xChanRes].field[abValue].value = maximum(6,hero.child[xChanRes].field[abValue].value)
+
+foreach pick in hero from BaseNatWep where "thingid.wSlam"
+  eachpick.field[wDamExtra].text = " plus energy drain"
+nexteach]]></eval>
+    </thing>
+  <thing id="xuImmEvil" name="Immune to Evil Spells" description="Immune to spells and spell-like effects with evil descriptor." compset="Ability">
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="rauDhlDths" name="Deathsight" description="A deathleech can determine the condition of creatures near death within 30 feet. (This range doubles for every 10 HD a deathleech has.) This functions as a deathwatch spell with a caster level equal to the deathleech&apos;s Hit Dice. This ability is always on, but can be suppressed or negated. A deathleech can restart it again as a free action on its next turn." compset="RaceSpec">
+    <usesource source="srcTomeHor"/>
+    <tag group="SpecType" tag="Sense"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final"><![CDATA[var rng as number
+rng = hero.tagcount[Hero.HitDice]
+rng = (1 + round(rng/10,0,-1))*30
+
+field[livename].text = "Deathsight (" & rng & " ft.)"]]></eval>
+    </thing>
+  <thing id="tmuDebasFe" name="Debased Fey" description="Debased fey, sometimes called dark or unseelie fey, are malevolent and evil creatures of nature. Once happy, carefree, and joyous like many other fey, the debased followed a dark path into evil; a seed purportedly planted by a dark god in an attempt to corrupt and misalign the pure and good fey of the world. Debased fey seethe with hatred for good&#150;aligned fey and seek to destroy or kill them at every opportunity.\n\nA debased fey is almost indistinguishable from a normal fey of its kind, save that its eyes burn red-fueled with a hatred for life, love, and all that is pure. Its skin darkens, changing to a deep gray or black. Its fingernails blacken and its hands reshape into wicked talons. Its teeth become jagged and pointed." compset="Template" uniqueness="unique">
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <tag group="Custom" tag="debFey_Clw"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="rauDbFDefT"></bootstrap>
+    <bootstrap thing="xDamRdIron"></bootstrap>
+    <bootstrap thing="rauDbFRest"></bootstrap>
+    <bootstrap thing="wClaw">
+      <containerreq phase="First" priority="400">hero#Custom.debFey_Clw</containerreq>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="rauDbFAnat"></bootstrap>
+    <eval phase="First" index="2"><![CDATA[if (hero.childcount[wClaw] <= 1) then
+   perform hero.assign[Custom.debFey_Clw]
+endif]]></eval>
+    <eval phase="PreLevel" priority="10000" index="3"><![CDATA[foreach pick in hero from BaseNatWep where "thingid.wClaw"
+  
+if (hero.tagis[Size.Fine] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1_1]
+elseif (hero.tagis[Size.Diminutive] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d2_2]
+elseif (hero.tagis[Size.Tiny] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d3_3]
+elseif (hero.tagis[Size.Small] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d4_4]
+elseif (hero.tagis[Size.Medium] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d6_5]
+elseif (hero.tagis[Size.Large] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d8_6]      
+elseif (hero.tagis[Size.Huge] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.2d6_104]
+elseif (hero.tagis[Size.Gargantuan] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.2d8_305]     
+elseif (hero.tagis[Size.Colossal] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.4d6_106]     
+endif
+
+perform eachpick.delete[Helper.DamageUp]
+perform eachpick.delete[Helper.DamageDown]
+perform eachpick.delete[Helper.NatSizeDmg]
+
+nexteach]]></eval>
+    <eval phase="Final"><![CDATA[var hd as number
+var dr as number
+hd = hero.tagcount[Hero.HitDice]
+dr = hero.child[xDamRdIron].field[abValue].value
+
+if (hd < 8) then
+  hero.child[xDamRdIron].field[abValue].value = maximum(5,dr)
+elseif (hd < 12) then
+  hero.child[xDamRdIron].field[abValue].value = maximum(10,dr)
+else
+  hero.child[xDamRdIron].field[abValue].value = maximum(15,dr)
+endif]]></eval>
+    <prereq message="Fey type required.">
+      <validate><![CDATA[~once we've been selected, we're fine (since a template might be added later.
+validif (@ispick <> 0)
+
+validif (#hastype[tpFey] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuFlameSp" name="Flame-Spawned" description="Flame-spawned creatures are creatures born of elemental fire and are native to the Elemental Plane of Fire. They resemble their normal Material Plane counterparts in most all respects save their bodies are composed of elemental fire and are colored red, reddish-bronze, yellow-orange, or black. For example, a flame-spawned wolf looks like a normal wolf but its body is reddish-bronze and covered in dancing flames rather than fur. A flame-spawned creature&apos;s eyes burn with white-hot fire.\n\nFlame-spawn creatures with an Intelligence of 3 or higher can speak Ignan.\n\n&#147;Flame-Spawned&#148; is an inherited template that can be added to any corporeal aberration, animal, dragon, fey, humanoid, magical beast, monstrous humanoid, ooze, plant, or vermin that does not have the cold or water subtype." compset="Template" uniqueness="unique">
+    <fieldval field="tmDEX" value="2"/>
+    <fieldval field="tmAC" value="2"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TypeNoEff" tag="tpOutsider"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="stElement"></bootstrap>
+    <bootstrap thing="stExtrapla"></bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="raBurn"></bootstrap>
+    <bootstrap thing="rauFlSFrAu"></bootstrap>
+    <bootstrap thing="lIgnan"></bootstrap>
+    <bootstrap thing="stFire"></bootstrap>
+    <eval phase="Final"><![CDATA[perform hero.findchild[BaseRace].setfocus
+doneif (state.isfocus = 0)
+
+var hd as number
+hd = focus.tagcount[Hero.HitDice]
+
+if (hd <= 3) then
+  herofield[tCR].value += 0
+elseif (hd <= 8) then
+  herofield[tCR].value += 1
+  hero.child[xDamRdMag].field[abValue].value = maximum(5,hero.child[xDamRdMag].field[abValue].value)
+else
+  herofield[tCR].value += 2
+  hero.child[xDamRdMag].field[abValue].value = maximum(10,hero.child[xDamRdMag].field[abValue].value)
+endif
+
+~ fire damage
+var fireDam as string
+if (herofield[tSize].value <= -1) then
+  fireDam = "1d4"
+elseif (herofield[tSize].value = 0) then
+  fireDam = "1d6"
+elseif (herofield[tSize].value = 1) then 
+  fireDam = "1d8"
+else
+  fireDam = "2d6"
+endif
+
+foreach pick in hero from BaseNatWep
+  eachpick.field[wDamExtra].text &= " plus " & fireDam & " fire"
+nexteach
+
+hero.child[rauFlSFrAu].field[livename].text = "Firu Aura (5 ft., " & fireDam & ")"
+
+~ Ignan
+if (hero.child[aINT].field[aFinalVal].value < 3) then
+  perform hero.child[lIgnan].assign[Hide.Language]
+endif
+
+~ rengeration
+hero.childfound[xRegen].field[livename].text = replace(hero.childfound[xRegen].field[livename].text,"fire","cold",0)]]></eval>
+    <prereq message="Cold and Water subtypes forbidden.">
+      <validate><![CDATA[        ~once we've been selected, we're fine (since a template might be added later.
+        validif (@ispick <> 0)
+
+      validif (#hassubtype[stCold] + #hassubtype[stWater] <> 0)]]></validate>
+      </prereq>
+    <prereq message="Construct, Outsider and Undead types forbidden.">
+      <validate><![CDATA[        ~once we've been selected, we're fine (since a template might be added later.
+        validif (@ispick <> 0)
+
+      validif (#hastype[tpConst] + #hastype[tpOutsider] + #hastype[tpUndead] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuLandwal" name="Landwalker" description="A landwalker is an aquatic creature that has somehow gained the ability to move about freely on dry land. It is assumed by sages that landwalkers are the creations of some mad god of the sea, sending his creations against the air breathers. Others conjecture that landwalkers are simply prehistoric ancestors of current aquatic life that have until now remained undiscovered.\n\nThe most commonly encountered landwalkers are predatory fish and mammals such as sharks and whales. Creatures such as these, with skeletal systems, have elongated and strengthened fins which act as legs to enable them to move over land. Other landwalkers that have been seen surging out of the ocean are giant squids and even monstrous jellyfish. Such boneless landwalkers ooze and flop over land with surprising quickness.\n\n&#147;Landwalker&#148; is an inherited template that can be added to animal, magical beast, or vermin with the &#147;aquatic&#148; subtype that is confined to the water and has no land speed, or has a land speed of 5 feet or less (referred to hereafter as the base creature)." compset="Template" uniqueness="unique">
+    <fieldval field="tmSTR" value="4"/>
+    <fieldval field="tmDEX" value="-2"/>
+    <fieldval field="tmCON" value="2"/>
+    <fieldval field="tmReplHD" value="10"/>
+    <fieldval field="tmReplRaHD" value="Replace with d10s."/>
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TypeAndAug" tag="tpMagBeast"/>
+    <tag group="ClVaryName" tag="AppNoComma"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <bootstrap thing="raAmphib"></bootstrap>
+    <bootstrap thing="raDarkVis"></bootstrap>
+    <eval phase="Final">var swm as number
+swm = hero.child[xSwim].field[abValue].value
+
+hero.child[Speed].field[tSpeed].value = maximum(20,round(swm/2,0,-1))
+hero.child[xSwim].field[abValue].value = maximum(10,swm-10)
+
+hero.childfound[raDarkVis].field[abValue].value = maximum(60,hero.child[raDarkVis].field[abValue].value)</eval>
+    <prereq message="Land speed of 5 ft. or less required">
+      <validate><![CDATA[validif (hero.child[Speed].field[tSpeed].value > 5)]]></validate>
+      </prereq>
+    <prereq message="Animal, Magical Beast or Vermin types required">
+      <validate><![CDATA[~once we've been selected, we're fine (since a template might be added later.
+validif (@ispick <> 0)
+
+validif (#hastype[tpAnimal] + #hastype[tpMagBeast] + #hastype[tpVermin] <> 0)]]></validate>
+      </prereq>
+    <prereq message="Aquatic subtype required.">
+      <validate><![CDATA[~once we've been selected, we're fine (since a template might be added later.
+validif (@ispick <> 0)
+
+validif (#hassubtype[stAquatic] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuMythAni" name="Mythical" description="Mythical animals are the stuff of legends; stronger, faster, wiser, and more intimidating than their normal counterparts.\n\nMythical animals appear as normal animals and are indistinguishable from them, though in some cases their eyes may betray their origin and existence (perhaps showing a glint of intellect or wisdom unknown to their lesser cousins). Mythical animals are found wherever their normal animal counterparts are, though they rarely keep company with such animals. Though they may be the creation of the gods and beasts of legend and dreams, mythical animals still pay homage and answer to the various animal lords.\n\n&#147;Mythical&#148; is an inherited template that can be added to any normal non-dire animal that has at least 1-HD." compset="Template" uniqueness="unique">
+    <fieldval field="tmHDSides" value="8"/>
+    <fieldval field="tmTmSklPls" value="2"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TemplHelp" tag="AddHitDice"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="fEndure"></bootstrap>
+    <eval phase="First" priority="10000" index="2">~ increase dam of nat attacks
+foreach pick in hero from BaseNatWep
+  perform eachpick.assign[Helper.DamageUp]
+nexteach</eval>
+    <eval phase="First" priority="500" index="4"><![CDATA[~ adjust attributes
+
+if (herofield[tSize].value <= -1) then
+  hero.child[aSTR].field[aStartMod].value += 4
+  hero.child[aDEX].field[aStartMod].value += 12
+  hero.child[aCON].field[aStartMod].value += 4
+  hero.child[aWIS].field[aStartMod].value += 4
+  hero.child[aCHA].field[aStartMod].value += 4
+elseif (herofield[tSize].value = 0) then
+  hero.child[aSTR].field[aStartMod].value += 10
+  hero.child[aDEX].field[aStartMod].value += 10
+  hero.child[aCON].field[aStartMod].value += 6
+  hero.child[aWIS].field[aStartMod].value += 4
+  hero.child[aCHA].field[aStartMod].value += 4
+else
+  hero.child[aSTR].field[aStartMod].value += 12
+  hero.child[aDEX].field[aStartMod].value += 4
+  hero.child[aCON].field[aStartMod].value += 6
+  hero.child[aWIS].field[aStartMod].value += 4
+  hero.child[aCHA].field[aStartMod].value += 4
+endif
+
+hero.child[aSTR].field[aStartMod].value = maximum(0,hero.child[aSTR].field[aStartMod].value)
+hero.child[aDEX].field[aStartMod].value = maximum(0,hero.child[aDEX].field[aStartMod].value)
+hero.child[aCON].field[aStartMod].value = maximum(0,hero.child[aCON].field[aStartMod].value)
+hero.child[aWIS].field[aStartMod].value = maximum(0,hero.child[aWIS].field[aStartMod].value)
+hero.child[aCHA].field[aStartMod].value = maximum(0,hero.child[aCHA].field[aStartMod].value)]]></eval>
+    <eval phase="Final"><![CDATA[~ double nat armor
+hero.child[ArmorClass].field[tACNatural].value += hero.child[ArmorClass].field[tACNatural].value
+
+~ increase speed
+hero.child[Speed].field[tSpeed].value += 10
+
+if (hero.child[xFly].field[abValue].value > 0) then
+   hero.child[xFly].field[abValue].value += 20
+endif
+
+if (hero.child[xSwim].field[abValue].value > 0) then
+   hero.child[xSwim].field[abValue].value += 20
+endif]]></eval>
+    <eval phase="PostAttr" index="5">~ skill points
+#resmax[resSkill] += field[tmHitDice].value * maximum(1,2 + hero.child[aINT].field[aModBonus].value)
+
+~ make will save good
+perform hero.child[svWill].assign[SaveGood.svWill]</eval>
+    <eval phase="PreLevel" priority="4000" index="6">#racialbonus[skPercep] += 4
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    <eval phase="First" priority="530" index="3">perform hero.findchild[BaseRace].setfocus
+doneif (state.isfocus = 0)
+
+~ get base hd
+var hd as number
+hd = focus.tagcount[Hero.HitDice]
+perform state.clearfocus
+
+~ add new hd
+var newhd as number
+newhd = round(1.5 * hd,0,-1)*2 - hd
+field[tmHitDice].value = newhd
+
+~ adjust cr
+herofield[tCR].value += 2 + round(newhd/3,0,-1)
+
+
+~ make will a good save
+perform hero.child[tpAnimal].assign[SaveGood.svWill]</eval>
+    <prereq message="Animal type required">
+      <validate><![CDATA[~once we've been selected, we're fine (since a template might be added later.
+validif (@ispick <> 0)
+
+validif (#hastype[tpAnimal] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuPaleosk" name="Paleoskeleton" description="Paleoskeletons are the fossil remains of long-dead creatures animated by necromantic rituals. These undead dinosaurs are used as temple guardians by evil witch doctors.\n\nOnly fossilized remains can become paleoskeletons. The bones that comprise a paleoskeleton must have been in the earth for thousands or even millions of years. Provided the skull and at least 20% of the actual bones remain, an animate dead spell cast by an arcane spellcaster of at least 12th level produces a paleoskeleton. The very rock of the fossil site itself becomes charged with negative energy, and takes the place of any missing bones in the skeleton. The fossilization process mineralizes most of the actual bones in a paleoskeleton as well, replacing them with stone or other silicates. The extreme age of the bones and the strange properties of the mineralization interact with the negative energy to produce a very powerful undead creature.\n\n&#147;Paleoskeleton&#148; is an acquired template that can be added to dinosaur or prehistoric animal." compset="Template" uniqueness="unique">
+    <fieldval field="tmReplRaHD" value="8"/>
+    <fieldval field="tmInfHD" value="Reaplce with d8s."/>
+    <fieldval field="tmDEX" value="2"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TypeNoEff" tag="tpUndead"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <tag group="AlgnReq" tag="NeutEvil"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="xDamRdAdB">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="xImmCold"></bootstrap>
+    <bootstrap thing="rauPalFoss"></bootstrap>
+    <bootstrap thing="rauPalPrmR"></bootstrap>
+    <bootstrap thing="stEarth"></bootstrap>
+    <eval phase="First"><![CDATA[
+      ~ Many races and classes bootstrap feats, so go through them disabling
+      ~ them all - except Improved Initiative and Weapon Proficiencies
+      foreach pick in hero from BaseFeat where "!thingid.fImpInit & !Helper.ProfGroup & !(SpecSource.tmuPaleosk)"
+        perform eachpick.assign[Helper.FtDisable]
+        perform eachpick.assign[Hide.Special]
+        nexteach
+
+~ remove swallow whole
+  perform hero.childfound[raSwallow].assign[Helper.SpcDisable]
+  perform hero.childfound[raSwallow].assign[Hide.Special]
+  
+
+      ~ Change special saves
+        foreach pick in hero from Ability 
+          if (eachpick.tagis[StandardDC.aCON] <> 0) then
+             perform eachpick.delete[StandardDC.aCON]
+             perform eachpick.assign[StandardDC.aCHA]
+          endif
+        nexteach
+
+
+      ~ Go over all weapons, deleting stuff like weapon focus and
+      ~ improved natural attack from them - these tags are often just
+      ~ bootstrapped directly onto the weapon
+      foreach pick in hero from BaseWep
+        perform eachpick.delete[Broadcast.?]
+
+        if (eachpick.tagis[Helper.NatNoBones] + eachpick.tagis[Helper.NatAttSpec] <> 0) then
+          perform eachpick.assign[Hide.Weapon]
+          endif
+
+        nexteach]]></eval>
+    <eval phase="PreLevel" priority="1000" index="2"><![CDATA[
+      ~ bonus to natural armor based on size
+      var bonus as number
+      if (hero.tagis[Size.Small] <> 0) then
+        bonus = 1
+      elseif (hero.tagis[Size.Medium] <> 0) then
+        bonus = 2
+      elseif (hero.tagis[Size.Large] <> 0) then
+        bonus = 3
+      elseif (hero.tagis[Size.Huge] <> 0) then
+        bonus = 4
+      elseif (hero.tagis[Size.Gargantuan] <> 0) then
+        bonus = 6
+      elseif (hero.tagis[Size.Colossal] <> 0) then
+        bonus = 10
+        endif
+      hero.child[mNatural].field[Bonus].value = bonus
+
+      ~ We don't have an INT score
+      perform hero.child[aINT].assign[Helper.NoScore]
+
+      ~ Force our Wisdom to 10 and our Charisma to 10
+      hero.child[aWIS].field[aNormForce].value = 10
+      hero.child[aCHA].field[aNormForce].value = 10
+
+      var hd as number
+      hd = hero.tagcount[Hero.HitDice] - hero.tagcount[Classes.?]
+
+      ~ Use the number of HD to calculate CR
+      var cr as number
+      if (hd < 1) then
+        cr = .5
+      elseif (hd = 1) then
+        cr = 1
+      elseif (hd <= 3) then
+        cr = 2
+      elseif (hd <= 5) then
+        cr = 3
+      elseif (hd <= 7) then
+        cr = 4
+      elseif (hd <= 9) then
+        cr = 5
+      elseif (hd <= 11) then
+        cr = 6
+      elseif (hd <= 14) then
+        cr = 7
+      elseif (hd <= 17) then
+        cr = 8
+      else
+        cr = 9
+        endif
+
+      herofield[tCR].value = cr]]></eval>
+    <eval phase="Final" index="3">~ remove fly
+hero.childfound[xFly].field[abValue].value = 0</eval>
+    <eval phase="First" index="4">~ remove all skill ranks and skill bonuses
+
+foreach pick in hero from BaseSkill
+  eachpick.field[skInnate].value = 0
+  eachpick.field[Bonus].value = 0
+nexteach</eval>
+    <prereq message="Undead type forbidden.">
+      <validate><![CDATA[        ~once we've been selected, we're fine (since this makes the creature undead).
+        validif (@ispick <> 0)
+
+        ~we're valid if the hero is living
+        validif (#hastype[tpUndead] = 0)]]></validate>
+      </prereq>
+    <prereq message="Corporeal creature required.">
+      <validate><![CDATA[
+        ~once we've been selected, we're fine
+        validif (@ispick <> 0)
+
+        ~we're valid if the incorporeal special isn't present
+        validif (#hasability[raIncorpor] = 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuPhaseCr" name="Phase Creature" description="The most well-known traveler from the Ethereal Plane is the phase spider, but other insect-like creatures with similar abilities have been seen jaunting in and out of the Material Plane. Planar scholars have put forth the theory that somewhere off the Ethereal Plane a demiplane exists that is home to what they call phase vermin (or phase creatures).\n\nPhase creatures are mottled black or gray and white in color, which may be an indicator of the nature of their home environment. They closely resemble normal vermin of the Material Plane, except that their natural weapons are inexplicably smaller. The phase creatures have adapted to this difference, however, with poison that is much stronger.\n\n&#147;Phase Creature&#148; is an inherited template that can be added to any vermin." compset="Template" uniqueness="unique">
+    <fieldval field="tmCON" value="4"/>
+    <fieldval field="tmWIS" value="4"/>
+    <fieldval field="tmAC" value="1"/>
+    <fieldval field="tmReplRaHD" value="10"/>
+    <fieldval field="tmInfHD" value="Change to d10s"/>
+    <fieldval field="tmHitDice" value="1"/>
+    <fieldval field="tmHDSides" value="10"/>
+    <fieldval field="tmSTR" value="2"/>
+    <arrayval field="tmCRArray" index="0" value="2"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TypeAndAug" tag="tpMagBeast"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="TemplHelp" tag="AddHitDice"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="rauPhEthJa"></bootstrap>
+    <bootstrap thing="rauPhEthAm"></bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <eval phase="Final" priority="10000" index="3"><![CDATA[~ increase poison damage
+var noDice as number
+var diceTyp as number
+var dam as string
+
+foreach pick in hero from Ability where "thingid.raPoi?"
+
+noDice = eachpick.field[abValue3].value
+diceTyp = eachpick.field[abValue].value
+
+~ make current damage dice
+if (diceTyp = 1) then
+  dam = "1x1"
+else
+  dam = noDice & "d" & diceTyp
+endif
+
+~ now up damage
+if (compare(dam,"1x1") = 0) then
+  eachpick.field[abValue3].value = 1
+  eachpick.field[abValue].value = 2
+elseif (compare(dam,"1d2") = 0) then 
+  eachpick.field[abValue3].value = 1
+  eachpick.field[abValue].value = 3
+elseif (compare(dam,"1d3") = 0) then 
+  eachpick.field[abValue3].value = 1
+  eachpick.field[abValue].value = 4
+elseif (compare(dam,"1d4") = 0) then 
+  eachpick.field[abValue3].value = 1
+  eachpick.field[abValue].value = 6
+elseif (compare(dam,"1d6") = 0) then 
+  eachpick.field[abValue3].value = 1
+  eachpick.field[abValue].value = 8
+elseif (compare(dam,"1d8") = 0) then 
+  eachpick.field[abValue3].value = 2
+  eachpick.field[abValue].value = 6
+elseif (compare(dam,"2d6") = 0) then 
+  eachpick.field[abValue3].value = 2
+  eachpick.field[abValue].value = 8
+elseif (compare(dam,"2d8") = 0) then 
+  eachpick.field[abValue3].value = 4
+  eachpick.field[abValue].value = 6
+elseif (compare(dam,"4d6") = 0) then 
+  eachpick.field[abValue3].value = 6
+  eachpick.field[abValue].value = 6
+elseif (compare(dam,"6d6") = 0) then 
+  eachpick.field[abValue3].value = 8
+  eachpick.field[abValue].value = 6
+elseif (compare(dam,"8d6") = 0) then 
+  eachpick.field[abValue3].value = 12
+  eachpick.field[abValue].value = 6
+endif
+
+nexteach]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[~ change damage for natural attacks
+foreach pick in hero from BaseNatWep
+   if (eachpick.tagis[wMain.1d2_2] <> 0) then
+     perform eachpick.delete[wMain.?]
+     perform eachpick.assign[wMain.1d3_3]
+   endif
+   perform eachpick.assign[Helper.DamageDown]
+nexteach]]></eval>
+    <eval phase="PreAttr" index="2">~ setup Int and Cha
+perform hero.child[aINT].delete[Helper.NoScore]
+perform hero.child[aINT].delete[NoScore.aINT]
+
+hero.child[aINT].field[aNormForce].value = 7
+
+hero.child[aCHA].field[aStartMod].value = maximum(0,hero.child[aCHA].field[aStartMod].value)</eval>
+    <eval phase="First" priority="600" index="4"><![CDATA[      field[livename].text = "Phase"]]>
+      <before name="Template Name Modification"/>
+      </eval>
+    <prereq message="Vermin type required.">
+      <validate><![CDATA[        ~once we've been selected, we're fine (since this makes the creature undead).
+        validif (@ispick <> 0)
+
+        ~we're valid if the hero is living
+        validif (#hastype[tpVermin] = 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuPlantIm" name="Plant-Imbued" description="Plant-imbued creatures are animals or magical beasts that have been magically converted to a plant-type creature through the use of powerful druidic spells (such as the plant enlightenment spell in the sidebar). These creatures not only gain some of the characteristics and abilities of plants, they also gain additional Wisdom and Intelligence.\n\nWhile they can be found in a wide variety of different locations, they are almost never found underground or in areas that get little sunlight. These mystical creatures are often in the company of druids, or found in areas where powerful druids reside. Once created, their additional Wisdom and Intelligence gives them the free will to go where they wish and learn new things about the world around them. Those plant-imbued creatures that do choose to learn more of the world can eventually become almost fey-like as they age.\n\n&#147;Plant-Imbued&#148; is an acquired template that can be added to animal or magical beast." compset="Template" uniqueness="unique">
+    <fieldval field="tmAC" value="4"/>
+    <fieldval field="tmReplRaHD" value="8"/>
+    <fieldval field="tmInfHD" value="Reaplce with d8s"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="TypeNoEff" tag="tpPlant"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="xFastHeal">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="spEntangl1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spFreeMov4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spMagiFan1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spSunburs8">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spTreeStr4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="raDarkVis"></bootstrap>
+    <bootstrap thing="rauPtIActS"></bootstrap>
+    <bootstrap thing="raWoodStr"></bootstrap>
+    <bootstrap thing="lSylvan"></bootstrap>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[~ cr, sr and dr
+var totHD as number
+totHD = hero.tagcount[Hero.HitDice] - hero.tagcount[Classes.?]
+
+if (totHD <= 8) then
+  herofield[tCR].value += 3
+else
+  herofield[tCR].value += 2
+endif
+
+var sr as number
+sr = minimum(25, 11 + herofield[tCR].value)
+#applysr[sr]
+
+if (totHD <= 5) then
+  hero.child[xDamRdMag].field[abValue].value = 5
+elseif (totHD <= 10) then
+  hero.child[xDamRdMag].field[abValue].value = 10
+elseif (totHD <= 15) then
+  hero.child[xDamRdMag].field[abValue].value = 15
+else
+  hero.child[xDamRdMag].field[abValue].value = 15
+  hero.child[xDamRdIron].field[abValue].value = 15
+endif]]></eval>
+    <eval phase="First" priority="530" index="3"><![CDATA[perform hero.findchild[BaseRace].setfocus
+doneif (state.isfocus = 0)
+
+focus.field[rLangBonus].value = 1
+
+~ get base hd
+var hd as number
+hd = focus.tagcount[Hero.HitDice]
+
+~ add new hd
+if (hd <= 1) then
+  field[tmHitDice].value = 2 - hd
+endif
+
+perform state.clearfocus]]></eval>
+    <eval phase="PreLevel" priority="4000" index="4"><![CDATA[#racialsituational[hero.child[skStealth],"+4 in forested terrain",field[name].text]]]>
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    <eval phase="First">if (hero.child[raDarkVis].field[abValue].value = 0) then
+  hero.child[raDarkVis].field[abValue].value = 60
+else
+  hero.child[raDarkVis].field[abValue].value += 30
+endif</eval>
+    </thing>
+  <thing id="tmuSkelWar" name="Skeleton Warrior" description="The skeleton warrior is a lich-like undead that was once a powerful fighter of at least 8th level. Legend says that the skeleton warriors were forced into their undead state by a powerful demon prince who trapped each of their souls in a golden circlet. A skeleton warrior&apos;s only purpose is to search for and regain the circlet containing its soul.\n\nA skeleton warrior appears as a lich-like creature dressed in the same type of armor and clothes worn during life. Its clothes and armor usually show signs of wear and age.\n\n&#147;Skeleton Warrior&#148; is an acquired template that can be added to any humanoid creature." compset="Template" uniqueness="unique">
+    <fieldval field="tmSTR" value="4"/>
+    <fieldval field="tmWIS" value="2"/>
+    <fieldval field="tmCHA" value="2"/>
+    <fieldval field="tmReplRaHD" value="8"/>
+    <fieldval field="tmInfHD" value="Change to d8s."/>
+    <arrayval field="tmCRArray" index="0" value="2"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <tag group="TypeAndAug" tag="tpUndead"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <tag group="ClVaryName" tag="AppNoComma"/>
+    <bootstrap thing="xDamRdB">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdMag">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xImmChnEng"></bootstrap>
+    <bootstrap thing="typUndead"></bootstrap>
+    <bootstrap thing="rauSkWrFrA"></bootstrap>
+    <bootstrap thing="rauSkWrFdT"></bootstrap>
+    <bootstrap thing="xImmMind"></bootstrap>
+    <bootstrap thing="xImmDis"></bootstrap>
+    <bootstrap thing="xImmDeath"></bootstrap>
+    <bootstrap thing="xImmPois"></bootstrap>
+    <bootstrap thing="xImmSleep"></bootstrap>
+    <bootstrap thing="xImmParaly"></bootstrap>
+    <bootstrap thing="xImmStun"></bootstrap>
+    <bootstrap thing="xImmAbDmP"></bootstrap>
+    <bootstrap thing="xImmAbilDr"></bootstrap>
+    <bootstrap thing="xImmFatigu"></bootstrap>
+    <bootstrap thing="xImmExhaus"></bootstrap>
+    <bootstrap thing="xImmEnerDr"></bootstrap>
+    <bootstrap thing="raImmNonLe"></bootstrap>
+    <bootstrap thing="xImmBleed"></bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <eval phase="Final" index="2">var sr as number
+sr = 15 + hero.tagcount[Hero.HitDice]
+sr = minimum(35, sr)
+#applysr[sr]</eval>
+    <eval phase="PreLevel" priority="4000" index="3">#racialbonus[skIntim] += 8
+#racialbonus[skPercep] += 6
+#racialbonus[skSenseMot] += 6
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    <eval phase="First">~ nat AC bonus
+var natAC as number
+natAC = hero.child[ArmorClass].field[tACNatural].value
+hero.child[ArmorClass].field[tACNatural].value = maximum(4,natAC)</eval>
+    <prereq message="Humanoid creature required.">
+      <validate><![CDATA[~once we've been selected, we're fine (since a template might be added later.
+validif (@ispick <> 0)
+
+validif (#hastype[tpHumanoid] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuSpecTro" name="Spectral Troll" description="Spectral trolls resemble normal trolls but are jet-black in color. They are undead and detest all living creatures, including other trolls.\n\n&#147;Spectral Troll&#148; is an acquired template that can be added to any troll." compset="Template" uniqueness="unique">
+    <fieldval field="tmCHA" value="6"/>
+    <fieldval field="tmReplRaHD" value="8"/>
+    <fieldval field="tmInfHD" value="Change to d8s."/>
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TypeNoEff" tag="tpUndead"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <tag group="Custom" tag="spctrl_cor"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Perfect"/>
+      </bootstrap>
+    <bootstrap thing="rauScTrRej"></bootstrap>
+    <bootstrap thing="xImmAbilDr"></bootstrap>
+    <bootstrap thing="xImmBleed"></bootstrap>
+    <bootstrap thing="xImmDeath"></bootstrap>
+    <bootstrap thing="xImmEnerDr"></bootstrap>
+    <bootstrap thing="xImmExhaus"></bootstrap>
+    <bootstrap thing="xImmFatigu"></bootstrap>
+    <bootstrap thing="xImmAbDmP"></bootstrap>
+    <bootstrap thing="xImmDis"></bootstrap>
+    <bootstrap thing="xImmMind"></bootstrap>
+    <bootstrap thing="raImmNonLe"></bootstrap>
+    <bootstrap thing="xImmParaly"></bootstrap>
+    <bootstrap thing="xImmPois"></bootstrap>
+    <bootstrap thing="xImmSleep"></bootstrap>
+    <bootstrap thing="xImmStun"></bootstrap>
+    <bootstrap thing="xBonusPerc">
+      <autotag group="Value" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="rauSptrCor"></bootstrap>
+    <bootstrap thing="rauSpTrCrS"></bootstrap>
+    <bootstrap thing="rauSpTrVan"></bootstrap>
+    <bootstrap thing="wOtherMel">
+      <autotag group="wMaxStrBon" tag="0"/>
+      <autotag group="wMaxStrPen" tag="0"/>
+      <autotag group="Custom" tag="spctrl_cor"/>
+      <assignval field="livename" value="Corrupting Touch"/>
+      </bootstrap>
+    <bootstrap thing="stIncorpor"></bootstrap>
+    <bootstrap thing="typUndead"></bootstrap>
+    <bootstrap thing="xChanRes">
+      <autotag group="Value" tag="4"/>
+      </bootstrap>
+    <eval phase="Final"><![CDATA[~ fly speed
+var flSp as number
+flSp = hero.child[xFly].field[abValue].value
+hero.child[xFly].field[abValue].value = maximum(30,flSp)
+
+~ corrupting touch damage
+hero.child[wOtherMel].field[wFixDamage].text = herofield[tCR].value & "d6"
+
+~ hide all natural attacks
+foreach pick in hero from BaseNatWep where "!Custom.spctrl_cor"
+  perform eachpick.assign[Hide.Weapon]
+nexteach
+
+~ remove regeneration and fast healing
+perform hero.childfound[xFastHeal].assign[Hide.Special]
+perform hero.childfound[xFastHeal].assign[Helper.SpcDisable]
+perform hero.childfound[xRegen].assign[Hide.Special]
+perform hero.childfound[xRegen].assign[Helper.SpcDisable]]]></eval>
+    <eval phase="First" priority="600" index="2"><![CDATA[field[livename].text = "Spectral"]]>
+      <before name="Template Name Modification"/>
+      </eval>
+    </thing>
+  <thing id="tmuZombSpe" name="Zombie, Spellgorged" description="It is the ultimate humiliation for a spellcaster to be reduced to a mindless, rotting husk used only to store the spells of a rival. Created with the use of a create greater undead spell, a spellgorged zombie is a programmed being, which appears much like a normal zombie. It must be made from a corpse that was in life an arcane or divine spellcaster. Spellgorged zombies may be used to store spells much like a ring of spell storing with the notable exception that they may be programmed to exhaust these spells by the spellcaster through a series of set commands.\n\n&#147;Spellgorged Zombie&#148; is an acquired template that can be added to character capable of casting arcane or divine spells." compset="Template" uniqueness="unique">
+    <fieldval field="tmSTR" value="2"/>
+    <fieldval field="tmDEX" value="-2"/>
+    <fieldval field="tmReplRaHD" value="8"/>
+    <fieldval field="tmInfHD" value="Change to d8s."/>
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlgnReq" tag="NeutEvil"/>
+    <tag group="OverType" tag="tpUndead"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <tag group="Custom" tag="zmspl_slm"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <bootstrap thing="wSlam">
+      <containerreq phase="First" priority="400">hero#Custom.zmspl_slm</containerreq>
+      </bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="rauSpZmSpS"></bootstrap>
+    <eval phase="PreLevel" priority="10000" index="3"><![CDATA[foreach pick in hero from BaseNatWep where "thingid.wSlam"
+  
+if (hero.tagis[Size.Fine] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1_1]
+elseif (hero.tagis[Size.Diminutive] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d2_2]
+elseif (hero.tagis[Size.Tiny] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d3_3]
+elseif (hero.tagis[Size.Small] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d4_4]
+elseif (hero.tagis[Size.Medium] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d6_5]
+elseif (hero.tagis[Size.Large] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.1d8_6]      
+elseif (hero.tagis[Size.Huge] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.2d6_104]
+elseif (hero.tagis[Size.Gargantuan] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.2d8_305]     
+elseif (hero.tagis[Size.Colossal] <> 0) then
+  perform eachpick.tagreplace[wMain.?,wMain.4d6_106]     
+endif
+
+perform eachpick.delete[Helper.DamageUp]
+perform eachpick.delete[Helper.DamageDown]
+perform eachpick.delete[Helper.NatSizeDmg]
+
+nexteach]]></eval>
+    <eval phase="First" index="2"><![CDATA[~ natural AC
+var natAC as number
+natAC = hero.child[ArmorClass].field[tACNatural].value
+hero.child[ArmorClass].field[tACNatural].value = maximum(2,natAC)
+
+~ see if we need slam attack
+if (hero.childcount[wSlam] <= 1) then
+   perform hero.assign[Custom.zmspl_slm]
+endif
+
+~ remove all special attacks but spell storing
+foreach pick in hero where "SpecType.Attack & !thingid.rauSpZmSpS"
+  perform eachpick.assign[Helper.SpcDisable]
+  perform eachpick.assign[Hide.Special]
+nexteach
+
+~ no intelligence score
+perform hero.child[aINT].assign[Helper.NoScore]
+
+~ Set Cha to 10
+hero.child[aCHA].field[aNormForce].value = 10]]></eval>
+    <eval phase="PostAttr" priority="10000" index="4">~ remove all skill ranks and skill bonuses
+
+foreach pick in hero from BaseSkill
+  eachpick.field[skInnate].value = 0
+  eachpick.field[Bonus].value = 0
+nexteach</eval>
+    <eval phase="Final"><![CDATA[~ cr
+var hd as number
+hd = hero.tagcount[Hero.HitDice]
+
+if (hd <= 1) then
+  herofield[tCR].value = .5
+elseif (hd = 2) then
+  herofield[tCR].value = 1
+elseif (hd <= 4) then
+  herofield[tCR].value = 2
+elseif (hd <= 6) then
+  herofield[tCR].value = 3
+elseif (hd <= 11) then
+  herofield[tCR].value = 4
+elseif (hd <= 14) then
+  herofield[tCR].value = 5
+elseif (hd <= 17) then
+  herofield[tCR].value = 6
+else
+  herofield[tCR].value = 7
+endif
+
+~ change fly to clumsy
+perform hero.childfound[xFly].delete[Maneuver.?]
+perform hero.childfound[xFly].assign[Maneuver.Clumsy]]]></eval>
+    <eval phase="First" priority="600" index="5"><![CDATA[field[livename].text ="Spellgorged"]]>
+      <before name="Template Name Modification"/>
+      </eval>
+    <prereq message="Arcane or Divine spellcaster required.">
+      <validate><![CDATA[~once we've been selected, we're fine (since a template might be added later.
+        validif (@ispick <> 0)
+
+        validif (hero.tagis[Hero.Arcane] + hero.tagis[Hero.Divine] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="tmuTherian" name="Therianthrope" description="Therianthropes (sometimes called anthromorphs or weretherions) are animals that can assume a human or hybrid form (the latter combining traits of both their human and animal forms). They are akin to lycanthropes (in that they are shapechangers), but therianthropes are not lycanthropes and do not carry or induce lycanthropy. All therianthropes in human form have slightly feral characteristics.\n\nCreating a Therianthrope &#147;Therianthrope&#148; is an inherited template that can be added to any animal." compset="Template" uniqueness="unique">
+    <fieldval field="tmHDSides" value="8"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TypeNoEff" tag="tpMagBeast"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="ClVaryName" tag="AppNoComma"/>
+    <bootstrap thing="stShapecha"></bootstrap>
+    <bootstrap thing="xBonusDisg">
+      <autotag group="Value" tag="8"/>
+      <assignval field="livename" value="in animal form"/>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdIron"></bootstrap>
+    <bootstrap thing="rauTheAltF"></bootstrap>
+    <bootstrap thing="fWepMart">
+      <containerreq phase="First" priority="100">hero#Custom.the_human | hero#Custom.the_hybrid</containerreq>
+      </bootstrap>
+    <bootstrap thing="fSimple">
+      <containerreq phase="First" priority="100">hero#Custom.the_human | hero#Custom.the_hybrid</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfguTherSA"></bootstrap>
+    <eval phase="PreAttr" index="3">~ set ability scores
+hero.child[aSTR].field[aNormMin].value = 10
+hero.child[aINT].field[aNormMin].value = 10
+hero.child[aWIS].field[aNormMin].value = 10
+hero.child[aCHA].field[aNormMin].value = 10</eval>
+    <eval phase="First" priority="530"><![CDATA[perform hero.findchild[BaseRace].setfocus
+doneif (state.isfocus = 0)
+
+~ get base hd
+var hd as number
+hd = focus.tagcount[Hero.HitDice]
+perform state.clearfocus
+
+~if we have less than 3 HD, set hd to 3
+if (hd < 3) then
+  field[tmHitDice].value += 3-hd
+  perform assign[TemplHelp.AddHitDice]
+endif
+
+
+~ set cr
+if (hd <=5) then
+  herofield[tCR].value = maximum(herofield[tCR].value + 1,2)
+elseif (hd <=10) then
+  herofield[tCR].value += 2
+else
+  herofield[tCR].value += 3
+endif
+
+~ set dr
+if (hd <= 5) then
+  perform hero.child[xDamRdIron].assign[Value.5]
+else
+  perform hero.child[xDamRdIron].assign[Value.10]
+endif]]></eval>
+    <prereq message="Animal type required.">
+      <validate><![CDATA[~once we've been selected, we're fine (since a template might be added later.
+validif (@ispick <> 0)
+
+validif (#hastype[tpAnimal] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cfguTherSA" name="Therianthrope Abilities" compset="Configure" uniqueness="unique">
+    <fieldval field="shortname" value="Special Attacks"/>
+    <fieldval field="cfgObject1" value="Special Attacks"/>
+    <usesource source="srcTomeHor"/>
+    <eval phase="PostLevel" priority="530"><![CDATA[var pnts as number
+if (hero.tagcount[Hero.HitDice] <= 5) then
+  pnts = 1
+elseif (hero.tagcount[Hero.HitDice] <= 10) then
+  pnts = 2
+else
+  pnts = 4
+endif
+
+field[cfgMax1].value = pnts]]></eval>
+    </thing>
+  <thing id="tmuVenSnak" name="Variant Venomous Snake" description="Use the venomous snake entry in the Pathfinder Roleplaying Game Bestiary as the base creature. Any one of the &#147;templates&#148; below can be added to any venomous snake in the Pathfinder Roleplaying Game Bestiary." compset="Template" uniqueness="unique">
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cfguSnakeS"></bootstrap>
+    <eval phase="First">~ hide exisiting poison
+
+perform hero.child[raPoiCON].assign[Hide.Special]
+perform hero.child[raPoiCON].assign[Helper.SpcDisable]</eval>
+    <eval phase="Final" index="2"><![CDATA[hero.childfound[wBite].field[wDamExtra].text = " plus poison"]]></eval>
+    <exprreq message="Venomous Snake or Venomous Snake Swarm required."><![CDATA[#hasrace[rmSnkVipMd] + #hasrace[rVenoSnake] <> 0]]></exprreq>
+    </thing>
+  <thing id="tmuAbomina" name="Abomination" description="Abominations (often called hybrids) are fusions of two normal creatures that are just as often intelligent as they are rampaging beasts. No one knows how abominations come to be: perhaps the result of experimentation by a mad wizard or druid, a wish or miracle gone awry, or the wrath a deity. The end result that fuses two creatures together often destroys the mind of the hapless beings, forcing them into madness and evil. Druids almost universally view evil abominations as profane violations of nature that must be eliminated wherever they are found. The most well known examples of abominations are hippogriffs, griffons, gorilla bears, and the terrible owlbear.\n\n{b}Note{/b} The abomination template is to complex for Hero Lab to handle at this time. To make an abomination create the creaturte from scratch and use this template to add the template name." compset="Template" uniqueness="unique">
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="AppNoComma"/>
+    </thing>
+
+
+
+
+
+
+  </document>

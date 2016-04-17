@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_AP065 - Into the Nightmare Rift"/>
+  <thing id="rAP65TarMs" name="Mastadon, Tar-Daubed" compset="Race">
+    <fieldval field="rSTR" value="24"/>
+    <fieldval field="rDEX" value="2"/>
+    <fieldval field="rCON" value="11"/>
+    <fieldval field="rINT" value="-8"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="-3"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-7"/>
+    <fieldval field="rHitDice" value="14"/>
+    <fieldval field="rHPStart" value="63"/>
+    <fieldval field="rAC" value="12"/>
+    <fieldval field="rCR" value="9"/>
+    <fieldval field="rEnviron" value="Cold or temperate forests and plains"/>
+    <fieldval field="rOrgan" value="Solitary or herd (6-30)"/>
+    <fieldval field="rTreasure" value="None"/>
+    <fieldval field="rDescript" value="This creature is larger than a normal elephant, with enormous sweeping tusks and shaggy brown fur on its body."/>
+    <usesource source="PathShStar"/>
+    <tag group="Helper" tag="Quadruped" name="Quadruped" abbrev="Quadruped"/>
+    <tag group="Hero" tag="NoDefComm" name="NoDefComm" abbrev="NoDefComm"/>
+    <tag group="RaceSize" tag="Huge2" name="Huge" abbrev="Huge"/>
+    <tag group="RaceType" tag="NPC" name="NPC Race" abbrev="NPC Race"/>
+    <tag group="Alignment" tag="NeutralGE" name="Neutral" abbrev="N"/>
+    <tag group="Alignment" tag="NeutralLC" name="Neutral" abbrev="N"/>
+    <tag group="HasType" tag="tpAnimal" name="Animal" abbrev="Animal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fImpIronWi"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wGore"/>
+      </bootstrap>
+    <bootstrap thing="wTrample">
+      <autotag group="wMain" tag="2d8_204"/>
+      </bootstrap>
+    <bootstrap thing="wGore">
+      <autotag group="wMain" tag="2d8_204"/>
+      <autotag group="Helper" tag="NatPrimary"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="2d6_104"/>
+      <autotag group="Helper" tag="NatPrimary"/>
+      </bootstrap>
+    <bootstrap thing="xScent"></bootstrap>
+    <bootstrap thing="fEndure"></bootstrap>
+    <bootstrap thing="fImpBull"></bootstrap>
+    <bootstrap thing="raAP65TarD"></bootstrap>
+    <eval phase="PreLevel" priority="4000">
+      #skillinnate[skPercep] += 14
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="raAP65TarD" name="Tar-Daubed" description="Each of these mastodons has been smeared with thick layers of tar. The sticky stuff functions as padded armor, granting the mastodons a +1 armor bonus, but its primary use is as a horrific attack. If the tar is lit on fire, the\nmastodon take 1d6 points of fire damage per round, but also deals +1d6 points of fire damage on each successful hit, or +2d6 points of fire damage with its trample attack." compset="RaceSpec">
+    <fieldval field="actName" value="Tar Lit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="First">
+      hero.child[ArmorClass].field[tACArmor].value += maximum(hero.child[ArmorClass].field[tACArmor].value,1)</eval>
+    <eval phase="First" index="2"><![CDATA[
+      ~ If not active get out now!    
+      doneif (field[abilActive].value = 0)
+
+      foreach pick in hero from BaseNatWep where "!thingid.wTrample"
+        eachpick.field[wDamExtra].text = " plus 1d6 fire"
+      nexteach
+
+      hero.child[wTrample].field[wDamExtra].text = " plus 2d6 fire"]]></eval>
+    </thing>
+  <thing id="xAP64SplSt" name="Spell Stealing" description="Once per round as a free action whenever any of the Curator's spell effects affect a spellcaster, he can attempt to steal one of that spellcaster's prepared spells or unused spell slots. The target can resist this attack with a successful DC 24 Will save. If the save fails, one random prepared spell or unused spell slot of the highest spell level available to the caster is expended for the day as if it had been used, but without any other effect save for healing the Curator damage equal to twice the spell level stolen. The save DC is Charisma-based." compset="RaceCustom" summary="Steal target&apos;s spells" uniqueness="unique">
+    <usesource source="PathShStar"/>
+    <tag group="AllowRCust" tag="cfgGhost" name="Ghost" abbrev="Ghost"/>
+    <tag group="Helper" tag="DCUseTotHD" name="The DC for this racial ability is based on total HD, rather than racial HD" abbrev="The DC for this racial ability is based on total HD, rather than racial HD"/>
+    <tag group="SpInfo" tag="spMagiJar5" name="Magic Jar" abbrev="Magic Jar"/>
+    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+    <tag group="StandardDC" tag="aCHA" name="Charisma" abbrev="Charisma"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    </thing>
+  </document>

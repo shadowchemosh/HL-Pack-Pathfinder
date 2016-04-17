@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <thing id="raAP74SCBt" name="Coordinated Bites" description="If Soltengrebbe attacks a single target with both of its bite attacks, it treats that target as if the target were flat-footed against those attacks." compset="RaceSpec" summary="Target is considered flat-footed when targeted with both bite attacks." uniqueness="useronce">
+    <usesource source="PathWraRig"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raAP74SCrJ" name="Crushing Jaws" description="If Soltengrebbe hits a creature with both bite attacks, it can expend one use of mythic power to savage its prey as an immediate action. This immediately deals 2d6+1d8+7 points of damage as it chews on the victim. In addition, the victim must succeed at a DC 19 Fortitude save to resist being staggered by the pain for 1d4 rounds. The save DC is Strength-based." compset="RaceSpec" summary="Target hit both both bite attacks is chewed for extra damage." uniqueness="useronce">
+    <usesource source="PathWraRig"/>
+    <tag group="StandardDC" tag="aSTR"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raAP74SDmc" name="Demonic" description="Soltengrebe's transformation into a mythic creature has infused it with many demonic resistances and immunities. It counts as if it had the demon subtype for the purposes of effects that have additional effects against demons." compset="RaceSpec" summary="Has demonic resistances and immunities." uniqueness="useronce">
+    <usesource source="PathWraRig"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <bootstrap thing="xDamRdGoCI">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="xImmElec"></bootstrap>
+    <bootstrap thing="xImmPois"></bootstrap>
+    <bootstrap thing="xDamRsFire">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsAcid">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsCold">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="stDemon"></bootstrap>
+    </thing>
+  <thing id="raAP74SMyB" name="Mythic Breath" description="Soltengrebe's breath weapon is enhanced from a normal chimera's. It deals 6d8 cold damage and 2d8 piercing damage in a 40-foot cone of freezing wind and shards of jagged ice (Reflex DC 19 half). The save DC is Constitution-based, and includes a +2 bonus from Ability Focus." compset="RaceSpec" uniqueness="useronce">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="PathWraRig"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abSave" tag="RefHalf"/>
+    <tag group="abAction" tag="Attack"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="CB1d4Rnds"/>
+    <eval phase="Render" priority="90000"><![CDATA[~set up summary
+
+field[abSumm].text = "40-cone, 6d8 cold + 2d8 piercing, Reflex DC " & field[abDC].value & " half, 1/1d4 rounds"
+
+field[sbName].text = "mythic breath (" & field[abSumm].text & ")"]]></eval>
+    <eval phase="First" priority="1000" index="2">~ hide breath weapon for chimera
+
+perform hero.child[raChiBreaW].assign[Helper.SpcDisable]
+perform hero.child[raChiBreaW].assign[Hide.Special]</eval>
+    </thing>
+  <thing id="raAP74ExEn" name="Endure Sunlight" description="Eustoyriax does not possess the standard shadow demon weakness of sunlight powerlessness." compset="RaceSpec">
+    <fieldval field="shortname" value="endure sunlight"/>
+    <usesource source="PathWraRig"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Mythic"/>
+    <eval phase="Final">perform hero.child[raShaSunlP].assign[Helper.SpcDisable]
+perform hero.child[raShaSunlP].assign[Hide.Special]</eval>
+    </thing>
+  <thing id="raAP74ExPM" name="Possession Mastery" description="Eustoyriax can use {i}magic jar{/i} three times per day. When he affects a creature with this ability, he can use all of its abilities, including spellcasting." compset="RaceSpec" summary="Can use magic jar 3/day.">
+    <usesource source="PathWraRig"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+doneif (tagis[Helper.SpcDisable] <> 0)
+
+hero.child[spMagiJar4].field[trkMax].value = 3]]></eval>
+    </thing>
+  <thing id="raAP47ExSB" name="Shadowblood" description="As a standard action once per day while possessing a living creature, Eustoyriax can create a single does of shadowblood by cutting his borrowed flesh and allowing the blood to fill a vial." compset="RaceSpec" summary="Make shadowblood from flesh of creature you possess.">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="PathWraRig"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abAction" tag="Standard"/>
+    </thing>
+  <thing id="raAP74ExSh" name="Summon Shadows" description="All will can summon 1d3 shadows with a 75% chance of success." compset="RaceSpec">
+    <fieldval field="shortname" value="summon (level 2, 1d3 shadows, 75%)"/>
+    <usesource source="PathWraRig"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="Usage" tag="AtWill"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+field[sbName].text = "summon (level 2, 1d3 shadows, 75%)"]]></eval>
+    </thing>
+  <thing id="raAP47ExSD" name="See in Darkness" description="The creature can see perfectly in darkness of any kind, including that created by {i}deeper darkness{/i}." compset="RaceSpec" summary="See perfectly in darkness of any kind, including magical darkness." uniqueness="unique">
+    <usesource source="PathWraRig"/>
+    <tag group="RaceSort" tag="Senses" name="Senses" abbrev="Senses"/>
+    <tag group="SpecType" tag="Sense" name="Sense" abbrev="Sense"/>
+    <tag group="SpecialTab" tag="Senses" name="Senses" abbrev="Senses"/>
+    <tag group="Universal" tag="Universal" name="Universal Monster Ability or Core Rulebook ability" abbrev="Universal Monster Ability or Core Rulebook ability"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    </thing>
+  </document>

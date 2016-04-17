@@ -1,0 +1,1652 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_PaizoBestiary1 - Variants"/>
+  <fileinfo>
+    <info_author>Jeffrey Hersh jeffrey.m.hersh@gmail.com</info_author>
+    <info_history><![CDATA[
+      Feburary 1, 2015 - Moved equipment over to the Basic Pack as its needed by the PFS Boons stuff.
+    
+      November 3, 2012 - Tim Shadow
+      - Added back the missing "Awakened Golem" template of Frumples that was removed somehow and I found in the archives. I also source marked this to the Bestiary1 so its not required people have the "Classic Horrors Revisted" data package.
+      - Added back the missing "Stone Giant Elder" template.
+
+      Oct 21, 2012 - Jeff Hersh
+      - Updated for PF v7.0
+
+      June 23, 2012 - Tim Shadow
+      -Added sources and Product ID to all the new things.
+      -Changed the boostrap thingid.raMummSwC to use thingid.raS2SwamCr so we don't have to have the Campaign Setting#3.
+
+      April 28, 2012 - Tim Shadow
+      -changed Unique ID(rGhast => rCBGhast).  
+
+      Feb 8, 2012 - Jeff Hersh
+      Added Huge Scorpion venom as an item
+      Added: Bog Mummy, Djinni Noble, Marid Noble, Dread Wraith, Cyro and Pyro Hydras, and Werelepoard templates
+
+      Feb 3, 2012 - Tim Shadow
+      -Merged in data set by renaming from PFRPG_Bestiary_Sup.user to PFRPG_Bestiary_Variants.user.
+      -Changed "Wight, Dust" bootstraps to use new one from PFRPG_Bestiary_UniversialAbilities instead of using from Campaign Setting#5.
+      --'raWiDDehyd' Resurrection Vulnerability(RaceSpec) -> raS2DDehyd
+
+      Frumple
+      This file contains the variuous variant creates from the Pathfinder Bestiary.]]></info_history>
+    </fileinfo>
+  <thing id="tmuLyLepN" name="Wereleopard, Natural" description="Lycanthropes are humanoids with the ability to turn into animals and animal-humanoid hybrid shapes. Natural lycanthropes are born with this ability and have perfect control over their shapechanging. Aff licted lycanthropes contract this ability like a curse or disease from another lycanthrope; they sometimes change form involuntarily." compset="Template" uniqueness="unique">
+    <fieldval field="tmCRMin" value="3"/>
+    <fieldval field="tmWIS" value="2"/>
+    <fieldval field="tmCHA" value="-2"/>
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="Bestiary1"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xDamRdSil"></bootstrap>
+    <bootstrap thing="xLyEmpathy"></bootstrap>
+    <bootstrap thing="stShapecha"></bootstrap>
+    <bootstrap thing="xCatHideUn">
+      <containerreq phase="First" priority="500">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      </bootstrap>
+    <bootstrap thing="raGrab">
+      <containerreq phase="First" priority="500">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      </bootstrap>
+    <bootstrap thing="raPounce">
+      <containerreq phase="First" priority="500">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      </bootstrap>
+    <bootstrap thing="wClaw">
+      <containerreq phase="First" priority="100">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      <autotag group="wMain" tag="1d3_3"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="wBite">
+      <containerreq phase="First" priority="100">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Value" tag="1"/>
+      <assignval field="livename" value="Bite (plus grab)"/>
+      </bootstrap>
+    <bootstrap thing="wRake">
+      <containerreq phase="First" priority="100">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="xScent"></bootstrap>
+    <bootstrap thing="raLowLight"></bootstrap>
+    <bootstrap thing="xLyChange"></bootstrap>
+    <bootstrap thing="xLyCurse"></bootstrap>
+    <bootstrap thing="xClimb">
+      <containerreq phase="First" priority="100">Hero.LyAnimal</containerreq>
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <eval phase="Attr" priority="10000" index="2">~ Set up our changing statistics
+      var v_strbonus as number
+      var v_dexbonus as number
+      var v_conbonus as number
+      var v_intbonus as number
+      var v_wisbonus as number
+      var v_chabonus as number
+
+      ~ Ability bonuses
+      v_strbonus = 6
+      v_dexbonus = 9
+      v_conbonus = 5
+      v_intbonus = -8
+      v_wisbonus = 3
+      v_chabonus = -4
+
+      ~ Make all changes appropriately
+      call LycanAttr</eval>
+    <eval phase="First" priority="5000" index="3"><![CDATA[
+      ~we gain the animal's skill bonuses in hybrid or animal form
+      if (hero.tagis[Hero.LyAnimal] + hero.tagis[Hero.LyHybrid] <> 0) then
+        #skillbonus[skAcrobat] += 4
+        #skillbonus[skStealth] += 4
+        endif]]></eval>
+    <eval phase="First" priority="750">~ Set up our changing statistics
+      var v_animsize as number
+      var v_animnat as number
+      var v_animspd as number
+
+      ~ Size of the animal - small = -1, medium = 0, large = 1
+      v_animsize = 0
+
+      ~ Animal natural armor class bonus
+      v_animnat = 1
+
+      ~ Animal speed
+      v_animspd = 30
+
+      ~ Make all changes appropriately
+      call LycanForm</eval>
+    <exprreq message="Size must be within 1 step of medium." iserror="no"><![CDATA[maximum(herofield[tSize].value - 0, 0 - herofield[tSize].value) <= 1]]></exprreq>
+    <exprreq message="Humanoid type required." iserror="no"><![CDATA[#hastype[tpHumanoid] <> 0]]></exprreq>
+    </thing>
+  <thing id="tmuLyLepA" name="Wereleopard, Afflicted" description="Lycanthropes are humanoids with the ability to turn into animals and animal-humanoid hybrid shapes. Natural lycanthropes are born with this ability and have perfect control over their shapechanging. Aff licted lycanthropes contract this ability like a curse or disease from another lycanthrope; they sometimes change form involuntarily." compset="Template" uniqueness="unique">
+    <fieldval field="tmCRMin" value="3"/>
+    <fieldval field="tmWIS" value="2"/>
+    <fieldval field="tmCHA" value="-2"/>
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="Bestiary1"/>
+    <tag group="TemplHelp" tag="Acquired" name="Acquired" abbrev="Acquired"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xLyChange"></bootstrap>
+    <bootstrap thing="xDamRdSil"></bootstrap>
+    <bootstrap thing="xLyEmpathy"></bootstrap>
+    <bootstrap thing="stShapecha"></bootstrap>
+    <bootstrap thing="xCatHideUn">
+      <containerreq phase="First" priority="500">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      </bootstrap>
+    <bootstrap thing="raGrab">
+      <containerreq phase="First" priority="500">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      </bootstrap>
+    <bootstrap thing="raPounce">
+      <containerreq phase="First" priority="500">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      </bootstrap>
+    <bootstrap thing="wClaw">
+      <containerreq phase="First" priority="100">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      <autotag group="wMain" tag="1d3_3"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="wBite">
+      <containerreq phase="First" priority="100">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Value" tag="1"/>
+      <assignval field="livename" value="Bite (plus grab)"/>
+      </bootstrap>
+    <bootstrap thing="wRake">
+      <containerreq phase="First" priority="100">Hero.LyHybrid | Hero.LyAnimal</containerreq>
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="raLowLight"></bootstrap>
+    <bootstrap thing="xScent"></bootstrap>
+    <bootstrap thing="xClimb">
+      <containerreq phase="First" priority="100">Hero.LyAnimal</containerreq>
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <eval phase="First" priority="750">~ Set up our changing statistics
+      var v_animsize as number
+      var v_animnat as number
+      var v_animspd as number
+
+      ~ Size of the animal - small = -1, medium = 0, large = 1
+      v_animsize = 0
+
+      ~ Animal natural armor class bonus
+      v_animnat = 1
+
+      ~ Animal speed
+      v_animspd = 30
+
+      ~ Make all changes appropriately
+      call LycanForm</eval>
+    <eval phase="Attr" priority="10000" index="2">~ Set up our changing statistics
+      var v_strbonus as number
+      var v_dexbonus as number
+      var v_conbonus as number
+      var v_intbonus as number
+      var v_wisbonus as number
+      var v_chabonus as number
+
+      ~ Ability bonuses
+      v_strbonus = 6
+      v_dexbonus = 9
+      v_conbonus = 5
+      v_intbonus = -8
+      v_wisbonus = 3
+      v_chabonus = -4
+
+      ~ Make all changes appropriately
+      call LycanAttr</eval>
+    <eval phase="First" priority="5000" index="3"><![CDATA[
+      ~we gain the animal's skill bonuses in hybrid or animal form
+      if (hero.tagis[Hero.LyAnimal] + hero.tagis[Hero.LyHybrid] <> 0) then
+        #skillbonus[skAcrobat] += 4
+        #skillbonus[skStealth] += 4
+        endif]]></eval>
+    <exprreq message="Humanoid type required." iserror="no"><![CDATA[#hastype[tpHumanoid] <> 0]]></exprreq>
+    <exprreq message="Size must be within 1 step of medium." iserror="no"><![CDATA[maximum(herofield[tSize].value - 0, 0 - herofield[tSize].value) <= 1]]></exprreq>
+    </thing>
+  <thing id="rHydraPyro" name="Hydra, Pyro" description="Variants of the standard hydra, the cryohydra lives in cold marshes or on glaciers, while the pyrohydra prefers deserts or volcanic mountains. A cryohydra gains the Cold subtype, while a pyrohydra gains the Fire subtype. Each of its heads has a breath weapon (15-ft. cone, 3d6 cold damage [cryohydra] or 3d6 fire damage [pyrohydra], Reflex half) useable every 1d4 rounds. The save DC is 10 + 1/2 the hydra&apos;s HD + the hydra&apos;s Con modifier. Although fire attacks cannot prevent a pyrohydra&apos;s neck stump from growing new heads (since it is immune to fire), 5 points of cold damage does. Acid works normally on both hydra variants." compset="Race">
+    <fieldval field="rHitDice" value="5"/>
+    <fieldval field="rHPStart" value="27"/>
+    <fieldval field="rSTR" value="7"/>
+    <fieldval field="rDEX" value="2"/>
+    <fieldval field="rCON" value="8"/>
+    <fieldval field="rINT" value="-8"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rCHA" value="-1"/>
+    <fieldval field="rSpeed" value="20"/>
+    <fieldval field="rFeat" value="-3"/>
+    <fieldval field="rAC" value="6"/>
+    <fieldval field="rCR" value="6"/>
+    <fieldval field="rDescript" value="Multiple angry snake-like heads rise from the sleek, serpentine body of this terrifying monster."/>
+    <fieldval field="rEnviron" value="warm deserts or volcanic mountains"/>
+    <fieldval field="rOrgan" value="solitary"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Helper" tag="Snaky"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="HasType" tag="tpMagBeast"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Huge2"/>
+    <tag group="Race" tag="rHydra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raHydRegeH"></bootstrap>
+    <bootstrap thing="xScent"></bootstrap>
+    <bootstrap thing="xBonusPerc">
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="stFire"></bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="fLightRef"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d8_6"/>
+      </bootstrap>
+    <bootstrap thing="xFastHeal"></bootstrap>
+    <bootstrap thing="raHydFastH"></bootstrap>
+    <bootstrap thing="raHydHydrT"></bootstrap>
+    <bootstrap thing="raBreath">
+      <assignval field="livename" value="Breath Weapon (15-ft. con, 3d6 fire, Reflex half), 1/1d4 rnds)"/>
+      </bootstrap>
+    <bootstrap thing="raPounce"></bootstrap>
+    <eval phase="PreLevel" priority="4000">#skillinnate[skPercep] += 5</eval>
+    </thing>
+  <thing id="rHydraCyro" name="Hydra, Cyro" description="Variants of the standard hydra, the cryohydra lives in cold marshes or on glaciers, while the pyrohydra prefers deserts or volcanic mountains. A cryohydra gains the Cold subtype, while a pyrohydra gains the Fire subtype. Each of its heads has a breath weapon (15-ft. cone, 3d6 cold damage [cryohydra] or 3d6 fire damage [pyrohydra], Reflex half) useable every 1d4 rounds. The save DC is 10 + 1/2 the hydra&apos;s HD + the hydra&apos;s Con modifier. Although fire attacks cannot prevent a pyrohydra&apos;s neck stump from growing new heads (since it is immune to fire), 5 points of cold damage does. Acid works normally on both hydra variants." compset="Race">
+    <fieldval field="rHitDice" value="5"/>
+    <fieldval field="rHPStart" value="27"/>
+    <fieldval field="rSTR" value="7"/>
+    <fieldval field="rDEX" value="2"/>
+    <fieldval field="rCON" value="8"/>
+    <fieldval field="rINT" value="-8"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rCHA" value="-1"/>
+    <fieldval field="rSpeed" value="20"/>
+    <fieldval field="rFeat" value="-3"/>
+    <fieldval field="rAC" value="6"/>
+    <fieldval field="rCR" value="6"/>
+    <fieldval field="rDescript" value="Multiple angry snake-like heads rise from the sleek, serpentine body of this terrifying monster."/>
+    <fieldval field="rEnviron" value="cold marshes or glaciers"/>
+    <fieldval field="rOrgan" value="solitary"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Helper" tag="Snaky"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="HasType" tag="tpMagBeast"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Huge2"/>
+    <tag group="Race" tag="rHydra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raPounce"></bootstrap>
+    <bootstrap thing="raHydRegeH"></bootstrap>
+    <bootstrap thing="xScent"></bootstrap>
+    <bootstrap thing="xBonusPerc">
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="fLightRef"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d8_6"/>
+      </bootstrap>
+    <bootstrap thing="xFastHeal"></bootstrap>
+    <bootstrap thing="raHydFastH"></bootstrap>
+    <bootstrap thing="raHydHydrT"></bootstrap>
+    <bootstrap thing="raBreath">
+      <assignval field="livename" value="Breath Weapon (15-ft. con, 3d6 cold, Reflex half), 1/1d4 rnds)"/>
+      </bootstrap>
+    <bootstrap thing="stCold"></bootstrap>
+    <eval phase="PreLevel" priority="4000">#skillinnate[skPercep] += 5</eval>
+    </thing>
+  <thing id="rCrystOoze" name="Crystal Ooze" description="The crystal ooze is an aquatic variant that dwells in deeper waters than most commonly found in the gray ooze&apos;s beloved swamps. A crystal ooze has the aquatic subtype and a swim speed of 30 ft. The crystal ooze lacks the gray ooze&apos;s constrict ability, but it does secrete a paralytic toxin that causes those whom it strikes to become paralyzed for 3d6 rounds if they fail a Fortitude saving throw (the save DC is Constitution-based)." compset="Race">
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="18"/>
+    <fieldval field="rSTR" value="6"/>
+    <fieldval field="rDEX" value="-9"/>
+    <fieldval field="rWIS" value="-9"/>
+    <fieldval field="rCHA" value="-9"/>
+    <fieldval field="rCON" value="16"/>
+    <fieldval field="rSpeed" value="10"/>
+    <fieldval field="rCR" value="4"/>
+    <usesource source="Bestiary1"/>
+    <tag group="HasType" tag="tpOoze"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Race" tag="rGrayOoze"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Helper" tag="Snaky"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raGraTrans"></bootstrap>
+    <bootstrap thing="raParalysi">
+      <assignval field="livename" value="Paralysis (3d6 rounds)"/>
+      </bootstrap>
+    <bootstrap thing="stAquatic"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d6_5"/>
+      <assignval field="livename" value="Slam"/>
+      <assignval field="wDamExtra" value=" plus 1d6 acid, grab and paralysis"/>
+      </bootstrap>
+    <bootstrap thing="xImmCold"></bootstrap>
+    <bootstrap thing="raGrab"></bootstrap>
+    <bootstrap thing="xImmFire"></bootstrap>
+    <bootstrap thing="raGraAcid"></bootstrap>
+    <eval phase="First">perform hero.childfound[wUnarmed].assign[Hide.Weapon]</eval>
+    </thing>
+  <thing id="rIdOooze" name="Id Ooze" description="Perhaps the strangest variant gray oozes are those that have developed a rudimentary intelligence, including the ability to communicate telepathically with other oozes, or even the ability to blast enemies with pulses of raw mental power. Id oozes are advanced gray oozes with an Intelligence score of 2 (and thus gain skill ranks and feats-typically 4 ranks in Stealth, Improved Initiative, and Toughness), can communicate basic empathic information with other id oozes within 100 feet via telepathy, and can use lesser confusion at will as a spell-like ability (CL equals the id ooze&apos;s HD)." compset="Race">
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="18"/>
+    <fieldval field="rSTR" value="10"/>
+    <fieldval field="rDEX" value="-5"/>
+    <fieldval field="rWIS" value="-5"/>
+    <fieldval field="rCHA" value="-5"/>
+    <fieldval field="rCON" value="20"/>
+    <fieldval field="rSpeed" value="10"/>
+    <fieldval field="rCR" value="6"/>
+    <fieldval field="rINT" value="-8"/>
+    <fieldval field="rAC" value="2"/>
+    <fieldval field="rFeat" value="-2"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Race" tag="rGrayOoze"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Helper" tag="Snaky"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="HasType" tag="tpOoze"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xImmCold"></bootstrap>
+    <bootstrap thing="raGrab"></bootstrap>
+    <bootstrap thing="xImmFire"></bootstrap>
+    <bootstrap thing="raGraAcid"></bootstrap>
+    <bootstrap thing="raGraTrans"></bootstrap>
+    <bootstrap thing="raParalysi">
+      <assignval field="livename" value="Paralysis (3d6 rounds)"/>
+      </bootstrap>
+    <bootstrap thing="spConfLes1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="xTelepathy">
+      <autotag group="Value" tag="100"/>
+      </bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d6_5"/>
+      <assignval field="livename" value="Slam"/>
+      <assignval field="wDamExtra" value=" plus 1d6 acid, grab and paralysis"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000" index="2">#skillinnate[skStealth] += 4</eval>
+    <eval phase="First">perform hero.childfound[wUnarmed].assign[Hide.Weapon]</eval>
+    </thing>
+  <thing id="rBurtWight" name="Wight, Brute" description="Giants that are killed by wights become hunchbacked, simple-minded undead. Brute wights are giant advanced wights, but cannot create spawn of their own." compset="Race">
+    <fieldval field="rSTR" value="10"/>
+    <fieldval field="rINT" value="5"/>
+    <fieldval field="rWIS" value="7"/>
+    <fieldval field="rCHA" value="9"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="18"/>
+    <fieldval field="rCR" value="6"/>
+    <fieldval field="rEnviron" value="any"/>
+    <fieldval field="rOrgan" value="solitary, pair, gang (3-6), or pack (7-12)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rAC" value="9"/>
+    <fieldval field="rDEX" value="4"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Alignment" tag="Lawful" name="Lawful" abbrev="L"/>
+    <tag group="AllowRCust" tag="ruSaltWigh" name="Wight, Salt" abbrev="Wight, Salt"/>
+    <tag group="HasType" tag="tpUndead" name="Undead" abbrev="Undead"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Race" tag="rWight" name="Wight" abbrev="Wight"/>
+    <tag group="RaceType" tag="NPC" name="NPC Race" abbrev="NPC Race"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Alignment" tag="Evil" name="Evil" abbrev="E"/>
+    <bootstrap thing="skKnowRel"></bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d6_5"/>
+      </bootstrap>
+    <bootstrap thing="fBlindFgt"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="raEnDrain">
+      <assignval field="abValue" value="1"/>
+      </bootstrap>
+    <bootstrap thing="raWigResuV"></bootstrap>
+    <eval phase="First">perform hero.childfound[wUnarmed].assign[Hide.Weapon]</eval>
+    <eval phase="PreLevel" priority="4000" index="2">#skillinnate[skIntim] += 4
+#skillinnate[skKnowRel] += 4
+#skillinnate[skPercep] += 4
+#skillinnate[skStealth] += 4</eval>
+    </thing>
+  <thing id="rCarinWigh" name="Wight, Carin" description="Some societies deliberately create these specialized wights to serve as guardians for barrows or other burial sites. A cairn wight is an advanced wight that fights with a weapon, typically a sword, that channels its energy drain attack and affects creatures damaged by the weapon as if they had been struck by the wight&apos;s slam attack." compset="Race">
+    <fieldval field="rSTR" value="6"/>
+    <fieldval field="rINT" value="5"/>
+    <fieldval field="rWIS" value="7"/>
+    <fieldval field="rCHA" value="9"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="18"/>
+    <fieldval field="rCR" value="4"/>
+    <fieldval field="rEnviron" value="any"/>
+    <fieldval field="rOrgan" value="solitary, pair, gang (3-6), or pack (7-12)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rAC" value="6"/>
+    <fieldval field="rDEX" value="6"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Alignment" tag="Lawful" name="Lawful" abbrev="L"/>
+    <tag group="AllowRCust" tag="ruSaltWigh" name="Wight, Salt" abbrev="Wight, Salt"/>
+    <tag group="HasType" tag="tpUndead" name="Undead" abbrev="Undead"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Race" tag="rWight" name="Wight" abbrev="Wight"/>
+    <tag group="RaceType" tag="NPC" name="NPC Race" abbrev="NPC Race"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Alignment" tag="Evil" name="Evil" abbrev="E"/>
+    <bootstrap thing="skKnowRel"></bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d4_4"/>
+      </bootstrap>
+    <bootstrap thing="fBlindFgt"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="raEnDrain">
+      <assignval field="abValue" value="1"/>
+      </bootstrap>
+    <bootstrap thing="fWepMart">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="raWigResuV"></bootstrap>
+    <eval phase="PreLevel" priority="4000" index="2">#skillinnate[skIntim] += 4
+#skillinnate[skKnowRel] += 4
+#skillinnate[skPercep] += 4
+#skillinnate[skStealth] += 4</eval>
+    <eval phase="First">perform hero.childfound[wUnarmed].assign[Hide.Weapon]</eval>
+    </thing>
+  <thing id="rDustWight" name="Wight, Dust" description="Just as wights that rise from the dead in frozen environments can become infused with the dangerous qualities of their harsh environs, dust wights carry in their desiccated, crumbling frames the scorching punishment of the searing desert. These wights are typically found in desert tombs or ruins, and have fiery orange eyes and very little flesh save for leathery scraps clinging to their bones. A dust wight gains DR 5/bludgeoning, and when it hits a foe with its slam attack, causes the creature struck to become dehydrated if this victim fails a Fortitude save (same DC as the wight&apos;s energy drain attack). A dehydrated foe becomes fatigued (or exhausted if already fatigued)." compset="Race">
+    <fieldval field="rSTR" value="2"/>
+    <fieldval field="rINT" value="1"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="5"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="18"/>
+    <fieldval field="rCR" value="4"/>
+    <fieldval field="rEnviron" value="any"/>
+    <fieldval field="rOrgan" value="solitary, pair, gang (3-6), or pack (7-12)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rAC" value="4"/>
+    <fieldval field="rDEX" value="2"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Alignment" tag="Lawful" name="Lawful" abbrev="L"/>
+    <tag group="AllowRCust" tag="ruSaltWigh" name="Wight, Salt" abbrev="Wight, Salt"/>
+    <tag group="HasType" tag="tpUndead" name="Undead" abbrev="Undead"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Race" tag="rWight" name="Wight" abbrev="Wight"/>
+    <tag group="RaceType" tag="NPC" name="NPC Race" abbrev="NPC Race"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Alignment" tag="Evil" name="Evil" abbrev="E"/>
+    <bootstrap thing="skKnowRel"></bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d4_4"/>
+      </bootstrap>
+    <bootstrap thing="fBlindFgt"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="raEnDrain">
+      <assignval field="abValue" value="1"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdB">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="raWigResuV"></bootstrap>
+    <eval phase="First">perform hero.childfound[wUnarmed].assign[Hide.Weapon]</eval>
+    <eval phase="PreLevel" priority="4000" index="2">#skillinnate[skIntim] += 4
+#skillinnate[skKnowRel] += 4
+#skillinnate[skPercep] += 4
+#skillinnate[skStealth] += 4</eval>
+    </thing>
+  <thing id="rFrostWigh" name="Wight, Frost" description="Wights created in cold environments sometimes become pale undead with blue-white eyes and ice in their hair. Frost wights have the cold subtype and their slam attacks deal 1d6 cold damage in addition to the normal effects. A creature touching a frost wight with natural weapons or unarmed strikes takes 1d6 cold damage." compset="Race">
+    <fieldval field="rSTR" value="2"/>
+    <fieldval field="rINT" value="1"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="5"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="18"/>
+    <fieldval field="rCR" value="4"/>
+    <fieldval field="rEnviron" value="any"/>
+    <fieldval field="rOrgan" value="solitary, pair, gang (3-6), or pack (7-12)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rAC" value="6"/>
+    <fieldval field="rDEX" value="2"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Alignment" tag="Lawful" name="Lawful" abbrev="L"/>
+    <tag group="AllowRCust" tag="ruSaltWigh" name="Wight, Salt" abbrev="Wight, Salt"/>
+    <tag group="HasType" tag="tpUndead" name="Undead" abbrev="Undead"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Race" tag="rWight" name="Wight" abbrev="Wight"/>
+    <tag group="RaceType" tag="NPC" name="NPC Race" abbrev="NPC Race"/>
+    <tag group="Alignment" tag="Evil" name="Evil" abbrev="E"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d4_4"/>
+      <assignval field="livename" value="Slam"/>
+      <assignval field="wDamExtra" value=" plus 1d6 cold"/>
+      </bootstrap>
+    <bootstrap thing="fBlindFgt"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="raEnDrain">
+      <assignval field="abValue" value="1"/>
+      </bootstrap>
+    <bootstrap thing="stCold"></bootstrap>
+    <bootstrap thing="raColdBody">
+      <assignval field="livename" value="Cold Body (1d6)"/>
+      </bootstrap>
+    <bootstrap thing="raWigResuV"></bootstrap>
+    <bootstrap thing="skKnowRel"></bootstrap>
+    <eval phase="First">perform hero.childfound[wUnarmed].assign[Hide.Weapon]</eval>
+    <eval phase="PreLevel" priority="4000" index="2">#skillinnate[skIntim] += 4
+#skillinnate[skKnowRel] += 4
+#skillinnate[skPercep] += 4
+#skillinnate[skStealth] += 4</eval>
+    </thing>
+  <thing id="raColdBody" name="Cold Body" description="The creature generates so much cold that its mere touch deals additional cold damage. The creature&apos;s metallic melee weapons also conduct this heat. Further those touching the creature with natural weapons or unarmed strikes the listed cold damage as well." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rMistWight" name="Wight, Mist" description="A mist wight can exhale black breath at will as a standard action, creating a 10-foot cube of thick mist that acts as obscuring mist. This tainted air causes living creatures to become fatigued as long as they remain within the mist and for 1 round thereafter. The cloud of mist remains in place for 1 round per HD possessed by the mist wight. Once per day, a mist wight can infuse its breath with the choking stench of the grave, creating an effect identical to a stinking cloud (Fortitude DC 14 negates; the save DC is Charisma-based). Mist wights can sense the subtle intake of breath in creatures around them, and they gain blindsense 60 feet against living creatures who aren&apos;t holding their breath." compset="Race">
+    <fieldval field="rSTR" value="2"/>
+    <fieldval field="rINT" value="1"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="5"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="18"/>
+    <fieldval field="rCR" value="4"/>
+    <fieldval field="rEnviron" value="any"/>
+    <fieldval field="rOrgan" value="solitary, pair, gang (3-6), or pack (7-12)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rAC" value="4"/>
+    <fieldval field="rDEX" value="2"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Alignment" tag="Lawful" name="Lawful" abbrev="L"/>
+    <tag group="AllowRCust" tag="ruSaltWigh" name="Wight, Salt" abbrev="Wight, Salt"/>
+    <tag group="HasType" tag="tpUndead" name="Undead" abbrev="Undead"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Race" tag="rWight" name="Wight" abbrev="Wight"/>
+    <tag group="RaceType" tag="NPC" name="NPC Race" abbrev="NPC Race"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Alignment" tag="Evil" name="Evil" abbrev="E"/>
+    <bootstrap thing="skKnowRel"></bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d4_4"/>
+      <assignval field="livename" value="Slam"/>
+      </bootstrap>
+    <bootstrap thing="fBlindFgt"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="raEnDrain">
+      <assignval field="abValue" value="1"/>
+      </bootstrap>
+    <bootstrap thing="rBlindsen">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="raSickMist"></bootstrap>
+    <bootstrap thing="raWigResuV"></bootstrap>
+    <eval phase="PreLevel" priority="4000" index="2">#skillinnate[skIntim] += 4
+#skillinnate[skKnowRel] += 4
+#skillinnate[skPercep] += 4
+#skillinnate[skStealth] += 4</eval>
+    <eval phase="First">perform hero.childfound[wUnarmed].assign[Hide.Weapon]</eval>
+    </thing>
+  <thing id="raSickMist" name="Sickening Mist" description="A mist wight can exhale black breath at will as a standard action, creating a 10-foot cube of thick mist that acts as obscuring mist. This tainted air causes living creatures to become fatigued as long as they remain within the mist and for 1 round thereafter. The cloud of mist remains in place for 1 round per HD possessed by the mist wight. Once per day, a mist wight can infuse its breath with the choking stench of the grave, creating an effect identical to a stinking cloud (Fortitude DC 14 negates; the save DC is Charisma-based)." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rLacedon" name="Ghoul, Lacedon" description="These aquatic cousins of the ghoul lurk near hidden reefs or other places where ships are likely to meet their ends. Lacedons have a base land speed of 30 feet and a swim speed of 30 feet." compset="Race">
+    <fieldval field="rHitDice" value="2"/>
+    <fieldval field="rHPStart" value="9"/>
+    <fieldval field="rSTR" value="3"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rINT" value="3"/>
+    <fieldval field="rWIS" value="4"/>
+    <fieldval field="rCHA" value="4"/>
+    <fieldval field="rFeat" value="-1"/>
+    <fieldval field="rCR" value="1"/>
+    <fieldval field="rAC" value="2"/>
+    <fieldval field="rDescript" value="This humanoid creature has long, sharp teeth, and its pallid flesh is stretched tightly over its starved frame."/>
+    <fieldval field="rEnviron" value="any water"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-4), or pack (7-12)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rLangBonus" value="-1"/>
+    <usesource source="Bestiary1"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="HasType" tag="tpUndead"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Race" tag="rGhoul"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    <bootstrap thing="stAquatic"></bootstrap>
+    <bootstrap thing="fWepFin"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6_5"/>
+      </bootstrap>
+    <bootstrap thing="xChanRes">
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="raParalysi">
+      <assignval field="livename" value="Paralysis (1d4+1 rounds, elves are immune)"/>
+      </bootstrap>
+    <bootstrap thing="raGhoDisea"></bootstrap>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="4000">#skillinnate[skAcrobat] += 2
+      #skillinnate[skClimb] += 2
+      #skillinnate[skPercep] += 2
+      #skillinnate[skStealth] += 2
+      #skillinnate[skSwim] += 2</eval>
+    </thing>
+  <thing id="rCobraMith" name="Mithral Cobra" compset="Race">
+    <fieldval field="rHitDice" value="1"/>
+    <fieldval field="rHPStart" value="5"/>
+    <fieldval field="rSTR" value="2"/>
+    <fieldval field="rDEX" value="9"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rCHA" value="-9"/>
+    <fieldval field="rSpeed" value="70"/>
+    <fieldval field="rCR" value="3"/>
+    <fieldval field="rAC" value="7"/>
+    <usesource source="Bestiary1"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="HasType" tag="tpConst"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Small11"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Helper" tag="Snaky"/>
+    <tag group="NoScore" tag="aCON"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raPoiCON">
+      <assignval field="livename" value="Poison"/>
+      <assignval field="abValue" value="2"/>
+      <assignval field="abDuration" value="6"/>
+      <assignval field="abValue2" value="1"/>
+      </bootstrap>
+    <bootstrap thing="raIroFindT"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d3_3"/>
+      <autotag group="Value" tag="2"/>
+      <assignval field="livename" value="Bite"/>
+      <assignval field="wDamExtra" value=" plus poison"/>
+      </bootstrap>
+    <bootstrap thing="xDamRd">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="xSplRs">
+      <autotag group="Value" tag="13"/>
+      </bootstrap>
+    </thing>
+  <thing id="rCobraCdIr" name="Cold Iron Cobra" compset="Race">
+    <fieldval field="rHitDice" value="1"/>
+    <fieldval field="rHPStart" value="5"/>
+    <fieldval field="rSTR" value="2"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rCHA" value="-9"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rCR" value="2"/>
+    <fieldval field="rAC" value="7"/>
+    <usesource source="Bestiary1"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="HasType" tag="tpConst"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Small11"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Helper" tag="Snaky"/>
+    <tag group="NoScore" tag="aCON"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raPoiCON">
+      <assignval field="livename" value="Poison"/>
+      <assignval field="abValue" value="2"/>
+      <assignval field="abDuration" value="6"/>
+      <assignval field="abValue2" value="1"/>
+      </bootstrap>
+    <bootstrap thing="raIroFindT"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d3_3"/>
+      <autotag group="Value" tag="1"/>
+      <assignval field="livename" value="Bite"/>
+      <assignval field="wDamExtra" value=" plus poison"/>
+      </bootstrap>
+    <bootstrap thing="xDamRd">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="xSplRs">
+      <autotag group="Value" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="raCldIrnCn"></bootstrap>
+    </thing>
+  <thing id="raCldIrnCn" name="Cold Iron Construction" description="Creature&apos;s natural attacks count as cold iron for the purpose of bypassing DR." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rCobraDrkW" name="Darkwood Cobra" compset="Race">
+    <fieldval field="rHitDice" value="1"/>
+    <fieldval field="rHPStart" value="5"/>
+    <fieldval field="rSTR" value="2"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rCHA" value="-9"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rCR" value="2"/>
+    <fieldval field="rAC" value="7"/>
+    <usesource source="Bestiary1"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="HasType" tag="tpConst"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Small11"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Helper" tag="Snaky"/>
+    <tag group="NoScore" tag="aCON"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raPoiCON">
+      <assignval field="livename" value="Poison"/>
+      <assignval field="abValue" value="2"/>
+      <assignval field="abDuration" value="6"/>
+      <assignval field="abValue2" value="1"/>
+      </bootstrap>
+    <bootstrap thing="raIroFindT"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d3_3"/>
+      <autotag group="Value" tag="1"/>
+      <assignval field="livename" value="Bite"/>
+      <assignval field="wDamExtra" value=" plus poison"/>
+      </bootstrap>
+    <bootstrap thing="xDamRd">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="xSplRs">
+      <autotag group="Value" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="xClimb">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    </thing>
+  <thing id="rCobraAdm" name="Adamantine Cobra" compset="Race">
+    <fieldval field="rHitDice" value="1"/>
+    <fieldval field="rHPStart" value="5"/>
+    <fieldval field="rSTR" value="2"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rCHA" value="-9"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rCR" value="3"/>
+    <fieldval field="rAC" value="12"/>
+    <usesource source="Bestiary1"/>
+    <tag group="HasType" tag="tpConst"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Small11"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Helper" tag="Snaky"/>
+    <tag group="NoScore" tag="aCON"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="NoScore" tag="aINT"/>
+    <bootstrap thing="raIroFindT"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d3_3"/>
+      <autotag group="Value" tag="1"/>
+      <assignval field="livename" value="Bite"/>
+      <assignval field="wDamExtra" value=" plus poison"/>
+      </bootstrap>
+    <bootstrap thing="xDamRd">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="xSplRs">
+      <autotag group="Value" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="raStrgCons"></bootstrap>
+    <bootstrap thing="raPoiCON">
+      <assignval field="livename" value="Poison"/>
+      <assignval field="abValue" value="2"/>
+      <assignval field="abDuration" value="6"/>
+      <assignval field="abValue2" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="raStrgCons" name="Strong Construction" description="An adamantine cobra gains can extra 5 hp/HD." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000">herofield[tHP].value += 5 * herofield[tHitDice].value</eval>
+    </thing>
+  <thing id="rCBGhast" name="Ghast" description="Ghasts are ghouls with the advanced monster template. A ghast&apos;s paralysis even affects elves. Ghasts roam in packs of their own kind or lead groups of common ghouls. The stink of death and corruption surrounding these creatures is overwhelming, granting them the stench extraordinary ability (10-foot radius, Fort DC 15 negates, sickened for 1d6+4 minutes)." compset="Race">
+    <comment><![CDATA[4/28/2012
+changed Unique ID(Tim Shadow) 
+rGhast => rCBGhast]]></comment>
+    <fieldval field="rHPStart" value="9"/>
+    <fieldval field="rSTR" value="7"/>
+    <fieldval field="rDEX" value="9"/>
+    <fieldval field="rINT" value="7"/>
+    <fieldval field="rWIS" value="8"/>
+    <fieldval field="rCHA" value="8"/>
+    <fieldval field="rFeat" value="-1"/>
+    <fieldval field="rCR" value="2"/>
+    <fieldval field="rAC" value="4"/>
+    <fieldval field="rDescript" value="This humanoid creature has long, sharp teeth, and its pallid flesh is stretched tightly over its starved frame."/>
+    <fieldval field="rEnviron" value="any water"/>
+    <fieldval field="rOrgan" value="solitary, gang (2-4), or pack (7-12)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rLangBonus" value="-1"/>
+    <fieldval field="rHitDice" value="2"/>
+    <usesource source="Bestiary1"/>
+    <tag group="HasType" tag="tpUndead"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Race" tag="rGhoul"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6_5"/>
+      </bootstrap>
+    <bootstrap thing="xChanRes">
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="raParalysi">
+      <assignval field="livename" value="Paralysis (1d4+1 rounds, elves not immune)"/>
+      </bootstrap>
+    <bootstrap thing="raGhoDisea"></bootstrap>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="rauGhastSt"></bootstrap>
+    <bootstrap thing="fWepFin"></bootstrap>
+    <eval phase="PostLevel" priority="4000">#skillinnate[skAcrobat] += 2
+      #skillinnate[skClimb] += 2
+      #skillinnate[skPercep] += 2
+      #skillinnate[skStealth] += 2
+      #skillinnate[skSwim] += 2
+
+      #skillinnate[skIntim] += 2
+      #skillinnate[skSenseMot] += 2</eval>
+    </thing>
+  <thing id="rauGhastSt" name="Stench" description="A creature with the stench special ability secretes an oily chemical that nearly every other creature finds offensive. All living creatures (except those with the stench special ability) within 30 feet must succeed on a Fortitude save (DC 10 + 1/2 stench creature&apos;s racial HD + stench creature&apos;s Con modifier; the exact DC is given in the creature&apos;s descriptive text) or be sickened. The duration of the sickened condition is given in the creature&apos;s descriptive text. Creatures that successfully save cannot be affected by the same creature&apos;s stench for 24 hours. A delay poison or neutralize poison spell removes the effect from the sickened creature. Creatures with immunity to poison are unaffected, and creatures resistant to poison receive their normal bonus on their saving throws." compset="RaceSpec">
+    <tag group="SpecType" tag="Aura" name="Aura" abbrev="Aura"/>
+    <tag group="StandardDC" tag="aCON" name="Constitution" abbrev="Constitution"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+     field[livename].text = "Stench (10 ft., sickened 1d6+4 minutes)"]]></eval>
+    </thing>
+  <thing id="tmuIntDevV" name="Intellect Devourer Vessel" compset="Template" uniqueness="unique">
+    <usesource source="Bestiary1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <bootstrap thing="spConfusi4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spDazeMon1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spInflSer3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spInvisib3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spCureMod3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spGlobInv6">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spReduPer1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      <assignval field="livename" value="Reduce Size (as reduce person but self only)"/>
+      </bootstrap>
+    <bootstrap thing="spDeteMag0">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    </thing>
+  <thing id="rGenMarNob" name="Genie, Marid Noble" description="Marids are genies from the Plane of Water. The most powerful of all the genie races, they are said to possess the strength of the ocean&apos;s currents and teeth made of pearl. A marid stands about 16 feet tall and weighs nearly 2,500 pounds.\n\nThe marids are perhaps the most unpredictable and capricious of the genies, a quality that the others (particularly shaitans) find to be both aggravating and embarrassing to the entire genie culture. Many marids become dancers, storytellers, performers, or other types of artists, and often travel to the Material Plane in disguise to seek out new audiences.\n\nA small percentage of marids can lay claim to nobility. Noble marids, often called shahzadas, have 14 Hit Dice and gain the following spell-like abilities: 3/day-cone of cold, ice storm; 1/day-elemental swarm (water elementals only), permanent image. A noble marid&apos;s caster level for its spell-like abilities is 20th. Noble marids are CR 11." compset="Race">
+    <fieldval field="rHitDice" value="14"/>
+    <fieldval field="rHPStart" value="77"/>
+    <fieldval field="rSTR" value="13"/>
+    <fieldval field="rDEX" value="9"/>
+    <fieldval field="rCON" value="8"/>
+    <fieldval field="rINT" value="4"/>
+    <fieldval field="rWIS" value="5"/>
+    <fieldval field="rCHA" value="6"/>
+    <fieldval field="rSpeed" value="20"/>
+    <fieldval field="rFeat" value="-6"/>
+    <fieldval field="rAC" value="9"/>
+    <fieldval field="rCR" value="11"/>
+    <fieldval field="rSpCastLev" value="20"/>
+    <fieldval field="rLangBonus" value="-2"/>
+    <usesource source="Bestiary1"/>
+    <tag group="ClassSkill" tag="skDiplo"/>
+    <tag group="ClassSkill" tag="skSpellcr"/>
+    <tag group="ClassSkill" tag="skSwim"/>
+    <tag group="SaveGood" tag="svRef"/>
+    <tag group="SaveGood" tag="svWill"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="HasType" tag="tpOutsider"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="stExtrapla"></bootstrap>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="lAquan"></bootstrap>
+    <bootstrap thing="lAuran"></bootstrap>
+    <bootstrap thing="lIgnan"></bootstrap>
+    <bootstrap thing="lTerran"></bootstrap>
+    <bootstrap thing="raWatMstry"></bootstrap>
+    <bootstrap thing="raMarWateF"></bootstrap>
+    <bootstrap thing="stWater"></bootstrap>
+    <bootstrap thing="fComCast"></bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="xTelepathy">
+      <autotag group="Value" tag="100"/>
+      </bootstrap>
+    <bootstrap thing="raWhirlwin">
+      <assignval field="livename" value="Vortex"/>
+      </bootstrap>
+    <bootstrap thing="raChangeSh">
+      <assignval field="livename" value="Change Shape (water elemental, humanoid, or giant, alter self, elemental body III, or giant form I)"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="2d6_104"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="fDodge"></bootstrap>
+    <bootstrap thing="fGreatFort"></bootstrap>
+    <bootstrap thing="fImpInit">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="spDeteEvi1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <bootstrap thing="spDeteGoo1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <bootstrap thing="spDeteMag0">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <bootstrap thing="spWateWal3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <bootstrap thing="spCreaWat0">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spInvisib2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spPlanShi4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      <assignval field="livename" value="Plane Shift (willing targets to elemental planes, astral plane, or material plane only)"/>
+      </bootstrap>
+    <bootstrap thing="spPuriFoo0">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      <assignval field="livename" value="Purify Food And Drink (liquids only)"/>
+      </bootstrap>
+    <bootstrap thing="spQuench3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spContWat4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="5"/>
+      </bootstrap>
+    <bootstrap thing="spGaseFor3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="5"/>
+      </bootstrap>
+    <bootstrap thing="spObscMis1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="5"/>
+      </bootstrap>
+    <bootstrap thing="spWateBre3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="5"/>
+      </bootstrap>
+    <bootstrap thing="spSeeInv2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spPersIma5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spWish9">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      <assignval field="livename" value="Wish (to nongenies only)"/>
+      </bootstrap>
+    <bootstrap thing="spConeCol6">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spElemSwa9">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      <assignval field="livename" value="Elemental Swarm (water elementals only)"/>
+      </bootstrap>
+    <bootstrap thing="spIceSto5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spPermIma6">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="fImpNatAtt"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    </thing>
+  <thing id="rGenDjnNob" name="Genie, Djinni Noble" description="The djinn (singular djinni) are genies from the Plane of Air. They are said to be made of the stuff of clouds, with the strength of the mightiest storms. A djinni is about 10 feet tall and weighs about 1,000 pounds.\n\nDjinn disdain physical combat, preferring to use their magical powers and aerial abilities against foes. A djinni overmatched in combat usually takes flight and becomes a whirlwind to harass those who follow. When faced with no other option than melee combat, most djinn prefer to wield masterwork scimitars two-handed.\n\nAmong other genies, djinn get along well with jann and marids. They are frequently at odds with the shaitans, and are sworn enemies of the efreet, despising these fiery genies more than any other genie race. So legendary is the conflict between the efreet and the djinn that many spellcasters attempt (to varying degrees of success) to secure a djinni&apos;s servitude by promising to aid the cause against their hated enemies.\n\nA small percentage of djinn are noble. Noble djinn, often called viziers, have 10 Hit Dice, Strength 23, and Charisma 17, and can grant three wishes to any being (nongenies only) who captures them. Djinn nobles are CR 8." compset="Race">
+    <fieldval field="rHitDice" value="10"/>
+    <fieldval field="rHPStart" value="55"/>
+    <fieldval field="rSTR" value="13"/>
+    <fieldval field="rDEX" value="9"/>
+    <fieldval field="rCON" value="4"/>
+    <fieldval field="rINT" value="4"/>
+    <fieldval field="rWIS" value="5"/>
+    <fieldval field="rCHA" value="7"/>
+    <fieldval field="rSpeed" value="20"/>
+    <fieldval field="rFeat" value="-4"/>
+    <fieldval field="rAC" value="5"/>
+    <fieldval field="rCR" value="8"/>
+    <fieldval field="rLangBonus" value="-2"/>
+    <fieldval field="rDescript" value="This creature stands nearly twice as tall as a human, although its lower torso trails away into a vortex of mist and wind."/>
+    <fieldval field="rEnviron" value="any (Plane of Air)"/>
+    <fieldval field="rOrgan" value="solitary, pair, company (3-6), or band (7-10)"/>
+    <fieldval field="rTreasure" value="standard (masterwork scimitar, other gear)"/>
+    <fieldval field="rSpCastLev" value="12"/>
+    <usesource source="Bestiary1"/>
+    <tag group="HasType" tag="tpOutsider"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Race" tag="rDjinni"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Good"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="lAuran"></bootstrap>
+    <bootstrap thing="lIgnan"></bootstrap>
+    <bootstrap thing="lTerran"></bootstrap>
+    <bootstrap thing="fWindStan"></bootstrap>
+    <bootstrap thing="stAir"></bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Perfect"/>
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="stExtrapla"></bootstrap>
+    <bootstrap thing="fComCast"></bootstrap>
+    <bootstrap thing="fImpInit">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="lAquan"></bootstrap>
+    <bootstrap thing="fDodge"></bootstrap>
+    <bootstrap thing="xImmAcid"></bootstrap>
+    <bootstrap thing="xTelepathy">
+      <autotag group="Value" tag="100"/>
+      </bootstrap>
+    <bootstrap thing="raAirMstry"></bootstrap>
+    <bootstrap thing="raWhirlwin"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="spInvisib2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      <assignval field="livename" value="Invisibility (self only)"/>
+      </bootstrap>
+    <bootstrap thing="spPlanShi4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      <assignval field="livename" value="Plane Shift (willing targets only)"/>
+      </bootstrap>
+    <bootstrap thing="spCreaFoo3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spCreaWat0">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      <assignval field="livename" value="Create Wine"/>
+      </bootstrap>
+    <bootstrap thing="spGaseFor3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spMajoCre6">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spPersIma5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spWindWal3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spWish9">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      <assignval field="livename" value="Wish (nongenies only)"/>
+      </bootstrap>
+    </thing>
+  <thing id="rDrdWraith" name="Wraith, Dread" description="A wraith that exists for long enough and feeds on enough life force undergoes an unholy transformation, becoming a creature known as a dread wraith. This causes the wraith to increase in size and strength, and to inflict 2d6 points of negative energy damage and 1d8 Constitution drain with its incorporeal touch. You can create a dread wraith by applying the giant and advanced simple templates, or you can increase the basic wraith to a Large 16 HD undead." compset="Race">
+    <fieldval field="rHitDice" value="16"/>
+    <fieldval field="rHPStart" value="54"/>
+    <fieldval field="rDEX" value="18"/>
+    <fieldval field="rINT" value="7"/>
+    <fieldval field="rWIS" value="8"/>
+    <fieldval field="rCHA" value="14"/>
+    <fieldval field="rSpeed" value="0"/>
+    <fieldval field="rCR" value="11"/>
+    <fieldval field="rLangBonus" value="-1"/>
+    <fieldval field="rFeat" value="-8"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Race" tag="rWraith"/>
+    <tag group="HasType" tag="tpUndead"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Alignment" tag="Lawful"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="lInfernal"></bootstrap>
+    <bootstrap thing="fBlindFgt"></bootstrap>
+    <bootstrap thing="raWraConsD">
+      <assignval field="livename" value="Constitution Drain (1d8)"/>
+      </bootstrap>
+    <bootstrap thing="raWraCreaS"></bootstrap>
+    <bootstrap thing="raWraLifes"></bootstrap>
+    <bootstrap thing="raWraSunlP"></bootstrap>
+    <bootstrap thing="wOtherMel">
+      <autotag group="Value" tag="1"/>
+      <assignval field="livename" value="Incorporeal Touch"/>
+      <assignval field="wFixDamage" value="2d6 neg. energy plus 1d8 Con drain"/>
+      </bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="fDodge"></bootstrap>
+    <bootstrap thing="fImpNatAtt">
+      <autotag group="Target" tag="wOtherMel"/>
+      </bootstrap>
+    <bootstrap thing="fMobility"></bootstrap>
+    <bootstrap thing="fSpringAtt"></bootstrap>
+    <bootstrap thing="fAlertness"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="stIncorpor"></bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Good"/>
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="raIncorpor"></bootstrap>
+    <bootstrap thing="typUndead"></bootstrap>
+    <bootstrap thing="skKnowRel"></bootstrap>
+    <bootstrap thing="skKnowPlan"></bootstrap>
+    <bootstrap thing="raWraUnnaA"></bootstrap>
+    <bootstrap thing="xChanRes">
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000">#skillinnate[skDiplo] += 16
+#skillinnate[skFly] += 16
+#skillinnate[skIntim] += 16
+#skillinnate[skKnowPlan] += 16
+#skillinnate[skKnowRel] += 16
+#skillinnate[skPercep] += 16
+#skillinnate[skSenseMot] += 16
+#skillinnate[skStealth] += 16</eval>
+    </thing>
+  <thing id="rMummyBog" name="Mummy, Bog" description="Bog mummies function as normal mummies, save that they are resistant to fire and vulnerable to cold. Additonally they transmit swamp crumble instead of of mummy rot" compset="Race">
+    <fieldval field="rSTR" value="14"/>
+    <fieldval field="rINT" value="-4"/>
+    <fieldval field="rWIS" value="5"/>
+    <fieldval field="rCHA" value="5"/>
+    <fieldval field="rSpeed" value="20"/>
+    <fieldval field="rFeat" value="-4"/>
+    <fieldval field="rHitDice" value="8"/>
+    <fieldval field="rHPStart" value="36"/>
+    <fieldval field="rAC" value="10"/>
+    <fieldval field="rCR" value="5"/>
+    <fieldval field="rEnviron" value="Any"/>
+    <fieldval field="rOrgan" value="Solitary, warden squad (2-6), or guardian detail (7-12)"/>
+    <fieldval field="rTreasure" value="Standard"/>
+    <fieldval field="rDescript" value="Wrapped from head to toe in ancient strips of moldering linen, this humanoid moves with a shuffling gait."/>
+    <usesource source="Bestiary1" parent="BestHeader" name="Bestiary"/>
+    <tag group="Alignment" tag="Evil" name="Evil" abbrev="E"/>
+    <tag group="Alignment" tag="Lawful" name="Lawful" abbrev="L"/>
+    <tag group="HasType" tag="tpUndead" name="Undead" abbrev="Undead"/>
+    <tag group="RaceSize" tag="Medium0" name="Medium" abbrev="Medium"/>
+    <tag group="RaceType" tag="NPC" name="NPC Race" abbrev="NPC Race"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wSlam"/>
+      </bootstrap>
+    <bootstrap thing="raMumDespa"></bootstrap>
+    <bootstrap thing="xVulCold"></bootstrap>
+    <bootstrap thing="xDamRd">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="typUndead"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Helper" tag="NatPrimary"/>
+      </bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="raS2SwamCr"></bootstrap>
+    <bootstrap thing="xDamRsFire">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000">#skillinnate[skPercep] += 8
+      #skillinnate[skStealth] += 8
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="tmuAwakeAn" name="Awakened Animal" description="An awakened animal gets 3d6 Intelligence, +1d3 Charisma, and +2 HD. Its type becomes magical beast (augmented animal). An awakened animal can&apos;t serve as an animal companion, familiar, or special mount." compset="Template" uniqueness="unique">
+    <fieldval field="tmHitDice" value="2"/>
+    <fieldval field="tmHDSides" value="8"/>
+    <usesource source="Bestiary1"/>
+    <tag group="TypeAndAug" tag="tpMagBeast"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="AddHitDice"/>
+    <exprreq message="Animal type required."><![CDATA[#hastype[tpAnimal] <> 0]]></exprreq>
+    <prereq message="Intelligence 2 or lower required.">
+      <validate><![CDATA[~once we've been selected, we're fine.
+        validif (@ispick <> 0)
+
+validif (#attrvalue[aINT] <= 2)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="ruSpdGiaHt" name="Spider, Giant Hunting" compset="Race">
+    <fieldval field="rHitDice" value="3"/>
+    <fieldval field="rHPStart" value="13"/>
+    <fieldval field="rSTR" value="1"/>
+    <fieldval field="rDEX" value="7"/>
+    <fieldval field="rCON" value="2"/>
+    <fieldval field="rCHA" value="2"/>
+    <fieldval field="rAC" value="1"/>
+    <fieldval field="rCR" value="1"/>
+    <fieldval field="rEnviron" value="any"/>
+    <fieldval field="rOrgan" value="solitary, pair, or colony (3-8)"/>
+    <fieldval field="rTreasure" value="incidental"/>
+    <fieldval field="rNumHands" value="8"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="HasType" tag="tpVermin"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Helper" tag="ManyLegs"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xBonusPerc">
+      <autotag group="Value" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="xBonusStea">
+      <autotag group="Value" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="xTremorsen">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6_5"/>
+      <assignval field="livename" value="Bite"/>
+      <assignval field="wDamExtra" value=" plus poison"/>
+      </bootstrap>
+    <bootstrap thing="raPoiSTR">
+      <assignval field="livename" value="Poison: Bite-injury"/>
+      <assignval field="abValue" value="2"/>
+      <assignval field="abDuration" value="4"/>
+      <assignval field="abDC" value="2"/>
+      </bootstrap>
+    <bootstrap thing="xClimb">
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    <bootstrap thing="xBonusAcro">
+      <autotag group="Value" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="xBonusClim">
+      <autotag group="Value" tag="16"/>
+      </bootstrap>
+    </thing>
+  <thing id="rBeetleBom" name="Beetle, Bombardier" description="This giant stag beetle has only 2 Hit Dice and is Medium sized, but can spray acid once per round in a 10-foot cone. Those in the cone must make a DC 11 Fortitude save or take 1d4+2 points of acid damage. The save DC is Constitution-based." compset="Race">
+    <fieldval field="rHitDice" value="2"/>
+    <fieldval field="rHPStart" value="9"/>
+    <fieldval field="rSTR" value="9"/>
+    <fieldval field="rCON" value="5"/>
+    <fieldval field="rCHA" value="-1"/>
+    <fieldval field="rAC" value="8"/>
+    <fieldval field="rCR" value="2"/>
+    <fieldval field="rSpeed" value="20"/>
+    <fieldval field="rSpace" value="10"/>
+    <fieldval field="rReach" value="5"/>
+    <usesource source="Bestiary1"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="Helper" tag="ManyLegs"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="HasType" tag="tpVermin"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="wTrample">
+      <autotag group="wMain" tag="1d6_5"/>
+      </bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Poor"/>
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="raBreath">
+      <assignval field="abSumm" value="10-ft. cone, 2d6 acid, Reflex half, 1/1d4 rnds"/>
+      </bootstrap>
+    <bootstrap thing="xImmMind"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="2d8_204"/>
+      </bootstrap>
+    </thing>
+  <thing id="tmuAwakeGl" name="Awakened Golem" description="Through some unknown process, rare berserk golems have been known to spontaneously generate consciousness and intelligence, breaking free of their masters&apos; control and setting them far above their mindless counterparts. This can only occur if the golem has ever gone berserk.\n\nThe golem becomes an intelligent, sentient creature. Roll 3d6 for its new Intelligence and Charisma scores. The awakened golem immediately gains skill points equal to 2 + Int modifier (minimum 1) per Hit Die, as well as feats based on its Hit Dice. A golem has no class skills. The golem also gains the ability to speak the language of its creator and chooses any bonus languages from among those its creator speaks. While the golem retains its immunity to magic and most other construct traits, it loses its immunity to mindaffecting effects.\n\nAn awakened golem can advance like any other creature, even taking levels in character classes. An awakened golem has no favored classes. Though intelligent, an awakened golem may still be controlled by its creator, but it can attempt to break free of its master&apos;s control with an opposed Charisma check.\n\nAn intelligent golem also has a higher chance of going berserk. An awakened golem has a cumulative 5% chance each round to go berserk during combat. The golem&apos;s creator, if within 60 feet, can try to regain control of the awakened golem, which requires a successful Intimidate check, but the golem gets a Will save (DC equal to creator&apos;s Intimidate result) to resist. It takes 1 minute of inactivity by the golem to reset the golem&apos;s berserk chance to 0%." compset="Template" uniqueness="unique">
+    <usesource source="CSClHorror"/>
+    <usesource source="Bestiary1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <eval phase="First">perform hero.childfound[xImmMind].assign[Helper.SpcDisable]
+perform hero.childfound[xImmMind].assign[Hide.Special]
+perform hero.child[aINT].delete[NoScore.aINT]</eval>
+    <eval phase="PreLevel" index="2">perform hero.delete[Hero.NoDefComm]</eval>
+    <exprreq message="Golem required."><![CDATA[tagCount[Race.rGolem] <> 0]]></exprreq>
+    </thing>
+  <thing id="tmuSGElder" name="Stone Giant Elder" description="Some stone giants develop special abilities related to their environment. Called elders, these stone giants have Charisma scores of at least 15 and three spell-like abilities (CL 10th). Once per day they can use stone shape, stone tell, and either transmute rock to mud or transmute mud to rock (DC 17). The save DC is Charisma-based. One in 10 elders is a sorcerer, usually of 3rd to 6th level. Stone giant elders add +1 to their CR." compset="Template" uniqueness="unique">
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="Bestiary1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="spStonSha3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spStonTel5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cfguSGElde"></bootstrap>
+    <exprreq message="Stone Giant required."><![CDATA[tagCount[Race.rStonGiant] <> 0]]></exprreq>
+    <prereq message="Charisma of 15 or higher required.">
+      <validate><![CDATA[~once we've been selected, we're fine.
+        validif (@ispick <> 0)
+
+validif (#attrvalue[aCHA] >= 15)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cfguSGElde" name="Elder Spells" compset="Configure" uniqueness="unique">
+    <fieldval field="cfgMax1" value="1"/>
+    <usesource source="Bestiary1"/>
+    </thing>
+  <thing id="rcuSGETRM" name="Transmute Rock to Mud" compset="RaceCustom">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="Bestiary1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpInfo" tag="spTranRoc5"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AllowRCust" tag="cfguSGElde"/>
+    <tag group="Usage" tag="Day"/>
+    </thing>
+  <thing id="rcuSGETMR" name="Transmute Mud to Rock" compset="RaceCustom">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="Bestiary1"/>
+    <tag group="AllowRCust" tag="cfguSGElde"/>
+    <tag group="SpInfo" tag="spTranMud5"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Usage" tag="Day"/>
+    </thing>
+  <thing id="tmCBDybbuk" name="Dybbuk-Possessed" description="A creature possessed by a Dybbuk from Bestiary 3." compset="Template" uniqueness="unique">
+    <fieldval field="tmSkillPls" value="4"/>
+    <usesource source="Bestiary3"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <tag group="ClassSkill" tag="skIntim"/>
+    <tag group="ClassSkill" tag="skPercep"/>
+    <tag group="ClassSkill" tag="skSenseMot"/>
+    <tag group="ClassSkill" tag="skStealth"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <bootstrap thing="spModiMem4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spTongues3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="raDybMalev"></bootstrap>
+    <bootstrap thing="raDybPossO"></bootstrap>
+    <bootstrap thing="spDeteTho2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      <assignval field="sCL" value="18"/>
+      </bootstrap>
+    <bootstrap thing="spTelekin5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      <assignval field="sCL" value="18"/>
+      </bootstrap>
+    <bootstrap thing="spDomiMon6">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      <assignval field="sCL" value="18"/>
+      </bootstrap>
+    <bootstrap thing="spFeeblem5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      <assignval field="sCL" value="18"/>
+      </bootstrap>
+    <bootstrap thing="spInflSer3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      <assignval field="sCL" value="18"/>
+      </bootstrap>
+    <bootstrap thing="xSplRs">
+      <autotag group="Value" tag="26"/>
+      </bootstrap>
+    <bootstrap thing="spHeroGre5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="First" priority="1000" index="2"><![CDATA[doneif (tagis[Helper.SpcDisable] <> 0)
+
+
+~ Change BAB
+hero.child[Attack].field[tAtkBase].value = 13]]></eval>
+    <eval phase="PostAttr" priority="11001"><![CDATA[doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ find difference of base creature's HD and dybbuk's
+
+var totHD as number
+totHD = hero.tagcount[Hero.HitDice]
+var delta as number
+delta = 18 - totHD
+
+doneif (totHD >= 18)
+
+herofield[tLevelAdj].value += delta
+
+~ Set feats allowed
+#resmax[resFeat] = 9]]></eval>
+    </thing>
+  <thing id="rcCBAOFlam" name="Flammable" description="The object gains vulnerability to fire." compset="RaceCustom" uniqueness="useronce">
+    <usesource source="CB_Variant"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="CustomNeg" tag="1"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AllowRCust" tag="rAnimObjec" name="Animated Object (Medium)" abbrev="Animated Object (Medium)"/>
+    <bootstrap thing="xVulFire"></bootstrap>
+    </thing>
+  <thing id="rcCBAOStro" name="Strong" description="The object is unusually strong for its size, gaining a +4 bonus to its Strength." compset="RaceCustom" uniqueness="useronce">
+    <usesource source="srcCoBeAdj"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AllowRCust" tag="rAnimObjec" name="Animated Object (Medium)" abbrev="Animated Object (Medium)"/>
+    <eval phase="First"><![CDATA[
+doneif (tagis[Helper.SpcDisable] <> 0)
+
+hero.child[aSTR].field[aNormMod].value += 4]]></eval>
+    </thing>
+  <thing id="rcCBSOBrit" name="Brittle" description="The object gains vulnerability to cold." compset="RaceCustom" uniqueness="useronce">
+    <usesource source="CB_Variant"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="CustomNeg" tag="1"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AllowRCust" tag="rAnimObjec" name="Animated Object (Medium)" abbrev="Animated Object (Medium)"/>
+    <bootstrap thing="xVulCold"></bootstrap>
+    </thing>
+  </document>

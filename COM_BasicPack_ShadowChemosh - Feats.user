@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_ShadowChemosh - Feats"/>
+  <fileinfo>
+    <info_author><![CDATA[
+      Author:  Tim Shadow
+      Email: shadowchemosh@yahoo.com
+      File Name changed from PFRPG_ShadowChemosh_VitalStrike.user => COM_BasicPack_ShadowChemosh - Feats.user]]></info_author>
+    <info_history><![CDATA[
+      December 12, 2014 - Tim Shadow
+      -Added new feat "Outflank" that can be activated to increase the "Flanking" condition to +4.
+
+      December 8, 2014 - Tim Shadow
+      -Added new feat "Improved Weapon Finesse".
+    
+      November 24, 2014 - Tim Shadow
+      -Fixed issue where some spells could still give an extra attack.
+
+      April 14, 2014 - Tim Shadow
+      -Fixes to "Vital Strike" to work again fully due to changes in HL.
+      -"Vital Strike" now correctly works with the Devastating Strike feat to increase damage.
+
+      August 25, 2013 - Tim Shadow
+      -Created new.
+      -Vital Strike was scrpited to now actually calculate the damage dice and damage bonus correctly. The damage is increased when taking Improved, Greater, and Mythic versions of the feats.]]></info_history>
+    </fileinfo>
+  <thing id="fImpWepFin" name="Improved Weapon Finesse" description="You&apos;ve become more reliant on agility rather than strength when it comes to damage.\n\n{b}Prerequisites{/b}: Weapon Finesse\n\n{b}Benefit{/b}: With a light weapon, elven curve blade, rapier, whip, or spiked chain made for a creature of your size category, you may use your Dexterity modifier instead of your Strength modifier on damage rolls.\n\n{b}Normal{/b}: When using a melee weapon, you apply your Strength modifier to damage rolls." compset="Feat" summary="Gain Dex on damage with Finesse weapons." uniqueness="useronce">
+    <usesource source="srcS2Feat"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're disabled, get out now!
+      doneif (tagis[Helper.FtDisable] <> 0)    
+
+      ~ All Finesse and Light Weapons
+      foreach pick in hero from BaseWep where "Helper.Finesse|wClass.Light"
+        ~ Set tag so that we use either Str or Dex
+        perform eachpick.assign[DamageOpt.aDEX]
+      nexteach]]></eval>
+    <exprreq message="Weapon Finesse feat required"><![CDATA[#hasfeat[fWepFin] <> 0]]></exprreq>
+    </thing>
+  </document>

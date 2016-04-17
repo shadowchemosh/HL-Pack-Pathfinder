@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_AP084 - Pyramid of the Sky Pharaoh"/>
+  <thing id="raAP84DesA" name="Desecrating Aura" description="The phantasm has a 30-foot-radius emanation equivalent to a desecrate spell centered on a shrine of evil power. Undead within this radius (including the phantasm) gain a +2 profane bonus on attack rolls, damage rolls, and saving throws; they also gain 2 hit points per Hit Die (these adjustments are included in the phantasm&apos;s stat block), and the save DC of channeled negative energy increases by 6. This aura can be negated by dispel evil, but a phantasm can reactivate the aura on its turn as a free action. A desecrating aura suppresses and is suppressed by consecrate or hallow; both effects are negated within any overlapping area of effect. When the phantasm is possessing a creature, its aura remains active, emanating from the host." compset="RaceSpec">
+    <fieldval field="abRange" value="30"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="SpecType" tag="Aura"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SbNamePar" tag="IncRange"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="11000">
+      ~ Give an profane bonus to hit to all weapons
+      hero.child[Attack].field[BonProfane].value += 2
+      ~ Give an profane bonus on damage to all weapons
+      hero.child[Damage].field[BonProfane].value += 2
+      ~ Give an profane bonus to all saves
+      hero.child[svAll].field[BonProfane].value += 2</eval>
+    <eval phase="PostLevel" priority="10000" index="2">
+      herofield[tBonusHP].value += 2 * herofield[tHitDice].value</eval>
+    </thing>
+  <thing id="pAP84HandM" name="Specific Creature: Handmaiden of Nailah" description="Specific features for Handmaidens of Nailah" compset="InPlay">
+    <usesource source="PathMuMask"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="OthAdjCat" tag="UniqueChar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raAP84DesA">
+      <containerreq phase="First" priority="200"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      </bootstrap>
+    </thing>
+  <thing id="pAP84TainC" name="Specific Creature: Tainted Chaos Beast" description="Specific features for tainted chaos beast" compset="InPlay" uniqueness="useronce">
+    <usesource source="PathMuMask"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="OthAdjCat" tag="UniqueChar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xFly">
+      <containerreq phase="First" priority="200"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      <autotag group="Maneuver" tag="Poor"/>
+      <autotag group="Value" tag="70"/>
+      </bootstrap>
+    <bootstrap thing="xSplRs">
+      <containerreq phase="First" priority="200"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      <autotag group="Value" tag="23"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdGood">
+      <containerreq phase="First" priority="200"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="raFreeze">
+      <containerreq phase="First" priority="200"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      </bootstrap>
+    </thing>
+  <thing id="raAP84Cons" name="Consume" description="An earthcurse scarab swarm can rapidly consume any creature it swarms over. Against helpless or nauseated targets, an earthcurse scarab swarm&apos;s swarm attack deals 8d6 points of damage." compset="RaceSpec" summary="Swarm attack deals 8d6 vs. helpless or nauseated characters." uniqueness="useronce">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raAP84CurW" name="Cursed Wound" description="The damage dealt by an earthcurse scarab swarm doesn&apos;t heal naturally and resists magical healing. A character attempting to use magical healing on a creature damaged by an earthcurse scarab swarm must succeed at a DC 24 caster level check, or the healing has no effect on the injured creature." compset="RaceSpec" summary="Damage doesn&apos;t heal naturally and resists magical healing." uniqueness="useronce">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Attack"/>
+    <eval phase="Final"><![CDATA[
+      foreach pick in hero from BaseWep
+        #extradamage[eachpick," plus cursed wound",field[name].text]
+      nexteach]]></eval>
+    </thing>
+  <thing id="pAP84EthCu" name="Specific Creature: Earthcurse Scarab Swarm" description="Specific abilities of the earthcurse scarab swarm." compset="InPlay" uniqueness="useronce">
+    <usesource source="PathMuMask"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="OthAdjCat" tag="UniqueChar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raAP84Cons">
+      <containerreq phase="First" priority="200"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raAP84CurW">
+      <containerreq phase="First" priority="200"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      </bootstrap>
+    <eval phase="Final" priority="500">
+      doneif (field[pIsOn].value = 0)
+      hero.child[xFly].field[abValue].value = 20</eval>
+    </thing>
+  <thing id="rAP84DkPlO" name="Plasma Ooze, Dark" compset="Race">
+    <fieldval field="rHitDice" value="18"/>
+    <fieldval field="rHPStart" value="81"/>
+    <fieldval field="rSTR" value="22"/>
+    <fieldval field="rDEX" value="6"/>
+    <fieldval field="rCON" value="14"/>
+    <fieldval field="rINT" value="-7"/>
+    <fieldval field="rWIS" value="-9"/>
+    <fieldval field="rCHA" value="-9"/>
+    <fieldval field="rSpeed" value="0"/>
+    <fieldval field="rCR" value="16"/>
+    <fieldval field="rFeat" value="-9"/>
+    <fieldval field="rSpace" value="15"/>
+    <fieldval field="rReach" value="15"/>
+    <fieldval field="rNumHands" value="0"/>
+    <usesource source="PathMuMask"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="RaceSize" tag="Huge2"/>
+    <tag group="HasType" tag="tpOoze"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="wConstrict">
+      <autotag group="wMain" tag="4d6_106"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="4d6_106"/>
+      </bootstrap>
+    <bootstrap thing="xDamRd">
+      <autotag group="Value" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="xImmAcid"></bootstrap>
+    <bootstrap thing="xImmBlud"></bootstrap>
+    <bootstrap thing="xImmElec"></bootstrap>
+    <bootstrap thing="xImmPierce"></bootstrap>
+    <bootstrap thing="xDamRsFire">
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    <bootstrap thing="rBlindSi">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="raCompress"></bootstrap>
+    <bootstrap thing="raEngulf">
+      <assignval field="wFixDamage" value="4d6 cold plus 4d6 electricity"/>
+      </bootstrap>
+    <bootstrap thing="raGrab">
+      <autotag group="Target" tag="wSlam"/>
+      </bootstrap>
+    <bootstrap thing="raPlaMagnP">
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    <bootstrap thing="raNoBreath"></bootstrap>
+    <bootstrap thing="typOoze"></bootstrap>
+    <bootstrap thing="xCBSplit">
+      <assignval field="livename" value="slashing or sonic"/>
+      <assignval field="abValue" value="112"/>
+      </bootstrap>
+    <bootstrap thing="fDodge"></bootstrap>
+    <bootstrap thing="fGreatFort"></bootstrap>
+    <bootstrap thing="raAP84PlsA"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wRay"/>
+      </bootstrap>
+    <bootstrap thing="fLightRef"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skStealth"/>
+      </bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wSlam"/>
+      </bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Perfect"/>
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    <bootstrap thing="raEnerDam">
+      <autotag group="Target" tag="wSlam"/>
+      <assignval field="shortname" value="plus 4d6 cold"/>
+      </bootstrap>
+    <bootstrap thing="raEnerDam">
+      <autotag group="Target" tag="wSlam"/>
+      <assignval field="shortname" value="plus 4d6 electricity"/>
+      </bootstrap>
+    <bootstrap thing="raEnerDam">
+      <autotag group="Target" tag="wConstrict"/>
+      <assignval field="shortname" value="plus 4d6 cold"/>
+      </bootstrap>
+    <bootstrap thing="raEnerDam">
+      <autotag group="Target" tag="wConstrict"/>
+      <assignval field="shortname" value="plus 4d6 electricity"/>
+      </bootstrap>
+    <eval phase="First" priority="400"><![CDATA[
+      field[livename].text = "Dark Plasma Ooze"]]></eval>
+    <eval phase="PostAttr" index="2">~ cludge for weapon focus
+      hero.child[raAP84PlsA].field[wRanAtk].value += 1</eval>
+    <eval phase="PreLevel" priority="4000" index="3">
+      #skillinnate[skFly] += 18
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="raAP84PlsA" name="Plasma Arc" description="As a standard action, a plasma ooze can fire 1d4 plasma rays at up to 4 separate targets within 60 feet (no more than one ray can attack a single creature). Each ray deals 4d6 points of electricity damage and 4d6 points of cold damage on a hit.\n\nA dark plasma ooze&apos;s plasma arcs function the same as a normal plasma ooze&apos;s rays, but can arc around corners (ignoring line of sight restrictions and negating concealment modifiers) if the target wears any metal." compset="RaceSpec" summary="A single foe can only be targetted by 1 ray, but can fire at up to 4 foes and arc around corners if wearing metal." uniqueness="useronce">
+    <fieldval field="wFixRanDam" value="4d6 cold and 4d6 electricity"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="WeaponSpec"/>
+    <tag group="Helper" tag="SingleAtt"/>
+    <tag group="wCategory" tag="Touch"/>
+    <tag group="wType" tag="Cold"/>
+    <tag group="wType" tag="Elec"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCritMult" tag="2"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="wRangeInc" tag="60"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="wFtrGroup" tag="Natural"/>
+    <tag group="IsWeapon" tag="Ray"/>
+    <tag group="SpecType" tag="ArmorClass"/>
+    </thing>
+  </document>

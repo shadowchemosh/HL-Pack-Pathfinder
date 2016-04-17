@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_ModulePaizo - Tears at Bitter Manor"/>
+  <thing id="ioX1AmGrSo" name="Amulet of Grasping Souls" description="This amulet can be worn by both corporeal and incorporeal creatures. If worn by a corporeal creature, it confers the ghost touch special ability on her natural attacks and weapons she wields (even thrown weapons and projectiles). Once per day as a swift action, the wearer can make the next spell she casts affect incorporeal creatures as though she were using the Ectoplasmic Spell metamagic feat but without increasing the spell level.\n\nWhen an incorporeal creature wears the amulet, it can interact with it surroundings. Any item in its possession becomes incorporeal, allowing the incorporeal creature to take items and phase through objects with them. An incorporeal creature without a Strength score uses its Charisma score to determine how much it can carry.\n\n{b}CONSTRUCTION REQUIREMENTS{/b}\nCOST 10,500 GP Craft Wondrous Item, Ectoplasmic Spell, plane shift" compset="Wondrous" summary="Confers the ghost touch special ability on all attacks.">
+    <fieldval field="gCost" value="21000"/>
+    <fieldval field="gCraftCost" value="10500"/>
+    <fieldval field="trkMax" value="1"/>
+    <fieldval field="iCL" value="13"/>
+    <usesource source="srcTearMan"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Hero" tag="EqpNeck"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    <tag group="iSchool" tag="Transmutat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ability" tag="iGhostTch"/>
+    <eval phase="PostLevel" priority="10050">~ If not equipped get out now!
+      doneif (field[gIsEquip].value = 0)
+      ~ Only process if we are incorporeal
+      doneif (hero.tagis[Ability.raIncorpor] = 0)
+
+      ~ Remove the Ingore Encubrance tag that incorporeal applies
+      perform hero.delete[Hero.IgnoreEnc]
+
+      ~ Find all gear items and give the Ghost Touch ability
+      ~ so that these items can be worn without errors.
+      foreach pick in hero from MyGear
+        perform eachpick.assign[Ability.iGhostTch]
+      nexteach</eval>
+    <eval phase="PostAttr" priority="1" index="2">~ If not equipped get out now!
+      doneif (field[gIsEquip].value = 0)
+      ~ Only process if we are incorporeal
+      doneif (hero.tagis[Ability.raIncorpor] = 0)
+
+      ~ Set our Encubrance Strength to be our Charisma
+      herofield[tEncumSTR].value += hero.child[aCHA].field[aFinalVal].value</eval>
+    <eval phase="Render" priority="9999999" index="3"><![CDATA[
+      ~ If not equipped get out now!
+      doneif (field[gIsEquip].value = 0)
+      ~ Only process if we are corporeal
+      doneif (hero.tagis[Ability.raIncorpor] = 1)
+
+      ~ Find all weapons and give the Ghost Touch ability
+      foreach pick in hero from BaseWep
+        perform eachpick.assign[Ability.iGhostTch]
+        perform eachpick.assign[HasAbility.iGhostTch]
+
+        ~ If custom/magic weapon then build full name including other
+        ~ abilities.
+        if (eachpick.isgizmo = 1) then
+          eachpick.field[livename].text = signed(eachpick.field[BonEnhance].value) & " " & lowercase(eachpick.tagnames[Ability.?," "]) & " " & lowercase(eachpick.tagnames[IsWeapon.?])
+        ~.. not a custom/magic weapon so just add ghost touch
+        else
+          eachpick.field[livename].text = lowercase(eachpick.tagnames[Ability.?," "]) & " " & lowercase(eachpick.field[name].text)
+        endif
+
+      nexteach]]></eval>
+    </thing>
+  <thing id="ioX1ChCoDw" name="Chalice of Communal Dweomer" description="Once per day, a creature can pour a potion with a duration longer than instantaneous into the chalice, then drink it as a standard action that provokes attacks of opportunity. The bearer and up to two willing allies within 30 feet gain the benefits as though they had consumed the potion; however, the duration is divided evenly between all recipients (including the bearer), rounded down to the nearest round.\n\n{B}CONSTRUCTION REQUIREMENTS{/b}\nCOST 1,875 GP Craft Wondrous Item, achemical alocation, amplify eixir" compset="Wondrous" summary="The bearer and two willing allies w/30ft gain the benefits of a single potion.">
+    <fieldval field="trkMax" value="1"/>
+    <fieldval field="gCost" value="3750"/>
+    <fieldval field="gCraftCost" value="1875"/>
+    <fieldval field="gWeight" value="1"/>
+    <fieldval field="iCL" value="7"/>
+    <usesource source="srcTearMan"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AlwaysAvl"/>
+    <tag group="thing" tag="holder"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="iSchool" tag="Transmutat"/>
+    </thing>
+  <thing id="ioX1ExLaWi" name="Elixir of Last Will" description="If a character drinks this gray liquid, the next time (within 24 hours) he falls below O hit points, he exhales a sliver of his consciousness-whether he is alive or dead. If a character drinks multiple elixirs in a 24-hour period, only one is effective.\n\nAs an immediate action, the sliver can guide the action of one ally within 30 feet of the drinker&apos;s body. This guidance gives a +2 luck bonus on that ally&apos;s next attack roll, to the ally&apos;s AC against the next attack made against her, or on the ally&apos;s next skill check. The drinker decides the type of bonus and the ally. The bonus must be used within 1 round.\n\n{b}CONSTRUCTION REQUI REMENTS{/b}\nCOST 75 GP Craft Wondrous Item, guidance" compset="Wondrous">
+    <fieldval field="gCost" value="150"/>
+    <fieldval field="gCraftCost" value="75"/>
+    <fieldval field="iCL" value="1"/>
+    <usesource source="srcTearMan"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="iSchool" tag="Necromancy"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    </thing>
+  <thing id="ioX1GorgLW" name="Gorget of Living Whispers" description="Once per day as a standard action, the wearer of this collar can speak a suggested course of action. Her words coalesce into a living whisper-a sinuous creature with blue runes lining its back-that appears in a square adjacent to her. The living whisper uses the statistics of a fiendish venomous snake (Pathfinder RPG Bestiary 255, 294), but has an Intelligence score of 3 and can communicate telepathically with the gorget&apos;s wearer. Instead of being poisoned, any creature bitten by the living whisper must succeed at a DC 14 Will save or be affected by a {i}suggestion{/i} spell (CL 9th). This suggestion is determined when the living whisper is summoned and affects all creatures bitten by it. Creatures that can read Aklo can read the runes on the living whisper and know what suggestion is carried by its bite. A living whisper lasts for 1 minute or until slain.\n\n{b}CONSTRUCTION REQUIREMENTS{/b}\nCOST 7,500 GP Craft Wondrous Item, suggestion, summon monster II" compset="Wondrous">
+    <fieldval field="gCost" value="15000"/>
+    <fieldval field="gCraftCost" value="7500"/>
+    <fieldval field="trkMax" value="1"/>
+    <fieldval field="iCL" value="9"/>
+    <usesource source="srcTearMan"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    <tag group="iSchool" tag="Conjur"/>
+    <tag group="iSchool" tag="Enchant"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="SpInfo" tag="spSuggest3"/>
+    </thing>
+  <thing id="ioX1IconAs" name="Icon of Aspects" description="When a cleric with an icon of aspects prepares spells, she may replace the granted powers of one of her domains with those of a different domain she doesn&apos;t have but that is associated with her deity. This lasts until the next time she prepares spells. The cleric must meet the level requirements for both abilities. For example, a 6th level cleric with the Good domain who swaps for the Healing domain can&apos;t use healer&apos;s blessing even though she meets the level requirement, because the holy lance power of the Good domain requires her to be 8th level. The icon affects only granted powers, not domain spells, bonus feats, or other benefits. The icon can affect only one person at a time.\n\n{b}Note:{/b} To use the abilities of this item you must equip the item. Then a drop down of domains your character has will be shown.  Select the domain you wish to swap.  Then on the &quot;Icon of the Aspects&quot; tab you will be able to select the new domain powers.  Your existing domain powers will be disabled during the swap.\n\n{b}CONSTRUCTION REQUIREMENTS{/b}\nCOST 2,750 GP Craft Wondrous Item, imbue with spell ability, creator must be a divine spellcaster" compset="Wondrous">
+    <fieldval field="gCost" value="5500"/>
+    <fieldval field="gCraftCost" value="2750"/>
+    <fieldval field="gWeight" value="1"/>
+    <fieldval field="iCL" value="7"/>
+    <usesource source="srcTearMan"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="iSchool" tag="Evocation"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <bootstrap thing="cfgX1IconA"></bootstrap>
+    <eval phase="First" priority="496" index="2">~ if not equipped get out now!
+      doneif (field[gIsEquip].value = 0)
+      ~ If no domain chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Get Class Count As tag from domain
+      perform field[usrChosen1].chosen.pulltags[CustTaken.?,ClsCountAs]
+
+      var countid as string
+      countid = tagids[ClsCountAs.?]
+      
+      ~ Set class level into configurable     
+      hero.childfound[cfgX1IconA].field[cfgLevel].value += hero.tagcountstr[countid]
+      <before name="Calc CompClLev"/>
+      </eval>
+    <eval phase="First" priority="70000"><![CDATA[
+      ~ if not equipped get out now!
+      doneif (field[gIsEquip].value = 0)
+      ~ If no domain chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      var search as string
+      ~ Find all the class specials attached to the chosen domain
+      foreach bootstrap in field[usrChosen1].chosen
+         search = splice(search,eachthing.tagids[thingid.?],"|")
+      nexteach
+      
+      ~ Disable all the Domain Class Specials
+      foreach pick in hero from BaseClSpec where search
+        perform eachpick.assign[Helper.SpcDisable]
+      nexteach
+
+      ~ Set one swapped domain allowed on configurable
+      hero.childfound[cfgX1IconA].field[cfgMax1].value += 1]]></eval>
+    <eval phase="First" priority="10000" index="3"><![CDATA[
+      ~ if not equipped get out now!
+      doneif (field[gIsEquip].value = 0)
+
+      ~ Allow selection of domains
+      field[usrCandid1].text = "component.BaseClrDom"
+      perform assign[ChooseSrc1.Hero]]]></eval>
+    </thing>
+  <thing id="cfgX1IconA" name="Icon of Aspects" compset="Configure" uniqueness="unique">
+    <fieldval field="cfgAllow1" value="component.BaseClrDom"/>
+    <fieldval field="cfgObject1" value="Swapped Domain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="ioX1SanClo" name="Quicksand Cloak" description="The exterior of the cloak is an extradimensional space filled with water and sand. Each time a creature of the wearer&apos;s size or smaller attempts to grapple the wearer, it must succeed at a DC 15 Reflex save or fail at the attempt and be engulfed by quicksand (Pathfinder RPG Core Rulebook 427). Every round it&apos;s trapped in the extradimensional space, the trapped creature must make a Swim check (DC 15) to climb out, landing prone adjacent to the wearer. Crawling out doesn&apos;t provoke an attack of opportunity from the wearer, but does provoke from others. A creature that fails its Swim check by 5 or more submerges and begins to drown. A creature that succeeds at the initial save grapples the wearer normally, and doesn&apos;t need to save again unless the wearer escapes and the creature tries to grapple the wearer again.\n\nA quicksand cloak left on the ground behaves as a patch of quicksand filling one 5-foot square, and swimming out works the same. Others may use aid another to help a creature trapped in the cloak, as though the creature were grappled.\n\nA quicksand cloak of any size can contain only one creature at a time; a creature attempting to grapple the wearer while the cloak already contains a body is not affected by the cloak.\n\n{b}CONSTRUCTION REQUIREMENTS{/b}\nCOST 7,500 GP Craft Wondrous Item, create water, shifting sond(APG)" compset="Wondrous">
+    <fieldval field="gCost" value="15000"/>
+    <fieldval field="gCraftCost" value="7500"/>
+    <fieldval field="gWeight" value="4"/>
+    <fieldval field="iCL" value="5"/>
+    <usesource source="srcTearMan"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Hero" tag="EqpBack"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    <tag group="iSchool" tag="Transmutat"/>
+    </thing>
+  <thing id="ioX1RatBoo" name="Rat-Tread Boots" description="On command, these rat-fur boots summon a rat swarm underneath the wearer that moves with her and acts as a living carpet. As a move action, the wearer can travel on the backs of the rats as they swim, moving up to 15 feet across the surface of calm waters. If surface conditions become worse than calm, the rats disperse and the wearer falls. On land, the swarm allows the wearer to ignore difficult terrain&apos;s effects on her movement for up to 15 feet of movement per round. The swarm can be used for up to 10 minutes per day. This duration doesn&apos;t need to be continuous, but must be used in 1-minute increments.\n\nIf the wearer falls unconscious while rot-tread boots are active, on the wearer&apos;s next turn the swarm tries to move her away from the nearest foe, moving 5 feet before dispersing. This movement doesn&apos;t provoke attacks of opportunity. If such movement is impossible, the swarm disperses.\n\nThe swarm is a normal rat swarm, except its area doesn&apos;t exceed that of the wearer and it can&apos;t move out of the wearer&apos;s space. The swarm disperses when the effect&apos;s duration ends or when the swarm is reduced to 0 hit points or fewer. Rat-Tread Boots grant the wearer immunity from the attacks of rat swarms, including their special attacks.\n\n{b}CONSTRUCTION REQUIREMENTS{/b}\nCOST 4,250 GP Craft Wondrous Item, charm animal, summon swarm" compset="Wondrous">
+    <fieldval field="gCost" value="8500"/>
+    <fieldval field="gCraftCost" value="4250"/>
+    <fieldval field="gWeight" value="1"/>
+    <fieldval field="iCL" value="3"/>
+    <fieldval field="trkMax" value="10"/>
+    <usesource source="srcTearMan"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    <tag group="iSchool" tag="Conjur"/>
+    <tag group="Hero" tag="EqpFoot"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Usage" tag="Minute"/>
+    </thing>
+  <thing id="ioX1WeiWat" name="Weirding Watch" description="This gold-plated watch is divided into five pieces. The weirding watch keeps flawless time without ever needing to be wound or repaired. In addition, the bearer of any piece of the watch can activate it to exercise power over time for herself and her allies. Once a watch piece is activated, the bearer gains the benefits of haste and lesser age resistonce{super}UM{/super} for 3 rounds.\n\nAnyone bearing a piece from the same weirding watch within 30 feet receives the same effect. Each piece of the watch can be activated once per day. The price of a weirding watch includes all five pieces. Pieces are rarely sold separately.\n\n{b}CONSTRUCTION REQUIREMENTS{/b}\nCOST 11,000 GP Craft Wondrous Item, haste, lesser age resistonce{super}UM{/super}" compset="Wondrous">
+    <fieldval field="iCL" value="5"/>
+    <fieldval field="gCost" value="22000"/>
+    <fieldval field="gCraftCost" value="11000"/>
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcTearMan"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="iSchool" tag="Transmutat"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    </thing>
+  <thing id="ioX1WhiGlo" name="Whispering Gloves" description="These gloves constantly project a very short-range silence spell, so that anything touched or held by the wearer&apos;s hands makes no sound. Thus picking a locked door wouldn&apos;t make a clicking noise audible to those on the other side, and holding a hand over a victim&apos;s mouth would silence his scream. The silence extends only a few inches, so knocking on a door produces no sound but hammering it down still does.\n\nIf the wearer presses a finger to her lips and speaks, no sound comes out, but the words are audible to anyone she chooses in her line of sight (as the message spell).\n\n{b}CONSTRUCTION REQUIREMENTS{/b}\nCOST 7,700 GP Requirements Craft Wondrous Item, message, silence" compset="Wondrous">
+    <fieldval field="gCost" value="15400"/>
+    <fieldval field="gCraftCost" value="7700"/>
+    <fieldval field="iCL" value="5"/>
+    <usesource source="srcTearMan"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Hero" tag="EqpHand"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="iSchool" tag="Illusion"/>
+    <tag group="iSchool" tag="Transmutat"/>
+    <bootstrap thing="spMessage0">
+      <autotag group="Helper" tag="ItemSpell"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    </thing>
+  <thing id="iX1Clarity" name="Clarity" description="{b}Alignment{/b} neutral good\n{b}Senses{/b} 30 ft.\n{b}Intelligence{/b} 10 {b}Wisdom{/b} 12 {b}Charisma{/b} 14\n{b}Ego{/b} 7\n{b}Language{/b} empathy\n\nClarity is a +1 holy scimitar crafted to vanquish the evil creatures of the night. Though she can&apos;t speak, her empathic communications clearly indicate a protective mindset. Clarity enjoys giving warm, encouraging energy to her wielder as long as that wielder opposes evil and gives his best effort. To preserve her wielder&apos;s valor in fights, she can cast remove fear up to three times per day, affecting only her wielder.\n\n{b}CONSTRUCTION REQUIREMENTS{/b} \nCOST 10,665 GP Craft Magic Arms and Armor, holy smite, remove fear" compset="MagicWep">
+    <fieldval field="gWeight" value="4"/>
+    <fieldval field="gSizeCost" value="15"/>
+    <fieldval field="gCost" value="21000"/>
+    <fieldval field="iCL" value="7"/>
+    <usesource source="srcTearMan"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="iSchool" tag="Evocation"/>
+    <tag group="iSubschool" tag="Good"/>
+    <bootstrap thing="spRemoFea1">
+      <autotag group="Helper" tag="ItemSpell"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      <assignval field="sCL" value="7"/>
+      <assignval field="DescAppend" value="{b}Clarity:{/b} she can cast remove fear up to three times per day, affecting only her wielder."/>
+      </bootstrap>
+    <child entity="wSpecMagic">
+      <bootstrap thing="wScimitar"></bootstrap>
+      <bootstrap thing="iHoly"></bootstrap>
+      </child>
+    </thing>
+  </document>

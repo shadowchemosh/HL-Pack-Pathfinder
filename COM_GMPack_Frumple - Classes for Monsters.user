@@ -1,0 +1,1078 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_Frumple - Classes for Monsters"/>
+  <fileinfo>
+    <info_history>
+      This file implements class abilities that are innate for monsters.
+
+      2013-9-25 - Updated mechanism for hexes. There are now two methods to include them in monsters. The first is with a configurable. The second is with the author making a custom special ability that bootstrap the hex helper included in this file.</info_history>
+    </fileinfo>
+  <thing id="cfguWtchHx" name="Hexes" compset="Configure" uniqueness="unique">
+    <comment><![CDATA[Set the field cfgLevel for the race's effective witch level before First/300]]></comment>
+    <fieldval field="cfgObject1" value="Hexes"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="rcuHexHelp"></bootstrap>
+    <eval phase="First" priority="300">
+      ~ set max number of hexes
+      ~ we put the value in here becuase the hexes use the helper
+      hero.child[rcuHexHelp].field[abValue].value = field[cfgLevel].value
+
+      field[cfgMax1].value = 1 + round(field[cfgLevel].value/2,0,-1)</eval>
+    </thing>
+  <thing id="rcuWtcBlig" name="Blight" description="The witch can curse an animal, plant creature, or plot of land, causing it to wither and die. Blighting an area takes 1 round, during which time the witch and her familiar must be in contact with the target. If it's used on a plot of land, the land begins to wither the following day, and over the next week all plants in the area die. Nothing will grow in that area so long as the curse persists. A witch can affect an area with a radius equal to her class level &#215; 10 feet. Blighting a creature is a standard action that requires a melee touch attack. If used on a creature of the animal or plant type, the creature gains the following curse: \n\n{b}Blight Hex{/b}-type curse; {i}save{/i} Will negates; {i}frequency{/i} 1/day; {i}effect{/i} 1 Con damage. Both types of curse can be removed with a remove curse or similar magic, using the save DC as the DC to remove the curse. A witch can only have one blight in effect at a time. If another blight hex is made, the first immediately ends." compset="RaceCustom" summary="Curse an animal, plant, or land causing it to die." uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="HasAbility" tag="cWitBlight"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <eval phase="Final" priority="10005">
+      ~ override DC
+      var v_level as number
+      v_level = hero.child[rcuHexHelp].field[abValue].value
+
+      call overrideDC</eval>
+    </thing>
+  <thing id="rcuWtcBstO" name="Beast of Ill-Omen" description="The witch imbues her familiar with strange magic, putting a minor curse upon the next enemy to see it. The enemy must make a Will save or be affected by bane (caster level equal to the witch's level). The witch can use this hex on her familiar at a range of up to 60 feet. The affected enemy must be no more than 60 feet from the familiar to trigger the effect; seeing the familiar from a greater distance has no effect (though if the enemy and familiar approach to within 60 feet of each other, the hex takes effect). The bane affects the closest creature to the familiar (ties affect the creature with the highest initiative score). Whether or not the target's save is successful, the creature cannot be the target of the bane effect for 1 day (later uses of this hex ignore that creature when determining who is affected)." compset="RaceCustom" uniqueness="unique">
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="HasAbility" tag="cWitBeaIll"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <eval phase="Final" priority="10005">
+      ~ override DC
+      var v_level as number
+      v_level = hero.child[rcuHexHelp].field[abValue].value
+
+      call overrideDC</eval>
+    </thing>
+  <thing id="rcuWtcCack" name="Cackle" description="A witch can cackle madly as a move action. Any creature that is within 30 feet that is under the effects of an agony hex, charm hex, evil eye hex, fortune hex, or misfortune hex caused by the witch has the duration of that hex extended by 1 round." compset="RaceCustom" summary="As a move action, extend the duration of other hexes by 1 rd." uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    </thing>
+  <thing id="rcuWtcCaul" name="Cauldron" description="The witch receives Brew Potion as a bonus feat and a +4 insight bonus on Craft (alchemy) skill checks" compset="RaceCustom" summary="Gain Brew Potion and a +4 insight bonus to Craft (Alchemy)." uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="HasAbility" tag="cWitCauldr"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <bootstrap thing="fBrewPot">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      
+      #applybonus[BonInsight, hero.childfound[skCrafAlch], 4]]]></eval>
+    </thing>
+  <thing id="rcuWtcChar" name="Charm" description="A witch can charm an animal or humanoid creature within 30 feet by beckoning and speaking soothing words. This improves the attitude of an animal or humanoid creature by 1 step, as if the witch had successfully used the Diplomacy skill. The effect lasts for a number of rounds equal to the Witch's Intelligence modifier. A Will save negates this effect. Whether or not the save is successful, a creature cannot be the target of this hex again for 1 day. At 8th level, this effect improves the attitude of the target creature by 2 steps. This is a mind-affecting charm effect." compset="RaceCustom" summary="Improve attitudes by 1 step." uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="HasAbility" tag="cWitCharm"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ get total HD plus witch levels
+      var wtchLvl as number
+      wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+      
+      ~ Scarred Witch changes this to use CON instead of INT
+      if (#hasarchetype[arWitScarr] <> 0) then
+        field[abDuration].value += #attrbonus[aCON]
+      else
+        field[abDuration].value += #attrbonus[aINT]
+        endif
+      
+      if (wtchLvl >= 8) then
+        field[abValue].value += 2
+      else
+        field[abValue].value += 1
+        endif
+      
+      field[livename].text &= " +" & field[abValue].value & " (" & field[abDuration].value & " round(s))"
+      
+      field[abSumm].text = "Improve attitude of humanoid or animal in 30 ft by " & field[abValue].value & " step(s)."]]></eval>
+    <eval phase="Final" priority="10005" index="2">
+      ~ override DC
+      var v_level as number
+      v_level = hero.child[rcuHexHelp].field[abValue].value
+
+      call overrideDC</eval>
+    </thing>
+  <thing id="rcuWtcCldS" name="Child-Scent" description="The witch gains the scent ability, but only with respect to humanoid children and immature animals. Thus, she could sniff out a child&apos;s hiding place or a den of wolf pups, but not the child&apos;s parents or the den mother." compset="RaceCustom" uniqueness="unique">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="HasAbility" tag="cWitChildS"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    </thing>
+  <thing id="rcuWicCove" name="Coven" description="The witch counts as a hag for the purpose of joining a hag's coven. In addition, whenever the witch with this hex is within 30 feet of another witch with this hex, she can use the aid another action to grant a +1 bonus to the other witch's caster level for 1 round. This bonus applies to the witch's spells and all of her hexes." compset="RaceCustom" summary="Count as a hag to form covens, and aid another can increase coven witch&apos;s CL." uniqueness="unique">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="HasAbility" tag="cWitCoven"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    </thing>
+  <thing id="rcuWtcDisg" name="Disguise" description="A witch can change her appearance for a number of hours equal to her class level, as if using {i}disguise self{/i}. These hours do not need to be consecutive, but they must be spent in 1-hour increments." compset="RaceCustom" summary="Can change own appearance, as {i}disguise self{/i} but with longer duration." uniqueness="unique">
+    <tag group="SpInfo" tag="spDisgSel1"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ChargeCalc" tag="LevelFull"/>
+    <tag group="Usage" tag="DayHour"/>
+    <tag group="HasAbility" tag="cWitDisgui"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    </thing>
+  <thing id="rcuWtcEvlE" name="Evil Eye" description="The witch can cause doubt to creep into the mind of a foe within 30 feet that she can see. The target takes a &#150;2 penalty on one of the following (witch's choice): AC, ability checks, attack rolls, saving throws, or skill checks. This hex lasts for a number of rounds equal to 3 + the witch's Intelligence modifier. A Will save reduces this to just 1 round. This is a mind-affecting effect. At 8th level the penalty increases to &#150;4." compset="RaceCustom" summary="Foe in 30 ft takes penalty to your choice of AC, attacks, saves, ability or skill checks (Will part)." uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="HasAbility" tag="cWitEvilEy"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ get total HD plus witch levels
+      var wtchLvl as number
+      wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+      
+      ~ Scarred Witch changes this to use CON instead of INT
+      if (#hasarchetype[arWitScarr] <> 0) then
+        field[abDuration].value += 3 + #attrbonus[aCON]
+      else
+        field[abDuration].value += 3 + #attrbonus[aINT]
+        endif
+      
+      if (wtchLvl >= 8) then
+        field[abValue].value -= 4
+      else
+        field[abValue].value -= 2
+        endif
+      
+      field[livename].text &= " " & field[abValue].value & " (" & field[abDuration].value & " round(s))"]]></eval>
+    <eval phase="Final" priority="10005" index="2"></eval>
+    </thing>
+  <thing id="rcuWtcFerS" name="Feral Speech" description="This hex grants the witch the ability to speak with and understand the response of any animal as if using {i}speak with animals{/i}, though each time she uses the hex, she must decide to communicate with either amphibians, birds, fish, mammals, or reptiles, and can only speak to and understand animals of that type. The witch can make herself understood as far as her voice carries. This hex does not predispose any animal so addressed toward the witch in any way. At 12th level, the witch can use this hex to communicate with vermin." compset="RaceCustom">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="HasAbility" tag="cWitFerSpe"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    </thing>
+  <thing id="rcuWtcFlig" name="Flight" description="The witch grows lighter as she gains power, eventually gaining the ability to fly. At 1st level, the witch can use {i}feather fall{/i} at will and gains a +4 racial bonus on Swim checks. At 3rd level, she can cast {i}levitate{/i} once per day. At 5th level, she can {i}fly{/i}, as per the spell, for a number of minutes per day equal to her level. These minutes do not need to be consecutive, but they must be spent in 1-minute increments. This hex only affects the witch." compset="RaceCustom" uniqueness="unique">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="HasAbility" tag="cWitFlight"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="Custom" tag="hexLevitat" name="Hex: Flight - Levitate"/>
+    <tag group="Custom" tag="hexFly" name="Hex: Flight - Fly"/>
+    <bootstrap thing="rcuWtcLevi">
+      <containerreq phase="First" priority="500">hero#Custom.hexLevitat</containerreq>
+      </bootstrap>
+    <bootstrap thing="rcuWtcFly">
+      <containerreq phase="First" priority="500">hero#Custom.hexFly</containerreq>
+      </bootstrap>
+    <bootstrap thing="rcuWtcFetF"></bootstrap>
+    <eval phase="First" priority="450"><![CDATA[
+      ~ assign tags for flight abilities
+      var effLvl as number
+      effLvl = hero.child[cfguWtchHx].field[cfgLevel].value
+
+      if (effLvl >= 3) then
+        perform hero.assign[Custom.hexLevitat]
+      endif
+
+      if (effLvl >= 5) then
+        perform hero.assign[Custom.hexFly]
+      endif]]></eval>
+    </thing>
+  <thing id="rcuWtcFetF" name="Feather Fall" description="At 1st level, the witch can use {i}feather fall{/i} at will and gains a +4 racial bonus on Swim checks." compset="RaceCustom" uniqueness="useronce">
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="HasAbility" tag="cWitFeathe"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <bootstrap thing="spFeatFal1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      <assignval field="livename" value="Feather Fall (self only)"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      
+      ~ +4 swim
+      #skillbonus[skSwim] += 4]]></eval>
+    </thing>
+  <thing id="rcuWtcLevi" name="Levitate" description="At 3rd level, she can cast {i}levitate{/i} once per day." compset="RaceCustom" summary="Levitate 1/day" uniqueness="useronce">
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="HasAbility" tag="cWitLevita"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <bootstrap thing="spLevitat2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      <assignval field="livename" value="Levitate (self only)"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcuWtcFly" name="Fly" description="At 5th level, she can {i}fly{/i}, as per the spell, for a number of minutes per day equal to her level. These minutes do not need to be consecutive, but they must be spent in 1-minute increments." compset="RaceCustom" uniqueness="useronce">
+    <tag group="ChargeCalc" tag="LevelFull"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="HasAbility" tag="cWitFly"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <bootstrap thing="spFly3">
+      <autotag group="SpecSource" tag="cHelpWit"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="DayMinute"/>
+      <assignval field="livename" value="Fly (self only)"/>
+      </bootstrap>
+    <eval phase="Final" priority="10000"><![CDATA[      
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[trkMax].value = hero.child[rcuHexHelp].field[abValue].value
+      
+      hero.findchild[BaseSpell,"thingid.spFly3 & Helper.SpellLike & SpecSource.cHelpWit"].field[trkMax].value += field[trkMax].value]]></eval>
+    </thing>
+  <thing id="rcuWtcFort" name="Fortune" description="The witch can grant a creature within 30 feet a bit of good luck for 1 round. The target can call upon this good luck once per round, allowing him to reroll any ability check, attack roll, saving throw, or skill check, taking the better result. He must decide to use this ability before the first roll is made. At 8th level and 16th level, the duration of this hex is extended by 1 round. Once a creature has benefited from the fortune hex, it cannot benefit from it again for 24 hours." compset="RaceCustom" summary="Ally in 30 ft can roll 2d20 for an attack, save, ability, or skill check (and take higher) once/rd." uniqueness="unique">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="HasAbility" tag="cWitFortun"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cWitch"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ get total HD plus witch levels
+      var wtchLvl as number
+      wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+      
+      field[abDuration].value += 1 + round(wtchLvl/8,0,-1)
+      
+      field[livename].text &= " (" & field[abDuration].value &" round(s))"]]></eval>
+    </thing>
+  <thing id="rcuWtcHeal" name="Healing" description="A witch can soothe the wounds of those she touches. This acts as a {i}cure light wounds{/i} spell, using the witch's caster level. Once a creature has benefited from the healing hex, it cannot benefit from it again for 24 hours. At 5th level, this hex acts like {i}cure moderate wounds{/i}." compset="RaceCustom" summary="Use {i}cure light wounds{/i} once per day/person." uniqueness="unique">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitHealin"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ get total HD plus witch levels
+      var wtchLvl as number
+      wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+      
+      if (wtchLvl >= 5) then
+        field[abValue].value += minimum(linkage[table].field[cTotalLev].value,10)
+        field[livename].text = "Healing (2d8+" & field[abValue].value & ")"
+        field[abSumm].text = "Use {i}cure moderate wounds{/i} once per day/person."
+        perform assign[SpInfo.spCureMod2]
+      else
+        field[abValue].value += minimum(wtchLvl,5)
+        field[livename].text = "Healing (1d8+" & field[abValue].value & ")"
+        perform assign[SpInfo.spCureLig1]
+        endif]]></eval>
+    </thing>
+  <thing id="rcuWtcMisf" name="Misfortune" description="The witch can cause a creature within 30 feet to suffer grave misfortune for 1 round. Anytime the creature makes an ability check, attack roll, saving throw, or skill check, it must roll twice and take the worse result. A Will save negates this hex. At 8th level and 16th level, the duration of this hex is extended by 1 round. This hex affects all rolls the target must make while it lasts. Whether or not the save is successful, a creature cannot be the target of this hex again for 1 day." compset="RaceCustom" summary="Foe in 30 ft must take the lower of 2d20 for rolls (Will neg)." uniqueness="unique">
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitMisfor"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ get total HD plus witch levels
+      var wtchLvl as number
+      wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+      
+      field[abDuration].value += 1 + round(wtchLvl/8,0,-1)
+      
+      if (field[abDuration].value > 1) then
+        field[livename].text &= " (" & field[abDuration].value & " rds)"
+      else
+        field[livename].text &= " (" & field[abDuration].value & " rd)"
+        endif]]></eval>
+    <eval phase="Final" priority="10005" index="2">
+      ~ override DC
+      var v_level as number
+      v_level = hero.child[rcuHexHelp].field[abValue].value
+      call overrideDC</eval>
+    </thing>
+  <thing id="rcuWtcNail" name="Nails" description="The witch&apos;s nails are long and sharp, and count as natural weapons that deal 1d3 points of damage (1d2 for a Small witch). These attacks are secondary attacks. If trimmed, the witch&apos;s nails regrow to their normal size in 1d4 days." compset="RaceCustom" uniqueness="unique">
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="HasAbility" tag="cWitNails"/>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d3_3"/>
+      <autotag group="Helper" tag="NatOverSec"/>
+      <autotag group="Helper" tag="NatSizeDmg"/>
+      <autotag group="Value" tag="2"/>
+      <assignval field="livename" value="Nails"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcuWtcPoiS" name="Poison Steep" description="The witch can use her cauldron to brew a foul toxin in which she can steep fruits and other delicious edibles, transforming them so that when eaten, they have the same effect as a {i}poison{/i} spell. Brewing the toxin and then steeping the food takes 1 hour in total; steeping can affect up to 1 pound of food. The food is poisoned for 24 hours, and the poison cannot be transferred to other objects. The food tastes normal, but magic detects it as poisonous. The witch must have the cauldron hex to select this hex." compset="RaceCustom" uniqueness="unique">
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="HasAbility" tag="cWitPoiSte"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <exprreq message="Cauldron hex required."><![CDATA[#hasability[cWitCauldr] <> 0]]></exprreq>
+    </thing>
+  <thing id="rcuWtcPrhH" name="Prehensile Hair" description="The witch can instantly cause her hair (or even her eyebrows) to grow up to 10 feet long or to shrink to its normal length, and can manipulate her hair as if it were a limb with a Strength score equal to her Intelligence score. Her hair has reach 10 feet, and she can use it as a secondary natural attack that deals 1d3 points of damage (1d2 for a Small witch). Her hair can manipulate objects (but not weapons) as dexterously as a human hand.\n\nThe hair cannot be sundered or attacked as a separate creature. Pieces cut from the witch&apos;s elongated hair shrink away to nothing. Using her hair does not harm the witch&apos;s head or neck, even if she lifts something heavy with it.\n\nThe witch can manipulate her hair a number of minutes each day equal to her level; these minutes do not need to be consecutive, but must be spent in 1-minute increments. A typical male witch with this hex can also manipulate his beard, moustache, or eyebrows." compset="RaceCustom" uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitPreHai"/>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d3_3"/>
+      <autotag group="Helper" tag="NatOverSec"/>
+      <autotag group="Helper" tag="NatSizeDmg"/>
+      <assignval field="livename" value="Hail"/>
+      </bootstrap>
+    <eval phase="Final" priority="10000"><![CDATA[
+
+      foreach pick in hero from BaseNatWep where "IsWeapon.wSlam"
+        if ((eachpick.root.tagis[thingid.cWitPreHai] + eachpick.root.tagis[thingid.rcuWtcPrhH]) <> 0) then
+          perform eachpick.setfocus
+          endif
+        nexteach
+
+      ~ If strength is less than 10, we don't halve our strength bonus, it all
+      ~ applies to damage.
+      var strbon as number
+      if (hero.child[aSTR].field[aFinalVal].value < 10) then
+        strbon = #attrmod[aSTR]
+      else
+        strbon = round(#attrmod[aSTR]/2, 0, -1)
+        endif
+
+      ~ Negate strbon.
+      focus.field[wDamBonus].value -= strbon
+
+      ~ Damage is based on INT instead of STR, already negated STR so add INT
+
+      ~ If intelligence is less than 10, we don't halve our intelligence bonus,
+      ~ it all applies to damage.
+      var intbon as number
+      if (hero.child[aINT].field[aFinalVal].value < 10) then
+        intbon = #attrmod[aINT]
+      else
+        intbon = round(#attrmod[aINT]/2, 0, -1)
+        endif
+
+      focus.field[wDamBonus].value += intbon
+
+      ~ If we are using weapon finesse then we use INT instead of the higher of
+      ~ STR/DEX for attacks. Otherwise just INT instead of STR.
+      if (#hasfeat[fWepFin] <> 0) then
+        field[abValue].value += #attrmod[aINT] - maximum(#attrmod[aDEX], #attrmod[aSTR])
+      else
+        field[abValue].value += #attrmod[aINT] - #attrmod[aSTR]
+        endif
+
+      focus.field[wAttBonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="rcuWtcScar" name="Scar" description="This hex curses a single target touched with horrible scars of the witch&apos;s choosing, whether something as simple as a single letter on the target&apos;s forehead or blotchy, burnlike scars on his body. The target may make a Will save to resist this hex. These scars do not interfere with the target&apos;s senses or prevent it from using abilities, but may affect social interactions. They persist through disguises and shapechanging. The witch can use her hexes on the scarred target at a range of up to 1 mile, and she is considered to have a body part from the target for the purpose of {i}scrying{/i} and similar divination spells. The witch can withdraw this hex from a target as a move action at any range. The number of supernatural scars the witch can maintain at once is equal to her Intelligence bonus; once she reaches this limit, she must remove the scar from a current victim in order to mark another. Effects that remove curses can remove the scar." compset="RaceCustom" uniqueness="unique">
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ChargeCalc" tag="AttrOnly"/>
+    <tag group="ChargeAttr" tag="aINT"/>
+    <tag group="Usage" tag="atatime"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="HasAbility" tag="cWitScar"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <eval phase="Final" priority="10005">
+      ~ override DC
+      var v_level as number
+      v_level = hero.child[rcuHexHelp].field[abValue].value
+
+      call overrideDC</eval>
+    </thing>
+  <thing id="rcuWtcSlum" name="Slumber" description="A witch can cause a creature within 30 feet to fall into a deep, magical sleep, as per the spell {i}sleep{/i}. The creature receives a Will save to negate the effect. If the save fails, the creature falls asleep for a number of rounds equal to the witch's level. This hex can affect a creature of any HD. The creature will not wake due to noise or light, but others can rouse it with a standard action. This hex ends immediately if the creature takes damage. Whether or not the save is successful, a creature cannot be the target of this hex again for 1 day." compset="RaceCustom" summary="Foe in 30 ft falls asleep for duration, or until damaged or roused by ally (Will neg)." uniqueness="unique">
+    <tag group="SpInfo" tag="spSleep1"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="HasAbility" tag="cWitSlumbe"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+~ get total HD plus witch levels
+var wtchLvl as number
+wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+      
+      field[abDuration].value += wtchLvl
+      
+      if (field[abDuration].value > 1) then
+        field[livename].text &= " (" & field[abDuration].value & " rds)"
+      else
+        field[livename].text &= " (" & field[abDuration].value & " rd)"
+        endif]]></eval>
+    <eval phase="Final" priority="10005" index="2">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    </thing>
+  <thing id="rcuWtcSwpH" name="Swamp Hag" description="While traveling through swamps, mires, bogs, and similar terrain, the witch leaves no trail and cannot be tracked, as the trackless step druid ability. The witch can walk through mud and even quicksand as if it were normal ground." compset="RaceCustom" uniqueness="unique">
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitSwaHag"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    </thing>
+  <thing id="rcuWtcTong" name="Tongues" description="A witch with this hex can understand any spoken language for a number of minutes per day equal to her level, as {i}comprehend languages{/i}. This duration does not need to be consecutive, but it must be spent in 1-minute increments. Activating this ability is a free action. At 5th level, a witch can use this ability to speak any language, as per {i}tongues{/i}." compset="RaceCustom" summary="Understand any spoken language, as {i}comprehend languages{/i}." uniqueness="unique">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Language"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ChargeCalc" tag="LevelFull"/>
+    <tag group="Usage" tag="DayMinute"/>
+    <tag group="HasAbility" tag="cWitTongue"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ get total HD plus witch levels
+var wtchLvl as number
+wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+      
+      if (wtchLvl >= 5) then
+        field[livename].text = "Tongues"
+        field[abSumm].text = "Understand spoken and speak any language, as {i}tongues{/i}."
+        perform assign[SpInfo.spTongues3]
+      else
+        field[livename].text = "Tongues (Comprehend Languages)"
+        perform assign[SpInfo.spCompLan1]
+        endif]]></eval>
+    </thing>
+  <thing id="rcuWtcUnnB" name="Unnerve Beasts" description="The target becomes offensive to animals (Will negates). Animals become distraught and aggressive in the victim&apos;s presence - horses buck, dogs snap and bark, bulls charge, and so on. The hex lasts a number of hours equal to the witch&apos;s Intelligence modifier.\n\nA creature that saves against the hex cannot be affected by the hex for 1 day. The reaction of the animals is a mind-affecting charm effect, but the hex on the target is not." compset="RaceCustom" uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitUnnBea"/>
+    <eval phase="Final" priority="10005">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    </thing>
+  <thing id="rcuWtcWard" name="Ward" description="A witch can use this hex to place a protective ward over one creature. The warded creature receives a +2 deflection bonus to AC and a +2 resistance bonus on saving throws. This ward lasts until the warded creature is hit or fails a saving throw. A witch knows when a warded creature is no longer protected. A witch can have only one ward active at a time. If the witch uses this ability again, the previous ward immediately ends. A witch cannot use this ability on herself. At 8th level and 16th level, the bonuses provided by this ward increase by +1." compset="RaceCustom" summary="Ward another, granting +2 to AC and saves until hit or fail a save." uniqueness="unique">
+    <fieldval field="trkMax" value="1"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="Usage" tag="atatime"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitWard"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ get effective witch levels
+var wtchLvl as number
+wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+      
+      field[abValue].value += 2 + round(wtchLvl/8,0,-1)
+      
+      field[livename].text = "Ward +" & field[abValue].value
+      field[abSumm].text = "Ward another, granting " & signed(field[abValue].value) & " to AC and saves until hit or fail a save."]]></eval>
+    </thing>
+  <thing id="rcuWtcWatL" name="Water Lung" description="An air-breathing target can breathe water or an aquatic target can breathe air. This lasts 1 minute. If the witch uses this hex on herself, she can maintain it while she sleeps, allowing her to safely sleep underwater." compset="RaceCustom" uniqueness="unique">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitWatLun"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    </thing>
+  <thing id="rcuWtcAgon" name="Agony" description="With a quick incantation, a witch can place this hex on one creature within 60 feet, causing them to suffer intense pain. The target is nauseated for a number of rounds equal to the witch's level. A Fortitude save negates this effect. If the saving throw is failed, the target can attempt a new save each round to end the effect. Whether or not the save is successful, a creature cannot be the target of this hex again for 1 day." compset="RaceCustom" summary="Foe in 60 ft is nauseated for duration (Fort neg). Resave each rd, if fail initially." uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitAgony"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <eval phase="Final" priority="10005" index="2">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ get total HD plus witch levels
+var wtchLvl as number
+wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+
+      
+      field[abDuration].value += wtchLvl
+      
+      field[livename].text = "Agony (" & field[abDuration].value & " rounds)"]]></eval>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcBstE" name="Beast Eye" description="The witch can project her senses into an animal within 100 feet, sensing whatever it senses. She cannot control the animal&apos;s actions. She can project her senses from that animal to another within 100 feet of it as a standard action, and can continue to make these sensory leaps, potentially viewing things very far from her actual location. She may return her senses to her own body as a free action. Normal animals get no saving throw against this ability, but animal companions, paladin mounts, and similar unusual animals may resist with a Will save; the witch may use this ability on her own familiar as if it were an animal. If the witch has the coven hex, all other witches within 10 feet of her who also have the coven hex can see through this animal at will, although the acting witch still controls the ability. The witch can use this ability for a number of minutes per day equal to her level.\n\nThese minutes need not be consecutive, but they must be spent in 1-minute increments." compset="RaceCustom" uniqueness="unique">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Sense"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="ChargeCalc" tag="LevelFull"/>
+    <tag group="Usage" tag="DayMinute"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitBeaEye"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <eval phase="Final" priority="10005">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD of 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcCokP" name="Cook People" description="The witch can create fabulous spells by cooking an intelligent humanoid creature in her cauldron, either alive or dead. Using this hex creates one meal or serving of food of the witch&apos;s choice, typically a delicious stew or a dough suitable for cookies, pastries, or other desserts. Cooking the victim takes 1 hour. Eating the food provides one of the following benefits for 1 hour: {i}age resistance{/i}*, {i}bear&apos;s endurance{/i}, {i}bull&apos;s strength{/i}, {i}cat&apos;s grace{/i}, {i}eagle&apos;s splendor{/i}, {i}fox&apos;s cunning{/i}, {i}neutralize poison{/i} (instantaneous) {i}owl&apos;s wisdom, remove disease{/i} (instantaneous). Alternatively, the witch can shape the dough into a Small, humanlike creature, animating it as a homunculus for 1 hour. The witch must have the cauldron hex to select this hex. Using this hex or knowingly eating its food is an evil act." compset="RaceCustom" uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="rcuWtcCokP"/>
+    <exprreq message="Cauldron hex required."><![CDATA[#hasability[cWitCauldr] <> 0]]></exprreq>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcHagE" name="Hag&apos;s Eye" description="A witch with this hex can create a magic sensor that she can see through. This functions as per the spell {i}arcane eye{/i}. If the witch has the coven hex, all other witches within 10 feet who also have the coven hex can see through this sensor as well, although the witch that created it still controls its. The witch can use this eye for a number of minutes per day equal to her level. These minutes do not need to be consecutive, but they must be spent in 1-minute increments." compset="RaceCustom" summary="Create an invisible sensor, as {i}arcane eye{/i}, which nearby coven mates can also see through." uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpInfo" tag="spArcaEye4"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ChargeCalc" tag="LevelFull"/>
+    <tag group="Usage" tag="DayMinute"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitHagEye"/>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcHidH" name="Hidden Home" description="The witch can conceal or disguise her home and the area around it as if using {i}mirage arcana{/i}. Before using the hex, she must spend 1 day pacing out the border of an area that measures roughly 40,000 square feet (approximately 200 feet by 200 feet) to define her home territory. Thereafter, she can use the hex to change the appearance of that area as a standard action as long as she is within the area. The illusion persists until the witch changes or dismisses it. For the purpose of this ability, a witch can only have one &quot;home&quot; at a time." compset="RaceCustom" uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitHidHom"/>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcHoar" name="Hoarfrost" description="The target is rimed with a shell of frost needles that slowly work their way into its f lesh (Fortitude negates). The target turns pale and blue, and takes 1 point of Constitution damage per minute until it dies, saves (once per minute), or is cured. {i}Break enchantment{/i}, {i}dispel magic{/i}, {i}remove curse{/i}, and similar spells end the effect. If the target saves, it is immune to this hex for 1 day. This is a cold effect." compset="RaceCustom" uniqueness="unique">
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="Custom" tag="WinterHex"/>
+    <tag group="HasAbility" tag="cWitHoarfr"/>
+    <eval phase="First" priority="500">perform hero.assign[Custom.WinterHex]</eval>
+    <eval phase="Final" priority="10005" index="2">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD of 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcIceT" name="Ice Tomb" description="A storm of ice and freezing wind envelops the target, which takes 3d8 points of cold damage (Fortitude half). If the target fails its save, it is paralyzed and unconscious but does not need to eat or breathe while the ice lasts. The ice has 20 hit points; destroying the ice frees the creature, which is staggered for 1d4 rounds after being released. Whether or not the target&apos;s saving throw is successful, it cannot be the target of this hex again for 1 day." compset="RaceCustom" uniqueness="unique">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="Custom" tag="WinterHex"/>
+    <tag group="HasAbility" tag="cWitIceTom"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <eval phase="First" priority="500">perform hero.assign[Custom.WinterHex]</eval>
+    <eval phase="Final" priority="10005" index="2">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcMjHe" name="Major Healing" description="The witch's touch can mend even the most terrible wounds of those she touches. This acts as {i}cure serious wounds{/i}, using the witch's caster level. Once a creature has benefited from the major healing hex, it cannot benefit from it again for 24 hours. At 15th level, this hex acts like {i}cure critical wounds{/i}." compset="RaceCustom" summary="Use {i}cure serious wounds{/i} once per day/person." uniqueness="unique">
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="HasAbility" tag="cWitMaHeal"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ get total HD plus witch levels
+var wtchLvl as number
+wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+      
+      if (wtchLvl >= 15) then
+        field[abValue].value += minimum(wtchLvl,20)
+        field[livename].text = "Major Healing (4d8+" & field[abValue].value & ")"
+        field[abSumm].text = "Use {i}cure critical wounds{/i} once per day/person."
+        perform assign[SpInfo.spCureCri4]
+      else
+        field[abValue].value += minimum(wtchLvl,15)
+        field[livename].text = "Major Healing (3d8+" & field[abValue].value & ")"
+        perform assign[SpInfo.spCureSer3]
+        endif]]></eval>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcNigh" name="Nightmares" description="Calling upon fell powers, a witch can place a hex on a creature within 60 feet that causes its sleep to be tormented by terrible nightmares. This functions as the spell {i}nightmare{/i} each time the affected creature attempts to rest. A Will save negates this effect. If the save is failed, the target must make a new save each night or be unable to rest." compset="RaceCustom" summary="Foe in 60 ft is cursed with nightmares (Will neg). If fail initial, resave each night." uniqueness="unique">
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="HasAbility" tag="cWitNightm"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpInfo" tag="spNightma4"/>
+    <tag group="SpecType" tag="Attack"/>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcRetr" name="Retibution" description="A witch can place a retribution hex on a creature within 60 feet, causing terrible wounds to open across the target's flesh whenever it deals damage to another creature in melee. Immediately after the hexed creature deals damage in melee, it takes half that damage (round down). This damage bypasses any resistances, immunities, or damage reduction the creature possesses. This effect lasts for a number of rounds equal to the witch's Intelligence modifier. A Will save negates this effect." compset="RaceCustom" summary="Foe in 60 ft suffers half the melee damage it deals, ignoring resist, for duration (Will neg)." uniqueness="unique">
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitRetrib"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      
+      ~ Scarred Witch changes this to use CON instead of INT
+      if (#hasarchetype[arWitScarr] <> 0) then
+        field[abDuration].value += #attrbonus[aCON]
+      else
+        field[abDuration].value += #attrbonus[aINT]
+        endif
+      
+      field[livename].text &= " (" & field[abDuration].value & " round(s))"]]></eval>
+    <eval phase="Final" priority="10005" index="2">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcSpkD" name="Speak in Dreams" description="The witch can contact a creature as if using {i}dream{/i}. The witch can use this ability on a number of creatures per day equal to her Intelligence bonus, but can dream-speak to those creatures as often as desired throughout that time period." compset="RaceCustom" uniqueness="unique">
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitSpeDre"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpInfo" tag="spDream5"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ChargeCalc" tag="AttrOnly"/>
+    <tag group="ChargeAttr" tag="aINT"/>
+    <tag group="Usage" tag="Day"/>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcVisi" name="Vision" description="A witch with the vision hex can grant a glimpse of the future to a creature touched. Granting a vision takes 1 minute, during which time the witch and the target must remain in contact with one another. At the end of this time, the subject receives a brief image of the future, usually no more than 1 year from the time of the vision. This is only one possible version of the future, making such visions unreliable at best. Most visions are slanted toward the alignment of the witch that granted them. For example, the visions granted by a Chaotic Evil witch often show scenes of death and destruction, while those of a Neutral Good witch tend to be of joyous events or occasions. A creature cannot be subject to another vision until the current vision has either come to pass or been prevented. A witch cannot use this ability on herself. Unwilling creatures receive a Will save to negate the vision." compset="RaceCustom" summary="After 1 min, grant vision of possible future up to 1 year to another (Will neg)." uniqueness="unique">
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitVision"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <eval phase="Final" priority="10005">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcWaxI" name="Waxen Image" description="The witch can spend a full-round action to create a wax duplicate of a creature she can see within 30 feet. Once the image is complete, the subject must make a Will save. If the subject fails, the witch gains a small measure of control over the creature. Whenever she exercises this control, the creature receives a new Will save to end the effect. This effect occurs on the witch's turn and does not impede the creature's actions on its turn. The witch can use the waxen image a number of times equal to her Intelligence modifier before it melts. As a standard action, the witch can cause the subject to do any one of the following things: move up to the creature's speed in any direction, attack itself once with any weapon in hand (this attack automatically hits), lay down on the ground, or drop anything held. Alternatively, she can spend one of her uses to simply torture the image, causing the creature to be both sickened and staggered on its turn. As soon as the creature has succeeded on a saving throw against this effect, it is immune to it for 24 hours. The is an enchantment (compulsion) effect." compset="RaceCustom" summary="As a full rd action, create wax figure used to force to specific actions (Will neg)." uniqueness="unique">
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitWaxenI"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ChargeCalc" tag="AttrOnly"/>
+    <tag group="ChargeAttr" tag="aINT"/>
+    <tag group="Usage" tag="UsedUp"/>
+    <eval phase="Final" priority="10005">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcWeaC" name="Weather Control" description="A witch with this hex can use {i}control weather{/i} once per day, but creating the weather takes 1 full hour of chanting, dancing, and communing with her familiar." compset="RaceCustom" summary="Can use {i}control weather{/i}, after 1 hour of chanting and dancing." uniqueness="unique">
+    <fieldval field="trkMax" value="1"/>
+    <tag group="HasAbility" tag="cWitWeathe"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="SpInfo" tag="spContWea7"/>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcBrew" name="Witch&apos;s Brew" description="When the witch uses her cauldron to brew a potion, she may spend double the cost to create 2 identical potions that day instead of just 1. At 15th level, she may spend triple the cost to create 3 identical potions that day. The witch must have the cauldron hex to select this hex." compset="RaceCustom" uniqueness="unique">
+    <tag group="HasAbility" tag="cWitWitBre"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <exprreq message="Cauldron hex required."><![CDATA[#hasability[cWitCauldr] <> 0]]></exprreq>
+    <prereq message="Racial HD 10 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 10)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcDthC" name="Death Curse" description="This powerful hex seizes a creature's heart, causing death within just a few moments. This hex has a range of 30 feet. The hexed creature receives a Will save to negate the effect. If this save is failed, the creature becomes fatigued the first round of the hex. On the second round of the hex, the creature becomes exhausted. On the third round, the creature dies unless it succeeds at a Fort save. Creatures that fail the first save but succeed at the second remain exhausted and take 4d6 points of damage + 1 point of damage per level of the witch. Slaying the witch that hexed the creature ends the effect, but any fatigue or exhaustion remains. Whether or not the saves are successful, a creature cannot be the target of this hex again for 1 day." compset="RaceCustom" summary="Foe in 30 ft is fatigued (1st rd), exhausted (2nd), then dies (3rd) (Will neg, then Fort part)." uniqueness="unique">
+    <tag group="HasAbility" tag="cWitDeathC"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Render" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~ get total HD plus witch levels
+var wtchLvl as number
+wtchLvl = hero.child[rcuHexHelp].field[abValue].value
+
+      
+      field[abValue].value += wtchLvl
+      
+      field[livename].text &= " (4d6+" & field[abValue].value & " dam or Death)"]]></eval>
+    <eval phase="Final" priority="10005" index="2">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD 18 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 18)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcDrPr" name="Dire Prophecy" description="The witch curses the target so he is doomed to die (Will negates). As long as the curse persists, the target takes a -4 penalty to his Armor Class and on attack rolls, saves, ability checks, and skill checks. While the curse persists, the witch may end it by bringing its full force upon her victim all at once. Doing so gives the victim a penalty equal to the witch&apos;s caster level to his Armor Class or on any single attack roll, combat maneuver check, opposed ability or skill check, or saving throw. The witch must decide to apply this penalty before the roll to be modified is made. If the witch does not have line of sight to the target, the full force of the curse occurs when the GM considers it most appropriate, such as when the target is in mortal danger. A target can only have one dire prophecy upon him at a time. Whether or not the target&apos;s save against the hex is successful, a creature cannot be the target of this hex for 1 day. This is a curse effect." compset="RaceCustom" uniqueness="unique">
+    <tag group="HasAbility" tag="cWitDirPro"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Final" priority="10005">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD 18 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 18)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcEtnS" name="Eternal Slumber" description="The witch can touch a creature, causing it to drift off into a permanent slumber. The creature receives a Will save to negate this effect. If the save fails, the creature falls asleep and cannot be woken. The effect can only be removed with a {i}wish{/i} or similar magic, although slaying the witch ends the effect. The witch can use this ability to poison food or drink, causing those who ingest it to make a save or fall into an eternal slumber. She can only have one such dose of poison at any one time, and it loses its potency after 1 minute if not consumed. Whether or not the save is successful, a creature cannot be the target of this hex again for 1 day." compset="RaceCustom" summary="Touch curses foe to sleep forever, or can poison food to do the same (Will neg)." uniqueness="unique">
+    <tag group="HasAbility" tag="cWitEterSl"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <eval phase="Final" priority="10005">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD 18 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 18)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcFcdR" name="Forced Reincarnation" description="The witch cause a creature within 30 feet to die and be immediately {i}reincarnated{/i} into a new body. A Will save negates this effect. Those that fail are slain and immediately brought back to life with the spell {i}reincarnate{/i}. This process takes 1 full round, during which time the creature is in complete agony. Whether or not the save is successful, a creature cannot be the target of this hex again for 1 day." compset="RaceCustom" summary="Foe in 30 ft dies and is then reincarnated over 1 rd (Will neg)." uniqueness="unique">
+    <tag group="HasAbility" tag="cWitReinca"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="SpInfo" tag="spReincar4"/>
+    <eval phase="Final" priority="10005">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD 18 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 18)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcLfGv" name="Life Giver" description="The witch cause a creature within 30 feet to die and be immediately {i}reincarnated{/i} into a new body. A Will save negates this effect. Those that fail are slain and immediately brought back to life with the spell {i}reincarnate{/i}. This process takes 1 full round, during which time the creature is in complete agony. Whether or not the save is successful, a creature cannot be the target of this hex again for 1 day." compset="RaceCustom" summary="Touch a corpse to use {i}resurrection{/i}, but without needing components." uniqueness="unique">
+    <tag group="HasAbility" tag="cWitLifeGi"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpInfo" tag="spResurre7"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <prereq message="Racial HD 18 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 18)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcNatD" name="Natural Disaster" description="A witch using this hex calls down the forces of nature to wreak havoc on an area. This functions as a {i}storm of vengeance{/i} combined with an {i}earthquake{/i} that occurs on the second round of the effect (while acid is raining from the sky). A witch can only use this ability once per day." compset="RaceCustom" summary="Use {i}storm of vengeance{/i}, and on 2nd rd {i}earthquake{/i} occurs in the same area." uniqueness="unique">
+    <fieldval field="trkMax" value="1"/>
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpInfo" tag="spEarthqu8"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="SpInfo" tag="spStorVen9"/>
+    <tag group="HasAbility" tag="cWitNatDis"/>
+    <eval phase="Final" priority="10005">~ override DC
+
+var v_level as number
+v_level = hero.child[rcuHexHelp].field[abValue].value
+
+call overrideDC</eval>
+    <prereq message="Racial HD 18 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 18)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcSumS" name="Summon Spirit" description="The witch calls forth the ghost of a humanoid creature with no more than 18 Hit Dice. The ghost has its own personality and desires, but is willing to bargain with the witch, as if she had cast {i}greater planar ally{/i}. To seal an agreement with the witch, the ghost requires life energy equal to 1 temporary negative level (this is in addition to the standard payment for the ghost&apos;s service). This negative level persists as long as the ghost remains in the service of the witch; the witch can end the agreement as a standard action, immediately removing the negative level." compset="RaceCustom" uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="SpInfo" tag="spPlanAll8"/>
+    <tag group="HasAbility" tag="cWitSumSpi"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <prereq message="Racial HD 18 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 18)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcWtHt" name="Witch&apos;s Hut" description="The witch can animate a hut, small house, covered wagon, tent, or similar construction as an animated object. The hut can be of up to Huge size (approximately 15 feet by 15 feet). The animated hut&apos;s hardness increases to 8 and its hit points double. The witch can give the hut the following commands: guard (the hut watches for trespassers within 120 feet using the witch&apos;s Perception modifier and screams if it spots any), hide (all entrances are hidden by {i}illusory wall{/i} spells and locked with {i}arcane lock{/i}), and move (moves at speed 60 on giant bird or bone legs as directed by the witch, even obeying commands such as &quot;follow me from 100 feet away&quot;). The hut remains animate for 24 hours, until she dismisses it or she animates another, at which time the hut stops where it is and reverts to its nonmagical state." compset="RaceCustom" uniqueness="unique">
+    <tag group="AllowRCust" tag="cfguWtchHx"/>
+    <tag group="SpecSource" tag="cHelpWit"/>
+    <tag group="HasAbility" tag="cWitWitHut"/>
+    <tag group="AbilType" tag="Super"/>
+    <prereq message="Racial HD 18 or higher required.">
+      <validate><![CDATA[if (hero.childexists[cfguWtchHx] <> 0) then      
+   validif (hero.childfound[cfguWtchHx].field[cfgLevel].value  >= 18)
+else
+   @valid = 1
+endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcuWtcFrsF" name="Frostfoot" description="This ability works like the {i}spider climb{/i} spell, but the surfaces the witch climbs must be icy. The witch can move across icy surfaces without penalty and does not need to make Acrobatics checks to run or charge on ice. She can move across regular snow without penalty, and heavy snow only costs her 2 squares of movement instead of 4." compset="RaceCustom" summary="As {i}spider climb{/i}, but only on icy surfaces.">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="500">perform hero.assign[Custom.WinterHex]</eval>
+    </thing>
+  <thing id="rcuHexHelp" name="_Hex Helper" description="If not using the configurable, bootstrap this helper into the ability that brings hexes into the monster (it is already bootstraped into the configurable).\n\nThe field abValue is used for the equivalent class level." compset="RaceCustom">
+    <comment><![CDATA[There are two options for using hexes in a race.
+
+1) For a race that does not have fixed hexes bootstrap the configurable cfguWtchHx and set its field cfgLevel for the race's effective witch level before First/300.
+
+2) For a race with fixed hexes bootstrap rcuHexHelp to a racial special along with the hexes. Set rcuHexHelp's field abvalue before First/300 for equivalent witch level.]]></comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Hide" tag="Special"/>
+    </thing>
+  <thing id="rcuWtcFznC" name="Frozen Caress" description="Whenever the winter witch casts a touch spell, she can infuse the magic with cold as a swift action. This grants the spell the cold descriptor, and adds 1d4 points of cold damage to the spell's effect. If the touch spell allows a saving throw, a successful save negates this additional cold damage." compset="RaceCustom" summary="Infuse touch spells with cold.">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="500">perform hero.assign[Custom.WinterHex]</eval>
+    </thing>
+  <thing id="raCBFavTer" name="Favored Terrain" description="Creature gains a +2 bonus on initiative checks and Knowledge (geography), Perception, Stealth, and Survival skill checks when it is in specified terrain. A Creature traveling through his favored terrain normally leaves no trail and cannot be tracked (though he may leave a trail if he so chooses)." compset="RaceSpec" summary="Gain bonuses in specified terrain">
+    <fieldval field="abText" value="in"/>
+    <fieldval field="abValue" value="2"/>
+    <tag group="User" tag="NeedDomain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <bootstrap thing="skKnowGeog"></bootstrap>
+    <eval phase="Final" priority="10000"><![CDATA[~ abValue specifies bonus
+~ abText is "in", can be set to other prepositions
+
+var bon as number
+bon = field[abValue].value
+
+var locTxt as string
+locTxt = "+" & bon & " " & field[abText].text & " " & field[domDomain].text
+
+field[livename].text = field[name].text & " (+" & bon & ")"
+
+#racialsituational[hero.child[Initiative],locTxt,field[name].text]
+#racialsituational[hero.child[skKnowGeog],locTxt,field[name].text]
+#racialsituational[hero.child[skPercep],locTxt,field[name].text]
+#racialsituational[hero.child[skStealth],locTxt,field[name].text]
+#racialsituational[hero.child[skSurvival],locTxt,field[name].text]]]></eval>
+    </thing>
+  </document>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_CampaignPack_Eberron - Adjustments"/>
+  <fileinfo>
+    <info_author>Tim Shadow
+Email: ShadowChemosh@yahoo.com</info_author>
+    <info_history>January 30, 2014 - Tim Shadow
+-Fixed load errors and to work with the new Psionics.
+
+December 9, 2012
+-Created New.</info_history>
+    </fileinfo>
+  <thing id="pS2FtAshbo" name="Feat: Ashbound" description="You have been trained in the druidic traditions of the Ashbound, seeing yourself as one of nature&apos;s avengers.{br}{br}You consider the use of arcane magic to be a vile and unnatural act.{br}{br}{b}Prerequisite:{/b} Ability to spontaneously cast {i}summon nature&apos;s ally{/i}.{br}{br}{b}Benefi t:{/b} The duration of your {i}summon nature&apos;s ally{/i} spells is doubled{i}.{/i} Creatures summoned by those spells receive a +3 luck bonus on their attack rolls." compset="InPlay">
+    <fieldval field="pMinimum" value="3"/>
+    <fieldval field="pMaximum" value="3"/>
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <eval phase="PreLevel" priority="6000"><![CDATA[~ If we're not enabled, get out now
+doneif (field[pIsOn].value = 0)
+
+~ Give +3 luck bonus to attack rolls
+#applybonus[BonLuck,hero.child[Attack],field[pAdjust].value]]]></eval>
+    </thing>
+  <thing id="pS2AtMaWea" name="Feat: Attune Magic Weapon" description="Through your study of magic weapons, you have become adept at eking every advantage out of their enchanted qualities.\n\n{b}Prerequisites:{/b} Craft Magic Arms and Armor, caster level 5th.\n\n{b}Benefit:{/b} When you wield a magic weapon, you gain a +1 insight bonus on attack rolls and damage rolls.\n\n{b}Special:{/b} You must spend 24 hours with a newly acquired weapon before you can gain this benefit when wielding it." compset="InPlay">
+    <fieldval field="pMinimum" value="1"/>
+    <fieldval field="pMaximum" value="1"/>
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="Adjustment" tag="YourWep" name="Current Weapons" abbrev="Current Weapons"/>
+    <eval phase="PreLevel" priority="6000"><![CDATA[~ If we're not enabled, get out now
+doneif (field[pIsOn].value = 0)
+~if nothing's been chosen, there's nothing we can do
+doneif (field[pChosen].ischosen = 0)
+
+~ Give a Insight bonus to the weapon
+#applybonus[BonInsight,field[pChosen].chosen,field[pAdjust].value]]]></eval>
+    </thing>
+  <thing id="pS2PPtotal" name="Psionics Point Total" description="Use this adjustment to increase the total number of Psionics Power Points your character has. This can also be used to help with those items like &quot;Riedran Crysteel&quot; that require a power point total to work." compset="InPlay">
+    <usesource source="S2Eberron"/>
+    <tag group="OthAdjCat" tag="Misc"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[~ If we're not enabled, get out now
+doneif (field[pIsOn].value = 0)
+
+~hero.child[Psionics].field[tPPTotal].value += field[pAdjust].value
+#resmax[resPowerPt] += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pS2Source1" name="Hide Non-Eberron Deities" description="This adjustment is added to NPCs so when the &quot;Prepare for Distrubtion&quot; option is used it turns on the &quot;Hide Non-Eberron Deities&quot; option." compset="InPlay" uniqueness="useronce">
+    <usesource source="srcOnlyEbe"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    </thing>
+  <thing id="pS2Source2" name="Hide Non-Eberron Ethnicities" description="This adjustment is added to NPCs so when the &quot;Prepare for Distrubtion&quot; option is used it turns on the &quot;Hide Non-Eberron Ethnicities&quot; option." compset="InPlay" uniqueness="useronce">
+    <usesource source="srcOnlyEbe"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    </thing>
+  </document>

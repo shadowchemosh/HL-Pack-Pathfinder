@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_AP006 - Spires of Xin-Shalast"/>
+  <fileinfo>
+    <info_history>
+March 4, 2013 - Tim Shadow
+-Split a Player version of the file.</info_history>
+    </fileinfo>
+  <thing id="iouAP6RbAE" name="Robe of the Archmagi, Evil" description="This normal-appearing garment can be white (01-45 on d%, good alignment), gray (46-75, neither good nor evil alignment), or black (76-100, evil alignment). Its wearer, if an arcane spellcaster, gains the following powers.\n\n- +5 armor bonus to AC.\n\n- Spell resistance 18.\n\n- +4 enhancement bonus on Intelligence.\n\n- +2 enhancement bonus on caster level checks made to overcome spell resistance.\n\nIf a white robe is donned by an evil character, she immediately gains three negative levels. The reverse is true with respect to a black robe donned by a good character. An evil or good character who puts on a gray robe, or a neutral character who dons either a white or black robe, gains two negative levels. While these negative levels never result in lost levels, they remain as long as the garment is worn and cannot be overcome in any way (including restoration spells).\n\nStrong varied; CL 14th; Craft Wondrous Item, antimagic field, mage armor or shield of faith, creator must be of same alignment as robe; Price 75,000 gp; Weight 1 lb." compset="Wondrous">
+    <fieldval field="gWeight" value="1"/>
+    <fieldval field="gCost" value="75000"/>
+    <usesource source="PathRise"/>
+    <tag group="Hero" tag="EqpBody" name="Body" abbrev="Body"/>
+    <tag group="gType" tag="Wonder" name="Wondrous Item" abbrev="Wonder"/>
+    <tag group="Helper" tag="EquipAvail" name="EquipAvail" abbrev="EquipAvail"/>
+    <tag group="Helper" tag="EquipMag" name="EquipMag" abbrev="EquipMag"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ Assign negative levels based on alignment
+      if (field[gIsEquip].value <> 0) then
+        if (hero.tagis[Alignment.Good] <> 0) then
+          herofield[tNegLevel].value = herofield[tNegLevel].value + 3
+          endif
+        if (hero.tagis[Alignment.NeutralGE] <> 0) then
+          herofield[tNegLevel].value = herofield[tNegLevel].value + 2
+          endif
+        endif]]></eval>
+    <eval phase="Final" index="2"><![CDATA[
+      ~ If we're an arcane spellcaster, add our bonuses
+      if (field[gIsEquip].value <> 0) then
+        if (hero.tagis[Hero.Arcane] <> 0) then
+          hero.child[ArmorClass].field[tACArmor].value = maximum(hero.child[ArmorClass].field[tACArmor].value, 5)
+          endif
+        endif]]></eval>
+    <eval phase="First" index="3"><![CDATA[
+      ~ If we're an arcane spellcaster, add our bonuses
+      if (field[gIsEquip].value <> 0) then
+          #enhancementbonus[hero.child[aINT], 4]
+endif]]></eval>
+    </thing>
+  </document>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_UniversialThings - Subtypes"/>
+  <fileinfo>
+    <info_author><![CDATA[
+      Tim Shadow
+      shadowchemosh@yahoo.com
+      September 12, 2015
+
+      This file is designed to hold all those "Universal" Subtypes.]]></info_author>
+    </fileinfo>
+  <thing id="stPUHalfCo" name="Half-construct" description="A half-construct race is a group of creatures that are artificially enhanced or have parts replaced by constructed mechanisms, be they magical or mechanical. A half-construct race has the following features.\n\n• Half-constructs gain a +2 racial bonus on saving throws against disease, mind-affecting effects, poison, and effects that cause either exhaustion or fatigue.\n• Half-constructs cannot be raised or resurrected.\n• Half-constructs do not breathe, eat, or sleep, unless they want to gain some beneficial effect from one of these activities. This means that a half-construct can drink potions and can sleep in order to regain spells, but neither is required to survive or stay in good health." compset="Subtype" uniqueness="unique">
+    <fieldval field="RacePtCost" value="7"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="raPUConRes"></bootstrap>
+    <bootstrap thing="raX1HalfCo"></bootstrap>
+    <exprreq message="Construct/Undead type forbidden">#hastype[tpUndead] + #hastype[tpConst] = 0</exprreq>
+    </thing>
+  <thing id="raPUConRes" name="Half-Construct Resistance" description="You gain a +2 racial bonus on saving throws against disease, mind-affecting effects, poison, and effects that cause either exhaustion or fatigue." compset="RaceSpec" summary="+2 save vs. disease, mind-affecting, poison, and exhaustion/fatigue effects.">
+    <fieldval field="abValue" value="2"/>
+    <tag group="SpecType" tag="Resist"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000" index="2"><![CDATA[
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #situational[hero.childfound[svAll],signed(field[abValue].value) & " bonus vs. disease, mind-affecting effects, poison, and effects that cause either exhaustion or fatigue.",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="raX1HalfCo" name="Half-Construct" description="Half-constructs do not breathe, eat, or sleep, unless they want to gain some beneficial effect from one of these activities. This means that a half-construct can drink potions and can sleep in order to regain spells, but neither is required to survive or stay in good health." compset="RaceSpec" summary="You do not breathe, eat, or sleep, but can drink potions and sleep to regain spells.">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  </document>

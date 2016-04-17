@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_RGG - Bullet Points Sinful Lust"/>
+  <fileinfo>
+    <info_history>June 2, 2013 - Tim Shadow
+-Changed the category tag from Sinful to CGSinful to prevent any future clashes with Official packages.
+</info_history>
+    </fileinfo>
+  <thing id="fSFBrazen" name="Brazen" description="The way you act, dress, and move takes others by surprise.\n\n{b}Prerequisite{/b}: Cha 13, Lustful.\n\n{b}Benefit{/b}:  As long as you are dressed in something that shows off your form you gain bonuses in your interactions with others. You must be dressed in a courtier&#146;s outfit, entertainer&#146;s outfit, noble&#146;s outfit, tear-away clothing, or nothing. You also cannot be wearing medium or heavy armor (unless it is magically enchanted to increase your appeal, such as alluring armor from Krazy Kragnar&#146;s Black Market Magic Items). As long as this is the case, you gain a +2 bonus to Charisma checks and Charisma-based skill checks against creatures with an Int of 3 or more. As a result of the confidence you feel being yourself, you also gain a +2 bonus to Initiative checks." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Lust"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="UserPreLv" priority="5000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      hero.child[Initiative].field[Bonus].value += 2
+
+if (field[abilActive].value <> 0) then
+        #situational[hero.child[aCHA],"+2 competence bonus to Charisma checks.",field[name].text]
+        
+        foreach pick in hero from BaseSkill
+          ~ we could be a CHA skill because of an override tag or the normal
+          ~ linkage, so test for both
+          if (eachpick.tagis[SkillOver.aCHA] <> 0) then
+            #applybonus[BonComp,eachpick,2]
+          elseif (eachpick.linkage[skillattr].tagis[thingid.aCHA] <> 0) then
+            #applybonus[BonComp,eachpick,2]
+            endif
+          nexteach
+        endif]]></eval>
+    <exprreq message="Lustful feat required"><![CDATA[#hasfeat[fSFLustfl] <> 0]]></exprreq>
+    <exprreq message="Charisma 13 or greater required"><![CDATA[#attrvalue[aCHA] >= 13]]></exprreq>
+    </thing>
+  <thing id="fSFMaso" name="Masochist" description="You can satisfy your sexual urges by being hurt.\n\n{b}Prerequisite{/b}: Cha 13, Lustful.\n\n{b}Benefit{/b}:  When a critical hit is scored against you, you take damage while grappled, pinned, or helpless, or are affected by a pain effect (such as pain strike and symbol of pain, or anything else considered a pain effect for the delay pain spell), you gain a bonus from your Lustful feat. This bonus lasts for 1 round per HD of the creature that hurt or affected you, and is separate from (and stacks with) any normal bonus you might have from Lustful, or other feats that give you access to the bonus from Lustful. Additionally, you gain a +1 bonus to concentration checks and a +1 bonus on the following checks and saves: Swim checks made to resist nonlethal damage from exhaustion; Constitution checks made to continue running, avoid nonlethal damage from a forced march, to hold your breath, or to avoid nonlethal damage from starvation or thirst; Fortitude saves made to avoid nonlethal damage from hot or cold environments or to resist damage from suffocation." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Lust"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <exprreq message="Charisma 13 or greater required"><![CDATA[#attrvalue[aCHA] >= 13]]></exprreq>
+    <exprreq message="Lustful feat required"><![CDATA[#hasfeat[fSFLustfl] <> 0]]></exprreq>
+    </thing>
+  <thing id="fSFSadist" name="Sadist" description="You can satisfy your sexual urges by hurting others.\n\n{b}Prerequisite{/b}: Cha 13, Lustful.\n\n{b}Benefit{/b}: When you score a critical hit against a target, or damage a helpless target, or affect a creature with a pain effect (such as pain strike and symbol of pain, or anything else considered a pain effect for the delay pain spell), you gain a bonus from your Lustful feat. This bonus lasts for 1 round per HD of the creature you hurt or affected, and is separate from (and stacks with) any normal bonus you might have from Lustful, or other feats that give you access to the bonus from Lustful. Additionally, you gain a +1 bonus to attack rolls made to confirm critical hits, and your caster level for pain effects is 1 higher than normal." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Lust"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <exprreq message="Charisma 13 or greater required"><![CDATA[#attrvalue[aCHA] >= 13]]></exprreq>
+    <exprreq message="Lustful feat required"><![CDATA[#hasfeat[fSFLustfl] <> 0]]></exprreq>
+    </thing>
+  <thing id="fSFWanton" name="Wanton" description="You are always interested in amorous encounters, and as a result of wantonly accepting this sin into yourself its hard for others to resist you.\n\n{b}Prerequisite{/b}: Cha 13, Lustful.\n\n{b}Benefit{/b}: You embody the sin of lust. For purposes of Diplomacy checks and enchantment spells, any effort to get you to engage in an amorous encounter (that does not have obviously harmful consequences) is treated as being in the same category as &#147;giving simple advice or directions.&#148; Conversely, your strong aura of sex appeal applies to all races and genders and alters their choices as well. If a creature has you in its power (when you are a prisoner, charmed, helpless, and so on) it must make a Will save (DC 10 +1/2 your level + your Charisma modifier) to take any act that would cause you serious physical harm or place you where the creature cannot visit you daily. You also gain a +5 bonus to Diplomacy checks to request a creature spend time with you in an area it believes to be private (not observed or inhabited by other creatures), may make such requests even against hostile creatures, and may make this request once a day even if previous requests to the same creature have failed." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Lust"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <eval phase="UserPostAt" priority="10000"><![CDATA[~if we're disabled, do nothing
+doneif (tagis[Helper.FtHide] <> 0)
+
+field[abValue].value += round(#totallevelcount[]/2, 0, -1)
+
+field[abDC].value += 10 + hero.child[aCHA].field[aModBonus].value + field[abValue].value]]></eval>
+    <exprreq message="Lustful feat required"><![CDATA[#hasfeat[fSFLustfl] <> 0]]></exprreq>
+    <exprreq message="Charisma 13 or greater required"><![CDATA[#attrvalue[aCHA] >= 13]]></exprreq>
+    </thing>
+  <thing id="fSFWrithe" name="Writhe" description="You are expert in maneuvering while in tight spaces.\n\n{b}Prerequisite{/b}: Dex 13.\n\n{b}Benefit{/b}: You gain a +10 bonus to concentration checks made to cast a spell while grappled or pinned." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Lust"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <exprreq message="Dexterity 13 or greater required"><![CDATA[#attrvalue[aDEX] >= 13]]></exprreq>
+    </thing>
+  <thing id="fSFWriggle" name="Wriggle" description="You can distract creatures pressed up against you.\n\n{b}Prerequisite{/b}: Dex 13, Lustful, Writhe.\n\n{b}Benefit{/b}: When you are in a grapple or pinned, as a standard action you may attempt to distract any one creature in the same grapple or that is pinning you. The target must make a Will save (DC 10 +1/2 your level + your Charisma modifier) or suffer a -2 penalty on all attack rolls, ability checks, skill checks, and Will saves, and a -4 penalty on concentration checks. This penalty lasts for 1 round per point of your Charisma bonus (minimum 1 round). Unlike most such penalties, penalties from this ability stack, to a maximum number of times equal to your Charisma bonus." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Lust"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <eval phase="UserPostAt" priority="10000"><![CDATA[~if we're disabled, do nothing
+doneif (tagis[Helper.FtHide] <> 0)
+
+field[abValue].value += round(#totallevelcount[]/2, 0, -1)
+
+field[abDC].value += 10 + hero.child[aCHA].field[aModBonus].value + field[abValue].value]]></eval>
+    <exprreq message="Lustful feat required"><![CDATA[#hasfeat[fSFLustfl] <> 0]]></exprreq>
+    <exprreq message="Writhe feat required"><![CDATA[#hasfeat[fSFWrithe] <> 0]]></exprreq>
+    <exprreq message="Dexterity 13 or greater required"><![CDATA[#attrvalue[aDEX] >= 13]]></exprreq>
+    </thing>
+  <thing id="fSFLustfl" name="Lustful" description="You have turned your enjoyment of sex into an art form&#133; and a power.\n\n{b}Prerequisite{/b}: Cha 13.\n\n{b}Benefit{/b}: You can use your sex appeal to relate to any creature with an Int of 2 or higher, allowing you to make Diplomacy checks to change a creature&#146;s attitude without being able to share a language with it. If you reject an amorous advance from a creature you have used this ability to improve the attitude of, its attitude reverts to its original level. Additionally, for four hours after slating your desire for physical affection you are inspired by the gratification you receive from such encounters. You receive a +1 morale bonus to one of the following (selected at the time you end your encounter): ability and skill checks tied to Dexterity, Constitution, or Charisma (your choice); caster level; or weapon damage. You can only have one bonus from Lustful in effect at a time, and if you use the ability again before an old bonus fades, the original bonus immediately ends." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Lust"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <exprreq message="Charisma 13 or greater required"><![CDATA[#attrvalue[aCHA] >= 13]]></exprreq>
+    </thing>
+  </document>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_AP064 - Beyond the Doomsday Door"/>
+  <fileinfo>
+    <info_history>March 4, 2013 - Tim Shadow
+-Split a Player version of the file.</info_history>
+    </fileinfo>
+  <thing id="pAP64Dama" name="Damaged" description="At the start of each round of combat after the first round, there&apos;s a flat 50% chance each round that the thing functions as if it were confused (results of “babble incoherently” should be treated as having the golem simply standing in place, grinding its gears and venting smoke while taking no actual actions. In addition, the golem takes a –2 penalty on attack rolls and saving throws, and a –5 penalty on all damage rolls. Damage it deals with its grind special attack applies to itself as well (bypassing its damage reduction) as the misaligned gears twist and churn, and it lacks the wall of gears special attack entirely." compset="InPlay">
+    <usesource source="PathShStar"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="OthAdjCat" tag="Campaign"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[      
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      hero.child[Attack].field[Penalty].value += -2
+      hero.child[svWill].field[Penalty].value += -2
+      hero.child[svFort].field[Penalty].value += -2
+      hero.child[svRef].field[Penalty].value += -2
+      hero.child[Damage].field[tDamBonus].value += -5]]></eval>
+    </thing>
+  <thing id="raAP64MGrH" name="Hivemind" description="As long as there are at least two Groetan mummies within 300 feet of each other, if one Groetan mummy in the group is aware of a particular danger, they all are. No Groetan mummy in a group is considered flanked or flat-footed unless all of them are." compset="RaceSpec">
+    <usesource source="PathShStar"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="rAP64GrMum" name="Mummy, Groetan" compset="Race">
+    <fieldval field="rSTR" value="14"/>
+    <fieldval field="rINT" value="-4"/>
+    <fieldval field="rWIS" value="5"/>
+    <fieldval field="rCHA" value="5"/>
+    <fieldval field="rSpeed" value="20"/>
+    <fieldval field="rFeat" value="-4"/>
+    <fieldval field="rHitDice" value="8"/>
+    <fieldval field="rHPStart" value="52"/>
+    <fieldval field="rAC" value="10"/>
+    <fieldval field="rCR" value="5"/>
+    <fieldval field="rEnviron" value="Any"/>
+    <fieldval field="rOrgan" value="Solitary, warden squad (2-6), or guardian detail (7-12)"/>
+    <fieldval field="rTreasure" value="Standard"/>
+    <fieldval field="rDescript" value="Wrapped from head to toe in ancient strips of moldering linen, this humanoid moves with a shuffling gait."/>
+    <usesource source="PathShStar"/>
+    <tag group="Alignment" tag="Evil" name="Evil" abbrev="E"/>
+    <tag group="Alignment" tag="Lawful" name="Lawful" abbrev="L"/>
+    <tag group="HasType" tag="tpUndead" name="Undead" abbrev="Undead"/>
+    <tag group="RaceSize" tag="Medium0" name="Medium" abbrev="Medium"/>
+    <tag group="RaceType" tag="NPC" name="NPC Race" abbrev="NPC Race"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wSlam"/>
+      </bootstrap>
+    <bootstrap thing="raMumDespa"></bootstrap>
+    <bootstrap thing="raMumMummR"></bootstrap>
+    <bootstrap thing="xVulFire"></bootstrap>
+    <bootstrap thing="xDamRd">
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="typUndead"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Helper" tag="NatPrimary"/>
+      </bootstrap>
+    <bootstrap thing="raAP64MGrH"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <eval phase="PreLevel" priority="4000">      
+      #skillinnate[skPercep] += 8
+      #skillinnate[skStealth] += 8
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  </document>

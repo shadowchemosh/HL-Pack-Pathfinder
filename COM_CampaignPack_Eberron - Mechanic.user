@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_CampaignPack_Eberron - Mechanic"/>
+  <fileinfo>
+    <info_author><![CDATA[
+      Tim Shadow
+      Email: ShadowChemosh@yahoo.com
+      ]]></info_author>
+    <info_history><![CDATA[
+      January 1, 2015 - Tim Shadow
+      -Fixed some Warforged Body Armor issues including Mithral body giving the wrong stats.
+      -Added "Pathfinder" changes notes that where missing from some of the Eberron Races.
+      -Added new check box in Configure Your Hero to "Hide all Non-Eberron Deities" if you wish.  See "Data File Authoring" section below if this hides any "eberron" gods you have added.
+      -Improved Action Point tracker now displays with new information including the number and size of dice to roll. This tracker no longer gets reset with the new "Night's Rest" button either.
+      -Misc script fixes. Including adding situational text to skills and saves.
+
+      [b]Data File Authoring[/b]
+      -To have any custom gods NOT get hidden you need to open your .user file and for your "Deity" click the edit button next to "Deity Category" and check mark "Eberron Deities".  Now your custom god will no longer get hidden.
+      -To make it easier to give bonus feats to the Artificier the BonusFor.S2Artifice tag was added. So any custom feats marked with this tag will be allowed to be chosen by the Artificer base class as a bonus feat.
+
+      v1.6 - Released January 30,2014
+      -Fixed load errors and to work with the new Psionics.
+      -changed all references to child[Psioncis] to use the new resource #resmax[resPowerPt].
+
+      v1.5 - Released
+      -Changed text on the "Iron Wood" body of the warforged to be correct.
+
+      v1.5 - May 28, 2012
+      =Tim Shadow=
+      -New Helper Things like selectors are stored in this file.
+
+      v1.4 May 28, 2012
+      -Finalized for release through Powered by Hero Lab.
+      -Fixed "Shape Change" so that if you activate Medium it disables "Small" and activating Small disables "Medium". No more being a Medium/Small creature at the same time.
+      -Lots of small script fixes on the Racial Abilities.
+      -Added in the Kalashtar race.
+      --Added "Quor" Language
+      --Added "Kalashtar" subtype.
+      --This races Psionics ability is scripted to work with the community "Psionics Unleashed" package.
+      -Added a check to all racial abilities to check for being disabled.
+      -Added in Faiths of Eberron Thanks RavenX!
+      --Adds in 20 Eberron Deity's.
+      --Adds in 10 Eberron Cleric Domains.
+      ]]></info_history>
+    </fileinfo>
+
+
+  <!-- ============================================================================================ -->
+  <!-- Campaign Pack Eberron Mechanic                                                               -->
+  <!-- ============================================================================================ -->
+  <thing id="mechS2ECS" name="Eberron Mechanic" description="This mechanic will make live helper objects whenever any child Eberron Source is active. This is achived by source marking ourself to the Parent Source." compset="Mechanics">
+    <usesource source="pEberron"/>
+    <tag group="sDescript"    tag="S2Gatekeep" name="Gatekeeper"/>
+    <tag group="sDescript"    tag="S2infusion" name="Infusion"/>
+    <tag group="sDescript"    tag="S2Deathles" name="Deathless"/>
+    <tag group="sSubschool"   tag="S2Construc" name="Construct"/>
+    <tag group="sSubschool"   tag="S2Item"     name="Item"/>
+    <tag group="DeityCat"     tag="S2SovHost"  name="The Sovereign Host"/>
+    <tag group="DeityCat"     tag="S2DarkSix"  name="The Dark Six"/>
+    <tag group="DeityCat"     tag="S2Eberron"  name="Eberron Deities"/>
+    <tag group="Usage"        tag="S2Level"    name="/level"/>
+    <tag group="BonusFor"     tag="S2Artifice" name="Artificer"/>
+    <tag group="sClass"       tag="fS2GateIni" name="Gatekeeper Initiate Feat"/>
+    <tag group="sClass"       tag="fS2GreenIn" name="Greensinger Initiate Feat"/>
+    <tag group="sClass"       tag="fS2WardIni" name="Warden Initiate Feat"/>
+    <tag group="fCategory"    tag="S2Racial"   name="Racial"/>
+    
+    <!-- Correct set info and values for Eberron Action Points -->
+    <bootstrap thing="ECSActionP"></bootstrap>
+    <!-- Hide non-Eberron Deities -->
+    <bootstrap thing="ECSDeities"></bootstrap>
+    <!-- Hide non-Eberron Ethnicities -->
+    <bootstrap thing="ECSEthnic"></bootstrap>
+    <!-- Hide non-Eberron Languages -->
+    <bootstrap thing="ECSLanguag"></bootstrap>
+    <!-- Region of Origin Configurable -->
+    <bootstrap thing="cfgS2RegOr"></bootstrap>
+
+    <eval phase="First" priority="15000"><![CDATA[         
+      ~ If not human, elf, dwarf, halfling or Gnome get out now!
+      ~ Bugbear, Hobgoblin, and Goblin.
+      doneif (#hasrace[rHuman] + #hasrace[rElf] + #hasrace[rDwarf] + #hasrace[rHalfling] + #hasrace[rGnome]  + #hasrace[rBugbear] + #hasrace[rHobgoblin] + #hasrace[rGoblin] = 0)
+      
+      ~ If Region of Origin taken then do not allow an Ethnicity
+      doneif (hero.tagis[Eberron.RegionOrig] = 1)
+      
+      ~ Give our race one Ethnicity
+      call GiveEthnic
+      ]]></eval>
+    </thing>
+
+  <!-- ============================================================================================ -->
+  <!-- Eberron Mechanic Simple Helpers. These are bootstrapped to the Mechanic                      -->
+  <!-- ============================================================================================ -->
+  <thing id="ECSDeities" name="Eberron Mechanic, Deities" description="Hide all non-Eberron deities if the source &quot;Hide Non-Eberron Deities&quot; is turned on." compset="Simple" uniqueness="unique">
+    <usesource source="srcOnlyEbe"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Find all non-Eberron deities
+      foreach thing in Deity where "!DeityCat.S2Eberron & !thingid.deiAtheist & !thingid.deiOther"
+
+        ~ If no deity category then pull the thingid
+        If (eachthing.tagcount[DeityCat.?] = 0) Then
+          perform eachthing.pulltags[thingid.?,HideDeity]
+        ~ If we have a category then pull the cateogry only
+        ~ if we have not already pulled it.
+        Else
+          If (eachthing.intersect[DeityCat,DeityCat] = 0) then
+            perform eachthing.pulltags[DeityCat.?]
+          Endif
+        Endif  
+      nexteach
+
+      ~ Create Hide Deity Catagory tags
+      perform pulltags[DeityCat.?,HideDeiCat]
+      ~ Push the hide deity tags to the hero
+      perform hero.pushtags[HideDeiCat.?]
+      perform hero.pushtags[HideDeity.?]
+      ]]></eval>
+    </thing>
+
+  <thing id="ECSEthnic" name="Eberron Mechanic, Ethnicity" description="Hide all non-Eberron ethnicities if the source &quot;Hide Non-Eberron Ethnicities&quot; is turned on." compset="Simple" uniqueness="unique">
+    <usesource source="srcHideEth"/>
+    <eval phase="Final" priority="9999999999"><![CDATA[
+      ~set our focus to the hero's race
+      perform hero.findchild[BaseRace].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ We need to make sure we really have Ethnicity and not heritages or warforged body armor.
+      ~ So make sure our Racial Custom Special is named 'Ethnicity'.
+      doneif (compare(focus.field[rSpecSing].text,"Ethnicity") <> 0)
+
+      ~ Build new Ethnicity search expression that prevents non-eberron Thigns from displaying
+      herofield[tCstSpExpr].text = focus.tagids[AllowRCust.?] & " & !(Helper.Secondary|Helper.Helper) & Eberron.Ethnicity"
+      ]]></eval>
+    </thing>
+
+  <thing id="ECSLanguag" name="Eberron Mechanic, Languages" description="Hide all non-Eberron languages if the source &quot;Hide Non-Eberron Campaign Languages&quot; is turned on." compset="Simple" uniqueness="unique">
+    <usesource source="srcHideLan"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Hide Golarion, Jade Oath, and Midgard languages
+      perform hero.assign[HideLanCat.Golarion]
+      perform hero.assign[HideLanCat.JadeOath]
+      perform hero.assign[HideLanCat.Midgard]
+      ]]></eval>
+    </thing>
+
+  <!-- ============================================================================================ -->
+  <!-- Set Action Points correctly for Eberron                                                      -->
+  <!-- ============================================================================================ -->
+  <thing id="ECSActionP" name="Eberron Mechanic, Action Points" description="This sets the action points for NPCs to be zero per the Eberron Campaign Setting rules. It also holds the dice values for Action Points and increases the values on the built in Action Point tracker." compset="Ability" uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="6"/>
+    <usesource source="pEberron"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[
+      ~ If action points tracker not live get out now
+      doneif (hero.childlives[hActionPts] <> 1)
+
+      #appenddesc[hActionPts,"A beginning (1st-level) character starts the game with 5 action points. A character above 1st level starts the game with a number of action points equal to 5 + 1/2 his current character level. Every time a character advances, he gains a number of action points equal to 5 + 1/2 his new character level.\n\nWhen you spend 1 action point to improve a d20 roll, you add the result of a 1d6 to your d20 roll (including attack rolls, saves, checks, or any other roll of a d20) to help you meet or exceed the target number. You can declare the use of 1 action point to alter a d20 roll after the roll is made, but only before the GM reveals the result of that roll. You can't use an action point to alter the result of a d20 roll when you are taking 10 or taking 20.\n\nDepending on character level, a character might be able to roll more than one d6 when he spends an action point. If so, apply the highest result and disregard the other rolls. A 15th-level character, for instance, gets to roll 3d6 and take the best result of the three. So, if he rolled a 1, 2, and 4, he would apply the 4 to his d20 roll. \n\n{B}1st-7th{/b} 1d6\n{B}8th-14th{/b} 2d6\n{B}15th-20th{/b} 3d6"]
+      perform hero.child[hActionPts].assign[Usage.S2Level]
+      perform hero.child[hActionPts].assign[Helper.NoNightRes]
+
+      ~ Add addtional action points based on level
+      If (herofield[tLevel].value >= 8) Then
+        field[abValue].value += 1
+      Endif
+      If (herofield[tLevel].value >= 15) Then
+        field[abValue].value += 1
+      Endif
+
+      ~ Set livename
+      hero.child[hActionPts].field[livename].text = hero.child[hActionPts].field[name].text & " " & field[abValue].value & "d" & field[abValue2].value]]></eval>
+    <eval phase="PostLevel" priority="10010"><![CDATA[
+      ~ If action points tracker not live get out now
+      doneif (hero.childlives[hActionPts] <> 1)
+
+      ~ If we are not a NPC then zero out action points
+      if (hero.tagis[CharType.typNPC] = 1) then
+        ~ Set action points to zero if we are a NPC
+        #trkmax[hActionPts] = 0
+
+        #appenddesc[hActionPts,"{b}Eberron:{/b} NPCs do not gain any APs unless they take the Heroic Spirit feat"]
+      endif]]></eval>
+    </thing>
+
+
+
+  <!-- ============================================================================================ -->
+  <!-- Minion Helpers                                                                               -->
+  <!-- ============================================================================================ -->
+  <thing id="minHdrSymb" name="Symbiont" compset="Minion" isshowonly="yes">
+    <usesource source="S2Eberron"/>
+    <tag group="gType" tag="S2Symbiont" name="Symbiont" abbrev="Symbiont"/>
+    </thing>
+
+  </document>

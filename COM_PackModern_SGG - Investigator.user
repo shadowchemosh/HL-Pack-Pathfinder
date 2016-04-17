@@ -1,0 +1,1386 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_PackModern_SGG - Investigator"/>
+  <thing id="cMPSGGAttD" name="Attention to Detail" description="The investigator can catalog and analyze the most minute of details, trusting in their reason to notice facts their instincts may overlook. They may add their Int modifier, rather than Wis modifier, to any Wisdom based skill check.\n\nAdditionally, whenever the investigator takes 20 on a skill check, they gain a +2 bonus to the total result." compset="CustomSpec" summary="Use Intelligence instead of wistom on skill checks. +2 when taking 20" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="SpecSource" tag="arRogInves"/>
+    <tag group="SpecSource" tag="cHelpInv"/>
+    <eval phase="First">perform hero.child[skHeal].assign[SkillOver.aINT]
+perform hero.child[skPercep].assign[SkillOver.aINT]
+perform hero.child[skSenseMot].assign[SkillOver.aINT]
+perform hero.child[skSurvival].assign[SkillOver.aINT]
+perform hero.child[skMSRDGamb].assign[SkillOver.aINT]</eval>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[field[livename].text = field[thingname].text & " (+2 when taking 20)"]]></eval>
+    </thing>
+  <thing id="arMPSGGGDe" name="Great Detective" compset="ClassVary" uniqueness="unique">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AllowC2nd" tag="arMHInvest"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="Helper" tag="RemoveCast"/>
+    <tag group="Custom" tag="ModHero"/>
+    <bootstrap thing="cMPSGGProf">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGCSAl">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGRpTl">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGStdP">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    </thing>
+  <thing id="arMPSGGMdE" name="Medical Examiner" compset="ClassVary" uniqueness="unique">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AllowC2nd" tag="arMHInvest"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="Helper" tag="RemoveCast"/>
+    <tag group="Custom" tag="ModHero"/>
+    <bootstrap thing="cMPSGGMERT">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGMdEx">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    </thing>
+  <thing id="arMPSGGInv" name="Inventor" compset="ClassVary" uniqueness="unique">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AllowC2nd" tag="arMHInvest"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="Helper" tag="RemoveCast"/>
+    <tag group="Custom" tag="ModHero"/>
+    <link linkage="varies" thing="cHelpMdH"/>
+    </thing>
+  <thing id="cMPSGGGRDt" name="Great Detective" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="ClsCountAs" tag="arMPSGGGDe"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[       ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGGDe) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGInve" name="Inventor" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="ClsCountAs" tag="arMPSGGInv"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[       ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGInv) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGMedE" name="Medical Examiner" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="ClsCountAs" tag="arMPSGGMdE"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[       ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGMdE) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGCyDf" name="Canny Defense" description="When wearing light or no armor and not using a shield, the investigator adds 1 point of Intelligence bonus (if any) per investigator class level to her Dexterity bonus to modify Armor Class while wielding a melee weapon. If the investigator is caught flat footed or otherwise denied her Dexterity bonus, she also loses this bonus. \n\nAn investigator with Improved Unarmed Strike is considered wielding a weapon for purposes of this ability whenever she is free to make unarmed attacks.\n\nNote: Not scripted, will have to add in the adjusment tab." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="SpecType" tag="Defense"/>
+    </thing>
+  <thing id="cMPSGGCyMn" name="Canny Maneuvers" description="The investigator is able to use her experience and intellect to perform combat maneuvers, rather than depend on physical ability or combat training. \n\nShe may use Int to replace Str and Wis to replace Dex to calculate her CMB and CMD." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecType" tag="Movement"/>
+    <tag group="SpecSource" tag="arRogInves"/>
+    <eval phase="PostAttr" priority="10000">~ Add our wisdom bonus to the combat maneuver bonus
+ hero.child[Maneuver].field[tCMD].value += hero.child[aWIS].field[aModBonus].value - hero.child[aDEX].field[aModBonus].value</eval>
+    <eval phase="PostAttr" priority="10500" index="2">~ Add our int bonus to the combat maneuver bonus
+ hero.child[Maneuver].field[tCMB].value += hero.child[aINT].field[aModBonus].value - hero.child[aSTR].field[aModBonus].value</eval>
+    <eval phase="PostAttr" priority="10750" index="3">~ Add our int bonus to the combat maneuver bonus
+ hero.child[Maneuver].field[tCMD].value += hero.child[aINT].field[aModBonus].value - hero.child[aSTR].field[aModBonus].value</eval>
+    </thing>
+  <thing id="cMPSGGCySt" name="Canny Strikes" description="The investigator is able to use her experience and intellect to hit her foes, rather than depend on strong or swift weapon blows. \n\nWhen making an attack, the investigator may add her Int modifier to her attack rolls rather than Str or Dex." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="SpecType" tag="Attack"/>
+    <eval phase="PostAttr" priority="10000">~ Add our int bonus to the melee attack bonus
+ hero.child[Attack].field[tAtkMelee].value = hero.child[Attack].field[tAtkMelee].value + hero.child[aINT].field[aModBonus].value</eval>
+    <eval phase="PostAttr" priority="10000" index="2">~ Add our int bonus to the ranged attack bonus
+ hero.child[Attack].field[tAtkRanged].value = hero.child[Attack].field[tAtkRanged].value + hero.child[aINT].field[aModBonus].value</eval>
+    </thing>
+  <thing id="cMPSGGGRD" name="Cross Training: Great Detective" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMHInvest" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="ClsCountAs" tag="arMPSGGGDe"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[       ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGGDe) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGCTIn" name="Cross Training: Inventor" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMHInvest" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="ClsCountAs" tag="arMPSGGInv"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[       ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGInv) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGCTME" name="Cross Training: Medical Examiner" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMHInvest" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="ClsCountAs" tag="arMPSGGMdE"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[       ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGMdE) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGCrTc" name="Careful Tactics" description="The investigator is able to analyze a situation and form a set of tactics specifically designed to address it. \n\nIf the investigator can analyze a situation as a fullround action (requiring accurate facts about the situation, though not necessarily direct observation of it) she can select one teamwork feat to grant herself and one ally, +1 ally per 2 investigator levels. The teamwork feat must be one the investigator meets all prerequisites for.\n\nSince plans rarely survive contact with a changing situation, the investigator and her allies retain use of the feat for only 2 rounds per investigator level. \n\nThe investigator may use this ability once per day, +1 once/day per 3 investigator levels." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="Level" priority="10000">var hp as number
+      hp = 0 + (herofield[tLevel].value / 3)
+      hp = round(hp, 0, -1)
+
+      ~ Add to our total charges.
+      field[trkMax].value += hp</eval>
+    </thing>
+  <thing id="cMPSGGCoor" name="Coordinate" description="The investigator is able to analyze the actions of friend and foe alike, and coordinate the efforts of her allies to maximize their potential.\n\nAs a standard action, the investigator may aid another for all allies within 30 feet who are able to see and hear her. \n\nRather than make a melee attack, the investigator makes a special level check (1d20 + investigator level + Wisdom modifier) against a DC of 10 +1 per ally to be aided." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    </thing>
+  <thing id="cMPSGGCntM" name="Countering Maneuver" description="Whenever a foe fails a CMB check against the investigator, or rolls a natural 1 (1 shows on the d20) on a melee attack against the investigator they may, as an immediate action, make a CMB check with a +4 bonus against the foe. \n\nThe investigator can analyze an attack made against them, and capitalize on any flaw in its execution. \n\nThis check does not provoke attacks of opportunity, and if successful the investigator may choose to disarm the attacker or knock it prone." compset="CustomSpec" summary="Retaliate against failed CMB checks or critically failed attacks" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="SpecSource" tag="cHelpInv"/>
+    <eval phase="Final" priority="20000"><![CDATA[#situational[hero.childfound[manDisarm], "+4 Disarm / Trip Bonus when retaliating against a foe's failed check.", field[thingname].text]
+
+hero.childfound[manDisarm].field[manCMB].value += 4
+hero.childfound[manTrip].field[manCMB].value += 4]]></eval>
+    </thing>
+  <thing id="cMPSGGCSAn" name="Crime Scene Analysis" description="The investigator can get a feel for what sort of intelligence committed a crime (or other specific act that leaves behind evidence, such as who set up an abandoned camp, or sewed together a flesh golem, or created a specific forgery, or performed a blood ritual) by careful examination of the scene of the action and interviews with witnesses and locals. \n\nThis allows the investigator to make a Sense Motive roll (the GM should make the check in private) to learn things about whoever committed the deed being investigated.\n\nThe investigator must study the site of a deed for 1d6 x 10 minutes before a check can be made.\n\nThe DC of the Sense Motive check is 10 + the CR of the perpetrator (or of the highest-level perpetrator for deeds committed by a group). A successful check allows the investigator to determine the number of perpetrators, and the creature type of the highest- CR member." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="SpecSource" tag="arRogInves"/>
+    </thing>
+  <thing id="cMPSGGEnyK" name="Encyclopedic Knowledge" description="The investigator has a vast store of knowledge, which she is constantly expanding and refining. She gains a bonus to all Knowledge checks equal to half her investigator level." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="arRogInves"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~our bonus is level /2
+      var bonus as number
+      foreach pick in hero from BaseSkill where "Helper.SkCatKnow"
+      bonus = field[xTotalLev].value / 2
+      eachpick.field[Bonus].value += maximum(round(bonus,0,-1),1)
+      perform eachpick.delete[Helper.TrainOnly]
+      nexteach]]></eval>
+    <eval phase="PostLevel" priority="5000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~our bonus is level /2, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 2
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+      field[abSumm].text = "Your Encyclopedic Knowledge Bonus is +" & field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGExpe" name="Expert" description="A number of times per day equal to 3 + their Int modifier, the investigator may roll two d20s when making a skill check, using the best value of the two dice to determine their check’s result.\n\nHowever, the investigator may only use this ability with those skills they gains a bonus to from a feat or ability; such as Skill Focus or Deceitful.\n\nThe investigator’s keen mind and analytical skills allow them to become a great expert in any field to which they particularly apply themselves, enabling them to outperform even those with the same amount of knowledge and training they possess." compset="CustomSpec" summary="Roll two D20s when making a skill check with a focused skill" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ChargeAttr" tag="aINT"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ChargeCalc" tag="AttrUses3"/>
+    <tag group="SpecSource" tag="cHelpInv"/>
+    </thing>
+  <thing id="cMPSGGFlEv" name="Follow the Evidence" description="The investigator can use evidence to form theories about where further evidence can be gained, even when she cannot yet solve a mystery. \n\nOnce per day, the investigator can attempt to determine where further information that helps answer a specific question (such as “Who killed guardsman Maillot Pej?” or “How can the Wraith Queen be killed?” or “How did Professor Abitazione contract Rune Peak Spotted Fever?”) can be found. \n\nThe base chance for this is 70%, +1% per class level, to a maximum of 90%. The GM should make this check in secret. On a successful check, the GM reveals a location likely to lead to more clues or hints that could help answer the question (such as the scene of another crime committed by the same perpetrator, or the ancient crypt where moldering scrolls hold secret lore). \n\nIf not such location exists, or the check is not successful, the investigator cannot come up with any potentially useful location to visit." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    </thing>
+  <thing id="cMPSGGFlTh" name="Follow Through" description="The investigator can use her understanding of leverage and anatomy to leave targets of her combat maneuvers disoriented and vulnerable to melee attacks.\n\nWhenever she makes a successful CMB check to perform a combat maneuver on a foe, she gains a +4 circumstance bonus on the next melee attack roll she makes against the opponent.\n\nThis attack must occur before the end of her next turn, and cannot itself be a CMB check." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="SpecSource" tag="arRogInves"/>
+    </thing>
+  <thing id="cMPSGGFore" name="Forethought" description="The investigator has carefully planned ahead for many eventualities lesser minds would not consider.\n\nOnce per day, she may reroll any one die roll. The decision to reroll must be made before the success or failure of a roll has been revealed, and the investigator must abide by the results of the reroll even if they are worse than the original. \n\nAt 8th level the investigator may reroll twice per day, and at 16th level three times per day." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="Level" priority="10000">var hp as number
+      hp = 0 + (herofield[tLevel].value / 8)
+      hp = round(hp, 0, -1)
+
+      ~ Add to our total charges.
+      field[trkMax].value += hp</eval>
+    </thing>
+  <thing id="cMPSSGImpA" name="Improved Aid" description="The investigator can use her quick wits to grant greater help to allies. \n\nWhen attempting to aid another, if the investigator makes a DC 20 check or hits an AC of 20 (rather than the normal DC 10 or AC of 10), her aid another bonus increases by +1. \n\nFor every 10 higher her check or attack roll is (DC/ AC 30, 40, 50, and so on), her aid another bonus increases by another +1." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arRogInves"/>
+    </thing>
+  <thing id="cMPSGGIrre" name="Irregulars" description="The investigator has forged a network of informants and aids from an eclectic and often overlooked group of bartenders, beggars, guards, merchants, porters, and serfs. \n\nThis acts as the Leadership feat, but the investigator adds half her class level to her Leadership score, and receives only followers (not a cohort).\n\nAlternatively (for campaigns that do not allow the Leadership feat), the investigator receives a bonus equal to half her level on Diplomacy checks made to gather information, and may make such checks in 1/6th the normal time (1d4 x 10 minutes)." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="HasAbility" tag="fLeader"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~our bonus is level /2, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 2
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+      field[abSumm].text = "Your Irregulars Bonus is +" & field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGLtFl" name="Litany of Faults" description="The investigator can outline all the shortcomings and weaknesses of creatures in such a way as to drain their selfconfidence.\n\nThe investigator may demoralize foes able to hear and understand her with an appropriate Knowledge check, rather than an Intimidate. Additionally, the demoralize attempt may apply to all foes of the same creature type and subtype within 60 feet." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGMtLn" name="Master Linguist" description="The investigator is a master linguist, analyst, and codebreaker, able to analyze all forms of communication to determine their meaning. \n\nThe investigator gains a bonus to all Linguistics checks equal to half her level.\n\nAdditionally, whenever she encounters a spoken language she does not know, she may make a Linguistics check to glean enough meaning to ascertain the basic message, using the same DCs as when making a Linguistics check to decipher writing. The investigator may also make herself understood in spoken and written form by creatures who do not share a common language with her by making a Linguistics check with the same DC." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="arRogInves"/>
+    <eval phase="PostLevel" priority="5000"><![CDATA[      field[abValue].value += round(#totallevelcount[]/2,0,-1)
+
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+
+      #skillbonus[skLinguist] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGICTN" name="Cross Training: None" description="You do not have to take a cross training talent. You gain back you class talent." compset="CustomSpec" uniqueness="unique">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <eval phase="Level" priority="10000">hero.childfound[cHelpMdH].field[cGiveSpec].value += 1</eval>
+    </thing>
+  <thing id="cMPSGGMtoD" name="Master of Disguise" description="The investigator has learned to maximize the value of a few elements to create a convincing disguise, and to apply such elements quickly without sacrificing quality.\n\nThe investigator can don a disguise in 1/10th the normal time (1d3 minutes), and takes no penalty for attempting disguises to appear to be of a different gender, race, or age (though she suffers normal penalties if disguising herself as a different size category)." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGMeti" name="Meticulous" description="The investigator may add their Int modifier, rather than their Dex modifier, to any Dexterity based skill check. Additionally, whenever the investigator takes 10 on a skill check, they gain a +2 bonus to the total result.\n\nConsidering the best possible avenue for any movement or physical action she takes, the investigator uses her considerable mental acumen to plot a course of action that compensates for any lack of speed or agility on their part." compset="CustomSpec" summary="Use intelligence instead of dexterity on skill checks. +2 when taking 10" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="cHelpInv"/>
+    <eval phase="First">perform hero.child[skAcrobat].assign[SkillOver.aINT]
+perform hero.child[skDisable].assign[SkillOver.aINT]
+perform hero.child[skEscape].assign[SkillOver.aINT]
+perform hero.child[skFly].assign[SkillOver.aINT]
+perform hero.child[skRide].assign[SkillOver.aINT]
+perform hero.child[skSleight].assign[SkillOver.aINT]
+perform hero.child[skStealth].assign[SkillOver.aINT]</eval>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[field[livename].text = field[thingname].text & " (+2 when taking 10)"]]></eval>
+    <eval phase="First" index="3"></eval>
+    </thing>
+  <thing id="cMPSGGNfTr" name="Nose for Trouble" description="When facing an apparently harmless or safe situation or locale, the investigator can combine her precise observations about behavior and the environment with extensive experience in dangerous situations and keen instincts to sniff out a potential hidden risk. \n\nThe investigator may make a Sense Motive check with a +10 bonus as a full-round action. If there is a hidden threat with a specific DC concealing it (such as the DC to discover a trap, or the Bluff check of a secret assassin, or the Disguise check of a concealed hag) the check uses that DC. \n\nFailing such specific efforts to actively conceal a threat, the check has a DC of 20. The check is made in secret by the GM.\n\nOn a successful check, if there is a threat present (based on the GM’s best guess relating to the circumstances), the investigator gets a hunch that some hidden danger lurks nearby or things are not as they seem. \n\nThis ability does not allow the investigator to pinpoint a specific threat (though further investigation may do so), but instead gives a vague sense that something is wrong. \n\nThe investigator may use this ability once per day, +1/ day per 2 class levels." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ChargeCalc" tag="LevelHalf"/>
+    <tag group="ChargeCalc" tag="LevelX1"/>
+    <tag group="User" tag="Tracker"/>
+    </thing>
+  <thing id="cMPSGGPySc" name="Psychology and Sociology" description="The investigator has studied the workings of the conscious and subconscious mind, and can use that understanding to craft plans of negotiation and trust with others (even magical entities and items), rather than depend on her natural social grace. \n\nShe may add her Int modifier, rather than her Cha modifier, to any Charisma-based skill check. Additionally, her comprehension of her own mental reactions to stimulus gives her a +1 bonus to all Will saves." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="First" index="2">perform hero.child[skBluff].assign[SkillOver.aINT]
+perform hero.child[skDiplo].assign[SkillOver.aINT]
+perform hero.child[skDisguise].assign[SkillOver.aINT]
+perform hero.child[skHandleAn].assign[SkillOver.aINT]
+perform hero.child[skIntim].assign[SkillOver.aINT]
+perform hero.child[skUseMagic].assign[SkillOver.aINT]
+perform hero.child[skPerfAct].assign[SkillOver.aINT]
+perform hero.child[skPerfCom].assign[SkillOver.aINT]
+perform hero.child[skPerfDanc].assign[SkillOver.aINT]
+perform hero.child[skPerfKey].assign[SkillOver.aINT]
+perform hero.child[skPerfOrat].assign[SkillOver.aINT]
+perform hero.child[skPerfOth].assign[SkillOver.aINT]
+perform hero.child[skPerfPerc].assign[SkillOver.aINT]
+perform hero.child[skPerfSing].assign[SkillOver.aINT]
+perform hero.child[skMHStdUp].assign[SkillOver.aINT]
+perform hero.child[skPerfStr].assign[SkillOver.aINT]
+perform hero.child[skMHVisArt].assign[SkillOver.aINT]
+perform hero.child[skPerfWind].assign[SkillOver.aINT]
+perform hero.child[skMHWritin].assign[SkillOver.aINT]</eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      hero.child[svWill].field[Bonus].value += 1]]></eval>
+    </thing>
+  <thing id="cMPSGGStAt" name="Studied Attacks" description="An investigator may use her vast knowledge of creatures, as well as her understanding of her own capabilities, to plan attacks to be most effective against specific foes. \n\nAs a standard action, the investigator may make an appropriate Knowledge check against a creature with a DC of 15 + the creature&apos;s CR. If she succeeds, she may grant herself a circumstance bonus of +1/4 levels to hp damage she deals to the creature with any attack she makes that normally deals hp damage. \n\nIf facing multiple creatures of the same type who have identical defenses, this bonus applies against all of them. \n\nThe bonus lasts for 1 round/ investigator level. The investigator cannot benefit from this ability against more than one foe (or set of identical foes) at a time." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="HasAbility" tag="fLeader"/>
+    <tag group="Usage" tag="Round"/>
+    <tag group="ChargeCalc" tag="LevelFull"/>
+    <tag group="ChargeCalc" tag="LevelX1"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~our bonus is level /4, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 4
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+      field[abSumm].text = "Your Studied Attacks Bonus is +" & field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGStDf" name="Studied Defense" description="An  investigator  may use her vast knowledge of creatures, as well as her understanding of battlefield effects and the fog  or  war,  to  recommend  defensive  stances against  specific  foes.  \n\nAs a standard action, the investigator may make an appropriate Knowledge check against a creature with a DC of 15 + the creature&apos;s CR. If she succeeds, she  may  grant  herself  or one adjacent ally a circumstance bonus of +1/5 levels to AC against the creature&apos;s attacks. (A creature that is denied its Dex modifier to AC is denied this bonus as well.) \n\nIf facing multiple creatures of the same type who have identical attacks, this bonus applies against all of them. \n\nThe bonus lasts for 1 round / 2 investigator levels. A creature cannot benefit from this ability against more than one foe (or set of identical foes) at a time." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ChargeCalc" tag="LevelHalf"/>
+    <tag group="ChargeCalc" tag="LevelX1"/>
+    <tag group="Usage" tag="Round"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~our bonus is level /5, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 5
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+      field[abSumm].text = "Your Studied Defense Bonus is +" & field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGStRs" name="Studied Resistance" description="An investigator may use her vast knowledge of creatures, as well as her understanding of cause and effect, to offset the powers and abilities of her foes.\n\nAs a standard action, the investigator may make an appropriate Knowledge check against a creature with a DC of 10 + the creature&apos;s  CR.  \nIf she succeeds, she may grant herself or one adjacent ally a circumstance bonus of +1/4 levels on all saving throws against the creature&apos;s abilities. \n(A creature that is denied its Dex modifier to AC is denied this bonus as well.) \n\nIf facing multiple creatures of the same type who have identical abilities, this bonus applies against all of them.\n\nThe bonus lasts for 1 round / investigator level. A creature cannot benefit from this ability against more than one foe (or set of identical foes) at a time." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ChargeCalc" tag="LevelX1"/>
+    <tag group="Usage" tag="Round"/>
+    <tag group="ChargeCalc" tag="LevelFull"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~our bonus is level /4, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 4
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+      field[abSumm].text = "Your Studied Resistance Bonus is +" & field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGSpAp" name="Surprising Aptitude" description="The investigator gains a bonus feat. The investigator need not meet all the prerequisites for the feat, and it must be selected from the following list: \n\nBreadth of Experience, Combat Expertise, Deadly Aim, Dodge, Drag Down, Extra Rogue Talent, Go Unnoticed, Landing Roll, Nimble Moves, Quick Draw, Step Up, Two-Weapon Fighting.\n\nUnlike the Trained Mind talent, an investigator may not take Surprising Aptitude more than once." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="fInclude" tag="fMPSGGBTEx"/>
+    <tag group="fInclude" tag="fMPSGGCTEx"/>
+    <tag group="fInclude" tag="fMPSGGDlyA"/>
+    <tag group="fInclude" tag="fMPSGGDodg"/>
+    <tag group="fInclude" tag="fMPSGGDgDw"/>
+    <tag group="fInclude" tag="fMPSGGExRg"/>
+    <tag group="fInclude" tag="fMPSGGGoUn"/>
+    <tag group="fInclude" tag="fMPSGGLnRl"/>
+    <tag group="fInclude" tag="fMPSGGNbMv"/>
+    <tag group="fInclude" tag="fMPSGGQkDw"/>
+    <tag group="fInclude" tag="fMPSGGStpU"/>
+    <tag group="fInclude" tag="fMPSGGTWF"/>
+    <eval phase="Level" priority="10000">hero.childfound[cHelpMdH].field[cBonFtMax].value += 1</eval>
+    </thing>
+  <thing id="fMPSGGBTEx" name="Breadth of Experience" description="{b}Benefit{/b}: You get a +2 bonus on all Knowledge and Profession skill checks, and can make checks with those skills untrained." compset="Feat" uniqueness="useronce">
+    <usesource source="MPRGGAnac"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fBrExper"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      
+      foreach pick in hero from BaseSkill where "Helper.SkCatKnow | Helper.SkCatProf"
+        eachpick.field[Bonus].value += 2
+        perform eachpick.delete[Helper.TrainOnly]
+        nexteach]]></eval>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGCTEx" name="Combat Expertise" description="You can increase your defense at the expense of your accuracy.\n\n{b}Benefit{/b}: You can choose to take a –1 penalty on melee attack rolls and combat maneuver checks to gain a +1 dodge bonus to your Armor Class. When your base attack bonus reaches +4, and every +4 thereafter, the penalty increases by –1 and the dodge bonus increases by +1. You can only choose to use this feat when you declare that you are making an attack or a full-attack action with a melee weapon. The effects of this feat last until your next turn." compset="Feat" summary="Bonus to AC in exchange for an equal penalty to attack." uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fComExpert"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      
+      ~For most characters, the attack penalty and dodge bonus are equal. The Aldori Swordlord prestige class's Adaptive Tactics ability
+      ~offsets part of the attack penalty, so now they're in separate fields so they can be modified separately.
+      var bonus as number
+      bonus = hero.child[Attack].field[tAtkBase].value / 4
+      bonus = round(bonus,0,-1) + 1
+      field[abValue].value += bonus
+      field[abValue2].value += bonus
+      
+      ~Further modification for the Aldori Swordlord prestige class; the values will be displayed as split values if they're different.
+      if (field[abValue].value <> field[abValue2].value) then
+        field[livename].text = "Combat Expertise -" & field[abValue].value & "/+" & field[abValue2].value
+      else
+        field[livename].text = "Combat Expertise +/-" & field[abValue].value
+        endif
+
+      if (field[abilActive].value <> 0) then
+        hero.child[ArmorClass].field[tACDodge].value += field[abValue2].value
+        hero.child[Attack].field[tAtkMelee].value -= field[abValue].value
+        endif]]></eval>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGDlyA" name="Deadly Aim" description="You can make exceptionally deadly ranged attacks by pinpointing a foe&apos;s weak spot, at the expense of making the attack less likely to succeed.\n\n{b}Benefit{/b}: You can choose to take a –1 penalty on all ranged attack rolls to gain a +2 bonus on all ranged damage rolls. When your base attack bonus reaches +4, and every +4 thereafter, the penalty increases by –1 and the bonus to damage increases by +2. You must choose to use this feat before making an attack roll and its effects last until your next turn. The bonus damage does not apply to touch attacks or effects that do not deal hit point damage." compset="Feat" summary="Trade a penalty to ranged attacks for a bonus to ranged damage." uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fDeadAim"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      var bonus as number
+      bonus = hero.child[Attack].field[tAtkBase].value / 4
+      field[abValue].value += round(bonus,0,-1) + 1
+
+      field[abValue2].value += field[abValue].value * 2
+
+      field[livename].text = "Deadly Aim -" & field[abValue].value & "/+" & field[abValue2].value
+
+      if (field[abilActive].value <> 0) then
+        hero.child[Attack].field[tAtkRanged].value -= field[abValue].value
+
+        foreach pick in hero from BaseWep where "wCategory.Range?"
+          eachpick.field[wDamBonus].value += field[abValue2].value
+          nexteach
+        endif]]></eval>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGDodg" name="Dodge" description="Your training and reflexes allow you to react swiftly to avoid an opponents&apos; attacks.\n\n{b}Benefit{/b}: You gain a +1 dodge bonus to your AC. A condition that makes you lose your Dex bonus to AC also makes you lose the benefits of this feat." compset="Feat" summary="+1 AC." uniqueness="useronce">
+    <tag group="Helper" tag="AnimCompOK" name="AnimCompOK" abbrev="AnimCompOK"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fDodge"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~don't proceed if we're disabled
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      hero.child[ArmorClass].field[tACDodge].value += 1]]></eval>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGDgDw" name="Drag Down" description="{b}Benefit{/b}: Whenever an opponent successfully trips you, you can attempt to trip that opponent as an immediate action." compset="Feat" uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fDragDown"/>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGExRg" name="Extra Rogue Talent" description="{b}Benefit{/b}: You gain one additional rogue talent. You must meet all of the prerequisites for this rogue talent." compset="Feat" uniqueness="useronce">
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fExRogueTa"/>
+    <eval phase="PostLevel" priority="500" index="2"><![CDATA[~we'll use the tertiary abilities slot for these
+
+linkage[table].field[cSpec3rdSi].text = "Rouge Training"]]></eval>
+    <eval phase="Final" priority="999999999999999999999" index="3"><![CDATA[linkage[table].field[cCstS3Expr].text = "(SpecSource.cHelpRog) & !Helper.Secondary & !Helper.Tertiary"]]></eval>
+    <eval phase="Level" priority="10000">hero.childfound[cHelpMdH].field[cGiveSp3rd].value += 1</eval>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGGoUn" name="Go Unnoticed" description="{b}Benefit{/b}: During the first round of combat, flat-footed opponents are considered not to have noticed you yet for the purposes of Stealth skill checks, allowing you to make a Stealth check that round to hide from them." compset="Feat" uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fGoUnnotic"/>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGLnRl" name="Landing Roll" description="You have learned the technique of rolling safely away when an enemy trips you.\n\n{b}Benefit{/b}: If you are tripped, you can spend an immediate action to move 5 feet without provoking an attack of opportunity. This does not count as taking a 5-foot step. You fall prone after this movement." compset="Feat" summary="If tripped, move 5 feet as an immediate action" uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fLandiRoll"/>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGNbMv" name="Nimble Moves" description="You can move across a single obstacle with ease.\n\n{b}Benefit{/b}: Whenever you move, you may move through 5 feet of difficult terrain each round as if it were normal terrain. This feat allows you to take a 5-foot step into difficult terrain." compset="Feat" summary="Move through 5&apos; of difficult terrain/round as if it was normal terrain." uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="HasFeat" tag="fNimbMove"/>
+    <tag group="fCategory" tag="Special"/>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGQkDw" name="Quick Draw" description="You can draw weapons faster than most.\n\n{b}Benefit{/b}: You can draw a weapon as a free action instead of as a move action. You can draw a hidden weapon (see the Sleight of Hand skill) as a move action.\n\nA character who has selected this feat may throw weapons at his full normal rate of attacks (much like a character with a bow).\n\nAlchemical items, potions, scrolls, and wands cannot be drawn quickly using this feat.\n\n{b}Normal{/b}: Without this feat, you may draw a weapon as a move action, or (if your base attack bonus is +1 or higher) as a free action as part of movement. Without this feat, you can draw a hidden weapon as a standard action." compset="Feat" summary="Draw weapon as a free action (or move if hidden weapon). Throw at full rate of attacks." uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fQuickDraw"/>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGStpU" name="Step Up" description="You can close the distance when a foe tries to move away.\n\n{b}Benefit{/b}: Whenever an adjacent foe attempts to take a 5-foot step away from you, you may also make a 5-foot step as an immediate action so long as you end up adjacent to the foe that triggered this ability. If you take this step, you cannot take a 5-foot step during your next turn. If you take an action to move during your next turn, subtract 5 feet from your total movement." compset="Feat" summary="When a foe makes a 5 ft step away from you, you can move 5 ft to follow them." uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fStepUp"/>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="fMPSGGTWF" name="Two-weapon Fighting" description="You can fight with a weapon wielded in each of your hands. You can make one extra attack each round with the secondary weapon.\n\n{b}Benefit{/b}: Your penalties on attack rolls for fighting with two weapons are reduced. The penalty for your primary hand lessens by 2 and the one for your off hand lessens by 6. See Two-Weapon Fighting in Combat.\n\n{b}Normal{/b}: If you wield a second weapon in your off hand, you can get one extra attack per round with that weapon. When fighting in this way you suffer a –6 penalty with your regular attack or attacks with your primary hand and a –10 penalty to the attack with your off hand. If your off-hand weapon is light, the penalties are reduced by 2 each. An unarmed strike is always considered light." compset="Feat" summary="Your penalties on attack rolls for fighting with two weapons are reduced. The penalty for your primary hand lessens by 2 and the one for your off hand lessens by 6." uniqueness="useronce">
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fTwoWep"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      perform hero.assign[Hero.TwoWep]]]></eval>
+    <pickreq thing="cMPSGGSpAp"/>
+    </thing>
+  <thing id="cMPSGGTrMd" name="Trained Mind" description="The investigator gains a bonus feat. The investigator must meet all the prerequisites for the feat, and it must be selected from the following list: \n\nAdditional Traits, Agile Maneuvers, Alertness,  Amateur  Gunslinger, Animal Affinity, Armor Proficiency (any), Betrayer, Blind-Fight, Catch Off-Guard, Cosmopolitan, Deceitful,  Defensive  Combat Training, Deft Hands, Disposable Weapon, Exotic Weapon Proficiency, Field Repair, Flanking Foil, Fleet, Improved Initiative, Iron Will, Leadership, Master Craftsman, Persuasive, Point-Blank Shot, Prodigy, Rapid Reload, Run, Self-Sufficient, Skill Focus, Skilled Driver, Stealthy, Throw Anything, Weapon Finesse.\n\nThis talent may be selected more than once. Each time it grants the investigator a different bonus feat." compset="CustomSpec">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="fInclude" tag="fAddTrait"/>
+    <tag group="fInclude" tag="fAlertness"/>
+    <tag group="fInclude" tag="fAmateuGun"/>
+    <tag group="fInclude" tag="fAnimAff"/>
+    <tag group="fInclude" tag="fArmHeavy"/>
+    <tag group="fInclude" tag="fArmLight"/>
+    <tag group="fInclude" tag="fArmMedium"/>
+    <tag group="fInclude" tag="fBetrayer"/>
+    <tag group="fInclude" tag="fBlindFgt"/>
+    <tag group="fInclude" tag="fCatchOff"/>
+    <tag group="fInclude" tag="fCosmopoli"/>
+    <tag group="fInclude" tag="fDeceit"/>
+    <tag group="fInclude" tag="fDefCom"/>
+    <tag group="fInclude" tag="fDeftHands"/>
+    <tag group="fInclude" tag="fDispoWeap"/>
+    <tag group="fInclude" tag="fExoticWep"/>
+    <tag group="fInclude" tag="fFieldRepa"/>
+    <tag group="fInclude" tag="fFlankFoil"/>
+    <tag group="fInclude" tag="fFleet"/>
+    <tag group="fInclude" tag="fImpInit"/>
+    <tag group="fInclude" tag="fIronWill"/>
+    <tag group="fInclude" tag="fLeader"/>
+    <tag group="fInclude" tag="fMasCraft"/>
+    <tag group="fInclude" tag="fPersuas"/>
+    <tag group="fInclude" tag="fPointBlnk"/>
+    <tag group="fInclude" tag="fRapidRel"/>
+    <tag group="fInclude" tag="fRun"/>
+    <tag group="fInclude" tag="fSelfSuff"/>
+    <tag group="fInclude" tag="fSkillFoc"/>
+    <tag group="fInclude" tag="fSkillDriv"/>
+    <tag group="fInclude" tag="fStealthy"/>
+    <tag group="fInclude" tag="fThrowAny"/>
+    <tag group="fInclude" tag="fWepFin"/>
+    <eval phase="UserFirst" priority="10000">hero.childfound[cHelpMdH].field[cBonFtMax].value += 1</eval>
+    </thing>
+  <thing id="cMPSGGTrMk" name="Trap Maker" description="The investigator has learned to design and create complex traps to injure or capture their foes. The investigator may select one ranger trap, +1 ranger trap per 4 levels, and gains the ability to create the selected traps. \n\nThey may make extraordinary traps, but the DC of these traps is not reduced. The investigator treats their class level as ranger levels for all calculations regarding these traps, and may use their Int modifier in place of their Wis mod for all such calculations. The investigator may use ranger traps a number of times per day equal to 1/2 their class level plus their Int bonus. \n\nAn investigator must have the trapfinding talent to select this talent. For more information on ranger traps, see the Ranger Trapper Archtype in Ultimate Magic.\n\n(http://www.d20pfsrd.com/classes/core-classes/ranger/archetypes/paizo---ranger-archetypes/trapper/ranger-traps)" compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ChargeCalc" tag="AttrUses1"/>
+    <tag group="ChargeCalc" tag="LevelHalf"/>
+    <tag group="ChargeAttr" tag="aINT"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="SpecSource" tag="arRogInves"/>
+    <tag group="SpecSource" tag="cHelpInv"/>
+    <tag group="User" tag="NeedDomain"/>
+    <eval phase="PostLevel" priority="5000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~our bonus is level /4, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 4
+      field[abValue].value += round(bonus,0,-1) + 1
+      field[livename].text = field[thingname].text & " (" & field[abValue].value & " Ranger Traps)"
+      field[abSumm].text = "Select " & field[abValue].value & " Ranger Traps"]]></eval>
+    <pickreq thing="cMHTrapFid"/>
+    </thing>
+  <thing id="cMPSGGTrSp" name="Trap Spotter" description="Whenever the investigator comes within 10 feet of a trap, they receives an immediate Perception skill check to notice the trap. This check should be made in secret by the host.\n\nAn investigator must have the trapfinding talent to select this talent." compset="CustomSpec" summary="Automatic Perception check within 10 feet of a trap" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arRogInves"/>
+    <tag group="SpecSource" tag="cHelpInv"/>
+    <tag group="SpecSource" tag="arMPCHInfi"/>
+    <eval phase="Final" priority="20000"><![CDATA[      #situational[hero.child[skPercep], "Automatically has a chance to locate traps within 10 feet.", field[thingname].text]]]></eval>
+    <exprreq message="Trap Finding required"><![CDATA[#hasability[cMPSGGTrpf] + #hasability[cMHTrapFid] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMPSGGTrpf" name="Trapfinding" description="The investigator adds 1/2 her level to Perception skill checks made to locate traps and to Disable Device skill checks (minimum +1). \n\nThe investigator can use Disable Device to disarm magic traps, and treats her investigator levels as rogue levels for purposes of what traps she can locate and potentially disarm." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arMPCHInfi"/>
+    <eval phase="Final" priority="20000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~our bonus is level /2, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 2
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+
+      #situational[hero.child[skPercep], signed(field[abValue].value) & " bonus to locating traps.", field[thingname].text]
+
+      #situational[hero.child[skDisable], signed(field[abValue].value) & " bonus to disabling traps.", field[thingname].text]
+
+      field[abSumm].text = "Your Trap Finding and Disable Device Bonus is +" & field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGUnfl" name="Unflappable" description="The investigator considers and prepares for all eventualities. The investigator is not flat-footed during a surprise round, and can take a move action or swift action in surprise rounds when they fail to make a Perception check.\n\nNormal: The Investigator would not normally be allowed to take any action." compset="CustomSpec" summary="Not flat-footed during a surprise round and take a move or swift action" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="cHelpInv"/>
+    <eval phase="Final" priority="20000"><![CDATA[#situational[hero.child[ArmorClass], "Take a move or swift action during any surprise round. You are not flat-footed when surprised.", field[thingname].text]]]></eval>
+    </thing>
+  <thing id="cMPSGGUltD" name="Advanced Training - Ultimate Deduction" description="The ability of the investigator to put together apparently unrelated clues, her vast catalog of information, the behavior of people, places, and things she has observed, and come to a conclusion that appears magical to those less trained in analysis than  the  investigator  herself.  \n\nUsing ultimate deduction is a free action the investigator may take only once per round, and she may do it a number of times per day equal to half her class level.\n\nThis acts as a single question from a commune spell (no material component or casting time required), except as an extraordinary ability it is limited to information a mortal could conceivably know or deduce (though it is not limited to knowledge a mortal could reasonably acquire  --  only  information it is  impossible for any mortal anywhere to know is beyond the reach of the ultimate deduction), and is not subject to spells or effects that block divination magic. \n\nWhen the investigator expends one use of his ultimate deduction ability, she may alternately decide to use it to take 20 on a Knowledge skill check, rather than use its normal commune-like ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="D20Arcana"/>
+    <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
+    <tag group="SpecSource" tag="arMHInvest" name="Investigator" abbrev="Investigator"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ChargeCalc" tag="LevelHalf"/>
+    <tag group="ChargeCalc" tag="LevelX1"/>
+    <pickreq thing="arMHInvest"/>
+    <exprreq message="Character level 6th required"><![CDATA[#totallevelcount[] >= 6]]></exprreq>
+    </thing>
+  <thing id="cMPSGGCnTh" name="Conspiracy Theory" description="Whenever the great detective makes a Sense Motive check to use the Crime Scene Analysis talent, he may also make a second check. \n\nIf the event being investigated was ordered by a creature not actually present at the act, or if the perpetrators answer to a crime lord of thieves’ guild, a successful check against a DC of 15 + the CR of the ultimate head of this crime ring allows the great detective to identify one new fact about the boss or crime ring giving orders to the perpetrators." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGGDe"/>
+    </thing>
+  <thing id="cMPSGGStdP" name="Study of Progress" description="The need for a great detective to be familiar with a broad range of potential murder weapons and obscure tools encourages them to study the methods and norms of eras of history prior to their own. A great detective begins play familiar with one progress level lower than his own background’s progress level." compset="ClSpecial">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    </thing>
+  <thing id="cMPSGGProf" name="Profile" description="At 1st level a great detective gains the Crime Scene Analysis investigator talent as a bonus talent, and receives a bonus to Sense Motive checks made with the talent equal to half his class level (minimum +1). \n\nAdditionally the great detective can use this talent as a full-round action, rather than requiring the normal 1d6 x 10 minutes." compset="ClSpecial">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <eval phase="PostLevel" priority="5000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~our bonus is level /2, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 2
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+      field[abSumm].text = "Your Profile Bonus is +" & field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGRpTl" name="Replace Talent" description="This replaces the Modern Hero class 1st level talent for an &quot;Profile&quot; for the Great Detective." compset="ClSpecial">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+hero.childfound[cHelpMdH].field[cGiveSpec].value -= 1]]></eval>
+    </thing>
+  <thing id="cMPSGGCSAl" name="Crime Scene Analysis" description="The investigator can get a feel for what sort of intelligence committed a crime (or other specific act that leaves behind evidence, such as who set up an abandoned camp, or sewed together a flesh golem, or created a specific forgery, or performed a blood ritual) by careful examination of the scene of the action and interviews with witnesses and locals. \n\nThis allows the investigator to make a Sense Motive roll (the GM should make the check in private) to learn things about whoever committed the deed being investigated.\n\nThe investigator must study the site of a deed for 1d6 x 10 minutes before a check can be made.\n\nThe DC of the Sense Motive check is 10 + the CR of the perpetrator (or of the highest-level perpetrator for deeds committed by a group). A successful check allows the investigator to determine the number of perpetrators, and the creature type of the highest- CR member." compset="ClSpecial">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    </thing>
+  <thing id="cMPSGGGDRT" name="Replace Training" description="This replaces the 2nd level &quot;archetype training&quot; for 1st level &quot;Crime Scene Analysis&quot;." compset="ClSpecial">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+hero.childfound[cHelpMdH].field[cGiveSp2nd].value -= 1]]></eval>
+    </thing>
+  <thing id="cMPSGGCtTr" name="Contemplative Trance" description="The great detective can, once per day, spend a 1d6 x 10 minutes in uninterrupted meditation to allow her mind to sort through the clues and facts she has gathered and look for patterns and connections not visible to the conscious mind. \n\nThe contemplative trance acts as a divination with 90% effectiveness. As an extraordinary ability, the contemplative trance is limited to information a mortal could conceivably know or deduce (though it is not limited to knowledge a mortal could reasonably acquire -- only information it is impossible for any mortal anywhere to know is beyond the reach of the ultimate deduction), and is not subject to spells or effects that block divination magic." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGGDe"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="Tracker"/>
+    </thing>
+  <thing id="cMPSGGIYHd" name="In Your Head" description="When the great detective is tracking down a perpetrator, he comes to understand his foe&apos;s actions and motivations so well that he gains bonuses when opposing the perpetrator. \n\nOnce a great detective has made a successful Sense Motive check to use the Crime Scene Analysis talent against a perpetrator, he treats that perpetrator as if it was a favored enemy (as the ranger class), using the great detective&apos;s class level as his ranger level. The great detective can only be in the head of a single creature at a time. If he successfully uses Crime Scene Analysis  against  a  second  perpetrator, he must decide whether to retain his previous foe as a favored enemy, or switch to the new perpetrator." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGGDe"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGManh" name="Manhunt" description="The investigator can track down suspects in urban environments, similarly to how rangers track beasts in the wild. To find the trail of an individual or to follow it for 1 hour requires a Perception check, or a Diplomacy check to gather information. The investigator must make another check for every hour of the search, as well as each time the trail becomes difficult to follow, such as when it moves to a different area of town.\n\nThe DC of the check, and the number of checks required to track down the quarry, depends on the community population and the conditions:\n\nIf you fail a manhunt check, you can retry after 1 hour of questioning. The GM rolls the number of checks required secretly, so the player doesn&apos;t know exactly how long the task requires." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGGDe"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGTGAf" name="The Game is Afoot" description="As the great detective hunts his prey, he manages to piece together information with repeated exposure to a perpetrator&apos;s work from facts that, on their own, would mean nothing. \n\nWhen using Crime Scene Analysis, the great detective always learns at least 1 new piece of useful information about the perpetrator with a successful Sense Motive check, even if he does not exceed the normal DC by 5." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGGDe"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGTrEa" name="Truth Ear" description="The great detective develops the ability to gauge whether another character is telling the truth by reading facial expressions and interpreting body language. The great detective must be able to observe (see and hear but not necessarily understand) the individual for one minute. \n\nWith a successful Sense Motive check opposed by the subject&apos;s Bluff check result or against DC 15 (whichever is greater), the great detective can tell whether the subject is deliberately and knowingly speaking a lie. This ability doesn&apos;t reveal the truth, uncover unintentional inaccuracies, or necessarily reveal omissions in information, only that the creature intentionally told a falsehood in the past minute." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGGDe"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGMdEx" name="Medical Expert" description="The medical examiner is a genius in her own field, and applies her vast intellect to solving medical problems in ways other professionals cannot comprehend. \n\nAs a result, she gains a +1 bonus to all Heal checks per 2 class levels. Additionally, each time the medical examiner performs an action that would normally expend a use from a healing kit, there is a percent chance (equal to 50 + the medical examiner&apos;s class level) she manages to preserve enough materials she does not actually lose a use from the kit." compset="ClSpecial">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <eval phase="PostLevel" priority="5000"><![CDATA[      field[abValue].value += round(#totallevelcount[]/2,0,-1)
+
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+
+      #skillbonus[skHeal] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGMERT" name="Replace Talent" description="This replaces the Modern Hero class 1st level talent for an &quot;Medical Expert&quot; for the Medical Examiner." compset="ClSpecial">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+hero.childfound[cHelpMdH].field[cGiveSpec].value -= 1]]></eval>
+    </thing>
+  <thing id="cMPSGGBtMd" name="Battlefield Medicine" description="The medical examiner has as much experience patching up and the living as cutting apart the dead, and can do so under terrible conditions. \n\nShe can use the Treat Deadly Wounds function of the Heal skill while expending only a single use from a healer&apos;s kit (instead of the two normally required). She is also able to apply the Treat Deadly Wounds use of the Heal skill as a full-round action (rather than taking the normal hour)." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGMdE"/>
+    </thing>
+  <thing id="cMPSGGDfDg" name="Differential Diagnosis" description="By examining the symptoms of a creature suffering an infliction (including curses, diseases, and poisons), the medical examiner can identify the affliction and possibly determine how best to treat it. \n\nIdentifying an affliction requires 1d6 x 10 minutes of study of the afflicted character, and a Heal check with a DC equal to 5 + the save DC of the affliction. If the Heal check exceeds this DC by 5 or more, the medical examiner also discovers how to cure the ailment if a specific treatment is particularly effective (such as a curse from stolen pirate gold that is removed if all the gold is restored to its original location). A medical examiner that does not have Use Magic Device as a class skill suffers a -5 penalty to Heal checks made to use the Differential Diagnosis talent to diagnose a magic affliction.\n\nThe medical examiner gains a +5 circumstance bonus to any Heal checks made to treat an ailment that she has identified with the Differential Diagnosis talent." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGMdE"/>
+    </thing>
+  <thing id="cMPSGGGBMd" name="Greater Battlefield Medicine" description="The medical examiner&apos;s medicinal treatments are far more effective than most healers&apos;. \n\nThe medical examiner can apply the Treat Wounds from Caltrops function of the Heal skill as a standard action, and can use the Treat Deadly Wounds function on injuries sustained more than 24 hours ago. Additionally the medical examiner can attempt to use the Treat Deadly Wounds function on a creature that has already benefitted from it in the past 24 hours, though the skill check to do so has a DC of 30. A creature cannot benefit from this function of the Heal skill more than twice in 24 hours." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGMdE"/>
+    </thing>
+  <thing id="cMPSGGLtBl" name="Lethal Blow" description="The medical examiner&apos;s experience with mortal wounds and knowledge of anatomy give her a keen understanding of where best to land blows in combat.\n\nThe medical examiner gains a 1d6 sneak attack (as the rogue class ability), and a +2 bonus to attack rolls made to confirm critical hits. These bonuses increase to +2d6 sneak attack and +4 to confirm critical hits at 8th level, and +3d6 sneak attack and +6 to confirm critical hits at 16th level." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGMdE"/>
+    <tag group="HasAbility" tag="cSneakAtt"/>
+    <tag group="SpecType" tag="SneakAtt"/>
+    <eval phase="Final" priority="10000"><![CDATA[   ~our bonus is level /8, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 8
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = "Sneak Attack +" & field[abValue].value & "d6"
+      field[abSumm].text = "+" & field[abValue].value & "d6 damage if you flank your target or your target is flat-footed."]]></eval>
+    </thing>
+  <thing id="cMPSGGMdDc" name="Mad Doctor" description="Some medical examiners seek the job of corpse-cutter more for the cutting than in an effort to solve mysteries or help the sick. \n\nWhen using a light medical cutting implement (bone saw, scalpel, medical knife, or similar improvised weapon designed for medical purposes) the medical examiner can make attacks as if he was wielding a dagger that dealt one die less damage than a normal dagger for his size (1d2 Small/1d3 Medium), and an 18-20 threat range. \n\nFurthermore, his base attack bonus for such attacks is figured using his class level rather than normal base attack bonus, and he may add his Intelligence modifier, rather than Strength, to both attack rolls and damage dealt." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGMdE"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[ 
+var bonus as number
+bonus = maximum(#attrmod[aINT] - #attrmod[aSTR], 0)
+ 
+foreach pick in hero from BaseWep where "IsWeapon.wMPSGGMdLC" 
+  eachpick.field[wAttBonus].value += bonus
+  nexteach]]></eval>
+    <eval phase="PostAttr" priority="10500" index="3"><![CDATA[      field[abValue].value +=#totallevelcount[]
+
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+
+foreach pick in hero from BaseWep where "IsWeapon.wMPSGGMdLC" 
+field[abValue].value -= hero.child[Attack].field[tAtkBase].value
+  eachpick.field[wAttack].value += field[abValue].value
+
+nexteach]]></eval>
+    <eval phase="First" priority="10000">perform hero.assign[WepProf.wMPSGGMdLC]</eval>
+    </thing>
+  <thing id="wMPSGGMdLC" name="Medical Cutting Tool" description="A light medical cutting implement (bone saw, scalpel, medical knife, or similar improvised weapon designed for medical purposes)." compset="Weapon">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gSizeCost" value="5"/>
+    <fieldval field="gWeight" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wMain" tag="1d3_3"/>
+    <tag group="wProfReq" tag="ImprovMel"/>
+    <tag group="wFtrGroup" tag="BladeLight"/>
+    <tag group="wClass" tag="Light"/>
+    <tag group="wCategory" tag="Melee"/>
+    <tag group="wCritMin" tag="18"/>
+    <tag group="wCritMult" tag="2"/>
+    <tag group="wType" tag="S"/>
+    </thing>
+  <thing id="cMPSGGRdtD" name="Read the Dead" description="The medical examiner can examine a body (requiring 2d4 x 10 minutes) to learn about the corpse&apos;s lifestyle when it was still living, as well as the circumstances of its death. \n\nThis acts as a speak with dead spell using the medical examiner&apos;s class level as the caster level. \n\nHowever, the questions asked may only pertain to the corpse&apos;s lifestyle and identifying features (age, gender, race, general health prior to death, quality of nutrition and health care, and so on) and the circumstances of its death (time of death, method of death, whether the corpse defended itself, and so on). \n\nThe medical examiner  can  use  this  ability  on  bodies  in advanced stages of decay or damage, as long as the majority of the body is present. The ability can be used on a fraction of a corpse, but gets answers only as complete as the corpse it is performed on. (If the medical examiner has only 25% of a body, he gains only a quarter as much information with each question asked as determined by the GM).\n\nFurthermore, any penalties the medical examiner would take to a Heal check made on the corpse (such as lack of proper tools - normally a healing kit - or circumstance modifiers from making such a check in poor conditions) instead apply as a penalty to the medical examiner&apos;s effective level for this ability (if the medical examiner&apos;s effective level is reduced to 0 or less, conditions are too poor to gain any useful information).\n\nThe medical examiner can use this ability only once on a specific corpse. \n\nShe can use the ability a number of times per day equal to 3 + her Intelligence modifier before mental fatigue prevents useful information being gained from further examinations." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="trkMax" value="3"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGMdE"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ChargeAttr" tag="aINT"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ChargeCalc" tag="0AttributM" name="0+Attribute Mod" abbrev="0+Attribute Mod"/>
+    </thing>
+  <thing id="cMPSGGSpli" name="Splint" description="Through the careful application of physical aids (such as slings, splints, and even simply prosthetics) and medicinals (to counter or relieve symptoms), the medical examiner can temporarily suppress penalties and conditions suffered by a character. \n\nAs a full-round action the medical examiner can automatically suspend any penalty or condition that can be removed by a heal check. This temporary suspension lasts 1 minute per level.\n\nAs a more involved procedure requiring 1d6 x 10 minutes, the medical examiner can temporarily suspend any ability score drain or damage, penalties to movement, or the bleed, dazed, dazzled, disabled, exhausted, fatigued, nauseated, paralyzed, shaken, sickened, staggered, or unconscious condition. \n\nThis suspension requires a Heal check with a DC of 10 + CR of the creature being treated (heroes make bad patients, and the things that take them out are harder to fix than ailments for farmers) and lasts for 1 hour per medical examiner level. \n\nThe medical examiner may use this talent multiple times on the same target, but each use after the first in the same 24 hours has a cumulative +5 to the Heal check DC.\n\nUsing this talent takes 1 use from a healer&apos;s kit." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGMdE"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGInvt" name="Invent" description="An inventor has an Invent check, which is treated like a Craft check as well as being used for various inventor abilities (such as prototype, below).   \n\nThe value of an inventor&apos;s Invent check is 5 + class level + Int modifier. \n\nAt first level the inventor has Invent for a single craft category (as defined by the Craft skill). At each level, he may add one craft category to his list. Thus a 5th level inventor with an Int of 18 has an Invent check of +14, and may use it for five crafts.\n\nWhen using the Invent check to craft objects, an inventor work much faster than most crafters, but also with more waste. The creator also needs a fairly quiet, comfortable, and well-lit place in which to work. Any place suitable for preparing spells is suitable for inventing. \n\nInventing an item requires 1 hour of work per 125 gp in the item&apos;s base price (or fraction thereof ), with a minimum of at least 1 hour. The character must spend the gold at the beginning of the construction process. This process can be accelerated to 1 hour of work per 250 gp in the item&apos;s base price (or fraction thereof ) by increasing the DC to create the item by 5.\n\nThe inventor can work for up to 8 hours each day. He cannot rush the process by working longer each day, but the days need not be consecutive, and the inventor can use the rest of his time as he sees fit. If the inventor is out adventuring, he can be considered to manage 2 hours each day to item creation. \n\nThis time is not spent in one continuous period, but rather during lunch, morning preparation, and during watches at night. If other time is dedicated to creation, it must be spent in uninterrupted 1-hour blocks.\n\nThe inventor can craft any item that could be created with the Craft skill corresponding to the categories he has selected, though he must have appropriate raw materials and tools to do so." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="trkMax" value="5"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ChargeAttr" tag="aINT"/>
+    <tag group="ChargeCalc" tag="LevelFull"/>
+    <tag group="ChargeCalc" tag="0AttributM"/>
+    <tag group="SpecSource" tag="arMPSGGInv"/>
+    <tag group="Usage" tag="Craftcheck" name=":Craft check" abbrev=":Craft check"/>
+    </thing>
+  <thing id="cMPSGGCrIv" name="Create Invention" description="The inventor is able to craft new things, though his creations are normally improvements on existing devices (regardless of what name he gives it - an inventor&apos;s &quot;Broad-Spectrum Optical Assessment Array&quot; is really a compact magnifying glass with an extra +2 bonus to Appraise checks involving items that are small or highly detailed) or unwieldy versions of devices that will be common in a higher Progress Level civilization.\n\nCreating a prototype requires an inventor to make an Invent check and to have selected a category of craft matching the Craft skill required." compset="CustomSpec" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGInv"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="gMPSGGBBCM" name="The Black Book of Cantor Mazeborn" description="Form: One 15 lb. book bound in minotaur hide\nPL: 3\nSubject/Rating: Religion +5 (undead +30)." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gWeight" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Scroll"/>
+    </thing>
+  <thing id="gMPSGGPCA" name="Pendaran Church Archives" description="Form: A dozen 20 ft. x 20 ft. rooms beneath the Pendaran Cathedral with cabinets full of scrolls, ancient tablets, and folios.\nPL: 2\nSubject/Rating: Arcana +15 (ancient mysteries +25); Dungeoneering +15; Geography +5 (people +15); History +15 (migrations +20); Local +15 (legends +25); Nature +10 (seasons and cycles +25); Nobility +10 (heraldry +25), Planes +20 (Outer Planes +35); Religion +25 (gods and goddesses +35)." compset="Gear" uniqueness="useronce" holdable="no">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Lodging"/>
+    </thing>
+  <thing id="gMPSGGPRDk" name="The Private Records of the Duke" description="Form: One 10 ft. x 40 ft. room with bookcases\nPL: 3\nSubject/Rating: Arcana +5 (magical beasts +25); Dungeoneering +5 (aberrations +20); Engineering +5 (fortifications +20); Local +20; Nature +5 (animals, giants, monstrous humanoids +25); Nobility +10 (lineages +30)." compset="Gear" uniqueness="useronce" holdable="no">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Scroll"/>
+    </thing>
+  <thing id="gMPSGGRnSR" name="Runemance School Records" description="Form: 27 bookcases scattered throughout the Runemance school catacombs\nPL: 3\nSubject/Rating: Arcana +25 (arcane symbols +35); Dungeoneering +15; Engineering +15 (aqueducts +20); History +10 (customs and humanoids +20); Local +15 (legends +25); Nature +10 (fey +25); Nobility +5 (personalities +25), Planes +10 (Inner Planes +25); Religion +15 (holy symbols +25)." compset="Gear" uniqueness="useronce" holdable="no">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Lodging"/>
+    </thing>
+  <thing id="gMPSGGSdUL" name="Sedgefield University Library" description="Form: 3-story brick library with computers and good lightning\nPL: 4\nSubjects/Ratings: Dungeoneering +5; Engineering +10; Geography +10 (lands +15); History +10; Local +5; Nature +5; Nobility +10; Religion +5 (mythic history and ecclesiastic traditions +10)." compset="Gear" uniqueness="useronce" holdable="no">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Lodging"/>
+    </thing>
+  <thing id="gMPSGGFBSS" name="Forbidden Books Section of Sedgefield University" description="Form: 4-story crumbling stone building, previously an asylum\nPL: 3\nSubjects/Ratings: Arcana +5 (magic traditions +20); History +10; Local +5 (legends +20); Planes +5 (Astral Plane +20); Religion +10 (mythic history and ecclesiastic traditions +20)." compset="Gear" uniqueness="useronce" holdable="no">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Lodging"/>
+    </thing>
+  <thing id="gMPSGGFK3" name="Forensics Kit, PL 3" description="A forensics kit contains the tools used to look for evidence at a crime scene.\n\nDepending on the Progress Level it is gained at, it may have little more than a magnifying glass, tweezers, and a small bullseye lantern.\n\nAt more advanced levels of technology, it may include fingerprinting dust, UV lights, chemical materials designed to react with biological fluids, special low-light electronic goggles, flashlights, sample cases, latex gloves, or even micro-computers able to run DNA tests in the field.\n\nRegardless of the PL of a forensics kit it works the same way in game terms, granting a circumstance bonuses on Appraise or Perception checks involving items that are small or highly detailed (as well as to Sense Motive checks to use the Crime Scene Analysis talent). \n\nThe value of this bonus is equal to the kit’s PL -3 (minimum 0), so a PL 4 forensics kit adds a +1 circumstance bonus, and a PL 8 kit adds a +5 circumstance bonus. Forensics kits at PL 3 or less add no bonus to such checks, but do allow fine details to be examined without taking penalties for not having the proper tools to do so." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gCost" value="50"/>
+    <fieldval field="gWeight" value="6"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="gType" tag="Tools"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    </thing>
+  <thing id="gMPSGGFK4" name="Forensics Kit, PL 4" description="A forensics kit contains the tools used to look for evidence at a crime scene.\n\nDepending on the Progress Level it is gained at, it may have little more than a magnifying glass, tweezers, and a small bullseye lantern.\n\nAt more advanced levels of technology, it may include fingerprinting dust, UV lights, chemical materials designed to react with biological fluids, special low-light electronic goggles, flashlights, sample cases, latex gloves, or even micro-computers able to run DNA tests in the field.\n\nRegardless of the PL of a forensics kit it works the same way in game terms, granting a circumstance bonuses on Appraise or Perception checks involving items that are small or highly detailed (as well as to Sense Motive checks to use the Crime Scene Analysis talent). \n\nThe value of this bonus is equal to the kit’s PL -3 (minimum 0), so a PL 4 forensics kit adds a +1 circumstance bonus, and a PL 8 kit adds a +5 circumstance bonus. Forensics kits at PL 3 or less add no bonus to such checks, but do allow fine details to be examined without taking penalties for not having the proper tools to do so." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gCost" value="75"/>
+    <fieldval field="gWeight" value="5"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="gType" tag="Tools"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    </thing>
+  <thing id="gMPSGGFK5" name="Forensics Kit, PL 5" description="A forensics kit contains the tools used to look for evidence at a crime scene.\n\nDepending on the Progress Level it is gained at, it may have little more than a magnifying glass, tweezers, and a small bullseye lantern.\n\nAt more advanced levels of technology, it may include fingerprinting dust, UV lights, chemical materials designed to react with biological fluids, special low-light electronic goggles, flashlights, sample cases, latex gloves, or even micro-computers able to run DNA tests in the field.\n\nRegardless of the PL of a forensics kit it works the same way in game terms, granting a circumstance bonuses on Appraise or Perception checks involving items that are small or highly detailed (as well as to Sense Motive checks to use the Crime Scene Analysis talent). \n\nThe value of this bonus is equal to the kit’s PL -3 (minimum 0), so a PL 4 forensics kit adds a +1 circumstance bonus, and a PL 8 kit adds a +5 circumstance bonus. Forensics kits at PL 3 or less add no bonus to such checks, but do allow fine details to be examined without taking penalties for not having the proper tools to do so." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gCost" value="150"/>
+    <fieldval field="gWeight" value="4"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="gType" tag="Tools"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    </thing>
+  <thing id="gMPSGGFK6" name="Forensics Kit, PL 6" description="A forensics kit contains the tools used to look for evidence at a crime scene.\n\nDepending on the Progress Level it is gained at, it may have little more than a magnifying glass, tweezers, and a small bullseye lantern.\n\nAt more advanced levels of technology, it may include fingerprinting dust, UV lights, chemical materials designed to react with biological fluids, special low-light electronic goggles, flashlights, sample cases, latex gloves, or even micro-computers able to run DNA tests in the field.\n\nRegardless of the PL of a forensics kit it works the same way in game terms, granting a circumstance bonuses on Appraise or Perception checks involving items that are small or highly detailed (as well as to Sense Motive checks to use the Crime Scene Analysis talent). \n\nThe value of this bonus is equal to the kit’s PL -3 (minimum 0), so a PL 4 forensics kit adds a +1 circumstance bonus, and a PL 8 kit adds a +5 circumstance bonus. Forensics kits at PL 3 or less add no bonus to such checks, but do allow fine details to be examined without taking penalties for not having the proper tools to do so." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gCost" value="300"/>
+    <fieldval field="gWeight" value="3"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="gType" tag="Tools"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    </thing>
+  <thing id="gMPSGGFK7" name="Forensics Kit, PL 7" description="A forensics kit contains the tools used to look for evidence at a crime scene.\n\nDepending on the Progress Level it is gained at, it may have little more than a magnifying glass, tweezers, and a small bullseye lantern.\n\nAt more advanced levels of technology, it may include fingerprinting dust, UV lights, chemical materials designed to react with biological fluids, special low-light electronic goggles, flashlights, sample cases, latex gloves, or even micro-computers able to run DNA tests in the field.\n\nRegardless of the PL of a forensics kit it works the same way in game terms, granting a circumstance bonuses on Appraise or Perception checks involving items that are small or highly detailed (as well as to Sense Motive checks to use the Crime Scene Analysis talent). \n\nThe value of this bonus is equal to the kit’s PL -3 (minimum 0), so a PL 4 forensics kit adds a +1 circumstance bonus, and a PL 8 kit adds a +5 circumstance bonus. Forensics kits at PL 3 or less add no bonus to such checks, but do allow fine details to be examined without taking penalties for not having the proper tools to do so." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gCost" value="600"/>
+    <fieldval field="gWeight" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="Tools"/>
+    </thing>
+  <thing id="gMPSGGFK8" name="Forensics Kit, PL 8" description="A forensics kit contains the tools used to look for evidence at a crime scene.\n\nDepending on the Progress Level it is gained at, it may have little more than a magnifying glass, tweezers, and a small bullseye lantern.\n\nAt more advanced levels of technology, it may include fingerprinting dust, UV lights, chemical materials designed to react with biological fluids, special low-light electronic goggles, flashlights, sample cases, latex gloves, or even micro-computers able to run DNA tests in the field.\n\nRegardless of the PL of a forensics kit it works the same way in game terms, granting a circumstance bonuses on Appraise or Perception checks involving items that are small or highly detailed (as well as to Sense Motive checks to use the Crime Scene Analysis talent). \n\nThe value of this bonus is equal to the kit’s PL -3 (minimum 0), so a PL 4 forensics kit adds a +1 circumstance bonus, and a PL 8 kit adds a +5 circumstance bonus. Forensics kits at PL 3 or less add no bonus to such checks, but do allow fine details to be examined without taking penalties for not having the proper tools to do so." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gCost" value="1200"/>
+    <fieldval field="gWeight" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="Tools"/>
+    </thing>
+  <thing id="gMPSGGGot5" name="GoTo, PL 5" description="A GoTo is a catch-all term for electronic data devices that either connect to a worldwide computer network to access data or have stored within them vast stores of knowledge equal to entire libraries of print books, and combine that with an ability to contact other electronic devices (ranging from phones to radios to subspace transmitters and ansibles), take pictures, record audio and video, track time, and run simple computer programs.\n\nThe first, primitive GoTos begin to appear at PL 5, and they become increasingly useful and ubiquitous in higher PL cultures. They may take the form of cellular phones, watches, electronic pads or tablets, or even interactive tattoos at PL 7 and up.\n\nA GoTo can act as a research archive (see above) on any subject. Its rating on all subjects is equal to 10 + the PL of the GoTo. Of course, if a GoTo requires connection to a network of computers for its data, it becomes largely useless if shunted off to a fantasy setting where no such computers exist (though a wish or similar powerful magic might well restore its normal function)." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gCost" value="500"/>
+    <fieldval field="gWeight" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="AdventGear"/>
+    </thing>
+  <thing id="gMPSGGGot6" name="GoTo, PL 6" description="A GoTo is a catch-all term for electronic data devices that either connect to a worldwide computer network to access data or have stored within them vast stores of knowledge equal to entire libraries of print books, and combine that with an ability to contact other electronic devices (ranging from phones to radios to subspace transmitters and ansibles), take pictures, record audio and video, track time, and run simple computer programs.\n\nThe first, primitive GoTos begin to appear at PL 5, and they become increasingly useful and ubiquitous in higher PL cultures. They may take the form of cellular phones, watches, electronic pads or tablets, or even interactive tattoos at PL 7 and up.\n\nA GoTo can act as a research archive (see above) on any subject. Its rating on all subjects is equal to 10 + the PL of the GoTo. Of course, if a GoTo requires connection to a network of computers for its data, it becomes largely useless if shunted off to a fantasy setting where no such computers exist (though a wish or similar powerful magic might well restore its normal function)." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gCost" value="200"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="AdventGear"/>
+    </thing>
+  <thing id="gMPSGGGot7" name="GoTo, PL 7" description="A GoTo is a catch-all term for electronic data devices that either connect to a worldwide computer network to access data or have stored within them vast stores of knowledge equal to entire libraries of print books, and combine that with an ability to contact other electronic devices (ranging from phones to radios to subspace transmitters and ansibles), take pictures, record audio and video, track time, and run simple computer programs.\n\nThe first, primitive GoTos begin to appear at PL 5, and they become increasingly useful and ubiquitous in higher PL cultures. They may take the form of cellular phones, watches, electronic pads or tablets, or even interactive tattoos at PL 7 and up.\n\nA GoTo can act as a research archive (see above) on any subject. Its rating on all subjects is equal to 10 + the PL of the GoTo. Of course, if a GoTo requires connection to a network of computers for its data, it becomes largely useless if shunted off to a fantasy setting where no such computers exist (though a wish or similar powerful magic might well restore its normal function)." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gCost" value="10000"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="AdventGear"/>
+    </thing>
+  <thing id="gMPSGGGot8" name="GoTo, PL 8" description="A GoTo is a catch-all term for electronic data devices that either connect to a worldwide computer network to access data or have stored within them vast stores of knowledge equal to entire libraries of print books, and combine that with an ability to contact other electronic devices (ranging from phones to radios to subspace transmitters and ansibles), take pictures, record audio and video, track time, and run simple computer programs.\n\nThe first, primitive GoTos begin to appear at PL 5, and they become increasingly useful and ubiquitous in higher PL cultures. They may take the form of cellular phones, watches, electronic pads or tablets, or even interactive tattoos at PL 7 and up.\n\nA GoTo can act as a research archive (see above) on any subject. Its rating on all subjects is equal to 10 + the PL of the GoTo. Of course, if a GoTo requires connection to a network of computers for its data, it becomes largely useless if shunted off to a fantasy setting where no such computers exist (though a wish or similar powerful magic might well restore its normal function)." compset="Gear" uniqueness="useronce">
+    <comment>Anachronistic Adventurers - The Investigator
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gCost" value="100000"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="AdventGear"/>
+    </thing>
+  </document>

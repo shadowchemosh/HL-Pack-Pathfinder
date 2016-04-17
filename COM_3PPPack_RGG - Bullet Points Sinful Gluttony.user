@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_RGG - Bullet Points Sinful Gluttony"/>
+  <fileinfo>
+    <info_author>Poizen, aka Matthew Winn</info_author>
+    <info_history>
+June 2, 2013 - Tim Shadow
+-Changed the category tag from Sinful to CGSinful to prevent any future clashes with Official packages.</info_history>
+    <info_todo>Add sources
+Add sinful feat prereq to Suck it Up</info_todo>
+    </fileinfo>
+  <thing id="fSFGlutton" name="Gluttonous" description="You have turned stuffing yourself into an art form&#133; and a power.\n\n{b}Prerequisite{/b}: Con 13.\n\n{b}Benefit{/b}: You can eat and drink much more than a typical creature of your race and size. Over the course of 15 minutes you can, without suffering any ill effects, eat enough food to sustain a typical creature of your size for a whole day. For six hours after doing so you are inspired by the gratification you receive from stuffing yourself. You receive a +1 morale bonus to one of the following (selected at the time you end your meal): ability and skill checks tied to Strength, Constitution, or Intelligence (your choice); caster level; or weapon damage. You can only have one bonus from Gluttonous in effect at a time, and if you use the ability again before an old bonus fades, the original bonus immediately ends.\n\nYou also gain a +3 bonus on Fortitude saves against ingested diseases and poisons (but not other kinds of diseases and poisons), and every day you go without eating counts as 2 days without food for purposes of the starvation rules." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Glutton"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Constitution 13 or greater required"><![CDATA[#attrvalue[aCON] >= 13]]></exprreq>
+    </thing>
+  <thing id="fSFBigMth" name="Big Mouth" description="You&#146;ve shoved so much into your mouth, it has monstrously strengthened your jaws and teeth.\n\n{b}Prerequisites{/b}: Con 13, Gluttonous, base attack bonus +1.\n\n{b}Benefit{/b}: You gain a bite attack (1d4 Small, 1d6 Medium). This is a primary attack if it is the only attack you make in a round, otherwise it is a secondary attack. You do not threaten any space with your bite attack and cannot use it to make attacks of opportunity, though you can make attacks against creatures within your normal reach on your turn." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Glutton"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Value" tag="1"/>
+      </bootstrap>
+    <exprreq message="Constitution 13 or greater required"><![CDATA[#attrvalue[aCON] >= 13]]></exprreq>
+    <exprreq message="Base Attack Bonus +1 or greater required"><![CDATA[child[Attack].field[tAtkBase].value >= 1]]></exprreq>
+    <exprreq message="Gluttonous feat required"><![CDATA[#hasfeat[fSFGlutton] <> 0]]></exprreq>
+    </thing>
+  <thing id="fSFFstHeal" name="Feast Healing" description="You can restore your body through the consumption of food.\n\n{b}Prerequisites{/b}: Con 13, Gluttonous.\n\n{b}Benefit{/b}: When, over the course of 15 minutes, you eat enough food to sustain a typical creature of your size for a whole day (per the Gluttonous feat) you receive the benefits of 1 day of natural healing. You may gain this healing a number of times per day equal to your Con bonus." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Glutton"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ChargeAttr" tag="aCON"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ChargeCalc" tag="AttrOnly"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Gluttonous feat required"><![CDATA[#hasfeat[fSFGlutton] <> 0]]></exprreq>
+    <exprreq message="Constitution 13 or greater required"><![CDATA[#attrvalue[aCON] >= 13]]></exprreq>
+    </thing>
+  <thing id="fSFGnaw" name="Gnaw" description="You can work on something too tough for the teeth of others.\n\n{b}Prerequisites{/b}: Con 13, Big Mouth, Gluttonous, base attack bonus +1.\n\n{b}Benefit{/b}: You can slowly chew through something too tough for you to bite clean through. If you spend an hour gnawing on something with a hardness or DR no greater than double your maximum bite damage, you can reduce its hardness/DR by 1. Every additional 1 reduction takes twice as long to achieve.\n\n{b}Special{/b}: Creatures with a natural bite attack may take this feat without having Big Mouth as a prerequisite." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Glutton"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Base Attack Bonus +1 or greater required"><![CDATA[child[Attack].field[tAtkBase].value >= 1]]></exprreq>
+    <exprreq message="Gluttonous feat required"><![CDATA[#hasfeat[fSFGlutton] <> 0]]></exprreq>
+    <exprreq message="Constitution 13 or greater required"><![CDATA[#attrvalue[aCON] >= 13]]></exprreq>
+    <prereq message="Big Mouth feat or Bite attack required">
+      <validate><![CDATA[foreach pick in hero from BaseNatWep where "IsWeapon.wBite"
+  @valid = 1
+  nexteach]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fSFStmchR" name="Stomach Reserve" description="Your stomach is normally so full, and your control over it so great, you can keep an imbibed potion inert until you wish to use it.\n\n{b}Prerequisites{/b}: Dex 13, Con 13, Gluttonous, Slurp It Down.\n\n{b}Benefit{/b}: When, over the course of 15 minutes, you eat enough food to sustain a typical creature of your size for a whole day (per the Gluttonous feat) you may also ingest 1 or 2 potions (or other consumables at the GM&#146;s discretion) that do not take effect immediately. Soaked up into the vast quantities of food you&#146;ve eaten, the potions remain inert in your stomach until you use your abdominal muscles to churn your stomach contentsaround to access the potions (a swift action for each potion), or 6 hours pass, whichever comes first. You can never have more than 2 potions suspended in your stomach in this manner at a time." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Glutton"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Dexterity 13 or greater required"><![CDATA[#attrvalue[aDEX] >= 13]]></exprreq>
+    <exprreq message="Slurp It Down feat required"><![CDATA[#hasfeat[fSFSlrpDwn] <> 0]]></exprreq>
+    <exprreq message="Gluttonous feat required"><![CDATA[#hasfeat[fSFGlutton] <> 0]]></exprreq>
+    <exprreq message="Constitution 13 or greater required"><![CDATA[#attrvalue[aCON] >= 13]]></exprreq>
+    </thing>
+  <thing id="fSFSlrpDwn" name="Slurp it Down" description="You can guzzle potables with amazing speed and voraciousness.\n\n{b}Prerequisites{/b}: Dex 13, Con 13, Gluttonous.\n\n{b}Benefit{/b}: You can drink two potions (or similar potables at the GM&#146;s discretion) as a single standard action (gaining the normal effect of each). You must prepare each potion separately, but may use double-chambered potion bottles (cost 1gp each in addition to the cost of potions used, allows you to prepare two potions at once, but both must be drunk at the same time) to prepare and drink two potions in the time normally required for one.\n\n{b}Normal{/b}: It&#146;s a standard action to drink a single potion, and multiple potions cannot be drunk together." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Glutton"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Dexterity 13 or greater required"><![CDATA[#attrvalue[aDEX] >= 13]]></exprreq>
+    <exprreq message="Gluttonous feat required"><![CDATA[#hasfeat[fSFGlutton] <> 0]]></exprreq>
+    <exprreq message="Constitution 13 or greater required"><![CDATA[#attrvalue[aCON] >= 13]]></exprreq>
+    </thing>
+  <thing id="fSFSuckUp" name="Suck it Up" description="You can force a target to expend more eldritch energy to fill your voracious gluttony when you are affected by a magic ability.\n\n{b}Prerequisites{/b}: Con 13, Gluttonous, any 2 additional sinful feats.\n\n{b}Benefit{/b}: To use Suck It Up, you must take a ready action to absorb energy from the next spell, spell-like ability, or supernatural ability that affects you. When you are targeted by such an ability while readied, you may choose to fail any saving throw the ability allows in order to Suck It Up. The creature affecting you must make a Will save (DC 10 +1/2 your HD + your Con modifier). On a failed check, the ability uses additional energy to fill your supernatural appetite. If the magic ability was a spell or spell-like ability, the attacker loses one additional spell slot or prepared spell of the same level or higher. If the ability can normally be used once in a limited time period (such as once every 1d4 rounds, or once a day), instead the recharge time is doubled. If the ability can normally be used at will, the attacker cannot use it for 1d4 rounds.\n\nAt 8th level on a failed save you force the attacker to spend three spell slots, prepared spells, or uses per day (or triple a recharge time). At 16th level on a failed save you force the attacker to spend four spell slots, prepared spells, or uses per day (or quadruple a recharge time)." compset="Feat" uniqueness="useronce">
+    <usesource source="BP7Glutton"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="CGSinful"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="UserPostAt" priority="10000">~ set DC value
+field[abValue].value += round(#totallevelcount[]/2, 0, -1)
+
+field[abDC].value += 10 + hero.child[aCON].field[aModBonus].value + field[abValue].value</eval>
+    <exprreq message="Gluttonous feat required"><![CDATA[#hasfeat[fSFGlutton] <> 0]]></exprreq>
+    <exprreq message="Constitution 13 or greater required"><![CDATA[#attrvalue[aCON] >= 13]]></exprreq>
+    </thing>
+  </document>

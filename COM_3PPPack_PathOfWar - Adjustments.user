@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_PathOfWar - Adjustments"/>
+  <fileinfo>
+    <info_author>Shatterjack
+November 27, 2014</info_author>
+    </fileinfo>
+  <thing id="pPWRemDisc" name="Remove Martial Discipline from Class" description="Select this adjustment to revoke an initiating class&apos;s access to a particular martial discipline that is normally on its list.  For example, you could use this to remove the Iron Tortoise discipline from a Warder." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.PWManList"/>
+    <fieldval field="pCandExpr2" value="PathOfWar.selDisc"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="NoIncr" name="NoIncr" abbrev="NoIncr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChooseSrc1" tag="Thing" name="All Things" abbrev="All Things"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <eval phase="First" priority="5000">~ Do nothing if not activated, or if either selection not made
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+      doneif (field[pChosen2].ischosen = 0)
+
+      ~ Get the discipline tag from the chosen field, and remove it from the configurable
+      var remDisc as string
+      remDisc = field[pChosen2].chosen.tagids[Discipline.?]
+      perform field[pChosen].chosen.deletestr[remDisc]</eval>
+    </thing>
+  <thing id="pPWAddDisc" name="Add Martial Discipline to Class" description="Select this adjustment to grant an initiating class access to a particular martial discipline that isn&apos;t normally on its list.  For example, you could use this to grant the Iron Tortoise discipline to a Stalker." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.PWManList"/>
+    <fieldval field="pCandExpr2" value="PathOfWar.selDisc"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="NoIncr" name="NoIncr" abbrev="NoIncr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChooseSrc1" tag="Thing" name="All Things" abbrev="All Things"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <eval phase="First" priority="5000">~ Do nothing if not activated, or if either selection not made
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+      doneif (field[pChosen2].ischosen = 0)
+
+      ~ Pull discipline tags from the chosen field, then push them to the configurable
+      perform field[pChosen2].chosen.pulltags[Discipline.?]
+      perform field[pChosen].chosen.pushtags[Discipline.?]</eval>
+    </thing>
+  <thing id="pPWPrdLdSt" name="Golden Lion: Pride Leader&apos;s Stance" description="You gain a +4 morale bonus vs. fear and demoralization effects." compset="InPlay">
+    <fieldval field="pDuration" value="Stance"/>
+    <fieldval field="pMinimum" value="4"/>
+    <fieldval field="pMaximum" value="4"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <eval phase="PostAttr" priority="15000"><![CDATA[
+      ~Do nothing if not activated
+      doneif (field[pIsOn].value = 0)
+
+      #situational[hero.childfound[svWill],signed(field[pAdjust].value) & " morale vs. fear and demoralization effects",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="pPWGGenAtt" name="Golden Lion: Golden General&apos;s Attitude" description="You gain a bonus to attack, damage, and saves vs. fear" compset="InPlay">
+    <fieldval field="pDuration" value="Stance"/>
+    <fieldval field="pMinimum" value="1"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <eval phase="PostAttr" priority="15000"><![CDATA[
+      ~ Don't do anything if not active
+      doneif (field[pIsOn].value = 0)
+
+      ~ Attack and damage bonus
+      #applybonus[BonMorale, hero.child[Attack], field[pAdjust].value]
+      #applybonus[BonMorale, hero.child[Damage], field[pAdjust].value]
+
+      ~ Bonus vs. fear
+      #situational[hero.child[svWill],signed(field[pAdjust].value) & " morale vs. fear",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="pPWTriLion" name="Golden Lion: Triumphant Lion&apos;s Leadership" description="You gain +1d6 damage for every enemy killed by the stance user while within range of the stance" compset="InPlay">
+    <fieldval field="pDuration" value="Stance"/>
+    <fieldval field="pMinimum" value="0"/>
+    <fieldval field="pMaximum" value="5"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <eval phase="PostAttr" priority="15000"><![CDATA[
+      ~ Don't do anything if not active
+      doneif (field[pIsOn].value = 0)
+
+      ~ Don't do anything if we don't have at least one die to add
+      doneif (field[pAdjust].value < 1)
+
+      ~ Add d6(s) to all weapon damage
+      foreach pick in hero from BaseWep
+        #extradamage[eachpick, signed(field[pAdjust].value) & "d6",field[thingname].text]
+      nexteach]]></eval>
+    </thing>
+  <thing id="pPWSCStyle" name="Silver Crane Style" description="You gain a bonus to your Armor Class and Reflex save from an ally&apos;s use of Silver Crane Style." compset="InPlay">
+    <fieldval field="pMinimum" value="1"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      
+      ~ Stop now if we're not activated
+      doneif (field[pIsOn].value = 0)
+
+      hero.child[ArmorClass].field[Bonus].value += field[pAdjust].value
+      hero.child[svRef].field[Bonus].value += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pPWInitLvl" name="Initiator level" description="Select this adjustment to grant an initiating class access to a particular martial discipline that isn&apos;t normally on its list.  For example, you could use this to grant the Iron Tortoise discipline to a Stalker." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.PWManList"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChooseSrc1" tag="Thing" name="All Things" abbrev="All Things"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <eval phase="PostLevel" priority="15">
+      ~ Do nothing if not activated, or if either selection not made
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+
+      ~ Increase/Decrease IL level
+      field[pChosen].chosen.field[cIL].value += field[pAdjust].value
+      <after name="PoW Calc IL"/>
+      </eval>
+    </thing>
+  </document>

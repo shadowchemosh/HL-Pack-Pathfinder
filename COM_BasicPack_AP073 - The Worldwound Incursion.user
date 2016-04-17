@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_AP073 - The Worldwound Incursion"/>
+  <fileinfo>
+    <info_history>
+May 21, 2014 - Tim Shadow
+-Created a version of Radiance that is able to level itself up to a holy avenger!</info_history>
+    </fileinfo>
+  <thing id="gAP73HolCI" name="Holy symbol, cold iron" description="A holy symbol focuses positive energy and is used by good clerics and paladins (or by neutral clerics who want to cast good spells or channel positive energy). Each religion has its own holy symbol. The material used to make the holy symbol has no effect on its powers, though a religion may place special significance on a particular material." compset="Gear">
+    <fieldval field="gCost" value="5"/>
+    <fieldval field="gWeight" value="1"/>
+    <usesource source="PathWraRig"/>
+    <tag group="Helper" tag="GearNoSize" name="GearNoSize" abbrev="GearNoSize"/>
+    <tag group="User" tag="NeedDomain" name="Sacred Space" abbrev="Sacred Space"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="AdventGear" name="Adventuring Gear" abbrev="Adventuring"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  <thing id="iCBRadianc" name="Radiance" description="In 4692 ar, soon after the start of the Fourth Crusade, a paladin of Iomedae and renowned demon slayer named Yaniel spoke out against the Mendevian crusaders, accusing them of negligence and sloth, and claiming these faults were what allowed Khorramzadeh to invade Kenabres and damage the {i}wardstone{/i}. Her accusations cut too close to the truth, and in a moment of weakness her superiors threatened to excommunicate her. Instead, she said she would enter the Worldwound and fight the Fourth Crusade on her own, with only her magic sword {i}Radiance{/i} for company. The church was happy to see Yaniel go, and in the 2 years that followed, she was thought to have been slain. Yet when she returned to Kenabres in 4694 ar, leading a small army of crusaders she&apos;d rescued, both Yaniel and her superiors had changed. For her part, Yaniel had shed her pride and insubordination, and had gained a new appreciation for the difficult decisions leaders are forced to make. And the church leaders had learned that sometimes the truth is exactly what you need to hear. Alas, Yaniel was assassinated before the year was out, slain by the lilitu demon Minagho only a week into her second personal crusade. Her followers managed to return to Kenabres with {i}Radiance{/i}, but Yaniel&apos;s body had been taken. The sword had gone dark after Yaniel&apos;s death, its magical powers apparently lost, and so the crusaders elected to place it in the Gray Garrison on display. Yet several months ago it was stolen by the Templars of the Ivory Labyrinth, who plan to soon send the sword north to Drezen for corruption into a weapon of evil.\n\n{i}Radiance{/i} was once a powerful weapon, yet since Yaniel&apos;s death the blade has become inert. When handled by a paladin, however, the blade suddenly glows with golden light and functions as a {i}+1 cold iron longsword{/i} that radiates light as a torch on command. The weapon shifts and changes its form to match the paladin&apos;s deity&apos;s favored weapon (in the hands of a paladin who doesn&apos;t worship a deity, the weapon remains a {i}+1 longsword{/i}). Certain events and tasks can awaken {i}Radiance{/i}&apos;s latent powers, eventually transforming it into a full-fledged {i}holy avenger{/i} - these events are noted in the following adventures in Wrath of the Righteous as they occur.\n\nIn addition, {i}Radiance{/i} is a legendary item ({i}Pathfinder RPG Mythic Adventures{/i} 169) that bonds with a mythic paladin as soon as it is wielded in combat - in this adventure, {i}Radiance{/i} bonds if a paladin uses it in the final encounter against Vorlesh&apos;s babaus. The weapon has two daily uses of legendary power that recharge each day, but does not currently possess any legendary attributes, for it has yet to be wielded by a mythic paladin. As {i}Radiance{/i} has its own ability to grow in power, it cannot be given the upgradable legendary item ability.\n\n{b}DESTRUCTION{/b}\nA paladin must knowingly slay an angel with the blade, at which point the sword can be destroyed normally with damage.\n\n{B}Community Note:{/B} Use the counter on the In-Play tab to increase Radiance&apos;s abilities as you progress through the Wraith of the Righteous AP.\n0 = +1 Cold Iron Weapon\n1 = +2 Cold Iron Weapon\n2 = +3 Cold Iron Weapon\n3 = +3 Holy Cold Iron Weapon\n4 = +5 Holy Avenger Cold Iron Weapon" compset="MagicWep">
+    <fieldval field="gWeight" value="4"/>
+    <fieldval field="iCL" value="20"/>
+    <fieldval field="abValue2" value="5"/>
+    <fieldval field="actUserMin" value="0"/>
+    <fieldval field="actUserMax" value="4"/>
+    <usesource source="PathWraRig" parent="PathAdvent" name="Wrath of the Righteous"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="iSchool" tag="Abjur" name="Abjuration" abbrev="Abjur"/>
+    <tag group="Helper" tag="LegendItem" name="Legendary Item" abbrev="Legendary"/>
+    <bootstrap thing="spDispMag5">
+      <containerreq phase="First" priority="99"><![CDATA[fieldval:actUser >= 4]]></containerreq>
+      <autotag group="Usage" tag="AtWill"/>
+      <autotag group="Helper" tag="ItemSpell"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not a paladin, get out now
+      doneif (#levelcount[Paladin] = 0)
+
+      If (field[actUser].value = 0) Then
+         field[BonEnhance].value = 1
+      ElseIf (field[actUser].value = 1) Then
+         field[BonEnhance].value = 2
+      ElseIf (field[actUser].value = 2) Then
+         field[BonEnhance].value = 3
+      ElseIf (field[actUser].value = 3) Then
+         field[BonEnhance].value = 3
+      ElseIf (field[actUser].value = 4) Then
+         field[BonEnhance].value = 5
+         field[abValue2].value += #levelcount[Paladin]
+         #applysr[field[abValue2].value]
+         hero.childfound[spDispMag5].field[sCL].value = #levelcount[Paladin]
+      Endif]]></eval>
+    <child entity="wSpecMagic">
+      <bootstrap thing="eColdIron"></bootstrap>
+      <bootstrap thing="LegItemHlp"></bootstrap>
+      <bootstrap thing="wLongsword"></bootstrap>
+      <bootstrap thing="iHoly">
+        <containerreq phase="First" priority="99"><![CDATA[fieldval:actUser >= 3]]></containerreq>
+        </bootstrap>
+      </child>
+    </thing>
+  <thing id="gAP73UnhOb" name="Unholy symbol, obsidian" description="A holy symbol focuses positive energy and is used by good clerics and paladins (or by neutral clerics who want to cast good spells or channel positive energy). Each religion has its own holy symbol.{br}{br}Unholy Symbols: An unholy symbol is like a holy symbol except that it focuses negative energy and is used by evil clerics (or by neutral clerics who want to cast evil spells or channel negative energy)." compset="Gear">
+    <fieldval field="gWeight" value="1"/>
+    <fieldval field="gCost" value="20"/>
+    <usesource source="PathWraRig"/>
+    <tag group="Helper" tag="GearNoSize" name="GearNoSize" abbrev="GearNoSize"/>
+    <tag group="User" tag="NeedDomain" name="Sacred Space" abbrev="Sacred Space"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="AdventGear" name="Adventuring Gear" abbrev="Adventuring"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  <thing id="pAP73Wards" name="Wardstone Surge" description="For use during the final battle in The Worldwound incursion. Grants: \n\n• Damage reduction 10/good\n• Regeneration 5 (unholy damage or evil spells)\n• Resist acid 10 and fire 10\n• Each PC glows with bright light that automatically dispels any 3rd-level or lower darkness effect they enter.\n• Each PC&apos;s attacks are treated as good for the purposes of overcoming damage reduction, and deals +2d6 points of damage against creatures with the evil subtype.\n• Once per round as an immediate action, a PC can roll 1d12 and add the result to any d20 roll he just made." compset="InPlay">
+    <usesource source="PathWraRig"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="OthAdjCat" tag="Campaign"/>
+    <bootstrap thing="xDamRsAcid">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsFire">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdGood">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xRegen">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      <autotag group="Value" tag="5"/>
+      <assignval field="livename" value="unholy damage or evil spells"/>
+      </bootstrap>
+    <eval phase="Final" priority="1000"><![CDATA[
+      doneif (field[pIsOn].value = 0)
+
+      foreach pick in hero from BaseWep
+        #extradamage[eachpick,"+2d6 vs. evil",field[name].text]
+      nexteach]]></eval>
+    </thing>
+  </document>

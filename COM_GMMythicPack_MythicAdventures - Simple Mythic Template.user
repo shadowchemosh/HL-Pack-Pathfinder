@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <fileinfo>
+    <info_author>Tim Shadow</info_author>
+    <info_history><![CDATA[
+      August 26, 2013 Tim Shadow
+      -Fixed the double HP bug.
+      -Now correctly calculates the CR rating.
+      -As a new tab called "Mythic Abilities" that allows one to select mythic racial abilities at the rate of MR +1 as per Mythic Adventures page 226.
+
+      August 20, 2013 Tim Shadow
+      -Created New for the new Mythic Monsters and Templates.]]></info_history>
+    </fileinfo>
+  <thing id="tmS2Mythic" name="Mythic" description="This template simply gives the Mythic Subtype to any creature.  The subtype will give Mythic Ranks, Mythic Powers, Mythic Bonus HP, and depending on the number of ranks will offer the ability to choose mythic feats and apply ability point bonuses." compset="Template" uniqueness="unique">
+    <arrayval field="tmMRArray" index="0" value="1"/>
+    <usesource source="MythicAdv"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raS2MyRank"></bootstrap>
+    <bootstrap thing="cfgS2MyAbi"></bootstrap>
+    <bootstrap thing="stMythic"></bootstrap>
+    <eval phase="PostLevel" priority="1500"><![CDATA[
+      ~ if we are incorporeal remove natural AC bonus granted my mythic type
+      doneif (#hassubtype[stIncorpor] = 0)
+
+       hero.child[ArmorClass].field[tACNatural].value -= #mythicrank[]]]></eval>
+    </thing>
+  <thing id="raS2MyRank" name="Mythic Rank" description="Use this to set the mythic rank of your monster." compset="RaceSpec">
+    <arrayval field="usrArray" index="0" value="1"/>
+    <arrayval field="usrArray" index="1" value="2"/>
+    <arrayval field="usrArray" index="2" value="3"/>
+    <arrayval field="usrArray" index="3" value="4"/>
+    <arrayval field="usrArray" index="4" value="5"/>
+    <arrayval field="usrArray" index="5" value="6"/>
+    <arrayval field="usrArray" index="6" value="7"/>
+    <arrayval field="usrArray" index="7" value="8"/>
+    <arrayval field="usrArray" index="8" value="9"/>
+    <arrayval field="usrArray" index="9" value="10"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="CustomCost" tag="0"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      var iX as number
+      var nTotal as number
+      iX = 0
+      ~ Add any addtional Mythic Ranks as we know we have at least one
+      while (iX < field[usrIndex].value)
+        iX += 1
+        perform hero.assign[MythicTier.MythicRank]
+      loop
+
+      ~ Set the Mythic Rank
+      ~ Note: that the usrIndex array starts at zero
+      field[abValue].value += field[usrIndex].value + 1
+
+      ~ Give MR+1 ability choices to the Configurator
+      hero.child[cfgS2MyAbi].field[cfgMax1].value += field[abValue].value + 1
+
+      ~ commented out since mythic subtype now does this
+      ~ Calculate the correct CR rating which is CR + 1/2 MR
+      ~herofield[tCR].value += round(field[abValue].value/2,0,-1)]]></eval>
+    </thing>
+  <thing id="cfgS2MyAbi" name="Mythic Abilities" compset="Configure" uniqueness="unique">
+    <fieldval field="cfgAllow1" value="Helper.Mythic &amp; !thingid.raS2MyRank &amp; component.RaceAbil"/>
+    <fieldval field="cfgObject1" value="Mythic Abilities"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ commented out since mythic subtype now does this correctly
+      ~ Count the number of racial abilities selected
+      ~foreach pick in hero from RaceAbil where "CustTaken.cfgS2MyAbi"
+       ~  field[cfgSpent1].value += 1   
+      ~nexteach]]></eval>
+    </thing>
+  <thing id="pCBMythRnk" name="Simple Mythic Template" description="Adjusts the number of mythic abilities that the Mythic template gives." compset="InPlay" uniqueness="useronce">
+    <fieldval field="pMinimum" value="0"/>
+    <usesource source="MythicAdv"/>
+    <tag group="OthAdjCat" tag="Mythic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="1000">
+      ~ If not on then get out now!
+      doneif (field[pIsOn].value = 0)
+      ~ If configurable is not live then get out now!
+      doneif (hero.childlives[cfgS2MyAbi] = 0)
+
+      hero.child[cfgS2MyAbi].field[cfgMax1].value += field[pAdjust].value</eval>
+    </thing>
+  </document>

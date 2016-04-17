@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_UltimatePsionics - Procedures"/>
+
+  <fileinfo>
+    <info_author>
+      Tim Shadow
+      Email: ShadowChemosh@yahoo.com
+    </info_author>
+    <info_history><![CDATA[
+      December 12, 2014 - Tim Shadow
+      -Added "NameMindBl" proceadure to move all the logic for Mind Blades into a single script.
+      -Added "SetMindBl" proceadure to move all the logic for Mind Blades into a single script.
+      -Added "PUPreReqs" proceadure for testing Custom Ability levels.
+
+      September 30, 2012 - Tim Shadow
+      -Removed "CntMartWea" so we don't clash with the "SGG" data set.
+
+      September 9, 2012
+      -HaveSpell converted to HavePower for use with Psionics.
+
+      July 12, 2012
+      -HaveSpell and CntMartWea are meant to be used in a "Pre-Req" script only.
+      -Added the new procedure "HaveSpell" to test if a character has access to a specific spell ID.
+      -Added the new procedure "CntMartWea" to count the number of martial weapon proficiencies a character has. 
+      ]]>
+    </info_history>
+  </fileinfo>
+
+
+  <procedure id="HavePower" scripttype="validate"><![CDATA[
+    ~ This procedure tests if a character has a specific spell and sets the valid field
+    ~ ===How to use this Procedure===
+    ~ var PowerID as String
+    ~ var HavePower as number
+    ~ PowerID = "spCureLig1"
+    ~ Call HavePower
+    ~ @valid = HavePower
+
+    var HavePower as number
+    var PowerID as string
+    var s2search as string
+    var s2classes as string
+    var X as number
+    ~ Init fields here
+    X = 0
+    HavePower = 0
+
+    ~ Add thingid to the spell id passed us
+    PowerID = "thingid." & PowerID
+    ~ replace the | with |thingid. tag groups
+    PowerID = replace(PowerID,"|","|thingid.",0) & " & !Hide.Power"
+
+    ~ Set focus to the power and based on if we got the pointer
+    ~ or not set the validation flag. Make sure at the end to
+    ~ clear the focus so we don't affect any other setfocus going on.
+    perform hero.findchild[BasePower,PowerID].setfocus
+    HavePower = state.isfocus
+    perform state.clearfocus
+    ]]>
+  </procedure>
+
+
+  <!-- ****************************************************************** -->
+  <!-- Setup Psychic Warrior Maneuver/Trance First 10000                  -->
+  <!-- ****************************************************************** -->
+  <procedure id="PsyWarTrMa" context="pick"><![CDATA[
+    var lvl as number
+    ~ If the Path Ability is Primary then set us to level 3
+    If (root.field[usrIndex].value = 0) Then
+      lvl = 3
+    ~..If the Path Ability is Secondary then set us to level 11
+    else 
+      lvl = 11
+    endif
+  
+    ~ If we have levels in the Awakened Blade PrC, those levels count for these abilities
+    lvl -= hero.childfound[cPWP6PthWr].root.field[cTotalLev].value
+    
+    ~ If we come out less then level 1 then force us to be level 1 ability
+    if (lvl < 1) then
+      lvl = 1
+    endif
+    
+    ~ Added safe guard of making sure Pick lives before using it. Sometimes with bootstrapps
+    ~ childfound will not always work corretly. So it never hurts to "make" sure so we don't
+    ~ toss errors at gamers and I get nasty support emails. =)
+    if (hero.childlives[cPWP6PthWr] = 1) then
+      field[xExtraLev].value += hero.childfound[cPWP6PthWr].root.field[cTotalLev].value
+    endif
+
+    perform assignstr["ClSpecWhen." & lvl]
+    ]]>
+  </procedure>
+
+
+  <!-- ****************************************************************** -->
+  <!-- Setup Psychic Warrior Path Custom Ability - First 100              -->
+  <!-- ****************************************************************** -->
+  <procedure id="PsyWarPath" context="pick"><![CDATA[
+    var s2Power as string
+
+    ~ If Primary then set correct levels here
+    If (field[usrIndex].value = 0) Then
+      ~ Path Powers are level 1 & 3 only for primary
+      s2Power = "thingid.cPWaPathPo & (ClSpecWhen.1|ClSpecWhen.3)"
+      ~ Set Primary Path Power tag
+      perform assign[PsyWarrior.PathPrim]
+    ~..if Secondary then set correct levels here
+    Else
+      ~ Path Powers are level 9 only for secondary
+      s2Power = "thingid.cPWaPathPo & (ClSpecWhen.9)"
+      ~ Set Secondary Path Power tag
+      perform assign[PsyWarrior.PathSec]
+    Endif
+
+    ~ Find all the skills we need to make a class skill
+    foreach pick in hero from BaseSkill where tagids[ClassSkill.?,"|"]
+       ~ Assign the Helper.ClassSkill tag to make a class skill
+       perform eachpick.assign[Helper.ClassSkill]
+    nexteach
+
+    ~ Find all the Class Path Power Things
+    foreach pick in hero from BaseClSpec where s2Power
+       ~ Push all Allow Power tags to the Path Power Thing
+       perform eachpick.pushtags[ClsAllowPs.?]
+    nexteach
+
+    ~ Find all the Class Path Skill Things
+    foreach pick in hero from BaseClSpec where "thingid.cPWaPathSk"
+       ~ Push all Allow Skil tags to the Path Skill Thing
+       perform eachpick.pushtags[PathSkill.?]
+    nexteach
+    ]]>
+  </procedure>
+
+
+  <!-- ****************************************************************** -->
+  <!-- Psicrystal Personality Bonuses PostLevel/20000                     -->
+  <!-- ****************************************************************** -->
+  <procedure id="PsicryPers" context="pick"><![CDATA[
+    ~ If we're within 1 mile or arms length apply personality bonus
+    doneif (hero.tagcount[Psicrystal.Master?] = 0)
+
+    var nS2Bonus as number
+
+    ~ Set psicrystal bonus
+    nS2Bonus += tagvalue[PsicrysBon.?]
+
+    var S2TagID  as string
+    var S2Target as string
+    ~ Generate Thing ID tag
+    S2TagID = tagids[PsicrystID.?,"|"]
+    S2TagID = replace(S2TagID,"PsicrystID","thingid",0)
+    ~ If Psycrstal gives a skill bonus process here
+    If (tagis[PsicryType.Skill] <> 0) Then
+
+      ~ If not all craft skills process here
+      If (tagis[PsicrystID.AllCraft] = 0) Then
+        ~ Set focus to the skill
+        perform hero.findchild[BaseSkill,S2TagID].setfocus
+
+      ~.. For all craft skills process here
+      Else
+        ~ Give bonus to all craft skills
+        foreach pick in hero from BaseSkill where "Helper.SkCatCraft"
+          eachpick.field[Bonus].value += nS2Bonus
+        nexteach
+      Endif
+
+    ~..If psycristal gives a save bonus process here
+    ElseIf (tagis[PsicryType.Save] <> 0) Then
+      ~ Set focus to the skill
+      perform hero.findchild[BaseSave,S2TagID].setfocus
+
+    ~..If psycristal gives a bonus to something else
+    ElseIf (tagis[PsicryType.Other] <> 0) Then
+
+      ~ Initiative Bonus
+      If (tagis[PsicrystID.Initiative] <> 0) Then
+        hero.child[Initiative].field[Bonus].value += nS2Bonus
+
+      ~..Concentration Bonus
+      ElseIf (tagis[PsicrystID.Concentr] <> 0) Then
+        herofield[tConcCheck].value += nS2Bonus
+
+      ~..One Knowledge Skill bonus
+      ElseIf (tagis[PsicrystID.Knowledge] <> 0) Then
+
+        ~ If 2nd drop down chosen something then give it bonus
+        If (field[usrChosen2].ischosen <> 0) Then
+          field[usrChosen2].chosen.field[Bonus].value += nS2Bonus
+
+        ~..If we have a Reference tag then use it to get the right knowledge skill
+        ElseIf (tagcount[Reference.?] <> 0) Then
+          S2Target = tagids[Reference.?]
+          perform hero.findchild[BaseSkill,S2Target].setfocus
+        Endif
+
+      Endif
+
+    Endif
+
+    doneif (state.isfocus = 0)
+    ~ Give bonus to focus
+    focus.field[Bonus].value += nS2Bonus
+    ]]>
+  </procedure>
+
+  <procedure id="NameMindBl" context="pick"><![CDATA[
+    ~ Name Mind Blade - As we are running custom after a Item Power is 
+    ~                   added to a the mind blade the name gets chopped.
+    ~                   So we reset it here.
+    ~ Should run at Render/99999999 and run on the "Weapon, Magic" pick
+
+    ~ If we are masterwork we have to reset the name as it gets lost
+    If (tagis[EquipType.Masterwork] <> 0) Then
+       ~ Reset the live name as it gets destroyed
+       field[livename].text &= " " & tagnames[MindBlade.?]
+    Endif
+    
+    ~ Remove Tracker
+    perform delete[User.Tracker]
+    ]]>
+  </procedure>
+
+  <procedure id="SetMindBl" context="pick"><![CDATA[
+    ~ Setup Mind Blade - As we are running custom after a Item Power is 
+    ~                    added to a the mind blade the name gets chopped.
+    ~                    So we reset it here.
+    ~ Should run at Pre-Level/10000 and run on the "Weapon, Magic" pick
+
+    ~ If we have Powerful Build then we need to increase
+    ~ the damage of the mind blade.
+    if (hero.tagis[Hero.PowerBuild] = 1) then
+      perform assign[Helper.DamageUp]
+    endif  
+
+    ~ If we use undersized weapons then decrease
+    ~ the damage of the mind blade.
+    if (hero.tagis[Helper.Undersized] = 1) then
+      perform assign[Helper.DamageDown]
+    endif
+
+    ~ All Mind Blades are Masterwork weapons. We can't apply a tag YET
+    ~ like we can do with armor. So we need to give a +1 Enhancement bonus
+    ~ to attack rolls only.
+    #applybonus[atmBonEnh,this,1]
+    #applybonus[atrBonEnh,this,1]
+    ]]>
+  </procedure>
+
+  <procedure id="PUPreReqs" scripttype="validate"><![CDATA[
+    ~ IN: classcheck
+    ~ OUT: levels
+    ~ This proceadure is designed to correctly count class levels, PrC, and archetypes that
+    ~ cause spell stacking rules. In example Soul Archer PrC levels stack with Soulknife
+    ~ levels for purposes of Pre-Reqs.
+
+    var classcheck as string
+    var levels as number
+
+    ~ First add the levels of the class we specified. Plus new LW logic for comparing all the new
+    ~ PreReq and Class Specials count as logic.
+    levels += hero.tagcountstr["Classes." & classcheck] + hero.tagcountstr["CSCountAs." & classcheck] + altthing.intersect[PreReqPos1,PreReqPos1,countsource] - altthing.intersect[PreReqNeg1,PreReqNeg1,countsource] + altthing.intersect[abCategory,PreReqCaP1,countsource] - altthing.intersect[abCategory,PreReqCaN1,countsource]
+
+    ~ Next check for any other class levels allowed by archetypes or PrC's
+    ~---------------------------------------------------------------------
+
+    ~ Soulknife
+    if (compare(classcheck,"Soulknife") = 0) then
+
+      ~ Soul Archer
+      levels += #levelcount[PUSoulArc]
+
+    endif
+
+    ~ Aegis
+    if (compare(classcheck,"Aegis") = 0) then
+
+      ~ Metaforg PrC
+      levels += #levelcount[PUMetafrg]
+
+      ~ As Aegis doesn't account for xExtraLev, if we have the Student of the 
+      ~ Astral Suit feat, calculate our Aegis level as being 4 higher (not to
+      ~ exceede total character level). This needs to run after taking any 
+      ~ Metaforge levels into account.
+      if (#hasfeat[fPUStdntAS] = 1) then
+        levels += 4
+        if (levels > #totallevelcount[]) then
+          levels = #totallevelcount[]
+        endif
+      endif
+    endif
+    ]]>
+  </procedure>
+
+
+  <!-- ****************************************************************** -->
+  <procedure id="PsyWepDmg" context="pick"><![CDATA[
+    ~ Timing: Final/50000
+    ~ This proceadure is designed to work for both Psionic Fist and Psionic Weapon
+    ~ feats.
+    ~ abValue  = Static Bonus if focused
+    ~ abValue2 = Number of dice xd6
+    ~ abValue3 = Dice size 2dx
+    
+    var sSearch as string
+    
+    ~ If we are not active or psionic focus get out now!
+    doneif (hero.tagis[Hero.PsiFocus] + field[abilActive].value = 0)
+
+    var s2Damage as string
+
+    ~ If we expend psionic focus then damage increases to plus dice
+    if (field[abilActive].value = 1) then
+       s2Damage = signed(field[abValue2].value) & "d" & field[abValue3].value
+    endif
+
+    ~ Find weapons based on the passed in search expression
+    foreach pick in hero from BaseWep where sSearch
+
+      ~ if we have expended focus give dice damage
+      if (field[abilActive].value = 1) then
+        #extradamage[eachpick,s2Damage,field[name].text]
+      ~..give bonus damage
+      else
+        eachpick.field[dmmBonus].value += field[abValue].value
+      endif
+    nexteach
+    ]]>
+  </procedure>
+
+  <procedure id="SetHeroPsi" context="pick"><![CDATA[
+    ~ Set Hero.Psionic tag only once on the hero.
+
+    ~ If no hero psionic tag already on hero than assign one
+    If (hero.tagis[Hero.Psionic] <> 1) Then
+      ~ Set the Hero.Psionic tag on the hero
+      perform hero.assign[Hero.Psionic]
+    Endif
+    ]]>
+  </procedure>
+
+
+  <procedure id="PUSetAegCP" context="pick"><![CDATA[
+    ~ Adds four effective class levels worth of customization points
+    ~ Aegis hard codes the customization points per level in a script that 
+    ~ runs at PostLevels 600, storing the bonus reconfigure points in 
+    ~ field abValue2. And Metaforge runs it's calcs at 610. So we need to 
+    ~ run after those and alter CPs by determining how many pseudo-levels 
+    ~ to add and then how much TO add.
+
+    var V_CurrLvl as number
+    var V_NewLvl as number
+    var PUCurrCP as number
+    var PUNewCP as number
+
+    ~debug "Student of the Astral Suit: V_CurrLvl = " & V_CurrLvl & " and ~V_NewLvl = " & V_NewLvl
+
+    if (V_CurrLvl = 1) then
+      PUCurrCP = 3
+    elseif (V_CurrLvl = 2) then
+      PUCurrCP = 4
+    elseif (V_CurrLvl = 3) then
+      PUCurrCP = 5
+    elseif (V_CurrLvl = 4) then
+      PUCurrCP = 7
+    elseif (V_CurrLvl = 5) then
+      PUCurrCP = 8
+    elseif (V_CurrLvl = 6) then
+      PUCurrCP = 9
+    elseif (V_CurrLvl = 7) then
+      PUCurrCP = 10
+    elseif (V_CurrLvl = 8) then
+      PUCurrCP = 11
+    elseif (V_CurrLvl = 9) then
+      PUCurrCP = 13
+    elseif (V_CurrLvl = 10) then
+      PUCurrCP = 14
+    elseif (V_CurrLvl = 11) then
+      PUCurrCP = 15
+    elseif (V_CurrLvl = 12) then
+      PUCurrCP = 16
+    elseif (V_CurrLvl = 13) then
+      PUCurrCP = 17
+    elseif (V_CurrLvl = 14) then
+      PUCurrCP = 19
+    elseif (V_CurrLvl = 15) then
+      PUCurrCP = 20
+    elseif (V_CurrLvl = 16) then
+      PUCurrCP = 21
+    elseif (V_CurrLvl = 17) then
+      PUCurrCP = 22
+    elseif (V_CurrLvl = 18) then
+      PUCurrCP = 23
+    elseif (V_CurrLvl = 19) then
+      PUCurrCP = 25
+    elseif (V_CurrLvl = 20) then
+      PUCurrCP = 26
+    endif
+
+    if (V_NewLvl = 1) then
+      PUNewCP = 3
+    elseif (V_NewLvl = 2) then
+      PUNewCP = 4
+    elseif (V_NewLvl = 3) then
+      PUNewCP = 5
+    elseif (V_NewLvl = 4) then
+      PUNewCP = 7
+    elseif (V_NewLvl = 5) then
+      PUNewCP = 8
+    elseif (V_NewLvl = 6) then
+      PUNewCP = 9
+    elseif (V_NewLvl = 7) then
+      PUNewCP = 10
+    elseif (V_NewLvl = 8) then
+      PUNewCP = 11
+    elseif (V_NewLvl = 9) then
+      PUNewCP = 13
+    elseif (V_NewLvl = 10) then
+      PUNewCP = 14
+    elseif (V_NewLvl = 11) then
+      PUNewCP = 15
+    elseif (V_NewLvl = 12) then
+      PUNewCP = 16
+    elseif (V_NewLvl = 13) then
+      PUNewCP = 17
+    elseif (V_NewLvl = 14) then
+      PUNewCP = 19
+    elseif (V_NewLvl = 15) then
+      PUNewCP = 20
+    elseif (V_NewLvl = 16) then
+      PUNewCP = 21
+    elseif (V_NewLvl = 17) then
+      PUNewCP = 22
+    elseif (V_NewLvl = 18) then
+      PUNewCP = 23
+    elseif (V_NewLvl = 19) then
+      PUNewCP = 25
+    elseif (V_NewLvl = 20) then
+      PUNewCP = 26
+    endif
+
+    ~ Set configurable points on Aegis Helper in abValue2 field by adding 
+    ~ the difference. 
+    ~   field abValue contains the # of times tracker for the first copy
+    ~   field abValue2 contains the bonus reconfigure points
+    ~   field abValue3 contains the bonus uses
+    hero.childfound[cPUAegHelp].field[abValue2].value += (PUNewCP - PUCurrCP)
+    ]]>
+  </procedure>
+
+
+</document>

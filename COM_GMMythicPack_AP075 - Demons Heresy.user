@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <thing id="pAP75Arues" name="Specific Individual: Arushalae" compset="InPlay">
+    <usesource source="PathWraRig"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <bootstrap thing="raAP75ArPR"></bootstrap>
+    <eval phase="Final" priority="1000" index="2">~ adjust CR
+~ +1 for wealthy
+~ +1 for 3 mytic tiers (HL not handling this right)
+
+herofield[tCR].value += 3</eval>
+    <eval phase="First">~ class skills
+perform hero.child[skAcrobat].assign[Helper.ClassSkill]
+
+~ adjust some skills and saves
+hero.child[skBluff].field[Bonus].value += 1
+hero.child[skDisguise].field[Bonus].value += 1
+hero.child[skSenseMot].field[Bonus].value += 1
+hero.child[skStealth].field[Bonus].value += 1
+hero.child[skUseMagic].field[Bonus].value += 1
+
+hero.child[svAll].field[Bonus].value += 1</eval>
+    </thing>
+  <thing id="raAP75ArPR" name="Path to Redemption" description="Arueshalae's hopeful path toward redemption has had some unique effects on her abilities as a demon. She no longer has the evil subtype, and she's lost the use of some of her demonic spell-like abilities as detailed above. Her DR has changed from DR 10/cold iron or good to DR 10/cold iron or lawful. When she's within 30 feet of a CR 6 or higher demon at the start of any turn, she must succeed at a DC 15 Fortitude save or be staggered for 1 round by flashbacks of her evil past." compset="RaceSpec" summary="In being redeemed, various demonic abilities have changed.">
+    <fieldval field="actName" value="Redeemed"/>
+    <usesource source="PathWraRig"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <bootstrap thing="raEvasion"></bootstrap>
+    <bootstrap thing="raAP75ArIv"></bootstrap>
+    <bootstrap thing="raAP75ArRd"></bootstrap>
+    <bootstrap thing="xDamRdLaCI">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <eval phase="Final" priority="1000" index="4">~ adjust DRs
+
+hero.child[xDamRdGoCI].field[abValue].value = 0
+hero.child[xDamRsFire].field[abValue].value = 0
+
+perform hero.child[xDamRdGoCI].delete[Value.?]</eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[~ hide some spells if we are not fully redeemed
+
+doneif (hero.tagis[Custom.AruRedeeme] <> 0)
+
+var keep as string
+keep = "Helper.SpellLike & !(thingid.spCharMon3 | thingid.spDeteGoo1 | thingid.spDeteTho2 | thingid.spMagiAur1 | thingid.spNondete3 | thingid.spSuggest2 | thingid.spTongues2 | thingid.spVampTou3)"
+
+foreach pick in hero from BaseSpell where keep
+  perform eachpick.assign[Hide.Spell]
+nexteach
+
+~ adjust times per day for some spells
+perform hero.child[spSuggest2].tagreplace[Usage.?,Usage.Day]
+hero.child[spSuggest2].field[trkMax].value = 3
+
+perform hero.child[spCharMon3].tagreplace[Usage.?,Usage.Day]
+hero.child[spCharMon3].field[trkMax].value = 3
+
+perform hero.child[spVampTou3].tagreplace[Usage.?,Usage.Day]
+hero.child[spVampTou3].field[trkMax].value = 3]]></eval>
+    <eval phase="First" priority="510" index="3">~ remove evil subtype
+
+perform hero.assign[NoTypeAbil.stEvil]
+
+hero.child[stEvil].activated = 0</eval>
+    <eval phase="First" priority="50" index="5"><![CDATA[~ set tag if we are redeemed else hide and disable invigoration and redeemed
+
+if (field[abilActive].value <> 0) then
+  perform hero.assign[Custom.AruRedeeme]
+else
+  perform hero.child[raAP75ArIv].assign[Helper.SpcDisable]
+  perform hero.child[raAP75ArIv].assign[Hide.Special]
+  perform hero.child[raAP75ArRd].assign[Helper.SpcDisable]
+  perform hero.child[raAP75ArRd].assign[Hide.Special]
+endif]]></eval>
+    <eval phase="Final" priority="1000" index="6">~ change profane gift to arcane gift
+
+hero.child[raSucProfG].field[livename].text = &quot;Anarchic Gift&quot;
+hero.child[raSucProfG].field[shortname].text = &quot;anarchic gift&quot;
+
+var desc as string
+
+if (hero.tagis[Custom.AruRedeeme] = 0) then
+
+desc = &quot;Arueshalae's redemption has altered her profane gift ability. This ability functions the same, except the bonus to an ability score granted by anarchic gift is asacred bonus, and the gift cannot be removed by {i}dispel evil{/i}. She can maintain only one anarchic gift at a time.&quot;
+
+else
+
+desc = &quot;Arueshalae's redemption has altered her profane gift ability. This ability functions the same, except the bonus to an ability score granted by anarchic gift is asacred bonus, and the gift cannot be removed by {i}dispel evil{/i}. She can maintain anarchic gift on an unlimited number of creatures.&quot;
+endif
+
+perform state.thing[raSucProfG].amendthing[description,desc]
+perform state.thing[raSucProfG].amendthing[name,&quot;Anarchic Gift&quot;]</eval>
+    </thing>
+  <thing id="pAP75Xanth" name="Specific Individual: Xanthir Vang" compset="InPlay">
+    <usesource source="PathWraRig"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <bootstrap thing="raAP75XnCn"></bootstrap>
+    </thing>
+  <thing id="raAP75XnCn" name="Contingency" description="If Xanthir is reduced to 0 or fewer hit points, his {i}contingency{/i} spell activates a {i}false life{/i} on him." compset="RaceSpec">
+    <usesource source="PathWraRig"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raAP75ArIv" name="Invigoration" description="A rueshalae can choose to infuse a portion of her own life energy into a mortal during an act of passion, such as a kiss. She gains 1 negative level when she uses this ability, while the target creature is affected by restoration and breath of life (both at CL 12th). If after 24 hours Arueshalae succeeds at a DC 20 Fortitude save, this negative level is removed (failure means it must be removed via normal means). She cannot use this ability on herself." compset="RaceSpec" summary="Infuse portion of life energy into a mortal.">
+    <usesource source="PathWraRig"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raAP75ArRd" name="Redeemed" description="Arueshalae gains the good subtype and is no longer in danger of being staggered in the presence of other demons. She regains full use of her succubus spell-like abilities, and can use her anarchic gift on an unlimited number of creatures. Her constant spell-like ability to detect good changes to detect evil." compset="RaceSpec">
+    <usesource source="PathWraRig"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Custom" tag="AruRedeeme" name="Redeemed"/>
+    <bootstrap thing="stGood">
+      <containerreq phase="First" priority="500">Custom.AruRedeeme</containerreq>
+      </bootstrap>
+    <bootstrap thing="spDeteEvi1">
+      <containerreq phase="First" priority="500">Custom.AruRedeeme</containerreq>
+      <autotag group="Usage" tag="Constant"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      </bootstrap>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+if (hero.tagis[Custom.AruRedeeme] <> 0) then
+  perform hero.child[raSucEnerD].assign[Helper.SpcDisable]
+  perform hero.child[raSucEnerD].assign[Hide.Special]
+  perform hero.child[spDeteGoo1].assign[Hide.Spell]
+endif]]></eval>
+    </thing>
+  <thing id="pAP75Jerri" name="Specific Individual: Jerribeth" compset="InPlay">
+    <usesource source="PathWraRig"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    </thing>
+  <thing id="raAP75JeCS" name="Change Shape (any humanoid form, {i}alter self{/i})" description="Jerribeth is a unique glabrezu. She's an advanced member of her kind with an unusual ability to change shape as a swift action into a humanoid form or back to her true form-a gift from Baphomet himself to aid her in her position as a leader among the humanoid cultists she has been tasked to interact with. She's come to favor the form of a beautiful green-haired elven woman, since she's found that this beautiful form works wonders when she's seducing and manipulating mortal minions." compset="RaceSpec">
+    <usesource source="PathWraRig"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  </document>

@@ -1,0 +1,842 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_PathOfWar - Feats"/>
+  <fileinfo>
+    <info_history><![CDATA[
+April 10, 2014 - Tim Shadow
+-Fixed "Deadly Agility" feat pre-req scripts.]]></info_history>
+    </fileinfo>
+  <thing id="fPWAdvStud" name="Advanced Study" description="You&apos;ve delved deeper into your martial learning to find new skills.\n\n{b}Prerequisite{/b}: Must be a martial disciple of 4th level or higher.\n\n{b}Benefit{/b}: You may select two maneuvers or one stance from your class&apos; list of disciplines and add them to your known maneuvers and stances. You must meet all prerequisites for the new maneuvers or stance to qualify for you to learn them. You may select maneuvers from a discipline that is not in class to you with this feat; doing so reduces the effectiveness of this feat to one maneuver or stance of your choice from an out of class discipline.\n\n{b}Special:{/b} You may select this feat multiple times.\n\n{b}Note:{/b} Use the first drop down is used to select if you want Manuevers or a Stance.  The 2nd drop down is used to select which class to give the bonus too." compset="Feat">
+    <fieldval field="usrCandid1" value="PathOfWar.Config &amp; component.Configure"/>
+    <arrayval field="usrArray" index="0" value="Manuevers"/>
+    <arrayval field="usrArray" index="1" value="Stance"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      ~ If we choose manuevers add two of them
+      If (field[usrIndex].value = 0) Then
+         field[usrChosen1].chosen.field[cfgMax1].value += 2
+      ~.. If we choose Stance add one of them
+      ElseIf (field[usrIndex].value = 1) Then
+         field[usrChosen1].chosen.field[cfgMax2].value += 1
+      Endif]]></eval>
+    <exprreq message="Martial disciple of 4th level or higher required."><![CDATA[#value2[PWDisLevel] >= 4]]></exprreq>
+    </thing>
+  <thing id="fPWDiscFoc" name="Discipline Focus" description="You’ve trained extensively in the arts of a single martial discipline.\n\n{b}Prerequisites{/b}: Ability to initiate three maneuvers of a single discipline.\n\n{b}Benefit{/b}: You gain a +2 bonus to saving throw DCs when using maneuvers of the selected discipline. You also inflict an additional +2 points of damage when wielding associated weapons of the chosen discipline.\n\n{b}Special{/b}: If the character ever has fewer than three maneuvers known from the specialized discipline, then he loses the benefits of this feat until such a time that he does. This feat may be selected multiple times, each time selecting a new discipline to receive the benefits of this feat." compset="Feat" summary="Gain +2 to discipline maneuver save DC&apos;s, +2 damage with discipline weapons">
+    <fieldval field="usrCandid1" value="component.Simple &amp; PathOfWar.selDisc"/>
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="General"/>
+    <eval phase="PostLevel" priority="20000"><![CDATA[      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ stop now if discipline not chosen
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Assign bonus damage to discipline weapons
+      var sTags as string
+      sTags = field[usrChosen1].chosen.tagids[wFtrGroup.?,"|"]
+      foreach pick in hero from BaseWep where sTags
+        eachpick.field[wDamBonus].value += field[abValue].value
+      nexteach
+
+      ~ Assign DC bonus to manuevers
+      sTags = field[usrChosen1].chosen.tagids[Discipline.?]
+      hero.findchild[SplSchool,"PathOfWar.Discipline & " & sTags].field[schDC].value += field[abValue].value]]></eval>
+    <evalrule phase="PostLevel" priority="25000" message="Must have three maneuvers in the selected discipline" summary="Must have three maneuvers in the selected discipline"><![CDATA[      if (field[usrChosen1].ischosen = 1) then
+        perform hero.findchild[Simple, "PathOfWar.selDisc & count:mLevel.? >= 3 & " & field[usrChosen1].chosen.tagids[Discipline.?]].setfocus
+        validif (state.isfocus = 1)
+      endif]]></evalrule>
+    <prereq message="Three maneuvers of a single discipline required.">
+      <validate><![CDATA[      perform hero.findchild[Simple, "PathOfWar.selDisc & count:mLevel.? >= 3"].setfocus
+      validif (state.isfocus = 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWDeadAgi" name="Deadly Agility" description="You have learned how to use your agility to greater purpose in battle.\n\n{b}Prerequisites{/b}: Weapon Finesse, base attack bonus +1\n\n{b}Benefit{/b}: You may add your Dexterity modifier in place of your Strength modifier when wielding a light weapon or a weapon that gains the benefits of the Weapon Finesse feat (such as the rapier) when determining additional damage inflicted upon a successful attack. This modifier to damage is not increased for two-handed weapons, but is not reduced for off-hand weapons." compset="Feat" summary="Use Dex for damage with light and finesse weapons" uniqueness="useronce">
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ All Finesse and Light Weapons
+      foreach pick in hero from BaseWep where "Helper.Finesse|wClass.Light"
+         ~ Set tag so that we use either Str or Dex
+         perform eachpick.assign[DamageOpt.aDEX]
+      nexteach]]></eval>
+    <exprreq message="Base attack bonus +1 required."><![CDATA[#BAB[] >= 1]]></exprreq>
+    <exprreq message="Weapon Finesse feat required."><![CDATA[#hasfeat[fWepFin] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWExtrGam" name="Extra Gambit" description="You have learned another manner in which to take a chance for success.\n\n{b}Prerequisites{/b}: The ability to initiate a gambit, Charisma 13, warlord level 3+ \n\n{b}Benefit{/b}: You may select another gambit method in which to regain maneuvers.\n\n{b}Special{/b}: You may select this feat multiple times, selecting a new gambit each time." compset="Feat">
+    <fieldval field="reqCha" value="13"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      hero.childfound[cHelpPW1].field[cGiveSpec].value += 1]]></eval>
+    <exprreq message="Warlord level 3+ required."><![CDATA[#featlevelcount[PWWarlord] >= 3]]></exprreq>
+    <exprreq message="Ability to initiate a gambit required."><![CDATA[#hasability[cPW1Gambit] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWDoubFin" name="Double Weapon Finesse" description="You have mastered ways to take a double weapon and turn it into a spinning majesty of deadly grace.\n\n{b}Prerequisites{/b}: Proficiency with one or more double weapons, Two-Weapon Fighting, Weapon Finesse\n\n{b}Benefits{/b}: While wielding a double weapon that you are proficient in, you may treat both heads of the weapon as light weapons for the purposes of the Weapon Finesse feat and for Two-Weapon Fighting. You also receive a +2 competence bonus to CMD when using a double weapon." compset="Feat" uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      var dblEquip as number
+      ~ Loop through all the double weapons on the character
+      foreach pick in hero from BaseWep where "wFtrGroup.Double & Helper.Proficient"
+        ~ It becomes a finesseable weapon
+        perform eachpick.assign[Helper.Finesse]
+        ~ If we find an equipped double weapon then we need to later
+        ~ give a +2 bonus to CMD
+        If (eachpick.field[gIsEquip].value + eachpick.field[wIs2nd].value <> 0) then
+          dblEquip += 1
+        endif
+      nexteach
+
+      ~ If we have a double weapon equipped then give 
+      ~ bonus to CMD
+      If (dblEquip <> 0) Then
+        #applybonus[BonComp, hero.child[ManeuvDef], field[abValue].value]
+      Endif]]></eval>
+    <exprreq message="Weapon Finesse feat required."><![CDATA[#hasfeat[fWepFin] <> 0]]></exprreq>
+    <exprreq message="Two-Weapon Fighting feat requried."><![CDATA[#hasfeat[fTwoWep] <> 0]]></exprreq>
+    <prereq message="You must be proficient with at least one double weapon.">
+      <validate><![CDATA[
+        foreach pick in hero from BaseWep where "wFtrGroup.Double & Helper.Proficient"
+          @valid = 1
+          done
+        nexteach]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWExtrReM" name="Extra Readied Maneuver" description="{b}Prerequisites:{/b} Ability to initiate a martial maneuver.\n\n{b}Benefit:{/b} Select a martial maneuver using class that you possess one or more levels in. You may ready an additional martial maneuver from your maneuvers known from that class.\n\n{b}Special:{/b} You may select this feat multiple times, applying it to multiple classes (if you possess multiple initiator classes) or multiple times to single class. This feat may not alter maneuvers readied from the Martial Training feat chain." compset="Feat" summary="Ready an additional martial maneuver from your maneuvers known.">
+    <fieldval field="usrCandid1" value="component.PWManList"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      var iX as number
+      ~ Calculate the array value which is class level minus one 
+      ~ as we start at zero
+      iX = field[usrChosen1].chosen.linkage[powClass].field[cTotalLev].value - 1
+
+      ~ Increase class ready number by one
+      field[usrChosen1].chosen.field[cManReady].arrayvalue[iX] += 1]]></eval>
+    <exprreq message="Ability to initiate a martial maneuver required."><![CDATA[hero.tagcount[HasMan.?] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWFuseSty" name="Fuse Styles" description="You are capable of mingling mundane and martial combat styles.\n\n{b}Prerequisites{/b}: One style feat, one stance known \n\n{b}Benefit{/b}: You can enter a fighting Style and a martial stance with the same swift action." compset="Feat" summary="You can enter a fighting Style and a martial stance with the same swift action." uniqueness="useronce">
+    <usesource source="srcPathOfW"/>
+    <tag group="fCategory" tag="PWStyle" name="Style"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="One Style feat required."><![CDATA[hero.tagcount[fCategory.PWStyle] <> 0]]></exprreq>
+    <exprreq message="One stance known required."><![CDATA[hero.tagcount[HasStance.?] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWGrtUnaS" name="Greater Unarmed Strike" description="Your unarmed attacks show a master&apos;s skill.\n\n{b}Prerequisites{/b}: Improved Unarmed Strike, base attack bonus +3\n\n{b}Benefit{/b}: Your unarmed strikes inflict more damage than ever before, inflicting damage as indicated below.\n\nThe damage listed is for Medium creatures, adjusting damage amounts according to size if necessary.\n3rd-7th (1d4)\n8th-11th (1d6)\n12th-15th (1d8)\n16th+ (1d10)" compset="Feat" summary="Your unarmed strikes inflict more damage than ever before, inflicting damage as indicated below." uniqueness="useronce">
+    <usesource source="srcPathOfW"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ At each level section add a new damage up tag to increase the 
+      ~ damage dice of our unarmed strike.
+      If (#totallevelcount[] >= 16) then
+        perform hero.child[wUnarmed].assign[Helper.DamageUp]
+      Endif
+      If (#totallevelcount[] >= 12) then
+        perform hero.child[wUnarmed].assign[Helper.DamageUp]
+      Endif
+      If (#totallevelcount[] >= 8) then
+        perform hero.child[wUnarmed].assign[Helper.DamageUp]
+      Endif
+      If (#totallevelcount[] >= 3) then
+        perform hero.child[wUnarmed].assign[Helper.DamageUp]
+      Endif]]></eval>
+    <exprreq message="Improved Unarmed Strike feat required."><![CDATA[#hasfeat[fImpUnarm] <> 0]]></exprreq>
+    <exprreq message="Base Attack Bonus of +3 required."><![CDATA[#BAB[] >= 3]]></exprreq>
+    </thing>
+  <thing id="fPWLightRe" name="Lightning Recovery" description="With a flash of insight, you retain the knowledge of a martial maneuver you&apos;ve just used.\n\n{b}Prerequisite:{/b} Ability to initiate martial maneuvers \n\n{b}Benefit:{/b} As a free action, after you&apos;ve use a martial strike, counter, or boost, you may instantly recover that maneuver. You may do this once per day.\n\n{b}Special:{/b} You may select this feat multiple times, gaining multiple uses per day." compset="Feat" summary="As a free action instantly recover a maneuver just used.">
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Combat"/>
+    <bootstrap thing="xPWLightRe"></bootstrap>
+    <exprreq message="Ability to initiate a martial maneuver required."><![CDATA[hero.tagcount[HasMan.?] <> 0]]></exprreq>
+    </thing>
+  <thing id="xPWLightRe" name="Lightning Recovery" description="With a flash of insight, you retain the knowledge of a martial maneuver you&apos;ve just used.\n\n{b}Prerequisite:{/b} Ability to initiate martial maneuvers \n\n{b}Benefit:{/b} As a free action, after you&apos;ve use a martial strike, counter, or boost, you may instantly recover that maneuver." compset="Ability" summary="As a free action instantly recover a maneuver just used." uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="Final" priority="25000">~ Set uses per day equal to the number of feat taken
+      field[trkMax].value += hero.tagcount[HasFeat.fPWLightRe]</eval>
+    </thing>
+  <thing id="fPWLightSw" name="Lightning Swap" description="Your speed is legendary, allowing you to switch weapons at a frightening pace.\n\n{b}Prerequisite{/b}: Quick Draw, Dexterity 15, base attack bonus +5 \n\n{b}Benefit{/b}: You may draw or put away a weapon as a free action. You cannot make more weapon swaps per round than your Dexterity modifier. You also gain a +2 bonus to CMD to resist attempts to be disarmed due to your fast hands and reflexes." compset="Feat" summary="Draw/sheath a weapon as a free action a number of times equal to your Dex modifier." uniqueness="useronce">
+    <fieldval field="reqDex" value="15"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Give +2 bonus to CMD Disarm
+      hero.child[manDisarm].field[manCMD].value += 2]]></eval>
+    <exprreq message="Base attack bonus of +5 required."><![CDATA[#BAB[] >= 5]]></exprreq>
+    <exprreq message="Quick Draw feat required."><![CDATA[#hasfeat[fQuickDraw] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWMartPow" name="Martial Power" description="You are able to instinctively call upon reserves of untapped power within yourself to defend yourself.\n\n{b}Prerequisites:{/b} Constitution 13, knowledge of at least one maneuver or stance.\n\n{b}Benefit:{/b} You can choose to take a -1 penalty on melee attack rolls and combat maneuver checks to gain 2 temporary hit points. This bonus is increased by half (50%) when you are using a shield of any kind. When your base attack bonus reaches +3 and every +2 thereafter, the penalty increases by -1 and the temporary hit point bonus increases by 2. You can only choose to use this feat when you declare that you are making an attack or a full-attack action with a melee weapon, or when you are initiating a maneuver. The temporary hit points gained from use of this feat last until your next turn.\n\n{b}Special:{/b} Martial Power can be used in place of Combat Expertise to qualify for a feat, prestige class, or other special ability. You can take both this feat and Combat Expertise." compset="Feat" uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="2"/>
+    <fieldval field="reqCon" value="13"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="HasFeat" tag="fComExpert"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PostLevel" priority="15000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Calculate our penalty and temp HP amount
+      if (#BAB[] >= 3) then
+        var nBAB as number
+        nBAB = #BAB[] - 2
+        field[abValue].value += round(nBAB/2,0,-1)
+        field[abValue2].value += round(nBAB/2,0,-1) * 2
+      endif
+      
+      ~ Increase temp HP bonus by 50% if a shield is equipped
+      if (hero.tagis[Hero.EquipShld] <> 0) then
+        field[abValue2].value *= 1.5
+      endif
+
+      ~ Stop if we're not activated
+      doneif (field[abilActive].value = 0)
+
+      ~ Add attack penalty
+      hero.child[Attack].field[atmPenalty].value -= field[abValue].value
+      ~ Add hit points
+      herofield[tBonusHP].value += field[abValue2].value]]></eval>
+    <eval phase="Render" priority="10000" index="2"><![CDATA[ 
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+    
+      ~ Set display name with +/- values
+      field[livename].text = field[thingname].text & " -" & field[abValue].value & "/" & signed(field[abValue2].value)]]></eval>
+    <exprreq message="Knowledge of at least one maneuver or stance required."><![CDATA[hero.tagcount[HasMan.?] + hero.tagcount[HasStance.?] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWMartTr1" name="Martial Training I" description="You’ve learned the basics in a martial discipline.\n\n{b}Prerequisites{/b}: Base attack bonus +3 or Knowledge (martial) 3 ranks.\n\n{b}Benefit{/b}: Select a martial discipline. The associated skill for this discipline is now a class skill. Your martial initiator level maneuvers granted by this feat (and subsequent Martial Training feats) is equal to half your character level + your attribute modifier that modifies your chosen discipline for use with this discipline (example, Dexterity for a discipline that uses Acrobatics), not to exceed your character level. Likewise, your initiation modifier is the attribute modifier that effects the associated skill of this chosen discipline (for example, Charisma if the discipline uses Diplomacy). You may select any two maneuvers from the 1st level maneuvers from this discipline, and you may ready one of your maneuvers for use. You may recover one maneuver by expending a full round action to recover it.\n\n{b}Special{/b}: If you ever gain levels in a martial adept class or possess them previously, these maneuvers continue to use their own initiator level and recovery method, independent of your martial adept level. Those wishing to add new maneuvers from a discipline that is already available to their class should instead select the Advanced Study feat instead." compset="Feat" uniqueness="useronce">
+    <comment>abValue  = Manuevers Known
+      abValue2 = Maneuvers Allowed to be Readied
+      abValue3 = Stances Known
+      abValue4 = Highest Level Maneuver allowed
+      abValue5 = Initiator level</comment>
+    <fieldval field="usrCandid1" value="component.Simple &amp; PathOfWar.selDisc"/>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue4" value="1"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cCfgPWMtTr"></bootstrap>
+    <bootstrap thing="PWDisLevel"></bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] = 1)      
+      ~ Stop now if we haven't picked a discipline yet
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Send our discipline selection to the configurable
+      perform field[usrChosen1].chosen.pulltags[Discipline.?]
+      perform hero.child[cCfgPWMtTr].pushtags[Discipline.?]
+
+      ~ Initiator level is equal to 1/2 character level
+      field[abValue5].value = round(herofield[tLevel].value/2, 0, -1)]]></eval>
+    <eval phase="PostAttr" priority="9000" index="2"><![CDATA[
+      ~ Note we calculate Manuever values at Post-Attribute 10,000
+      ~ This means we need to the tag on the Configurable BEFORE 10,000
+      ~ otherwise it is a random chance which script gets processes
+      ~ first.
+
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] = 1)      
+      ~ Stop now if we haven't picked a discipline yet
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Set focus to our selected Discipline's skill
+      perform hero.findchild[BaseSkill,tagids[Discipline.?]].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ Make the skill a class skill
+      perform focus.assign[Helper.ClassSkill]
+      ~ Add the skill's attribute modifier to our initiator level
+      field[abValue5].value += focus.field[skAttrBon].value
+      ~ Make sure our IL is not over our character level
+      field[abValue5].value = minimum(herofield[tLevel].value,field[abValue5].value)
+      ~ We need the Use attribute tags for the configurable so convert the "SkillAbility" tag
+      ~ to a UseAttr when we pull. This is faster than using any "String" processing.
+      perform focus.pulltags[SkillAbil.?,UseAttr]
+      ~ Tell the Martial Training Configurable which attribute to use to calc Maneuvers
+      perform hero.child[cCfgPWMtTr].pushtags[UseAttr.?]
+      ~ Tell the Martial Training Configurable we can select 1st level Maneuvers
+      perform hero.child[cCfgPWMtTr].assign[mLevel.1]]]></eval>
+    <prereq message="Base Attack Bonus +3 or Knowledge (martial) 3 ranks required.">
+      <validate><![CDATA[
+        validif (#skillranks[skPWKnowMa] >= 3)
+        validif (#BAB[] >= 3)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWMartTr2" name="Martial Training II" description="You’ve continued to progress your martial studies.\n\n{b}Prerequisite{/b}: Martial Training I, base attack bonus +5 or Knowledge (martial) 5 ranks.\n\n{b}Benefit{/b}: You may select two new maneuvers and one stance from your chosen discipline of up to 2nd level, and you may ready an additional maneuver. You must meet the minimum initiator level to select any maneuver." compset="Feat" uniqueness="useronce">
+    <comment>abValue  = Manuevers Known
+      abValue2 = Maneuvers Readied
+      abValue3 = Stances Known</comment>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="1"/>
+    <fieldval field="abValue4" value="1"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] = 1)      
+
+      ~ Push increased Maneuvers known, readied, and stances to
+      ~ Martial Training 1 feat that will contain all the totals
+      ~ onto a single place. This way the configurable can go to
+      ~ a single location to get the values.
+      #value[fPWMartTr1] += field[abValue].value
+      #value2[fPWMartTr1] += field[abValue2].value
+      #value3[fPWMartTr1] += field[abValue3].value
+      #value4[fPWMartTr1] += field[abValue4].value
+      
+      ~ Tell the Martial Training Configurable we can select 2nd level Maneuvers
+      perform hero.child[cCfgPWMtTr].assign[mLevel.2]]]></eval>
+    <exprreq message="Martial Training feat required."><![CDATA[#hasfeat[fPWMartTr1] <> 0]]></exprreq>
+    <prereq message="Base Attack Bonus +5 or Knowledge (martial) 5 ranks required.">
+      <validate><![CDATA[
+        validif (#skillranks[skPWKnowMa] >= 5)
+        validif (#BAB[] >= 5)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWMartTr3" name="Martial Training III" description="Your mastery of your martial discipline improves.\n\n{b}Prerequisites{/b}: Martial Training II, base attack bonus +7 or Knowledge (martial) 7 ranks.\n\n{b}Benefit{/b}: You may select an additional new maneuver from your chosen discipline of up to 3rd level, plus one new stance, and you may ready an additional maneuver. You may also trade out any one maneuver from your chosen discipline you know and replace it with a different maneuver from that discipline of up to 2nd level. You must meet the minimum initiator level to select any maneuver." compset="Feat" uniqueness="useronce">
+    <comment>abValue = Manuevers Known
+      abValue2 = Maneuvers Readied
+      abValue3 = Stances Known</comment>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="1"/>
+    <fieldval field="abValue4" value="1"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] = 1)      
+
+      ~ Push increased Maneuvers known, readied, and stances to
+      ~ Martial Training 1 feat that will contain all the totals
+      ~ onto a single place. This way the configurable can go to
+      ~ a single location to get the values.
+      #value[fPWMartTr1] += field[abValue].value
+      #value2[fPWMartTr1] += field[abValue2].value
+      #value3[fPWMartTr1] += field[abValue3].value
+      #value4[fPWMartTr1] += field[abValue4].value
+
+      ~ Tell the Martial Training Configurable we can select 3rd level Maneuvers
+      perform hero.child[cCfgPWMtTr].assign[mLevel.3]]]></eval>
+    <exprreq message="Martial Training II feat required."><![CDATA[#hasfeat[fPWMartTr2] <> 0]]></exprreq>
+    <prereq message="Base Attack Bonus +7 or Knowledge (martial) 7 ranks required.">
+      <validate><![CDATA[
+        validif (#skillranks[skPWKnowMa] >= 7)
+        validif (#BAB[] >= 7)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWMartTr4" name="Martial Training IV" description="You are fast approaching mastery of your chosen discipline.\n\n{b}Prerequisites{/b}: Martial Training III, base attack bonus +9 or Knowledge (martial) 9 ranks.\n\n{b}Benefit{/b}: You may select two new maneuvers from your chosen discipline of up to 4th level, and you may ready an additional maneuver. You must meet the minimum initiator level to select any maneuver." compset="Feat" uniqueness="useronce">
+    <comment>abValue = Manuevers Known
+      abValue2 = Maneuvers Readied
+      abValue3 = Stances Known</comment>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue4" value="1"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] = 1)      
+
+      ~ Push increased Maneuvers known, readied, and stances to
+      ~ Martial Training 1 feat that will contain all the totals
+      ~ onto a single place. This way the configurable can go to
+      ~ a single location to get the values.
+      #value[fPWMartTr1] += field[abValue].value
+      #value2[fPWMartTr1] += field[abValue2].value
+      #value3[fPWMartTr1] += field[abValue3].value
+      #value4[fPWMartTr1] += field[abValue4].value
+      
+      ~ Tell the Martial Training Configurable we can select 4th level Maneuvers
+      perform hero.child[cCfgPWMtTr].assign[mLevel.4]]]></eval>
+    <exprreq message="Martial Training III required."><![CDATA[#hasfeat[fPWMartTr3] <> 0]]></exprreq>
+    <prereq message="Base Attack Bonus +9 or Knowledge (martial) 9 ranks required.">
+      <validate><![CDATA[
+        validif (#skillranks[skPWKnowMa] >= 9)
+        validif (#BAB[] >= 9)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWMartTr5" name="Martial Training V" description="You are truly enlightened with using your chosen discipline.\n\n{b}Prerequisites{/b}: Martial Training IV, base attack bonus +11 or Knowledge (martial) 11 ranks.\n\n{b}Benefit{/b}: You may select two new maneuvers or one new maneuver and one new stance from your chosen discipline of up to 5th level, and you may ready an additional maneuver. You may also trade out any one maneuver from your chosen discipline you know and replace it with a different maneuver from that discipline of up to 4th level. You must meet the minimum initiator level to select any maneuver." compset="Feat" uniqueness="useronce">
+    <comment>abValue = Manuevers Known
+      abValue2 = Maneuvers Readied
+      abValue3 = Stances Known</comment>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue4" value="1"/>
+    <arrayval field="usrArray" index="0" value="1 Maneuver &amp; 1 Stance"/>
+    <arrayval field="usrArray" index="1" value="2 Maneuvers"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] = 1)      
+
+      ~ Push increased Maneuvers known, readied, and stances to
+      ~ Martial Training 1 feat that will contain all the totals
+      ~ onto a single place. This way the configurable can go to
+      ~ a single location to get the values.
+      #value2[fPWMartTr1] += field[abValue2].value
+      #value4[fPWMartTr1] += field[abValue4].value
+
+      ~ 1 Maneuver and 1 Stance selected
+      If (field[usrIndex].value = 0) Then
+        #value[fPWMartTr1] += 1
+        #value3[fPWMartTr1] += 1
+      ~..else 2 Maneuvers selected
+      Elseif (field[usrIndex].value = 1) Then
+        #value[fPWMartTr1] += 2
+      Endif
+      ~ Tell the Martial Training Configurable we can select 5th level Maneuvers
+      perform hero.child[cCfgPWMtTr].assign[mLevel.5]]]></eval>
+    <exprreq message="Martial Training IV required."><![CDATA[#hasfeat[fPWMartTr4] <> 0]]></exprreq>
+    <prereq message="Base Attack Bonus +11 or Knowledge (martial) 11 ranks required.">
+      <validate><![CDATA[
+        validif (#skillranks[skPWKnowMa] >= 11)
+        validif (#BAB[] >= 11)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWMartTr6" name="Martial Training VI" description="You have reached your limits in mastering your chosen discipline.\n\n{b}Prerequisites{/b}: Martial Training V, base attack bonus +13 or Knowledge (martial) 13 ranks.\n\n{b}Benefit{/b}: You may select two new maneuvers or one new maneuver and one new stance from your chosen discipline of up to 6th level, and you may ready an additional maneuver. You may also trade out any one maneuver from your chosen discipline you know and replace it with a different maneuver from that discipline of up to 5th level. You must meet the minimum initiator level to select any maneuver." compset="Feat" uniqueness="useronce">
+    <comment>abValue = Manuevers Known
+      abValue2 = Maneuvers Readied
+      abValue3 = Stances Known</comment>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue4" value="1"/>
+    <arrayval field="usrArray" index="0" value="1 Maneuver &amp; 1 Stance"/>
+    <arrayval field="usrArray" index="1" value="2 Maneuvers"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] = 1)
+
+      ~ Push increased Maneuvers known, readied, and stances to
+      ~ Martial Training 1 feat that will contain all the totals
+      ~ onto a single place. This way the configurable can go to
+      ~ a single location to get the values.
+      #value2[fPWMartTr1] += field[abValue2].value
+      #value4[fPWMartTr1] += field[abValue4].value
+
+      ~ 1 Maneuver and 1 Stance selected
+      If (field[usrIndex].value = 0) Then
+        #value[fPWMartTr1] += 1
+        #value3[fPWMartTr1] += 1
+      ~..else 2 Maneuvers selected
+      Elseif (field[usrIndex].value = 1) Then
+        #value[fPWMartTr1] += 2
+      Endif
+      ~ Tell the Martial Training Configurable we can select 6th level Maneuvers
+      perform hero.child[cCfgPWMtTr].assign[mLevel.6]]]></eval>
+    <exprreq message="Martial Training V feat required."><![CDATA[#hasfeat[fPWMartTr5] <> 0]]></exprreq>
+    <prereq message="Base Attack Bonus +13 or Knowledge (martial) 13 ranks required.">
+      <validate><![CDATA[
+        validif (#skillranks[skPWKnowMa] >= 13)
+        validif (#BAB[] >= 13)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWBuckPro" name="Buckler Shield Proficiency" description="You are trained in how to properly use a buckler.\n\n{b}Benefit{/b}: When you use a tower shield, the shield&apos;s armor check penalty only applies to Strength and Dexterity-based skills.\n\n{b}Normal{/b}: A character using a shield with which he is not proficient takes the shield&apos;s armor check penalty on attack rolls and on all skill checks that involve moving, including Ride." compset="Feat" summary="You can use a tower shield and suffer only the standard penalties." uniqueness="useronce">
+    <fieldval field="shortname" value="Buckler Proficiency"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="ProfGroup" name="ProfGroup" abbrev="ProfGroup"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Make us proficient with bucklers
+      ~ TO-DO do we need a foreach loop to make us Proficient with Buckler???
+      foreach pick in hero from BaseArmor where "IsArmor.shBuckler"
+         perform eachpick.assign[Helper.Proficient]
+      nexteach]]></eval>
+    </thing>
+  <thing id="fPWDiscExp" name="Discipline Expertise" description="You are quite adept at the use of your available discipline’s associated skills.\n\n{b}Benefit:{/b} Choose a class you have at least one level in. You gain a +2 competence bonus to checks with the skills associated with maneuvers available to that class." compset="Feat" summary="+2 bonus to skills associated to class disciplines" uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.Configure &amp; PathOfWar.Config"/>
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+~ stop now if class configurable not chosen
+doneif (field[usrChosen1].ischosen = 0)
+
+~ Get associated skill for each discipline, and apply the competence bonus
+foreach pick in hero from BaseSkill where field[usrChosen1].chosen.tagids[Discipline.?,"|"]
+  #applybonus[BonComp, eachpick, field[abValue].value]
+nexteach]]></eval>
+    </thing>
+  <thing id="fPWDiscMst" name="Discipline Mastery" description="You’ve learned to use certain skills in reference to your martial ability with practiced ease.\n\n{b}Prerequisites:{/b} 8 or more ranks in a discipline’s associated skill.\n\n{b}Benefit:{/b}  You may take 10 on skill checks made with any associated skill of a discipline you possess (with 8 or more ranks) without increasing the time needed to make the check, even if combat or distractions would otherwise prevent you from doing so." compset="Feat" summary="Always take 10 with discipline skills, with no increase in time needed" uniqueness="useronce">
+    <comment><![CDATA[This feat's pre-reqs script refers to its thingid, so if you change the thingid you need to update that script to match.]]></comment>
+    <fieldval field="abValue" value="8"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Get all disciplines associated with chosen class
+      ~var sTags as string
+      ~sTags = hero.tagids[Discipline.?,"|"]
+      ~sTags = replace(sTags,"Discipline","pwdSkill",0)
+
+      ~ Get associated skill for each discipline, and append to the description
+      ~foreach pick in hero from BaseSkill where sTags
+      foreach pick in hero from BaseSkill where "Discipline.?"
+        if (eachpick.field[skRanks].value >= field[abValue].value) then
+          #situational[eachpick, "You may always take 10 with this skill, with no increase in the time needed to make the check, even if combat or distractions would otherwise prevent you from doing so", field[thingname].text]
+        endif
+      nexteach]]></eval>
+    <prereq message="Requires 8+ ranks in one of your martial discipline&apos;s associated skills">
+      <validate><![CDATA[
+        foreach pick in hero from BaseSkill where "Discipline.?"
+          validif (eachpick.field[skRanks].value >= #value[fPWDiscMst])
+        nexteach]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWDefExp" name="Defensive Expertise" description="You are able to use your defenses to greater effect.\n\n{b}Prerequisites:{/b} Shield Focus, shield proficiency, base attack bonus +1\n\n{b}Benefit:{/b}  Your shield bonus to armor class applies against touch attacks. Additionally, you may add the enhancement bonus of your shield (if any) as a competence bonus to Reflex saves." compset="Feat" summary="Your shield bonus applies to your touch AC" uniqueness="useronce">
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="abAction" tag="None"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Apply shield AC bonus to Touch AC
+      hero.child[ArmorClass].field[tACTouch].value += hero.child[ArmorClass].field[tACShield].value
+
+      ~ Find any shields equipped on the hero, and add their enhancements as a comp. bonus to Ref saves
+      foreach pick in hero from BaseArmor where "EquipType.Shield & Helper.CurrShield"
+        #applybonus[BonComp, hero.child[svRef], eachpick.field[BonEnhance].value]
+      nexteach]]></eval>
+    <pickreq thing="fShieldFoc"/>
+    <pickreq thing="fArmShield"/>
+    <exprreq message="Base attack bonus +1 required"><![CDATA[#BAB[] >= 1]]></exprreq>
+    </thing>
+  <thing id="fPWBuckBsh" name="Buckler Bash" description="You have learned to use your buckler as an effective weapon.\n\n{b}Prerequisites:{/b} Shield proficiency, at least one maneuver known from the Broken Blade or Iron Tortoise disciplines.\n\n{b}Benefit:{/b} You may make shield bash attacks with a buckler as though it was a light shield. You treat your buckler as an associated weapon for the Iron Tortoise and Broken Blade disciplines and may substitute a buckler bash for an unarmed strike if a maneuver calls for one." compset="Feat" summary="Make shield bashes with a buckler, treat buckler as associated weapon" uniqueness="useronce">
+    <usesource source="srcPathOfW"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="wShLtSteel">
+      <autotag group="Hide" tag="Weapon"/>
+      </bootstrap>
+    <eval phase="PostAttr"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      var hide as number
+      foreach pick in hero from BaseArmor where "EquipType.Shield & Helper.CurrShield & IsArmor.shBuckler"
+         hide += 1
+      nexteach
+
+      ~ If we found any two/one-handed weapons used in two hands
+      ~ then display the our special armament shield
+      if (hide <> 0) Then
+        perform hero.childfound[wShLtSteel].delete[Hide.Weapon]
+      endif
+
+      ~TODO: Add buckler as associated weapon for Iron Tortoise and Broken Blade]]></eval>
+    <pickreq thing="fArmShield"/>
+    </thing>
+  <thing id="fPWSerStrd" name="Serene Stride" description="Your ki allows for the lightest touch upon almost any surface.\n\n{b}Prerequisites:{/b}  Ki pool, Wis 13.\n\n{b}Benefit:{/b}  As long as you have at least one point in your ki pool you may ignore movement and Acrobatics penalties from difficult terrain and move across liquid surfaces just as if they were solid. You may still choose to swim if you wish to." compset="Feat" summary="Ignore difficult terrain penalties, walk on liquids" uniqueness="useronce">
+    <fieldval field="reqWis" value="13"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <prereq message="Ki Pool required">
+      <validate><![CDATA[
+        validif (#hasability[cMnkKiPool] <> 0)
+        validif (#hasability[cPW2KiPool] <> 0)
+        validif (#hasability[cPW2JgKiPl] <> 0)
+        validif (#hasability[cPW2SHKiPl] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cCfgPWMtTr" name="Martial Training Maneuvers" compset="Configure" uniqueness="unique">
+    <comment>This configurable is for maneuvers granted by the Martial Training feat, not for a class.</comment>
+    <fieldval field="cfgObject1" value="Maneuvers"/>
+    <fieldval field="cfgObject2" value="Stances"/>
+    <fieldval field="cfgAllow1" value="PathOfWar.Maneuver"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="PathOfWar" tag="Config"/>
+    <tag group="PathOfWar" tag="StanceUp"/>
+    <tag group="HasFeat" tag="fPWMartTr1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="11000">~ Setup the maneuvers
+       Call PWsetupCfg</eval>
+    <prereq message="You have too many Manuevers readied">
+      <validate>var ValidManOn as number
+        Call ValidManOn
+        @valid = ValidManOn</validate>
+      </prereq>
+    <prereq message="You have activated more Stances than allowed.">
+      <validate>var ValidStaOn as number
+        Call ValidStaOn
+        @valid = ValidStaOn</validate>
+      </prereq>
+    </thing>
+  <thing id="fPWXtraMrk" name="Extra Marks" description="You are able to mark more opponents than most.\n\n{b}Prerequisite:{/b} Armiger’s mark class feature.\n\n{b}Benefit:{/b} You gain two additional daily uses of your armiger’s mark class feature.\n\n{b}Special:{/b} This feat can be taken multiple times. Its effects stack." compset="Feat" summary="+2 uses of Armiger&apos;s Mark">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      perform hero.findchild[Ability,"Ability.cPW3ArmMrk & Helper.FirstCopy"].setfocus
+
+      doneif (state.isfocus = 0)
+
+      focus.field[trkMax].value += field[abValue].value]]></eval>
+    <exprreq message="Armiger&apos;s Mark ability required" iserror="no"><![CDATA[#hasability[cPW3ArmMrk] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWXtndMrk" name="Extended Mark" description="Your marks are more potent and are capable of keeping your foe’s attention longer.\n\n{b}Prerequisite:{/b} Armiger’s mark class feature\n\n{b}Benefit:{/b} The duration of your armiger’s mark is doubled." compset="Feat" summary="Armiger&apos;s Mark duration doubled" uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostAttr" priority="11000"><![CDATA[      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ If the Armiger's Mark ability isn't found, do nothing
+      perform hero.findchild[Ability,"Ability.cPW3ArmMrk & Helper.FirstCopy"].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ Multiply the duration of Armiger's Mark
+      focus.field[abDuration].value *= field[abValue].value]]></eval>
+    <exprreq message="Armiger&apos;s Mark ability required" iserror="no"><![CDATA[#hasability[cPW3ArmMrk] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWGrdsGlr" name="Guard&apos;s Glare" description="Your unflinching stare keeps your targets terrified of fleeing from you.\n\n{b}Prerequisite:{/b} Armiger’s mark class feature, Intimidate 4 ranks\n\n{b}Benefit:{/b} A creature that is demoralized, frightened, shaken, or panicked and marked by your armiger’s mark must make a Will save (DC 10 + half your warder level + Intelligence modifier) to move in a direction away from you. A creature only needs to make this save once per round. This is a mind-affecting fear effect." compset="Feat" uniqueness="useronce">
+    <usesource source="srcPathOfW"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostAttr" priority="11000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ If the Armiger's Mark ability isn't found, do nothing
+      perform hero.findchild[Ability,"Ability.cPW3ArmMrk & Helper.FirstCopy"].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ Assign feat DC
+      field[abDC].value = 10 + #attrmod[aINT] + round(focus.field[xTotalLev].value/2,0,-1)]]></eval>
+    <eval phase="Render" index="2"><![CDATA[
+      field[abSumm].text = "Marked foes must make DC " & field[abDC].value & " Will save to move away from you if they are under a fear effect."]]></eval>
+    <exprreq message="Armiger&apos;s Mark ability required" iserror="no"><![CDATA[#hasability[cPW3ArmMrk] <> 0]]></exprreq>
+    <prereq message="Intimidate 4 ranks required">
+      <validate><![CDATA[validif (#skillranks[skIntim] >= 3)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWPwflMrk" name="Powerful Mark" description="Your ability to mark foes is more potent than others of your trade.\n\n{b}Prerequisite:{/b} Armiger’s mark class feature.\n\n{b}Benefit:{/b} The penalty for your armiger’s mark ability increases by 2, and the save DC for your armiger’s mark grand challenge increases by +2.\n\n{b}Special:{/b} This feat can be taken multiple times. Its effects stack." compset="Feat" summary="Extra -2 to-hit for marked foes, +2 DC for grand challenge">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PostAttr" priority="11000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      perform hero.findchild[Ability,"Ability.cPW3ArmMrk & Helper.FirstCopy"].setfocus
+
+      doneif (state.isfocus = 0)
+
+      focus.field[abValue].value -= field[abValue].value]]></eval>
+    <exprreq message="Armiger&apos;s Mark ability required" iserror="no"><![CDATA[#hasability[cPW3ArmMrk] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWTakeBlw" name="Take the Blow" description="You are swift in positioning yourself to aid your allies.\n\n{b}Prerequisite:{/b} Armiger’s mark class feature.\n\n{b}Benefit:{/b} When a creature within your reach who is marked by your armiger’s mark targets an ally with a melee or ranged attack, you can expend a use of your armiger’s mark as an immediate action to force the opponent’s attack to target you instead. You are considered the target for all effects of the attack (the creature must make a successful attack roll, you are allowed a save, if any, etc.)." compset="Feat" summary="Spend 2 marks, you are attacked in place of ally" uniqueness="useronce">
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abAction" tag="Immediate"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Armiger&apos;s Mark ability required"><![CDATA[#hasability[cPW3ArmMrk] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWDedPrng" name="Deadly Pairing" description="Through working together, you and an ally are capable of striking vital locations.\n\n{b}Prerequisites:{/b} Deadly Strike +1d6, at least one Steel Serpent stance known.\n\n{b}Benefit:{/b} Whenever you and another ally flank a creature both you and that ally increase the critical threat range of your weapons by 1 (so a weapon with a 19-20 threat range would increase to 18-20) if you or your ally are in a stance from the Steel Serpent discipline. This additional critical threat range is not multiplied by abilities such as keen or the Improved Critical feat and is applied after abilities such as those are applied." compset="Feat" summary="Increase threat modifier when flanking" uniqueness="useronce">
+    <usesource source="srcPathOfW"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Teamwork"/>
+    <eval phase="Final" priority="50000"><![CDATA[      ~ If we've been disabled or deactivated, get out now
+      doneif (tagis[Helper.FtDisable] <> 0)
+      doneif (field[abilActive].value = 0)
+
+      ~ Loop through all weapons
+      foreach pick in hero from BaseWep
+        ~ Calc defult range
+        field[abValue].value = 20 - eachpick.tagvalue[wCritMin.?]
+        ~ Keen or Improved Crit change the value to include this
+        If (eachpick.tagis[Helper.Keen] + eachpick.tagis[Broadcast.ImpCrit] <> 0) Then
+          field[abValue].value = (field[abValue].value * 2) + 1
+        Endif
+        ~ Increase amount by one more
+        field[abValue].value += 1
+        ~ Calc new CritMin tag
+        field[abValue2].value = 20 - field[abValue].value
+        ~ Remove Keen and Improved Crit tags
+        perform eachpick.delete[Helper.Keen]
+        perform eachpick.delete[Broadcast.ImpCrit]
+        ~ Remove old Crit tag
+        perform eachpick.delete[wCritMin.?]
+        ~ Assign new tag including any Keen/Improved Crit values
+        ~ and the +1 from the ability
+        If (field[abValue2].value > 0) Then
+          perform eachpick.assignstr["wCritMin." & field[abValue2].value]
+        Endif
+      nexteach]]></eval>
+    <exprreq message="Steel Serpent stance required"><![CDATA[hero.tagcount[HasStance.SteelSerp] >= 1]]></exprreq>
+    <exprreq message="Deadly Strike +1d6 required"><![CDATA[#hasability[cPW2DeadSt] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWMrtChrg" name="Martial Charge" description="You have learned how to initiate a martial strike on the move, delivering them at the end of a charge attack.\n\n{b}Prerequisites:{/b} Base attack bonus +3, ability to initiate a martial strike.\n\n{b}Benefit:{/b} You may initiate a strike instead of making an attack at the end of a charge." compset="Feat" summary="Initiate strike at the end of a charge" uniqueness="useronce">
+    <usesource source="srcPathOfW"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Base attack bonus +3 required"><![CDATA[#BAB[] >= 3]]></exprreq>
+    <exprreq message="Must be able to initiate a martial strike"><![CDATA[#hasability[PWDisLevel] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWRicWeap" name="Ricochet Weapon" description="When throwing weapons as part of a martial strike, you are quite capable of bouncing the weapon in such a way as to have it return to you.\n\n{b}Prerequisites:{/b} Point Blank Shot, Dex 13.\n\n{b}Benefit:{/b} Whenever you throw a weapon as part of a martial strike, that weapon bounces or ricochets off your target and returns to your hand at the end of your turn. You must have a free hand to be able to catch the weapon on its return, otherwise it falls into your space at your feet." compset="Feat" summary="Thrown weapon returns to your hand" uniqueness="useronce">
+    <fieldval field="reqDex" value="13"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Point-Blank Shot required"><![CDATA[#hasfeat[fPointBlnk] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPWVicRec" name="Victorious Recovery" description="You learn how to use victory over a foe to your advantage, repositioning yourself and recovering a martial maneuver.\n\n{b}Prerequisites:{/b} Able to initiate maneuvers.\n\n{b}Benefit:{/b} Once per encounter, you may recover maneuvers equal to your initiator modifier when you reduce an opponent to zero or less hit points." compset="Feat" summary="Recover maneuvers when you defeat an opponent 1/encounter" uniqueness="useronce">
+    <usesource source="srcPathOfW"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <prereq message="Must be able to initiate martial maneuvers">
+      <validate><![CDATA[validif (hero.tagis[PathOfWar.HeroInit] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWTacRsh" name="Tactical Rush" description="You are capable of making a fast sprint in the midst of combat, allowing you the ability to better position yourself.\n\n{b}Prerequisites:{/b} At least one maneuver known from the Iron Tortoise, Scarlet Throne, or Veiled Moon disciplines.\n\n{b}Benefit:{/b} Once per encounter you may move up to your speed as a swift action.\n\n{b}Special:{/b} This feat may be taken up to three times, each time granting another use of this feat.\n\n" compset="Feat" summary="Move up to your speed as a swift action 1/encounter">
+    <usesource source="srcPathOfW"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <prereq message="One maneuver known from the Iron Tortoise, Scarlet Throne, or Veiled Moon disciplines required.">
+      <validate><![CDATA[
+        ~ Must have one maneuver known from the Iron Tortoise,
+        ~ Scarlet Throne, or Veiled Moon disciplines.
+        ~ Note: Tagis is faster and less over head than tagcount[].
+        validif (hero.tagis[HasMan.ScarletThr] <> 0)
+        validif (hero.tagis[HasMan.IronTort] <> 0)
+        validif (hero.tagis[HasMan.VeiledMoon] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPWWgAdapt" name="Weapon Group Adaptation" description="You specialize in a specific family of weaponry, adapting many techniques to suit them.\n\n{b}Benefit:{/b} Choose a weapon group (excluding siege weapons and siege firearms). That weapon group is considered associated with disciplines you have access to. Note that this does not change the initiation requirements of maneuvers from those disciplines (for example, a warlord who takes this feat might have heavy blades associated with Solar Wind, but still cannot make a ranged attack with them without further feats or abilities that allow him to use a heavy blade as a ranged weapon).\n\n{b}Special:{/b} This may be taken multiple times." compset="Feat" summary="Add weapons to discipline weapon group">
+    <usesource source="srcPathOfW"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fShowWhat" tag="WeaponsGrp"/>
+    <eval phase="First" priority="50000"><![CDATA[
+      ~ If we've been disabled or a selection hasn't been made, get out now
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      var sTag as string
+
+      ~ Pull all the chosen weapon group tags to ourself
+      perform field[usrChosen1].chosen.pulltags[wFtrGroup.?]
+      
+      ~ Build a search expression that includes all the Disciplines we have access too
+      sTag = hero.tagids[Discipline.?,"|"]
+      ~ Update the Discipline selectors with the new weapon groups
+      foreach pick in hero from Simple where "PathOfWar.selDisc & (" & sTag & ")"
+        perform eachpick.pushtags[wFtrGroup.?]
+      nexteach]]></eval>
+    </thing>
+  <thing id="fPWXtrStAr" name="Extra Stalker Art" description="You’ve learned a new way to use your stalker training.\n\n{b}Prerequisites:{/b} 3rd-level stalker, Wis 13.\n\n{b}Benefit:{/b} You may select a new stalker art and add it to your known stalker arts.\n\n{b}Special:{/b} You may select this feat multiple times, selecting a new stalker art each time." compset="Feat" summary="Learn a new Stalker Art" uniqueness="useronce">
+    <fieldval field="reqWis" value="13"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[    
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      hero.childfound[cHelpPW2].field[cGiveSpec].value += 1]]></eval>
+    <exprreq message="Stalker level 3 required"><![CDATA[#featlevelcount[PWStalker] >= 3]]></exprreq>
+    </thing>
+  </document>

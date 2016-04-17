@@ -1,0 +1,1401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_PackModern_SGG - Enforcer"/>
+  <thing id="arMPSGGEnf" name="Enforcer" compset="ClassVary" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="cvSpec3rdS" value="Archetype Cross Training"/>
+    <fieldval field="cvSpec3rdN" value="Archetype Cross Training"/>
+    <arrayval field="cvCustTTot" index="0" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="Helper" tag="RemoveCast"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="Custom" tag="ModHero"/>
+    <bootstrap thing="cMPSGGRTr">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGRCBF">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="fWepMart">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGEnfo">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGRT">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    </thing>
+  <thing id="cMPSGGBIA" name="Burst Into Action" description="The enforcer is always ready for action, and can explode into full speed without warning. They gain a +2 bonus to initiative checks. \n\nAlso, as long as the enforcer is not hindered in movement (not entangled, slowed, in difficult terrain, etc.), they are always considered to have a running start for Acrobatics checks made to jump, and can charge a foe without moving 10 feet beforehand." compset="CustomSpec" summary="Receive a +2 bonus to initiative checks" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      hero.child[Initiative].field[Bonus].value += 2]]></eval>
+    </thing>
+  <thing id="cMPSGGEnf" name="Enforcer" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ClsCountAs" tag="arMPSGGEnf"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[        ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGEnf) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGCond" name="Conditioning" description="The enforcer has trained themselves to resist adverse effects. Whenever the enforcer is subject to one of the following conditions, the duration is halved: confused, dazed, dazzled, nauseated, shaken, sickened, staggered.\n\nDurations of 1 round are not reduced." compset="CustomSpec" summary="You are trained to resist adverse effects" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Final" priority="20000"><![CDATA[#situational[hero.child[svFort],"Half Duration vs confused, dazed, dazzled, nauseated, shaken, sickened, and staggered", field[thingname].text]]]></eval>
+    </thing>
+  <thing id="cMPSGGDead" name="Deadeye" description="The enforcer can land a ranged weapon attack with precision that deals additional damage. When making a single ranged attack, the enforcer can add their Intelligence or Dexterity modifier (enforcer’s choice) to the damage dealt." compset="CustomSpec" summary="Ranged weapon attack with precision" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGDuck" name="Duck" description="The enforcer can focus their attention on a single foe and move to avoid attacks from that foe. Gain a +4 dodge bonus to AC against a foe’s attacks until the beginning of your next turn. The enforcer must take a ready action to use this talent.\n\nIt should readied to evade attacks from a specific foe. If that foe attacks the enforcer, their ready action is activated and they can move up to 10 feet." compset="CustomSpec" summary="Focus attention on a single foe and move to avoid attacks" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Final" priority="20000"><![CDATA[#situational[hero.child[ArmorClass], "+4 dodge AC and 10 feet movement as a readied action against a single target.", field[thingname].text]]]></eval>
+    </thing>
+  <thing id="cMPSGGExEf" name="Extreme Effort" description="This ability allows an enforcer to focus their physical power to accomplish amazing tasks of physical prowess.\n\nAs a full-round action the enforcer can undertake a single task that normally requires no more than a standard action as if one of his physical ability scores (Strength, Dexterity, or Constitution) was 6 points higher. This allows the enforcer to make a single ability check or skill check based on the selected ability score with a +3 bonus, or lift a single object using the carrying capacity of a temporarily higher Strength. Extreme effort does not apply to attack rolls, damage rolls, AC, saving throws, or CMB checks, but it can be used to increase the enforcer’s CMD for 1 round as a full-round action (bracing against any effort made by foes)." compset="CustomSpec" summary="Focus your physical power to accomplish amazing tasks of prowess." uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGFrFt" name="Firm Footing" description="The enforcer has learned to keep his feet firmly planted, even in the heat of combat. They receives a +4 bonus to their CMD against bull rush, trip, and overrun combat maneuvers." compset="CustomSpec" summary="+4 bonus to his CMD against bull rush, trip, and overrun" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Final" priority="10000">hero.child[manBullRus].field[manCMD].value += 4
+
+      hero.child[manTrip].field[manCMD].value += 4
+
+      hero.child[manOverrun].field[manCMD].value += 4</eval>
+    </thing>
+  <thing id="cMPSGGFV1" name="Focused Violence I" description="The enforcer can direct their entire focus onto dealing violence effectively. Add 1 point to the total damage dealt any time the enforcer makes a damage roll." compset="CustomSpec" summary="The enforcer can direct their entire focus onto dealing violence effectively." uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Level" priority="10000">hero.child[Damage].field[tDamBonus].value += 1</eval>
+    </thing>
+  <thing id="cMPSGGFV2" name="Focused Violence II" description="The enforcer can direct their entire focus onto dealing violence effectively. Add 2 point to the total damage dealt any time the enforcer makes a damage roll.\n\nAn enforcer must have Focused Violence I to take Focused Violence II." compset="CustomSpec" summary="The enforcer can direct their entire focus onto dealing violence effectively." uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Level" priority="10000">hero.child[Damage].field[tDamBonus].value += 1</eval>
+    <eval phase="PostAttr" priority="10000" index="2">perform hero.childfound[cMPSGGFV1].delete[Helper.ShowSpec]</eval>
+    <pickreq thing="cMPSGGFV1"/>
+    </thing>
+  <thing id="cMPSGGFV3" name="Focused Violence III" description="The enforcer can direct their entire focus onto dealing violence effectively. Add 3 point to the total damage dealt any time the enforcer makes a damage roll.\n\nAn enforcer must have Focused Violence I and II to take Focused Violence III." compset="CustomSpec" summary="The enforcer can direct their entire focus onto dealing violence effectively." uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Level" priority="10000">hero.child[Damage].field[tDamBonus].value += 1</eval>
+    <eval phase="PostAttr" priority="10000" index="2">perform hero.childfound[cMPSGGFV2].delete[Helper.ShowSpec]</eval>
+    <pickreq thing="cMPSGGFV2"/>
+    </thing>
+  <thing id="cMPSGGPrAk" name="Precision Attack" description="The enforcer can add their Intelligence or Dexterity modifier (enforcer’s choice) to the damage dealt, rather than their Strength modifier. The enforcer must use a weapon with which Weapon Finesse applies.\n\nThe enforcer can land an attack with such precision that it deals additional damage.\n\nIf the weapon would normally add x1.5 or x0.5 of their Strength modifier to damage, it uses that multiple for the Intelligence or Dexterity modifier that is added instead." compset="CustomSpec" summary="Attack with such precision that it deals additional damage" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    </thing>
+  <thing id="cMPSGGPulv" name="Pulverize" description="The enforcer has learned how to find weak spots in objects to break them. Whenever the enforcer attacks an object, they can ignore a number of points of its hardness equal to their Strength score." compset="CustomSpec" summary="The enforcer has learned how to find weak spots in objects to break them" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[var ignoreHard as number
+ignoreHard = hero.child[aSTR].field[aModBonus].value
+
+field[livename].text = field[thingname].text & " (Ignore " & ignoreHard & " Hardness)"]]></eval>
+    </thing>
+  <thing id="cMPSGGSkPn" name="Sucker Punch" description="The enforcer knows the advantage of getting the drop on a foe. \n\nDeal an extra 2d6 damage on successful attacks against flat-footed opponents. Effects or abilities that negate critical hits or sneak attacks also negate the additional damage from a sucker punch." compset="CustomSpec" summary="The enforcer knows the advantage of getting the drop on a foe." uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGSpEf" name="Supreme Effort" description="When using their extreme effort, the enforcer now acts as if the selected ability score was 12 points higher. An enforcer must be at least 11th level and have the extreme effort talent to select this talent.\n\nAs a full-round action the enforcer can undertake a single task that normally requires no more than a standard action as if one of his physical ability scores (Strength, Dexterity, or Constitution) was 12 points higher. This allows the enforcer to make a single ability check or skill check based on the selected ability score with a +6 bonus, or lift a single object using the carrying capacity of a temporarily higher Strength. Extreme effort does not apply to attack rolls, damage rolls, AC, saving throws, or CMB checks, but it can be used to increase the enforcer’s CMD for 1 round as a full-round action (bracing against any effort made by foes)." compset="CustomSpec" summary="Act as if the selected ability score was 12 points higher" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostAttr" priority="10000">perform hero.childfound[cMPSGGExEf].delete[Helper.ShowSpec]</eval>
+    <pickreq thing="cMPSGGExEf"/>
+    <exprreq message="Character level 11th required."><![CDATA[#totallevelcount[] >= 11]]></exprreq>
+    </thing>
+  <thing id="cMPSGGThOt" name="Tough It Out" description="The enforcer can add their Constitution modifier as a bonus to a Reflex or Will saving throw. They can make this choice after rolling the saving throw, but must do so before knowing if the saving throw is successful. \n\nAn enforcer’s rigorous training and focus often allows them to tough out conditions others can’t face. \n\nAn enforcer can do this once per day, plus once for every two class levels." compset="CustomSpec" summary="Add Constitution modifier as a bonus to a Reflex or Will saving throw" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <eval phase="Level" priority="10500">var hp as number
+      hp = 0 + (herofield[tLevel].value / 2)
+      hp = round(hp, 0, -1)
+
+      ~ Add to our total charges.
+      field[trkMax].value += hp</eval>
+    <eval phase="Final" priority="20000" index="2"><![CDATA[#situational[hero.child[svRef], signed(hero.child[aCON].field[aModBonus].value) & " bonus to Reflex saving throws when used.", field[thingname].text]
+
+#situational[hero.child[svWill], signed(hero.child[aCON].field[aModBonus].value) & " bonus to Will saving throws when used.", field[thingname].text]]]></eval>
+    </thing>
+  <thing id="cMPSGGCtTA" name="Combat Training - Armor Training" description="The combatant learns to be more maneuverable while wearing armor. Whenever he is wearing armor, he reduces the armor check penalty by 1 (to a minimum of 0) and increases the maximum Dexterity bonus allowed by his armor by 1. If this Training is taken again, these bonuses increase by +1 each time, to a maximum -4 reduction of the armor check penalty and a +4 increase of the maximum Dexterity bonus allowed.\n\nIn addition, a combatant can also move at his normal speed while wearing medium armor. At the next 4 levels, a combatant can move at his normal speed while wearing heavy armor." compset="CustomSpec" summary="Reduce armor check penalty and increase max DEX of armor.">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGCom"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="HasAbility" tag="cFtrArmor"/>
+    <bootstrap thing="cFtrArmor">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="3000"><![CDATA[field[livename].text = "Armor Training " & field[xIndex].value
+
+~only perform the calculations for the first copy
+doneif (tagis[Helper.FirstCopy] = 0)
+
+~ If we're not shown, just get out now
+doneif (tagis[Helper.ShowSpec] = 0)
+
+field[abValue].value += field[xCount].value
+field[abValue2].value += field[xCount].value
+field[livename].text = "Armor Training " & field[abValue].value
+field[abSumm].text = "Worn armor -" & field[abValue].value & " check penalty, +" & field[abValue2].value & " max DEX."
+
+~Improve the armor check penalty and max dex stats of our armors.
+foreach pick in hero from BaseArmor where "EquipType.Armor"
+eachpick.field[arArmorChk].value += field[abValue].value
+eachpick.field[arMaxDex].value += field[abValue2].value
+
+~if we're level 7+, remove the slowing effect of heavy armor
+if (field[xCount].value >= 2) then
+if (eachpick.tagis[ArmorClass.Heavy] <> 0) then
+perform eachpick.delete[ArmorCateg.Slows]
+endif
+endif
+
+~remove the slowing effects of medium (and light) armor
+~light armor was added because it is possible for a user to define a light armor that slows the wearer - this ability ought to remove that, too
+if (eachpick.tagis[ArmorClass.Medium] + eachpick.tagis[ArmorClass.Light] <> 0) then
+perform eachpick.delete[ArmorCateg.Slows]
+endif
+nexteach]]></eval>
+    </thing>
+  <thing id="cMPSGGArTr" name="Armor Training" description="Though the silk gambesons, steel waistcoats, and heavy body shields fitted to the torso that made up early efforts at ballistic armor weren’t particularly effective, many soldiers of the era were trained to wear them. As a result the devil dog receives armor proficiency in light and medium armor." compset="CustomSpec" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGDvD"/>
+    <tag group="AbilType" tag="Extra"/>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="fArmMedium"></bootstrap>
+    </thing>
+  <thing id="cMPSGGAmAt" name="Amphibious Assault" description="The devil dog has been trained to move through and fight in aquatic environments. \n\nHe adds half his class level to his Swim checks and takes no penalty to grapple or melee attack checks made underwater." compset="CustomSpec" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGDvD"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arMPCHSold"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~our bonus is level /2, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 2
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+      field[abSumm].text = "Your Amphibious Assault Bonus is +" & field[abValue].value 
+
+      #skillbonus[skSwim] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGBdFr" name="Blind Fire" description="Whenever a devil dog suffers a miss chance despite a successful attack roll, he rolls his miss chance twice. If either result hits, the attack is successful." compset="CustomSpec" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGDvD"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arMPCHSold"/>
+    </thing>
+  <thing id="cMPSGGPatr" name="Patrol" description="One of the basic functions of infantry is to patrol, be that to guard a home base, seek out leading elements of an enemy force, or help establish control over an area. \n\nA devil dog with this talent adds half his class level to Perception checks, and he can take 10 on a Perception check even when distractions or stress would normally prevent him from doing so." compset="CustomSpec" summary="Adds half his class level to Perception checks" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGDvD"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arMPCHSold"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~our bonus is level /2, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 2
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+      field[abSumm].text = "Your Patrol Bonus is +" & field[abValue].value 
+
+      #skillbonus[skPercep] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGPurs" name="Pursuit" description="Devil dogs often have their foes on the run and are forced to run after them and even track them down. \n\nA devil dog with this talent gains a +5 foot bonus to his movement rate and can make Perception checks to follow tracks as if using the Survival skill." compset="CustomSpec" summary="+5 foot bonus to his movement rate" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGDvD"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arMPCHSold"/>
+    <eval phase="Final" priority="10000">hero.child[Speed].field[tSpeed].value += 5</eval>
+    <eval phase="Final" priority="20000" index="2"><![CDATA[#situational[hero.child[skPercep], "Can make Perception checks to follow tracks as if using the Survival skill.", field[thingname].text]]]></eval>
+    </thing>
+  <thing id="cMPSGGSpec" name="Specialty" description="The needs of an army often lead to training its soldiers as specialists, and a devil dog can pick up multiple specialties over the course of a career. \n\nWhen this talent is selected, the devil dog selects one of the following skills: Appraise, Disable Device, Disguise, Escape Artist, Handle Animal, Knowledge (engineering), Knowledge (local), Linguistics, or Survival. That skill is always considered a class skill, and the devil dog gains a +1 bonus to the skill for every five class levels. \n\nThis talent can be selected more than once. Its benefits do not stack. Each time it is selected, it applies to a different skill." compset="CustomSpec">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="usrCandid1" value="thingid.skAppraise|thingid.skDisable|thingid.skDisguise|thingid.skEscape|thingid.skHandleAn|thingid.skKnowEng|thingid.skKnowLoc|thingid.skLinguist|thingid.skSurvival"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMPSGGDvD"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPCHSold"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[if (field[usrChosen1].ischosen <> 0) then
+  perform field[usrChosen1].chosen.assign[Helper.ClassSkill]
+
+      ~our bonus is level /5, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 5
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+      field[abSumm].text = "Your Specialty Bonus is +" & field[abValue].value 
+
+      #applybonus[BonTrait,field[usrChosen1].chosen,field[abValue].value]
+endif]]></eval>
+    </thing>
+  <thing id="cMPSGGSpot" name="Spotter" description="The devil dog has been trained to act as a spotter for the ranged attacks of another character. \n\nAs a move action, the devil dog can grant one ally able to hear him a +2 circumstance bonus on the next ranged attack roll the ally makes against a target the devil dog has line of sight to before the end of the devil dog’s next turn. If the devil dog also has the blind fire talent, he can grant his ally the benefit of that talent instead of the +2 circumstance bonus to the attack roll." compset="CustomSpec" summary="Trained to act as a spotter for the ranged attacks of another character" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGDvD"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arMPCHSold"/>
+    </thing>
+  <thing id="cMPSSGCtTW" name="Combat Training - Weapon Training" description="The combatant’s training in the techniques of conflict gives him  weapon training. \n\nNote : This gives you an extra Talent to spend on a Weapon Training." compset="CustomSpec">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMPSGGCom"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="wFtrGroup" tag="all" name="all" abbrev="all"/>
+    <tag group="AllowCust" tag="cHelpFtr"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="HasAbility" tag="cFtrWeapTr"/>
+    <tag group="HasAbility" tag="rcMPDPLCFd"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="Level" priority="10000">hero.childfound[cHelpMdH].field[cBonFtMax].value += 1</eval>
+    </thing>
+  <thing id="cMPSGGBrut" name="Brutal" description="Whenever you deal enough damage to drop a foe or score a critical hit with an attack, as a swift action you can make an Intimidate check to demoralize foes within 30 feet that are able to see and hear you." compset="CustomSpec" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGKnB"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGGuar" name="Guard" description="Some knee-breakers serve as guards, often protecting a crime boss from rival mobsters (though a few knee-breakers are legitimate professional bodyguards). \n\nWhen a knee-breaker selects this talent, he can take Bodyguard*, Combat Patrol*, Ironguts*, or Lucky Halfling as a bonus feat. \n\nA knee breaker with the Bodyguard feat can select In Harm’s Way* as a bonus feat. The knee-breaker need not meet the prerequisites of these bonus feats.\n\nThis talent can be selected more than once, and the knee-breaker takes a different bonus feat each time.\n\n*Indicates a feat from the Advanced Player’s Guide." compset="CustomSpec">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGKnB"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="fInclude" tag="fBodyguard"/>
+    <tag group="fInclude" tag="fComPatrol"/>
+    <tag group="fInclude" tag="fInHarmWay"/>
+    <tag group="fInclude" tag="fIronguts"/>
+    <tag group="fInclude" tag="fLuckHalfl"/>
+    <eval phase="First" priority="10000">~add one feat allowed
+#resmax[resFeat] += 1</eval>
+    </thing>
+  <thing id="cMPSGGMaim" name="Maim" description="If a knee-breaker can catch an opponent when it is unable to defend itself effectively from the knee-breaker’s attack, he can attempt to maim the target and place it at a disadvantage. The knee-breaker can make a maim attack as a standard action anytime his target would be denied a Dexterity bonus to AC (whether the target has a Dexterity bonus or not), or when the knee-breaker flanks her target. Ranged attacks can count as maim attacks only if the target is within 30 feet of the knee-breaker.\n\nRather than deal normal hit point damage, a maim attack forces the target to make a Fortitude save (DC 10 + ½ knee-breaker’s level, + knee-breaker’s Strength modifier). On a failed save, the target takes 1d4 Strength or Dexterity damage (as preferred by the knee-breaker). On a successful save, the target suffers a 1d4 penalty to Strength or Dexterity for 1 round. Maim attacks can be made only with weapons that can deal lethal damage, or as part of a grapple.\n\nThe knee-breaker must be able to see the target well enough to pick out a vital spot and must be able to reach such a spot. A knee-breaker cannot make a maim attack while striking a creature with concealment. Any effect that prevents a critical hit or sneak attack prevents a maim attack from functioning.\n\nA knee-breaker must be at least 9th level to select this talent." compset="CustomSpec" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGKnB"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="StandardDC" tag="aSTR"/>
+    <exprreq message="Character level 9th required."><![CDATA[#totallevelcount[] >= 9]]></exprreq>
+    </thing>
+  <thing id="cMPSGGSmac" name="Smack Down" description="If the knee-breaker makes a successful melee attack using the Power Attack feat, as a swift action he can also make a CMB check at –4. \n\nOn a successful check, the target is knocked prone. Abilities that increase a target’s CMD against trip attacks work against smack down, and the knee-breaker does not get to add any feat or ability that gives him bonuses to CMB checks made for a trip maneuver." compset="CustomSpec" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGKnB"/>
+    <tag group="AbilType" tag="Extra"/>
+    <pickreq thing="fPowerAtt"/>
+    </thing>
+  <thing id="cMPSGGAdre" name="Adrenaline Rush" description="This ability allows a prize fighter to push himself beyond the normal limits of his physical frame. \n\nThe prize fighter can undertake a task as if one of his physical ability scores (Strength, Dexterity, or Constitution) was 6 points higher. This allows the prize fighter to make ability checks or skill checks based on the selected ability core with a +3 bonus, or lift objects using the carrying capacity of a temporarily higher Strength. \n\nAdrenaline rush does not apply to attack rolls, damage rolls, AC, saving throws, or CMB checks but it can be used to increase the prize fighter’s CMD for 1 round as a full-round action (bracing against any effort made by foes). \n\nA prize fighter can use this ability once per day, plus 1 additional time for every 5 levels. Activating the bonus is a swift action, and it last 1d4+1 rounds." compset="CustomSpec" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMPSGGPzF"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="Helper" tag="Secondary"/>
+    <eval phase="PostLevel" priority="10000">~ We get 1 + (5 our level, rounded down), so calculate
+      ~ that number.
+      var bp as number
+      bp = 0 + (herofield[tLevel].value / 5)
+      bp = round(bp, 0, -1)
+
+      ~ Add to our total charges.
+      field[trkMax].value += bp</eval>
+    </thing>
+  <thing id="cMPSGGClut" name="Clutch" description="The prize fighter is at his most dangerous in desperate situations. \n\nWhenever his current hit point total is 25% or less of his maximum hit points, he gains a +2 circumstance bonus to all attack rolls, saving throws, and skill and ability checks." compset="CustomSpec" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGPzF"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGCoun" name="Counterstrike" description="The prize fighter is a master of punishing foes for their failures.\n\nWhenever a foe attempts a combat maneuver requiring a CMB check, and the maneuver fails, the foe provokes an attack of opportunity from the prize fighter. This is separate from the attack of opportunity provoked by attempting many combat maneuvers." compset="CustomSpec" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGPzF"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGSigM" name="Signature Move" description="A prize fighter often trains on a single maneuver and becomes a master of that single attack. \n\nSelect one melee weapon. You can select unarmed strikes. As a standard action, you can attempt to stun foes you hit with this melee weapon. \n\nTreat this as the Stunning Blow feat, except you can deliver the stunning blow with your selected weapon rather than unarmed strikes." compset="CustomSpec">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGPzF"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="fShowWhat" tag="WeaponsMel"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="HasFeat" tag="fStunFist"/>
+    </thing>
+  <thing id="fMPSGGAvo" name="Avoidance" description="{b}Benefit{/b}: You gain an augmentation to your Dexterity bonus to Armor Class. This bonus is equal to half your base attack bonus, to a maximum of +4. \n\nThis augmentation does not stack with any bonus to AC that does not work in medium or heavy armor (including class- or feat-based abilities)." compset="Feat" summary="You’ve been trained in advanced arts of avoiding damage in combat." uniqueness="useronce">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="General"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[  ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      if (hero.tagis[Hero.MedArmor] + hero.tagis[Hero.HeavyArmor] <> 0) then
+        perform assign[Helper.SpcDisable]
+        done
+        endif
+
+      if (#hasfeat[fMPSGGIAvd] + #hasfeat[fMPSGGSpAv]<> 0) then
+        perform assign[Helper.SpcDisable]
+        done
+        endif
+      
+field[abValue].value = minimum(hero.child[Attack].field[tAtkBase].value,8)
+#applybonus[tACDeflect, hero.child[ArmorClass], field[abValue].value/2]]]></eval>
+    </thing>
+  <thing id="fMPSGGFann" name="Fanning" description="{b}Benefit{/b}: You can burst fire with a pistol as if it had the burst fire weapon feature.\n\nIf using single-action revolvers, this represents fanning back the hammer with your off-hand between shots, but the feat applies to all pistols at the listed PLs regardless of the technique required to produce the effect.\n\n{b}Normal{/b}: Without this feat, only firearms with the burst feature can burst fire." compset="Feat" uniqueness="useronce">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <pickreq thing="fWepMart"/>
+    <exprreq message="Dexterity of 13 is required"><![CDATA[child[aDEX].field[aFinalVal].value >= 13]]></exprreq>
+    </thing>
+  <thing id="fMPSGGIAvd" name="Improved Avoidance" description="{b}Benefit{/b}: Your augmentation to your Dexterity bonus to Armor Class from the Avoidance feat increases by 4, to a maximum of 8. This replaces (does not stack with) your augmentation from Avoidance." compset="Feat" summary="You have learned to use constant vigilance and combat positioning techniques to avoid damage in combat." uniqueness="useronce">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="General"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[  ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      if (hero.tagis[Hero.MedArmor] + hero.tagis[Hero.HeavyArmor] <> 0) then
+        perform assign[Helper.SpcDisable]
+        done
+        endif
+
+      if (#hasfeat[fMPSGGSpAv]<> 0) then
+        perform assign[Helper.SpcDisable]
+        done
+        endif
+      
+field[abValue].value = minimum(hero.child[Attack].field[tAtkBase].value,16)
+#applybonus[tACDeflect, hero.child[ArmorClass], field[abValue].value/2]]]></eval>
+    <pickreq thing="fMPSGGAvo"/>
+    <exprreq message="Constitution of 13 is required"><![CDATA[child[aCON].field[aFinalVal].value >= 13]]></exprreq>
+    </thing>
+  <thing id="fMPSGGImBF" name="Improved Burst Fire" description="{b}Benefit{/b}: When you make a burst fire attack, you add +4 to your CMB check." compset="Feat" summary="You are skilled at making rapid attacks with automatic weapons." uniqueness="useronce">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="abValue" value="4"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="User" tag="OptDomain"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="10000"><![CDATA[      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      hero.child[manMJLJbur].field[manCMB].value += field[abValue].value]]></eval>
+    <exprreq message="Strength of 13 is required"><![CDATA[child[aSTR].field[aFinalVal].value >= 13]]></exprreq>
+    <exprreq message="Dexterity of 13 is required"><![CDATA[child[aDEX].field[aFinalVal].value >= 13]]></exprreq>
+    <exprreq message="Base attack bonus +1 required."><![CDATA[child[Attack].field[tAtkBase].value >= 1]]></exprreq>
+    </thing>
+  <thing id="fMPSGGSpAv" name="Superior Avoidance" description="{b}Benefit{/b}: Your augmentation to your Dexterity bonus to Armor Class from the Improved Avoidance feat increases by 4, to a maximum of 12. This replaces (does not stack with) your increased augmentation from Improved Avoidance." compset="Feat" summary="You have mastered the use of constant vigilance and combat positioning techniques to avoid damage in combat." uniqueness="useronce">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="General"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[  ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      if (hero.tagis[Hero.MedArmor] + hero.tagis[Hero.HeavyArmor] <> 0) then
+        perform assign[Helper.SpcDisable]
+        done
+        endif
+   
+field[abValue].value = minimum(hero.child[Attack].field[tAtkBase].value,24)
+#applybonus[tACDeflect, hero.child[ArmorClass], field[abValue].value/2]]]></eval>
+    <pickreq thing="fMPSGGIAvd"/>
+    <pickreq thing="fMPSGGAvo"/>
+    <exprreq message="Constitution of 13 is required"><![CDATA[child[aCON].field[aFinalVal].value >= 13]]></exprreq>
+    <exprreq message="Dexterity of 13 is required"><![CDATA[child[aDEX].field[aFinalVal].value >= 13]]></exprreq>
+    </thing>
+  <thing id="pMPSGGBtFr" name="Burst Fire" description="{b}Benefit{/b}:  Some modern personal firearms have the ability to burst fire, you make a CMB check against your opponent’s CMD\n\nAs a standard action, make a CMB check against your opponent’s CMD. On a successful check, you hit the target. For every 5 your CMB check exceeds the target’s CMD, the target is hit by an additional attack. Burst fire requires you expend at least 3 rounds of ammunition, and you can expend up to 10 rounds (if your weapon has that much ammunition). You cannot hit the target with more attacks than rounds of ammunition expended. You cannot deal precision damage (including sneak attacks, and any damage type that specifies it does not work beyond 30 feet) with a burst fire attack." compset="InPlay" summary="Make a Busts fire you make a CMB check against your opponent’s CMD">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Adjustment" tag="YourWep"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjState"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're not enabled, get out now
+doneif (field[pIsOn].value = 0)
+
+field[abValue].value -= hero.child[Attack].field[tAtkBase].value
+
+field[abValue].value += hero.child[Maneuver].field[tCMB].value
+
+foreach pick in hero from BaseWep where "wFtrGroup.Firearms"
+   eachpick.field[wAttRanged].value = field[abValue].value
+nexteach]]></eval>
+    </thing>
+  <thing id="pMPSGGImBF" name="Improved Burst Fire" description="{b}Benefit{/b}:  When you make a burst fire attack, you add +4 to your CMB check." compset="InPlay" summary="You are skilled at making rapid attacks with automatic weapons.">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Adjustment" tag="YourWep"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjState"/>
+    <tag group="Helper" tag="AdjInfo"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're not enabled, get out now
+doneif (field[pIsOn].value = 0)
+
+field[abValue].value -= hero.child[Attack].field[tAtkBase].value
+
+field[abValue].value += hero.child[Maneuver].field[tCMB].value +4
+
+foreach pick in hero from BaseWep where "wFtrGroup.Firearms"
+   eachpick.field[wAttRanged].value = field[abValue].value
+nexteach]]></eval>
+    <pickreq thing="fMPSGGImBF" ispreclude="yes"/>
+    </thing>
+  <thing id="cMPSGGCSk" name="Class Skill Selection" description="Select skills to be designated as class skills." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="usrCandid1" value="component.BaseSkill"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="ChooseSrc1" tag="Thing" name="All Things" abbrev="All Things"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <eval phase="PreLevel" priority="500"><![CDATA[
+      ~ If we haven't chosen anything, get out immediately
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Assign the appropriate identity tag to the Modern Hero class
+      var result as number
+      result = field[usrChosen1].chosen.shareidentity[ClassSkill,cHelpMdH]]]></eval>
+    </thing>
+  <thing id="arMPSGGCom" name="Combatant" compset="ClassVary" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="RemoveCast"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AllowC2nd" tag="arMPSGGEnf"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="Custom" tag="ModHero"/>
+    <bootstrap thing="fWepMart">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGRTr">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cFtrBrave">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    </thing>
+  <thing id="arMPSGGDvD" name="Devil Dog" compset="ClassVary" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AllowC2nd" tag="arMPSGGEnf"/>
+    <tag group="Helper" tag="RemoveCast"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="AbReplace" tag="cMHFameBn"/>
+    <tag group="Custom" tag="ModHero"/>
+    <bootstrap thing="cMPSGGIfBn">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGIfBn">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGIfBn">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGIfBn">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGIfBn">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="fWepMart">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGRTr">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGRTDD">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="fArmLight">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fArmMedium">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    </thing>
+  <thing id="arMPSGGKnB" name="Knee-Breaker" compset="ClassVary" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AllowC2nd" tag="arMPSGGEnf"/>
+    <tag group="Helper" tag="RemoveCast"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="AbReplace" tag="cMPWealthB"/>
+    <tag group="fCategory" tag="Style"/>
+    <tag group="Custom" tag="ModHero"/>
+    <bootstrap thing="cMPSGGImpo">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGImpo">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGImpo">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="fWepMart">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGRTr">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGInfa">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGImpo">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGMtDt">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGRTKB">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGImpo">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    </thing>
+  <thing id="arMPSGGPzF" name="Prize Fighter" compset="ClassVary" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AllowC2nd" tag="arMPSGGEnf"/>
+    <tag group="Helper" tag="RemoveCast"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="AbReplace" tag="cMHHeroBus"/>
+    <tag group="fCategory" tag="Style"/>
+    <tag group="Custom" tag="ModHero"/>
+    <bootstrap thing="cMPSGGGrac">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGGrac">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGGrac">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGCros">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGCros">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGCros">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGCros">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGRTr">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="fWepMart">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGGrac">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cMPSGGGrac">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMdH"/>
+    </thing>
+  <thing id="cMPSGGBrv" name="Bravery" description="The bonus is +1  on Will saves against fear, and it increases by +1 for every four levels." compset="CustomSpec" summary="+1  on Will saves against fear, and it increases by +1 for every four  levels" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="HasAbility" tag="cFtrBrave" name="Bravery" abbrev="Bravery"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="arMPSGGCom" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~our bonus is level /4, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 4
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+      field[abSumm].text = "Your Bravery Bonus is +" & field[abValue].value]]></eval>
+    </thing>
+  <thing id="cMPSGGCo4" name="Combatant" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="cHelpMdH"/>
+    <tag group="ClsCountAs" tag="arMPSGGCom"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <eval phase="Final" priority="99999999999999999999"><![CDATA[        ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGCom) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGDevD" name="Devil Dog" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ClsCountAs" tag="arMPSGGDvD"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[        ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGDvD) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGKnee" name="Knee-Breaker" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ClsCountAs" tag="arMPSGGKnB"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[        ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGKnB) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGPriz" name="Prize Fighter" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ClsCountAs" tag="arMPSGGPzF"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Quaternary"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[        ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGPzF) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGBKF" name="Background Training: Extra Feat" description="A combatant selects a bonus feat to represent his background training. Unlike an enforcer’s bonus feats, this background feat need not be a combat feat." compset="CustomSpec" summary="A combatant selects a bonus feat">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMPSGGCom" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+
+hero.childfound[cHelpMdH].field[cBonFtMax].value += 1]]></eval>
+    </thing>
+  <thing id="cMPSGGBkA" name="Background Training: Armor" description="The combatant can select to be proficient with light, medium, and heavy armor, and all shields other than tower shields." compset="CustomSpec" uniqueness="useronce">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMPSGGCom" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="Helper" tag="Secondary"/>
+    <bootstrap thing="fArmHeavy">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fArmLight">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fArmMedium">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fArmShield">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    </thing>
+  <thing id="cMPSGGIfBn" name="Infantry’s Burden" description="The devil dog is trained to carry a full load that could often exceed an untrained person’s ability to do so. \n\nAt 2nd level, when determining the devil dog’s carrying capacity, calculate it as if his Strength score was one point higher. This has no effect on his Strength modifier or the impact of penalties due to wearing armor.\n\nAdd an additional +1 to the Strength score used to calculate the devil dog’s carrying capacity at 6th level, and again at 10th, 14th, and 18th level." compset="ClSpecial" summary="Carrying capacity as if his Str score was one point higher">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+herofield[tEncumSTR].value +=1]]></eval>
+    </thing>
+  <thing id="cMPSGGInfa" name="Infamous" description="The reputation of the kneebreaker precedes him and colors his dealings with everyone. \n\nThe knee-breaker can use his Intimidate skill bonus when making Diplomacy checks." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <eval phase="First" priority="10000">#skillbonus[skDiplo] += #skillbonus[skIntim]</eval>
+    </thing>
+  <thing id="cMPSGGMtDt" name="Master of Disaster" description="A knee-breaker is used to grabbing whatever tool, weapon, or implement is handy when damage needs to be done, and he has learned how to use just about anything as a weapon. \n\nA knee-breaker takes only a –1 penalty to attack rolls made with weapons with which he is not proficient (including improvised weapons), and he threatens with improvised weapons on a natural attack roll of 19–20." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      foreach pick in hero from BaseWep
+        eachpick.field[wNoProfPen].value -= 1
+        nexteach
+
+      foreach pick in hero from BaseWep where "Helper.Improvised"
+        ~ Set our critical modifier to it's expanded range.
+        perform eachpick.assign[wCritMin.19]
+    nexteach]]></eval>
+    </thing>
+  <thing id="cMPSGGImpo" name="Imposing" description="The ambience of menace that surrounds a knee-breaker often causes the brave-hearted to quail. \n\nAt 2nd level, the knee-breaker gains a +1 bonus to all Intimidate checks. This bonus increases by 1 at 6th, 10th, 14th, and 18th level." compset="ClSpecial" summary="+1 bonus to all Intimidate checks">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #skillbonus[skIntim] += 1]]></eval>
+    </thing>
+  <thing id="cMPSGGSnAt" name="Sneak Attack" description="The knee-breaker gains +1d6 of sneak attack, as the rogue ability.\n\n More information on Sneak Attack can be found in the Pathfinder Roleplaying Game Core Rules" compset="CustomSpec" summary="Gains the Rogue&apos;s Sneak Attack class feature">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMPSGGKnB" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="HasAbility" tag="cSneakAtt" name="Sneak Attack" abbrev="Sneak Attack"/>
+    <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
+    <eval phase="Final" priority="10000"><![CDATA[   ~our bonus is level /2, min 1
+      var bonus as number
+      bonus = field[xTotalLev].value / 2
+      field[abValue].value += maximum(round(bonus,0,-1),1)
+      field[livename].text = "Sneak Attack +" & field[abValue].value & "d6"
+      field[abSumm].text = "+" & field[abValue].value & "d6 damage if you flank your target or your target is flat-footed."]]></eval>
+    </thing>
+  <thing id="cMPSGGGrac" name="Grace Under Pressure" description="At 2nd level the prize fighter’s ability to remain calm under pressure allows him to select a single skill with which he can take 10, even when stress or distractions would normally prevent him from doing so. The skill selected must be a Strength-, Dexterity- or Constitution-based skill, or a Profession. \n\nThe prize fighter selects an additional skill he can take 10 with when distracted at 6th level, and again at 10th, 14th, and 18th level." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="fShowWhat" tag="Skills"/>
+    </thing>
+  <thing id="cMPSGGCros" name="Cross-Training" description="A prize fighter is always pushing his physical conditioning, working to improve weaknesses as much as enhance his advantages. At 5th level, this constant undertaking grants the prize fighter a +1 inherent bonus to the lowest of his Strength, Dexterity, or Constitution score.\n\nWhen determining which score is lowest, only the actual score and other inherent bonuses are considered (no magic effects, even long-term magic benefits, apply).\n\nAt 9th, 14th, and 17th level, the prize fighter gains an additional +1 inherent bonus, applied to whatever ability score is lowest at the time this benefit is gained. If this would result in the prize fighter having two +1 inherent bonuses to the same ability score or a +1 and a +2, or a +1 and a +3, instead the higher inherent bonus is increased by 1." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="usrCandid1" value="thingid.aSTR|thingid.aDEX|thingid.aCON"/>
+    <usesource source="MPRGGAnac"/>
+    <eval phase="Level" priority="5000"><![CDATA[
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+
+      if (field[usrChosen1].ischosen <> 0) then
+        field[usrChosen1].chosen.field[aStartMod].value += 1
+        endif]]></eval>
+    </thing>
+  <thing id="wSGGCarbAm" name="Carbines, Ammunition" description="Ammunition" compset="Weapon" stacking="merge">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gWeight" value=".01"/>
+    <fieldval field="gSizeCost" value="6"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="Proficient" name="Proficient" abbrev="Proficient"/>
+    <tag group="wCategory" tag="AmmoCart" name="Ammunition, Cartridge" abbrev="Ammunition, Cartridge"/>
+    <tag group="wFtrGroup" tag="Ammunition" name="Ammunition" abbrev="Ammunition"/>
+    <tag group="wMaxStrBon" tag="0" name="0" abbrev="0"/>
+    <tag group="wMaxStrPen" tag="0" name="0" abbrev="0"/>
+    <tag group="wType" tag="B" name="Bludgeoning" abbrev="B"/>
+    <tag group="wType" tag="P" name="Piercing" abbrev="P"/>
+    <tag group="Helper" tag="BucklerOK" name="BucklerOK" abbrev="BucklerOK"/>
+    <tag group="Helper" tag="FixSizeDmg" name="FixSizeDmg" abbrev="FixSizeDmg"/>
+    <tag group="EquipType" tag="Metal" name="Metal" abbrev="Metal"/>
+    <tag group="Helper" tag="GearNoSize" name="GearNoSize" abbrev="GearNoSize"/>
+    <tag group="SpecGroup" tag="FireAdvan"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    </thing>
+  <thing id="wSGGCavCar" name="Carbine, cavalry" compset="Weapon">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="gWeight" value="6"/>
+    <fieldval field="wMisfire" value="1"/>
+    <fieldval field="wCapacity" value="8"/>
+    <fieldval field="gSizeCost" value="1500"/>
+    <usesource source="MPRGGAnac"/>
+    <tag group="wClass" tag="TwoHanded"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCritMult" tag="4"/>
+    <tag group="wRangeInc" tag="60"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wMain" tag="2d4"/>
+    <tag group="wProfReq" tag="Firearm2"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wType" tag="P"/>
+    <tag group="wFtrGroup" tag="Firearms"/>
+    <tag group="SpecGroup" tag="FireAdvan"/>
+    <tag group="w1HandPen" tag="4"/>
+    <tag group="wType" tag="B"/>
+    <tag group="Helper" tag="NoDblStr"/>
+    <tag group="EquipType" tag="Wood"/>
+    <tag group="wCategory" tag="Firearm"/>
+    <tag group="Helper" tag="Easy2H"/>
+    </thing>
+  <thing id="cMPSGGECmb" name="Cross Training: Combatant" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="ClsCountAs" tag="arMPSGGCom"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="Final" priority="99999999999999999999"><![CDATA[        ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGCom) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGEDvD" name="Cross Training: Devil Dog" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMPSGGEnf" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ClsCountAs" tag="arMPSGGDvD"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[        ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGDvD) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGEKnB" name="Cross Training: Knee-Breaker" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMPSGGEnf" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ClsCountAs" tag="arMPSGGKnB"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[        ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGKnB) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGEPzF" name="Cross Training: Prize Fighter" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="SpecSource" tag="arMPSGGEnf" name="Modern Hero" abbrev="Modern Hero"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ClsCountAs" tag="arMPSGGPzF"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="Final" priority="999999999999999999999"><![CDATA[        ~ we'll overwrite the secondary abilities' expression, since we need
+        ~ to allow it to choose the abilities of our associated archetype
+
+        ~ First set up a variable to hold and modify the expression
+        var newexpr as string
+
+        ~ It starts the same as the original
+        newexpr = linkage[table].field[cCstS2Expr].text
+
+        ~ Then we replace the end with our own, which appends an additional SpecSource tag as an option
+        newexpr = replace(newexpr,") & Helper.Secondary"," | SpecSource.arMPSGGPzF) & Helper.Secondary",0)
+
+        ~ Now replace the old expresson with our modified one
+        linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
+    </thing>
+  <thing id="cMPSGGRT" name="Replace Talent" description="This replaces the Modern Hero class 1st level talent for an &quot;Archetype Cross Training&quot; for the Enforcer." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+hero.childfound[cHelpMdH].field[cGiveSpec].value -= 1]]></eval>
+    </thing>
+  <thing id="cMPSGGRTr" name="Replace Training" description="This replaces the 2nd level &quot;archetype training&quot; for 1st level &quot;martial weapons proficiency&quot;." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+hero.childfound[cHelpMdH].field[cGiveSp2nd].value -= 1]]></eval>
+    </thing>
+  <thing id="cMPSGGRCBF" name="Replace Class Bonus Feat" description="This replaces the Modern Hero class 20th level class bonus feat for the Enforcer class ability &quot;Enforcement&quot;." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+hero.childfound[cHelpMdH].field[cBonFtMax].value -= 1]]></eval>
+    </thing>
+  <thing id="cMPSGGCTN" name="Cross Training: None" description="You do not have to take a cross training talent. You gain back you class talent." compset="CustomSpec" uniqueness="unique">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="arMPSGGEnf"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="Level" priority="10000">hero.childfound[cHelpMdH].field[cGiveSpec].value += 1</eval>
+    </thing>
+  <thing id="cMPSGGEnfo" name="Enforcement" description="At 20th level, the enforcer becomes the master of calm, planned violence. When making an attack roll or CMB check, the enforcer can choose to “take 10” on the roll. \n\nInstead of rolling 1d20 for the attack roll or skill check, the enforcer calculates his result as if he had rolled a 10. When taking 10 on an attack or CMB check, the enforcer never gets a critical threat (nor does he ever fumble, if fumble rules are being used)." compset="ClSpecial" summary="The enforcer becomes the master of calm, planned violence.">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMPSGGRTDD" name="Replace Talent" description="This replaces the Modern Hero class 1st level talent for an &quot;Armor Proficiency&quot; for Devil Dog." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+hero.childfound[cHelpMdH].field[cGiveSpec].value -= 1]]></eval>
+    </thing>
+  <thing id="cMPSGGRTKB" name="Replace Talent" description="This replaces the Modern Hero class 1st level talent for an &quot;Master of Disaster&quot; for Knee-Breaker." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+hero.childfound[cHelpMdH].field[cGiveSpec].value -= 1]]></eval>
+    </thing>
+  <thing id="fMPSGGBody" name="Bodyguard" description="Your swift strikes ward off enemies attacking nearby allies.\n\n{b}Benefit{/b}: When an adjacent ally is attacked, you may use an attack of opportunity to attempt the aid another action to improve your ally’s AC. You may not use the aid another action to improve your ally’s attack roll with this attack.\n\n{b}Normal{/b}: Aid another is a standard action." compset="Feat" summary="Use an AoO to use aid another to improve an ally&apos;s AC." uniqueness="useronce">
+    <usesource source="APG"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="HasFeat" tag="fBodyguard"/>
+    <tag group="fCategory" tag="Special"/>
+    <pickreq thing="cMPSGGGuar"/>
+    </thing>
+  <thing id="fMPSGGCmbP" name="Combat Patrol" description="{b}Benefit{/b}: As a full-round action, you may set up a combat patrol, increasing your threatened area by 5 feet for every 5 points of your base attack bonus. Until the beginning of your next turn, you may make attacks of opportunity against any opponent in this threatened area that provokes attacks of opportunity. You may move as part of these attacks, provided your total movement before your next turn does not exceed your speed. Any movement you make provokes attacks of opportunity as normal." compset="Feat" summary="Full-round action: increase your threatened area by +5&apos; until your next turn." uniqueness="useronce">
+    <usesource source="APG"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="HasFeat" tag="fComPatrol"/>
+    <tag group="fCategory" tag="Special"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      
+      field[abValue].value += round(hero.child[Attack].field[tAtkBase].value/5,0,-1) * 5
+      
+      field[livename].text = field[thingname].text & " (+" & field[abValue].value & "')"
+      
+      field[abSumm].text = "Full-round action: increase your threatened area by +" & field[abValue].value & "' until your next turn."]]></eval>
+    <pickreq thing="cMPSGGGuar"/>
+    </thing>
+  <thing id="fMPSGGIron" name="Ironguts" description="You have an especially strong stomach.\n\n{b}Benefit{/b}: You gain a +2 racial bonus on saving throws against any effect causing the nauseated or sickened conditions and against all ingested poisons (but not other poisons). In addition, you receive a +2 bonus on Survival skill checks to find food for yourself (and only yourself )." compset="Feat" summary="+2 save vs. sickened, nauseated or ingested poison. +2 Survival to find food for yourself." uniqueness="useronce">
+    <usesource source="APG"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="HasFeat" tag="fIronguts"/>
+    <tag group="fCategory" tag="Special"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #situational[hero.child[svAll],"+2 bonus vs. nauseated, sickened, or ingested poisons",field[thingname].text]
+      #situational[hero.child[skSurvival],"+2 bonus to find food for only yourself",field[thingname].text]]]></eval>
+    <pickreq thing="cMPSGGGuar"/>
+    </thing>
+  <thing id="fMPSGGLukH" name="Lucky Halfling" description="You bring luck to those with whom you travel.\n\n{b}Benefit{/b}: Once per day, when one of your allies within 30 feet makes a saving throw, you may roll the same saving throw as if you were the one subject to the effect requiring it. You may use this ability after your ally has rolled, but before the GM declares if the roll was a success or failure. Your ally may choose to use your saving throw in place of his own." compset="Feat" summary="Roll a save vs an attack affecting an ally in 30 ft. They may use either result." uniqueness="useronce">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="APG"/>
+    <usesource source="CSKatapesh"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="Usage" tag="Day" name="/day" abbrev="/day"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="HasFeat" tag="fLuckHalfl"/>
+    <tag group="User" tag="Tracker"/>
+    <pickreq thing="cMPSGGGuar"/>
+    </thing>
+  <thing id="fMPSGGIHrW" name="In Harm&apos;s Way" description="You put yourself in danger’s path to save your allies.\n\n{b}Prerequisite{/b}: Bodyguard.\n\n{b}Benefit{/b}: While using the aid another action to improve an adjacent ally’s AC, you can intercept a successful attack against that ally as an immediate action, taking full damage from that attack and any associated effects (bleed, poison, etc.). A creature cannot benefit from this feat more than once per attack." compset="Feat" summary="When you aid another&apos;s AC and the attack succeeds, you may take the damage and effects of that attack yourself." uniqueness="useronce">
+    <usesource source="APG"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Special"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="HasFeat" tag="fInHarmWay"/>
+    <pickreq thing="cMPSGGGuar"/>
+    <exprreq message="Bodyguard required"><![CDATA[#hasfeat[fBodyguard] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMPSGGRTPF" name="Replace Talent" description="This replaces the Modern Hero class 1st level talent for an &quot;Grace Under Pressure&quot; for Prize Fighter." compset="ClSpecial">
+    <comment>The Enforcer
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <usesource source="MPRGGAnac"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+hero.childfound[cHelpMdH].field[cGiveSpec].value -= 1]]></eval>
+    </thing>
+  <thing id="manMJLJbur" name="Burst Fire" description="For attempting to use Burst Fire to perform Combat Maneuvers." compset="ManType" summary="The driver attempts to increase the distance between himself and either other vehicles">
+    <comment>Anachronistic Adventurers - The Tough
+
+Super Genius Games
+www.supergeniusgames.com</comment>
+    <fieldval field="manPresent" value="Burst Firing"/>
+    <fieldval field="manPast" value="Burst Fired"/>
+    <usesource source="MPRGGAnac"/>
+    </thing>
+  </document>

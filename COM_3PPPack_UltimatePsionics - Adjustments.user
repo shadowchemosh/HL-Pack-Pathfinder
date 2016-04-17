@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_UltimatePsionics - Adjustments"/>
+  <fileinfo>
+    <info_author>TCArknight</info_author>
+    </fileinfo>
+  <thing id="pPUPwrKnw1" name="Powers Known" description="Select this adjustment to increase/decrease the number of powers a class knows." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.Class &amp; Psionics.Class"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
+
+      ~ Increase/Decrease the powers known amount
+      field[pChosen].chosen.field[cPsiPowMax].value += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pPUPwrKnw2" name="Powers Known, Talents" description="Select this adjustment to increase/decrease the number of talent powers a class knows." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.Class &amp; Psionics.Class"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
+
+      ~ Increase/Decrease the secondary powers known amount
+      field[pChosen].chosen.field[cPsiSPowMa].value += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pPUPwrPnts" name="Power Points" description="Select this adjustment to increase/decrease the number of total power points your character has." compset="InPlay">
+    <usesource source="pPsiUn"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ increase/decrease total power points
+      #resmax[resPowerPt] += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pPUClsPwr" name="Add Power to Class Power List" description="Select this adjustment to add a specific power to an existing class. For example, if you want your Psychic Warrior to be able to also cast Alienation, you would choose Alienation for the first selector, and Psychic Warrior for the second." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.BasePower &amp; !Helper.Obsolete &amp; !Helper.Helper"/>
+    <fieldval field="pCandExpr2" value="component.Class"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="NoIncr" name="NoIncr" abbrev="NoIncr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="OthAdjCat" tag="Class" name="Class" abbrev="Class"/>
+    <tag group="ChooseSrc1" tag="Thing" name="All Things" abbrev="All Things"/>
+    <eval phase="PostLevel" priority="10000" index="2">      
+      ~ Correctly set the Custom Expression to choose Picks/Things
+      field[pUsePicks].value = 0
+      field[pUsePicks2].value = 1</eval>
+    <eval phase="First" priority="20000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Check to see if a power was chosen
+      doneif (field[pChosen].ischosen = 0)
+
+      ~ Pull the Class Allow Power tag
+      perform field[pChosen].chosen.pulltags[ClsAllowPs.?]
+
+      ~ Check to see if a Class was chosen
+      doneif (field[pChosen2].ischosen = 0)
+
+      ~ Push the Class Allow Power tag to class
+      perform field[pChosen2].chosen.pushtags[ClsAllowPs.?]]]></eval>
+    </thing>
+  <thing id="pPUClsPwrL" name="Add Power Type to Class Power List" description="Select this adjustment to add an entire power list to an existing class. For example, if you want your Pison to be able to also cast spells on the Psychic Warrior list, you would choose Psion for the first selector, and Psychic Warrior for the second." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.Class &amp; Psionics.Class"/>
+    <fieldval field="pCandExpr2" value="component.Class &amp; Psionics.Class"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <eval phase="PostLevel" priority="10000" index="2">      
+      ~ Correctly set the Custom Expression to choose Picks/Things
+      field[pUsePicks].value = 0
+      field[pUsePicks2].value = 1</eval>
+    <eval phase="First" priority="20000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ No Classes selected get out now!
+      doneif (field[pChosen].ischosen = 0)
+      doneif (field[pChosen2].ischosen = 0)
+
+      ~ Pull the Psionic Class Power spells and push to the other class
+      perform field[pChosen].chosen.pulltags[psiClass.?]
+      perform field[pChosen2].chosen.pushtags[psiClass.?]]]></eval>
+    </thing>
+  <thing id="pPUPwrsCst" name="Powers Cost" description="Select this adjustment to be able to increase or decrease the Psionic Point Cost of a specific power." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.BasePower"/>
+    <usesource source="pPsiUn"/>
+    <tag group="OthAdjCat" tag="Spell"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Correctly set the Custom Expression to choose Picks & Things
+      field[pUsePicks].value = 1]]></eval>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ Check to see if a power was chosen
+      doneif (field[pChosen].ischosen = 0)
+
+      ~ Pull the Class Allow Power tag
+      field[pChosen].chosen.field[psiCost].value += field[pAdjust].value]]></eval>
+    </thing>
+  </document>

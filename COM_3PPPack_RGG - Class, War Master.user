@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_RGG - Class, War Master"/>
+  <fileinfo>
+    <info_author>Author: Tim Shadow(ShadowChemosh)
+Contact: shadowchemosh@yahoo.com or PM on Hero Lab forum as ShadowChemosh</info_author>
+    <info_history><![CDATA[v1.2.1 10/16/2010
+-Added Source link to the feats.
+
+v1.2 - 7/28/2010
+-Added "Coordinated Attacks" and "Stay Down!" from the Adventurer's Handbook.
+
+v1.1 - 7/11/2010
+- Fixed "Fighting Spirit" to now correctly add only half class-levels for fighter feats.
+
+v1.0 - 6/30/2010
+-Added class
+-Added Class Specials
+-Added Custom Abilities
+-Added Feats
+-Added Items]]></info_history>
+    <info_todo><![CDATA[Their are a few things that can not be done. 
+-The Mark of Quality can't be done as Mathais answered this for Hyrum already.  Their is nothing that marks items as being MW in the HL.]]></info_todo>
+    </fileinfo>
+  <thing id="cWarmaster" name="Warmaster" description="The war master is a warrior, leader, and strategist. As their name might suggest, typical war masters are first and foremost military commanders, able to both slay foes directly and to aid his allies by suggesting various tactics and maneuvers to maximize their gifts and minimize their weaknesses. But the art of war is far more than the ability to kill and lead killers, and war masters must also learn at least some skills of negotiation, espionage, and organization to dominate all aspects of armed conflict. Similarly, the lessons learned in battle can often be applied in less violent venues, allowing war masters to see how to gain advantage in a wide range of situations.\n\nMany war masters come from families of wealth and power, raised as lords as well as battle leaders. Noble families often push their junior scions to be war masters (as well as clerics or wizards) to ensure the family has the skills and power needed to defend its holdings and organize its forces. Noble war masters are often younger siblings with little chance of inheriting major holdings, or the offspring of trusted servants who are given an opportunity to become knights, squires, or royal guards. Almost as common are noble war masters whose families have lost their lands, forcing them to become skilled generals as they seek the skills, troops, and allies necessary to take back their homelands." compset="ClassLevel" maxlimit="20">
+    <usesource source="WarMast"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ClassType" tag="Normal"/>
+    <bootstrap thing="cHelpWrm"></bootstrap>
+    <link linkage="helper" thing="cHelpWrm"/>
+    </thing>
+  <thing id="cWrmBatTsa" name="Battle Tactics" description="A war master is trained to use tactics to direct units and individuals to create beneficial combat situations that favor his allies. (A war master may always choose to count himself as one of his own allies, both for fulfilling conditions required by tactics, and for receiving the benefit of them.) He can use this ability for a number of rounds per day equal to 4 + his Charisma modifier. At each level after 1st, this number increases by +2 rounds per day. Each round, the war master can make use of any one of the types of battle tactics that he has mastered, as indicated by his level.\n\nActivating a war master&#146;s tactic is a standard action, but it can be maintained each round as a free action. Changing a war master&#146;s tactic from one effect to another requires the war master to end the previous tactic and start a new one as a standard action. A war master&#146;s tactic cannot be disrupted, but it ends immediately if the war master is killed, paralyzed, stunned, knocked unconscious, or otherwise  prevented from taking a free action to maintain it each round. A war master cannot have more than one battle tactic in effect in effect at one time.\n\nEach battle tactic has audible components and some also have visual components. Targets must be able to hear the war master for the tactics to have any effect, and such tactics are language dependent. A deaf war master has a 20% chance to fail when attempting to use a battle tactic. If he fails this check, the attempt still counts as one round against his daily limit. If a battle tactic has a visual component, the targets must have line of sight to the war master for the tactic to have any effect. A blind war master has a 50% chance to fail when attempting to use a battle tactic with a visual component. If he fails this check, the attempt still counts as one round against his daily limit." compset="ClSpecial">
+    <tag group="Usage" tag="DayRound"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="PostAttr" priority="10000">~Post-Attributes 10,000
+var Uses as number
+field[abValue].value = 4 + hero.child[aCHA].field[aModBonus].value
+field[abValue].value += (#levelcount[Warmaster]-1)*2 
+
+#trkmax[cWrmBatTsa] = field[abValue].value</eval>
+    </thing>
+  <thing id="cWrmAssail" name="Assail" description="At 1st level a war master learns to direct his allies to overwhelm a foe&#146;s defenses, forcing the enemy to divide its attention among multiple targets. The war master selects one foe he can see. If that foe is threatened by three or more of the war master&#146;s allies, it is considered flanked for the first melee attack each ally makes in a round." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Render" priority="1000"><![CDATA[~Set the list name
+var text as string
+if (field[xIndex].value = 2) then
+   text = "(multiple foes)"
+elseIf (field[xIndex].value = 3) then
+   text = "(foes threatened by 2 allies)"
+endif
+
+field[listname].text = field[thingname].text & text
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+field[abValue].value += field[xCount].value
+~Set Text correctly
+if (field[abValue].value = 2) then
+   text = "(multiple foes)"
+elseIf (field[abValue].value = 3) then
+   text = "(foes threatened by 2 allies)"
+endif
+field[livename].text = field[thingname].text & text]]></eval>
+    </thing>
+  <thing id="cWrmCounTa" name="Countering Tactics" description="At 1st level, a war master learns to counter the advantages foes gain by superior planning, morale, or position. Each round of the countering tactics he makes a Knowledge (nobility) skill check. The war master compares this to every foe he can see and has line of effect to. If the war master&#146;s Knowledge check hits a DC of (10 + target&#146;s hit dice or level), that foe gains no benefit from morale bonuses, luck bonuses, or battle tactics; cannot flank; and suffers a -4 penalty to all attacks of opportunity made. A creature the war master fails to affect with a use of countering tactics remains immune to any further use of the ability by the same war master for 24 hours." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cWrmCovMan" name="Covering Maneuvers" description="A 1st-level war master can use his tactics to direct his allies to watch out for one another, and assist each in remaining safe and protected. Any ally who is eligible to be affected by battle tactics and is adjacent to at least one additional ally receives a +1 morale bonus to Armor Class, CMD, and Reflex saving throws. This bonus increased to +2 at 5th level, +3 at 11th level, and reaches its maximum of +4 at 17th level. Covering maneuvers requires both audible and visual components." compset="ClSpecial">
+    <tag group="Helper" tag="UseOwnLev"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Render" priority="1000"><![CDATA[~Set the list name
+field[listname].text = field[thingname].text & "(+" & field[xIndex].value  & ")"
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+field[abValue].value += field[xCount].value
+field[livename].text = field[thingname].text & "(+" & field[abValue].value  & ")"]]></eval>
+    </thing>
+  <thing id="cWrmDeploy" name="Deployment" description="At 1st-level a war master can direct allies to get into advantageous positions quickly. All allies the war master can see gain a +10 foot enhancement bonus to their base movement if they take a double move or run action. At 10th level this becomes a +15 foot enhancement bonus for allies that take a double move or run action." compset="ClSpecial">
+    <tag group="Helper" tag="UseOwnLev"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Render" priority="1000"><![CDATA[~Set the list name
+var Mov as string
+If (field[xIndex].value = 1) then
+   Mov = "(+10ft)"
+ElseIf (field[xIndex].value = 2) then
+   Mov = "(+15ft)"
+endif
+
+field[listname].text = field[thingname].text & Mov
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+field[abValue].value += field[xCount].value
+If (field[abValue].value = 1) then
+   Mov = "(+10ft)"
+ElseIf (field[abValue].value = 2) then
+   Mov = "(+15ft)"
+endif
+field[livename].text = field[thingname].text & Mov]]></eval>
+    </thing>
+  <thing id="cWrmBatTma" name="Battle Tactics: Move Action" description="At 7th level, a war master can start a battle tactic as a move action instead of a standard action." compset="ClSpecial">
+    <tag group="Usage" tag="DayRound"/>
+    </thing>
+  <thing id="cWrmBatTsw" name="Battle Tactics: Swift" description="At 13th level, a war master can start a battle tactic as a swift action." compset="ClSpecial">
+    <tag group="Usage" tag="DayRound"/>
+    </thing>
+  <thing id="cWrmConsul" name="Consul" description="Though not all war masters move in highly-placed circles, they all learn the ins-and-outs of political maneuvering as part of their training in the art of war. At 2nd level a war master learns to use his understanding of the rules of the courts and places of political power to assist him in any social interaction, even with individuals of low social standing. The war master may use his Knowledge (nobility) bonus in place of his Diplomacy bonus whenever making a Diplomacy check." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cWrmBornLe" name="Born Leader" description="This talent adds half a war master&#146;s class level to his Leadership score, for purpose of determining the total number of followers he gains from the Leadership feat (but NOT to determine the level of his cohort) . If this bonus causes the war master&#146;s Leadership score to be 26 or higher, the war master gets a bonus group of followers. To determine how large this group of bonus followers is, subtract 10 from the war master&#146;s Leadership score, and compare this new number to the Leadership chart.\n\nFor example, Sir Mark is a 14th level war master with a 18 Charisma, a base of operations, great renown, and the born leader talent. His normal Leadership score is 22, giving him 75 1st-level followers, 7 2nd-level, 4 3rd-level, 2 4th-level, 2 5th-level, and 1 6thlevel. However, because he has born leader, Sir Mark&#146;s effective leadership for followers is 7 higher (half his level), making it 29. This gives him the maximum normal number of followers (135 1st-level followers, 13 2nd-level, 7 3rd-level, 4 4th-level, 2 5th-level, and 3 6th-level), plus the followers of a leadership score of 19 (10 lower than his effective leadership score), for an additional 40 1st-level, 4 2nd-level, 2 3rdlevel, 1 4th-level, and 1 5th-level follower.\n\nA war master must have the Leadership feat prior to selecting the born leader talent." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Final" priority="9999">~Final Phase 9,999
+hero.childfound[fLeader].field[abValue].value = round(#levelcount[Warmaster]/2,0,-1)</eval>
+    <exprreq message="Leadership Feat required."><![CDATA[#hasfeat[fLeader] <> 0]]></exprreq>
+    </thing>
+  <thing id="cWrmContac" name="Contacts" description="As a leader of men and lord of command, a war master is likely to have contacts among any large population. Upon reaching a new community, the war master may immediately make a Diplomacy check to see if he is aware of a contact in the community. A check result of 9 or less indicates no specific contact. A check result of 10-29 means that the war master knows one contact that is indifferent, a check result of 30-39 means he knows one contact that is friendly, and a check result of 40 or more means he knows one contact that is helpful.\n\nContacts are always typical members of the community, rather than knights or court wizards, and the war master must treat a contact well to gain actual aid. A contact has no special connection to the war master&#146;s allies, and has an initial attitude toward them consistent with how others in the community would feel." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cWrmCoverF" name="Cover Fire*" description="Whenever the war master grants benefits to his allies from any battle tactic, the allies also gain the ability to take the aid another combat action with ranged attacks. Both the target of the attack, and the ally to benefit from the aid another, must be in line of effect of the war master." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cWrmEsdeCo" name="Esprit de Corps" description="Any follower of the war master (gained from the Leadership feat) gains a +2 morale bonus to attacks, skill checks, damage rolls, CMD, and saving throws when within 60 feet of the war master. If they are currently suffering any fear effects, they may attempt a new save to resist those effects (against the original DC) once a round as long as they are within 60 feet of the war master.\n\nThese bonuses apply as long as followers know they are close to the war master, even if the war master is unconscious, paralyzed, or unable to react. The effect even carries on for 24 hours after the war master&#146;s death, as long as followers are within range.\n\nThe feeling of confidence the war master instills in his troops allows him to recruit additional kinds of creatures as cohorts. The following creatures may be taken as monster cohorts, using the rules from the {i}Pathfinder Roleplaying Game Bestiary{/i}, with the listed effective cohort &quot;level.&quot; Many war masters use such special cohorts as bodyguards or steeds." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cWrmFaith" name="Faith" description="Fighting men often depend on the gods for good fortune, and in some cases are actually faithful enough to receive direct answers to their prayers. A war master with this talent gains the ability to cast a 0-level spell from the cleric spell list. This spell can be cast three times a day as a spell-like ability. The caster level for this ability is equal to the war master&#146;s level. The save DC for this spell is 10 + the war master&#146;s Wisdom modifier. The war master must have a Wisdom of at least 10 to select this talent." compset="CustomSpec" uniqueness="useronce">
+    <fieldval field="trkMax" value="3"/>
+    <fieldval field="usrCandid1" value="component.BaseSpell&amp;sLevel.0 &amp; (sClass.cHelpClr)"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <eval phase="Final" priority="1000">field[abDC].value = 10 + hero.child[aWIS].field[aModBonus].value</eval>
+    <exprreq message="Wisdom 10 required."><![CDATA[child[aWIS].field[aFinalVal].value >= 10]]></exprreq>
+    </thing>
+  <thing id="cWrmFightS" name="Fighting Spirit" description="Some war masters are dedicated fighting men nearly as skilled as members of the fighter class. This talent allows the war master to select one feat normally restricted to fighters only, using half the war master&#146;s class level as his fighter level for purpose of one feat&#146;s prerequisite. The war master must meet all other prerequisites of the feat normally." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    <tag group="fInclude" tag="fWepSpec"/>
+    <eval phase="PreAttr"><![CDATA[var i as number
+var tagstoadd as number
+~Get half our level 
+tagstoadd = round(hero.childfound[cWrmAssail].field[xAllLev].value/2,0,-1)
+~Get out if we have nothing to add
+doneif (tagstoadd <= 0)
+~Add number of tags here
+for i = 1 to tagstoadd
+  perform hero.assign[FtCountAs.Fighter]
+  next]]></eval>
+    </thing>
+  <thing id="cWrmHandUp" name="Hand Up" description="As a move action, the war master can assist an adjacent prone ally to stand. The ally must take a move action on her turn to actually stand from prone, but if the war master is still adjacent the ally does not suffer an attack of opportunity for standing." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    </thing>
+  <thing id="cWrmHardMa" name="Hard March" description="The war master can keep his allies focused on moving forward with alacrity, using careful planning to reduce the breaks required, directing a group&#146;s scouts to find the best route through terrain, and ensuring assistance is given to anyone at risk of falling behind. As a result the war master and his allies (to a maximum of 20 people per war master level) double their miles per hour of overland speed. The group may still hustle or use a forced march to further increase their speed or time traveled, but suffers the normal penalties for doing so." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    </thing>
+  <thing id="cWrmHold" name="Hold!*" description="Whenever the war master grants benefits to his allies from any battle tactic, the allies also gain the ability to ready a full round action (rather than ready just a standard action, as normal)." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    </thing>
+  <thing id="cWrmPerspi" name="Perspicacity" description="This talent represents the war master&#146;s mastery of studying details and using them to draw conclusions about the bigger picture. The war master may use his Perception bonus in place of his Appraise or Sense Motive bonus whenever making an Appraise or Sense Motive check." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    </thing>
+  <thing id="cWrmRealmE" name="Realm of Expertise" description="A war master with this talent has learned how to maximize his efforts within a certain class of skills. The war master gains a +1 bonus to all skill and ability checks based on a single ability score selected when this talent is taken. If the war master is 10th level or higher, this bonus increases to +2. This talent may be selected more than once. A different ability score must be selected each time the talent is taken." compset="CustomSpec">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="fShowWhat" tag="Attributes"/>
+    <eval phase="PostAttr" priority="5000"><![CDATA[~ If we're not shown, just get out now
+doneif (tagis[Helper.ShowSpec] = 0)
+ 
+if (linkage[table].field[cTotalLev].value >= 10) then
+  field[abValue].value += 2
+else
+  field[abValue].value += 1
+  endif
+ 
+perform field[usrChosen1].chosen.setfocus
+~if we haven't chosen anything yet, just get out now
+doneif (state.isfocus = 0)
+ 
+perform focus.pulltags[SkillOver.?]
+ 
+foreach pick in hero from BaseSkill
+  if (eachpick.intersect[SkillOver,SkillOver] <> 0) then
+    eachpick.field[Bonus].value += field[abValue].value
+  elseif (eachpick.islinkage[skillattr] <> 0) then
+    if (eachpick.linkage[skillattr].intersect[SkillOver,SkillOver] <> 0) then
+      eachpick.field[Bonus].value += field[abValue].value
+      endif
+    endif
+  nexteach]]></eval>
+    </thing>
+  <thing id="cWrmShOfWa" name="Shout of Warning" description="As a move action a war master can shout a warning of impending danger to his allies. All allies able to hear him cease to be flat-footed, even if they are surprised." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    </thing>
+  <thing id="cWrmStrFai" name="Strong Faith" description="A war master with this talent gains the ability to cast a 1st-level spell from the cleric spell list two times a day as a spell-like ability. The caster level for this ability is equal to the war master&#146;s level. The save DC for this spell is 11 + the war master&#146;s Wisdom modifier. The war master must have a Wisdom of at least 11 to select this talent. A war master must have the faith talent before choosing this talent." compset="CustomSpec" uniqueness="useronce">
+    <fieldval field="trkMax" value="2"/>
+    <fieldval field="usrCandid1" value="component.BaseSpell&amp;sLevel.1 &amp; (sClass.cHelpClr)"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <eval phase="Final" priority="1000">field[abDC].value = 11 + hero.child[aWIS].field[aModBonus].value</eval>
+    <exprreq message="Faith talent required."><![CDATA[#hasability[cWrmFaith] <> 0]]></exprreq>
+    <exprreq message="Wisdom 11 required."><![CDATA[child[aWIS].field[aFinalVal].value >= 11]]></exprreq>
+    </thing>
+  <thing id="cWrmTaThAl" name="Take Them Alive!*" description="Whenever the war master grants benefits to his allies from any battle tactic, the allies also gain the ability for half the damage they deal to be nonlethal damage." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    </thing>
+  <thing id="cWrmAgents" name="Agents" description="This talent represents the warmaster&#146;s efforts to have spies and emissaries in areas he is likely to operate. Any time the war master enters a new kingdom, town, or settlement, he may make a DC 25 Diplomacy check. On a successful check, the war master may choose to have one of his followers of 2nd level or higher be an agent within the community. This agent is removed from the total number of followers the war master has available, and is attached to the community. Depending on the nature of the community, the GM must decide if the agent is a clandestine spy or an open representative of the war master or his patrons. In either case the agent is loyal to the war master and knows the lay of the land and local rumors, and is likely to be able to provide information about current events, a place to hide, and someone who can safely sell items or buy supplies without raising suspicions.\n\nEvery two levels the war master gains after selecting this talent he may &quot;reassign&quot; one of his agents, removing the agent from the community it was previously in and returning it to the pool of available followers. A war master with no available followers of 2nd or higher level can&#146;t use the agent talent until he has an available follower." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    <exprreq message="Warmaster level 12 required."><![CDATA[#levelcount[Warmaster] >= 12]]></exprreq>
+    </thing>
+  <thing id="cWrmBkUpPl" name="Back-Up Plan*" description="Whenever the war master grants benefits to his allies from any battle tactic, each ally also gain the ability to reroll any one attack roll, damage roll, or saving throw. If an ally does choose to reroll one of these die rolls, the ally must take the second result even if it is worse than the original die roll. An ally may only make one reroll from a specific war master&#146;s backup plan talent in a given day, even if that war master uses this talent multiple times during the day. Each time an ally chooses to make a reroll, the war master expends one additional round of battle tactics from his daily limit." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    <exprreq message="Warmaster level 12 required."><![CDATA[#levelcount[Warmaster] >= 12]]></exprreq>
+    </thing>
+  <thing id="cWrmFormat" name="Formation*" description="Whenever the war master grants benefits to his allies from any battle tactic, they also gain the ability to make one additional attack of opportunity each round, and a +4 morale bonus to attack rolls for attacks of opportunity." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    <exprreq message="Warmaster level 12 required."><![CDATA[#levelcount[Warmaster] >= 12]]></exprreq>
+    </thing>
+  <thing id="cWrmHearte" name="Hearten" description="When a war master with the hearten talent uses his rally ability, he adds his Intelligence modifier to the number of temporary hit points gained by each ally." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    <tag group="AbilType" tag="Super"/>
+    <exprreq message="Warmaster level 12 required."><![CDATA[#levelcount[Warmaster] >= 12]]></exprreq>
+    </thing>
+  <thing id="cWrmLastTa" name="Lasting Tactics*" description="With this talent, a war master may opt to have a battle tactic continue to be effective for 2 rounds after he stops maintaining it (even if the war master begins to use a different battle tactic). These 2 rounds count against the war master&#146;s daily total of battle tactics." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    <exprreq message="Warmaster level 12 required."><![CDATA[#levelcount[Warmaster] >= 12]]></exprreq>
+    </thing>
+  <thing id="cWrmParley" name="Parley" description="The art of trying to reach a truce of some kind with foes is represented by the parley talent. With this talent, a war master can make a special Diplomacy check as a full round action with hostile, unfriendly or indifferent NPCs to attempt to convince them to agree to a temporary cessation of hostilities. This can be attempted in combat, even against foes wishing the war master or his allies immediate harm. The DC for this special check is the same as the DC for improving the attitude of an NPC (see Diplomacy in the {i}Pathfinder Roleplaying Game Core Rulebook{/i} for more information). A successful check convinces a foe to stop attempting to harm the war master and his allies for 1d4 rounds, as long as the war master and his allies do nothing to improve their situation (or at least aren&#146;t caught doing anything). Thus neither the war master nor his allies may heal, move to better positions, cast spells, or ready equipment during the parley. In most cases if the war master and his allies don&#146;t offer concessions to a hostile foe, violence is renewed (even if negotiations seem to be going well) after the 1d4 rounds of parley." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="BonusFor" tag="Fighter"/>
+    <exprreq message="Warmaster level 12 required."><![CDATA[#levelcount[Warmaster] >= 12]]></exprreq>
+    </thing>
+  <thing id="_WarMaster" name="Source_Holder" compset="Simple">
+    <usesource source="WarMast"/>
+    </thing>
+  <thing id="cWrmIndiTa" name="Individual tactics" description="A war master of 3rd level or higher can use his tactics to help an ally use combat strategies outside the ally&#146;s normal repertoire. The war master may select one combat feat to which he has access and one ally who is within 30 feet of the war master. He then grants that ally access to the selected feat, provided the ally meets the feats prerequisites. While maintaining individual tactics, as a free action the war master may change the selected feat (but not the selected ally). At 6th level, and every 6 war master levels afterward (12th, 16th, and so on) the war master can select an additional feat to grant to his ally. All feats must be combat feats known by the war master, for which that the ally meets the prerequisites. Individual tactics requires both audible and visual components." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Render" priority="1000"><![CDATA[~Set the list name
+field[listname].text = field[thingname].text & "(" & field[xIndex].value  & "/feat)"
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+field[abValue].value += field[xCount].value
+field[livename].text = field[thingname].text & "(" & field[abValue].value  & "/feat)"]]></eval>
+    </thing>
+  <thing id="cWrmGoad" name="Goad" description="A war master of 5th level or higher can use his tactics to force a foe into immediate action. He selects one foe within 60 feet that he can see and has line of effect to. That target must make a Will save against a DC of (10 + &#189; the war master&#146;s class level + the war master&#146;s Intelligence bonus). If the foe fails, it cannot ready or delay any actions. If it does not take its turn in the normal initiative order, it loses its action until the next round. Although the war master can maintain this battle tactic for several rounds, the targeted foe is allowed a new saving throw against the goad at the beginning of every turn. Goad is an enchantment (compulsion), mind-affecting ability." compset="ClSpecial">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aINT"/>
+    </thing>
+  <thing id="cWrmMaOfQu" name="Mark of Quality" description="At 5th level the war master&#146;s experience with high-quality gear grows into a knack for getting more out of masterwork equipment. Anytime the war master uses a masterwork weapon, armor, tool kit or similar item he receives a +1 circumstance bonus. If the object is a masterwork weapon, the bonus is applied to attack rolls. If armor, the maximum Dex bonus is increased by 1 when the war master is wearing it. If the equipment is some other piece of gear (such as a masterwork tool), the bonus applies to whatever skill or ability check the equipment normally grants a bonus to. (See &quot;Other New Rules&quot; for more information on nonstandard masterwork equipment.)\n\nThese bonuses apply to all magic weapons and armor the war master may use (which must be masterwork to be imbued with magic), but normally do not apply to other magic items unless they are magical versions of mundane masterwork tools or kits. If the war master is 10th level or higher, the circumstance bonus increases to +2.\n{b}Must be configured manually as of HL v3.6b{/b}" compset="ClSpecial">
+    <comment><![CDATA[Now, for the problem. You won't find masterwork status stored in the tags and fields. The custom armor/weapon items in Hero Lab use the "gizmo" mechanism, so that the custom armor/weapon can inherit all the stats of an existing weapon without having to make the user re-enter all of them for each custom item.
+
+The tag and field reports don't report anything about the gizmo, just the final results.
+
+What's worse is that masterwork isn't consistently recorded from thing to thing. For example, I can't figure out how to find something that can tell me that the Mithral Shirt specific item is masterwork.
+
+I'll put on my to-do list to figure out a way to specifically tag all the masterwork items. But until then, I don't know a way to search for all the masterwork items on the character.
+
+You're going to have to leave your ability as text only until then. Sorry.]]></comment>
+    </thing>
+  <thing id="cWrmGuaTac" name="Guarded Tactics" description="A war master of 7th level or higher can employ tactics to protect weaker allies from being hampered by complex maneuvers by foes. All allies within 60 feet who are able to see and hear the war master may use his CMD rather than their own, if they choose to do so." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cWrmRaiTac" name="Raid Tactics" description="A war master of 9th level or higher can use his tactics to develop quick raids that maximize the potency of his allies while minimizing their weaknesses. This ability affects allies within 60 feet that can see and hear the war master. Affected allies ignore penalties from {i}confused, exhausted, fatigued, frightened, shaken, and sickened{/I} conditions for the duration of this battle tactic. These conditions are not removed, but they have no effect on creatures receiving the benefits of raid tactics. Each round the war master maintains the raid tactics, he expends two rounds of his battle tactics daily maximum. Raid tactics requires both audible and visual components." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cWrmAssTac" name="Assault Tactics" description="A war master of 13th level or higher can direct his allies to take positions that makes the most of their attack types. This ability affects allies within 60 feet that can see and hear the war master. Affected allies deal an additional 1 hit point of damage for each die of damage they deal, to a maximum of half the war master&#146;s class level.\n\nFor example, Grimmnur is a 14th level dwarven war master, fighting with his allies Dalla (a 13th level human barbarian swinging a greatsword for 2d6+9 damage) and Trebliock (a 13th level elf wizard). When Grimmnur uses his assault tactics, Dalla gains a +2 damage bonus with her greatsword (which deals 2 dice of damage). When Trebliock casts a 10d6 fireball, he gains a +7 bonus to its damage dealt (+1 per die for 10 dice, to a maximum of +7 for &#189; Grimmnur&#146;s 14 war master levels)." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Render" priority="1000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+field[abValue].value += round(#levelcount[Warmaster]/2,0,-1)
+field[livename].text = field[thingname].text & "(+" & field[abValue].value  & " max)"]]></eval>
+    </thing>
+  <thing id="cWrmRally" name="Rally" description="At 11th level a war master can rally flagging forces, giving them renewed hope and endurance to carry on and win victory. A rally affects all allies in a 30-foot radius burst. Those allies gain 4d6 temporary hit points, +1d6 for every two war master levels beyond 11th (5d6 at 13th, 6d6 at 15th, and so on). Each ally may also make one saving throw against any one effect it currently suffers which could have been prevented with a successful saving throw (with the same save DC as the original saving throw), and on a successful save the effect ends. A war master may rally once per day. At 19th level, the war master may rally twice per day." compset="ClSpecial">
+    <fieldval field="trkMax" value="1"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Usage" tag="Day"/>
+    <eval phase="Render" priority="1000"><![CDATA[~Set the list name
+var dice as number
+dice = 3 + field[xIndex].value
+field[listname].text = field[thingname].text & "(+" & dice  & "d6)"
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+field[abValue].value += field[xCount].value + 3
+field[livename].text = field[thingname].text & "(+" & field[abValue].value  & "d6)"
+
+~If 19th level increase use by one additional time
+if (#levelcount[Warmaster] >= 19) then
+   #trkmax[cWrmRally] = 2
+endif]]></eval>
+    </thing>
+  <thing id="cWrmHerTac" name="Heroic Tactics" description="A war master of 15th level or higher can employ tactics that allow a number of allies to employ strategies outside their normal repertoire. The war master selects one combat feat he knows. All allies within 60 feet that meet the prerequisites for the selected feat gain use of it. The war master can change what feat his allies gain access to as a move action while maintaining this battle tactic. Allies all have access to the same single feat at a given time, and they lose all previous benefits if the war master changes which feat they may access." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cWrmWarlor" name="Warlord" description="At 20th level, the war master becomes an expert in the fine art of directing a battle, able to assess his foes with great skill and use that knowledge to guide his allies to victory. The war master can assess a single foe as a move action, and use that information to guide his allies in defeating the foe. The war master makes a Sense Motive check with a DC of (10 + foe&#146;s total Bluff bonus) or (10 + foe&#146;s base attack bonus + foe&#146;s Charisma modifier), whichever is higher. If the war master succeeds, he learns the target&#146;s current and maximum hit points, base attack bonus, armor class, and total Fortitude, Reflex and Will saving throw bonuses. Any ally able to see and hear the war master gains a +5 bonus to attack and damage rolls against any target the war master has assessed in the past 24 hours. If the war master fails an assess check, he cannot attempt to assess the same foe again for 24 hours." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="fSgExtCoho" name="Extra Cohort" description="{i}You have an additional trusted companion that acts as a counterpart to your other cohorts.{/i}\n\n{b}Prerequisite:{/b} Leadership\n\n{b}Benefit:{/b} You gain an additional cohort from your Leadership feat. The maximum level of this cohort is four levels below your own level. It otherwise gains experience and levels using the normal cohort rules." compset="Feat" uniqueness="useronce">
+    <usesource source="WarMast"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Leadership Feat required."><![CDATA[#hasfeat[fLeader] <> 0]]></exprreq>
+    </thing>
+  <thing id="fSgExtTact" name="Extra Tactics" description="{i}You can use your battle tactics for an additional 6 rounds per day.{/i}\n\n{b}Prerequisites:{/b} Battle tactics class feature.\n\n{b}Benefit:{/b} You can use your battle tactics an additional for 6 additional rounds per day.\n\n{b}Special:{/b} You can gain Extra Tactics multiple times. Its effects stack." compset="Feat">
+    <usesource source="WarMast"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostAttr" priority="10001">~Post-Attributes 10,001
+#trkmax[cWrmBatTsa] += 6</eval>
+    <exprreq message="Battle tactics class feature required."><![CDATA[#hasability[cWrmBatTsa] <> 0]]></exprreq>
+    </thing>
+  <thing id="fSgPatois" name="Patois" description="{i}You are familiar with a little bit of many different languages, and can try to decipher similar languages on the fly.{/i}\n\n{b}Prerequisites:{/b} Int 13+, 5 ranks Linguistics\n\n{b}Benefit:{/b} Whenever you encounter creatures speaking a language you don&#146;t know, you can attempt to communicate by using phrases and words from similar languages. This requires you to make a Linguistics check (DC 15) for each concept you try to convey or understand, and even then only simple concepts can be exchanged. (As a general rule, each check allows you to send and receive one idea that can be expressed with no more than five words, each with no more than one syllable.)" compset="Feat">
+    <usesource source="WarMast"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="gSgMwChain" name="Chain, masterwork(10ft.)" description="Masterwork chain has hardness 11 and 6 hit points. It can be burst with a DC 27 Strength check. A war master gains no special benefit when using masterwork chain." compset="Gear">
+    <fieldval field="shortname" value="MW Chain"/>
+    <fieldval field="gCost" value="180"/>
+    <fieldval field="gWeight" value="2"/>
+    <usesource source="WarMast"/>
+    <tag group="gType" tag="AdventGear"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    </thing>
+  <thing id="gSgGraHkMw" name="Grappling Hook,  masterwork" description="A masterwork grappling hook has a range increment of 15 feet. In the hands of a war master with mark of quality, it has a range increment of 20 feet." compset="Gear">
+    <fieldval field="gCost" value="151"/>
+    <fieldval field="gWeight" value="3"/>
+    <usesource source="WarMast"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="AdventGear"/>
+    </thing>
+  <thing id="gSgOilMW" name="Oil, masterwork" description="1 pt. flask\nMasterwork oil creates brighter light when used in lanterns, creating bright light in the lantern&#146;s normal area of illumination, and increasing normal light to bright light for an additional area beyond.\n\nwar master with mark of quality gains an additional benefit when using masterwork oil, dealing an additional 1 point of damage with any fire started with the oil." compset="Gear">
+    <fieldval field="shortname" value="Oil MW"/>
+    <fieldval field="gCost" value="3"/>
+    <fieldval field="gWeight" value="1"/>
+    <usesource source="WarMast"/>
+    <tag group="gType" tag="AdventGear"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    </thing>
+  <thing id="gSgRamPoMW" name="Ram, Portable (masterwork)" description="This carved hand-held hardwood ram has a steel ram&#146;s head carefully affixed to one end, and a scrollwork counterbalance at the other. It gives a +2 circumstance bonus to Strength checks made to open a door, and allow a second person to help (automatically increasing your bonus by 2). A war master with mark of quality gains an additional +1 bonus to Strength checks to open doors when using a masterwork portable ram." compset="Gear">
+    <fieldval field="gCost" value="160"/>
+    <fieldval field="gWeight" value="20"/>
+    <usesource source="WarMast"/>
+    <tag group="gType" tag="AdventGear"/>
+    </thing>
+  <thing id="gSgTorchMW" name="Torch, masterwork" description="A masterwork torch takes only a move action to light (as opposed to the standard action required for a normal torch), and sheds normal light in a 25-foot radius (and increases the light level by one step to a maximum of normal light for an additional 25-foot radius beyond\nthat). \n\nA war master with mark of quality gains an additional benefit from a masterwork torch, extending its useable duration to 90 minutes." compset="Gear">
+    <fieldval field="gCost" value="3"/>
+    <fieldval field="gWeight" value="1"/>
+    <usesource source="WarMast"/>
+    <tag group="gType" tag="AdventGear"/>
+    </thing>
+  <thing id="gSgWatClMW" name="Water Clock, masterwork" description="A masterwork water clock keeps time to within five minutes per day since it was last set. Like its less accurate cousin, it is immobile and requires a source of water. A war master gains no special benefit when using a masterwork water clock." compset="Gear">
+    <fieldval field="gCost" value="2000"/>
+    <fieldval field="gWeight" value="150"/>
+    <usesource source="WarMast"/>
+    <tag group="gType" tag="AdventGear"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    </thing>
+  <thing id="cWrmCoorAt" name="Coordinated Attacks*" description="All allies affected by the war master&#146;s battle tactics coordinate their attacks, aiding each other in locating and targeting foes. An ally can ignore a target&#146;s concealment, or treat total concealment as normal concealment, if he can hear an ally against whom the target does not have concealment. An ally able to reduce an invisible target&#146;s concealment as a result of this ability is considered to have pinpointed the invisible target." compset="CustomSpec" uniqueness="useronce">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    </thing>
+  <thing id="cWrmStayDo" name="Stay Down!" description="Any ally able to see and hear the war master gains an additional +1 bonus to AC and reflex saves when the ally has any kind of cover. This increases to a +2 increase if the war master is 8th level or higher, and to a +3 increase if the war master is 16th level or higher." compset="CustomSpec" uniqueness="useronce">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="cHelpWrm"/>
+    <eval phase="Final" priority="1000"><![CDATA[~Set init value
+field[abValue].value += 1
+~If 8th or higher add another +1
+if (#levelcount[Warmaster] >= 8) then
+   field[abValue].value += 1
+endif
+~If 16th or higher add another +1
+if (#levelcount[Warmaster] >= 16) then
+   field[abValue].value += 1
+endif
+~Set the live name
+field[livename].text = field[thingname].text & " +" & field[abValue].value]]></eval>
+    </thing>
+  <thing id="cHelpWrm" name="War Master" compset="Class" uniqueness="unique">
+    <fieldval field="cHDSides" value="10"/>
+    <fieldval field="cAbbr" value="Wrm"/>
+    <fieldval field="cSpecSing" value="War Master Talent"/>
+    <fieldval field="cSkills" value="4"/>
+    <arrayval field="cCustTot" index="3" value="2"/>
+    <arrayval field="cCustTot" index="5" value="3"/>
+    <arrayval field="cCustTot" index="7" value="4"/>
+    <arrayval field="cCustTot" index="9" value="5"/>
+    <arrayval field="cCustTot" index="11" value="6"/>
+    <arrayval field="cCustTot" index="13" value="7"/>
+    <arrayval field="cCustTot" index="15" value="8"/>
+    <arrayval field="cCustTot" index="17" value="9"/>
+    <arrayval field="cCustTot" index="1" value="1"/>
+    <usesource source="WarMast"/>
+    <tag group="ClassSkill" tag="skIntim"/>
+    <tag group="ClassSkill" tag="skKnowEng"/>
+    <tag group="ClassSkill" tag="skKnowGeog"/>
+    <tag group="ClassSkill" tag="skKnowLoc"/>
+    <tag group="ClassSkill" tag="skKnowNobl"/>
+    <tag group="ClassSkill" tag="skLinguist"/>
+    <tag group="ClassSkill" tag="skPercep"/>
+    <tag group="ClassSkill" tag="skRide"/>
+    <tag group="ClassSkill" tag="skSenseMot"/>
+    <tag group="ClassSkill" tag="skSurvival"/>
+    <tag group="ClassSkill" tag="skClimb"/>
+    <tag group="cRef" tag="Good"/>
+    <tag group="cWill" tag="Good"/>
+    <tag group="Classes" tag="Warmaster" name="Warmaster"/>
+    <tag group="cAttack" tag="Good"/>
+    <tag group="cFort" tag="Poor"/>
+    <tag group="ClassSkill" tag="Craft"/>
+    <tag group="ClassSkill" tag="Profession"/>
+    <tag group="ClassSkill" tag="skAppraise"/>
+    <tag group="ClassSkill" tag="skBluff"/>
+    <tag group="ClassSkill" tag="skDiplo"/>
+    <tag group="ClassSkill" tag="skHandleAn"/>
+    <tag group="AgeColumn" tag="2"/>
+    <bootstrap thing="cWrmDeploy">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cWrmDeploy">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cWrmBatTma">
+      <autotag group="ClSpecWhen" tag="7"/>
+      </bootstrap>
+    <bootstrap thing="cWrmBatTsw">
+      <autotag group="ClSpecWhen" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="cWrmConsul">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="fArmHeavy"></bootstrap>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="fArmMedium"></bootstrap>
+    <bootstrap thing="fWepMart"></bootstrap>
+    <bootstrap thing="fArmShield"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="cWrmBatTsa">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cWrmAssail">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cWrmCounTa">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cWrmCovMan">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cWrmIndiTa">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cWrmIndiTa">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cWrmIndiTa">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cWrmIndiTa">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cWrmGoad">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cWrmMaOfQu">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cWrmGuaTac">
+      <autotag group="ClSpecWhen" tag="7"/>
+      </bootstrap>
+    <bootstrap thing="cWrmRaiTac">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cWrmAssTac">
+      <autotag group="ClSpecWhen" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="cWrmRally">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <bootstrap thing="cWrmRally">
+      <autotag group="ClSpecWhen" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="cWrmRally">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cWrmRally">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cWrmRally">
+      <autotag group="ClSpecWhen" tag="19"/>
+      </bootstrap>
+    <bootstrap thing="cWrmHerTac">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cWrmAssail">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cWrmAssail">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cWrmWarlor">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cWrmCovMan">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cWrmCovMan">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <bootstrap thing="cWrmCovMan">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    </thing>
+  </document>

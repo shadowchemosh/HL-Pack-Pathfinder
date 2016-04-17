@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_Duplicated - Feats"/>
+  <fileinfo>
+    <info_author>Tim Shadow
+      shadowchemosh@yahoo.com
+      March 17, 2013
+
+      This file is designed to hold duplicated spells, feats and abilities that are already done by LW. The reason is to prevent the need of lots of one off Packages being required by the community. So in these cases I have redon the abilities here to give its own copy that can be bootstrapped to prevent load errors.</info_author>
+    <info_history><![CDATA[
+      January 25, 2015 - Tim Shadow
+      -Added stuff from the People of the Stars to cover the Iron Gods: raCloWandM, fCrafTechn, spChEvAli2, raCombArms, spChEvAli2
+
+      June 4, 2014 - Tim Shadow
+      -Added "Rider Bond" (thingid.raRidBond) from Distant Worlds.
+
+      March 17, 2013 - Tim Shadow
+      -Created new to hold just the duplicated Things to cause less issues with the Player Pack.]]></info_history>
+    </fileinfo>
+  <thing id="fS2ChrRigh" name="Charge of the Righteous" description="You charge toward undead and fiends with confidence in your righteous cause.{br}{br}{b}Prerequisites{/b}: Base attack bonus +1, any good alignment.{br}{br}{b}Benefit{/b}: You do not take a penalty to AC while charging undead creatures and evil outsiders.{br}{br}{b}Normal{/b}: When you charge, you take a -2 penalty to AC until the start of your next turn." compset="Feat" uniqueness="useronce">
+    <comment>Golarion Companion #6 - Inner Sea Gods</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="HasFeat" tag="fChrgRight"/>
+    <tag group="fCategory" tag="Combat" name="Combat" abbrev="Combat"/>
+    <exprreq message="Base attack bonus +1 required."><![CDATA[#BAB[] >= 1]]></exprreq>
+    <exprreq message="Good alignment required." iserror="no"><![CDATA[tagcount[Alignment.Good] <> 0]]></exprreq>
+    </thing>
+  <thing id="fCBCraTech" name="Craft Technological Item" description="You can craft technological gear and items.\n\n{b}Prerequisites{/b}: Technologist, Craft (mechanical) 5 ranks, Knowledge (engineering) 5 ranks \n\n{b}Benefit{/b}: You can create technological gear. Creating a piece of technological gear takes 1 day for every 1,000 gp in the item&apos;s price. To create the object, you must use up raw materials costing half of this total price. See Crafting High- Tech Items on page 16 for more information.\n\nYou can also repair a broken technological item if it is one that you could make. Doing so costs half the raw materials and half the time it would take to craft that item from scratch." compset="Feat" uniqueness="useronce">
+    <comment>Technology Guide</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="HasFeat" tag="fCrafTechn"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Technologist required."><![CDATA[#hasfeat[fTechnolog] <> 0]]></exprreq>
+    <exprreq message="Craft (mechanical) 5 ranks required."><![CDATA[#skillranks[skCrafMech] >= 5]]></exprreq>
+    <exprreq message="Knowledge (engineering) 5 ranks required."><![CDATA[#skillranks[skKnowEng] >= 5]]></exprreq>
+    </thing>
+  <thing id="fS2PiraStr" name="Piranha Strike" description="You make a combination of quick strikes, sacrificing accuracy for multiple, minor wounds that prove exceptionally deadly.\n\n{b}Prerequisites:{/b} Weapon Finesse, base attack bonus +1.\n\n{b}Benefit:{/b} When wielding a light weapon, you can choose to take a –1 penalty on all melee attack rolls and combat maneuver checks to gain a +2 bonus on all melee damage rolls. This bonus to damage is halved (–50%) if you are making an attack with an off-hand weapon or secondary natural weapon. When your base attack bonus reaches +4, and for every 4 points thereafter, the penalty increases by –1 and the bonus on damage rolls increases by +2. You must choose to use this feat before the attack roll, and its effects last until your next turn. The bonus damage does not apply to touch attacks or effects that do not deal hit point damage. This feat cannot be used in conjunction with the Power Attack feat." compset="Feat" uniqueness="useronce">
+    <comment>Sargava, Lost Colony</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="HasFeat" tag="fPiranStr"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      var bonus as number
+      bonus = #BAB[] / 4
+      field[abValue].value += round(bonus,0,-1) + 1
+
+      field[abValue2].value += field[abValue].value * 2
+
+      field[livename].text = field[name].text & " -" & field[abValue].value & "/+" & field[abValue2].value
+
+      if (field[abilActive].value <> 0) then
+        hero.child[Attack].field[atmPenalty].value -= field[abValue].value
+        hero.child[Damage].field[tDamPower].value += field[abValue2].value
+        endif]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t combine with Power Attack" summary="Can&apos;t combine with Power Attack">
+      validif (field[abilActive].value = 0)
+
+      validif (hero.childfound[fPowerAtt].field[abilActive].value = 0)</evalrule>
+    <exprreq message="Base Attack bonus +1 required."><![CDATA[#BAB[] >= 1]]></exprreq>
+    <exprreq message="Weapon Finesse required."><![CDATA[#hasfeat[fWepFin] <> 0]]></exprreq>
+    </thing>
+  </document>

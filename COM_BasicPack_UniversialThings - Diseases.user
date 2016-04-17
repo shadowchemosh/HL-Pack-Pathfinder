@@ -1,0 +1,2562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_UniversialThings - Diseases"/>
+  <fileinfo>
+    <info_history><![CDATA[
+5/21/2014 - Tim Shadow
+-Removed the source id's from: xDisEidite, xDisManaFv, xDisWstTmb. 
+    
+    
+Disease text structure -
+
+Called via the proceedure DiseaseTxt (proceedure is in the community proceedures files).
+
+disName: name of the disease
+  
+-disease catagory -
+DiseaseCat.Contact 
+DiseaseCat.Ingested 
+DiseaseCat.Inhaled
+DiseaseCat.Injury
+
+- save type - 
+DiseaseSave.Fort
+DiseaseSave.Ref
+DiseaseSave.Will
+abValue4 - fixed DC
+
+StandardDC used for calculating DCs if they aren't fixed.
+
+- onset -
+abValue d abValue2
+DisOnset.Day
+DisOnset.Immediate
+DisOnset.Override
+  disOnset: disease onset text
+
+- frequency -
+abDuration
+DisFreq.PerDay
+DisFreq.PerWeek
+DisOnset.Override
+  disFreq: disease frequency text
+
+- effect -
+disEffect: disease effect text  
+
+- saves -
+abValue3  
+DisSave.Override
+  disSaves: disease save text
+
+- extra text -
+disExtra: any extra text]]></info_history>
+    <info_todo><![CDATA[The Adjustment to add a disease doesn't quite work yet. Need to figure out how to make a single adjustment adjust two things.  In this case, the disease and the weapon it is on.]]></info_todo>
+    </fileinfo>
+  <thing id="pCBDisease" name="Disease" description="Gives creature the specified disease on a weapon.\n\nSpecify the name of the weapon in the source field." compset="InPlay">
+    <fieldval field="pWhat" value="Weapon"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="OthAdjCat" tag="Race"/>
+    <bootstrap thing="xxCBDisHel"></bootstrap>
+    <eval phase="PreLevel" priority="5000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value <> 1)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      ~ reveal chosen disease
+
+      ~debug field[pChosen].chosen.idstring
+
+      var chsn as string
+      chsn = field[pChosen].chosen.idstring
+      chsn = "thingid." & chsn
+
+
+      foreach pick in hero from RaceAbil where chsn
+         perform eachpick.delete[Hide.Special]
+         perform eachpick.delete[Helper.SpcDisable]
+      nexteach]]></eval>
+    <eval phase="PreLevel" priority="11000"><![CDATA[
+      ~ All things
+      field[pUsePicks].value = 0
+
+      field[pCandExpr].text = "component.RaceAbil & Ailment.Disease & !Helper.Helper"
+
+      ~ field[pCandExpr].text = "Ailment.Disease"]]></eval>
+    </thing>
+  <thing id="xxCBDisHel" name="Disease Helper" description="This item bootstraps all the disesases so we can add them via an adjustment." compset="Simple" uniqueness="useronce">
+    <bootstrap thing="xDisAnthra">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisBlindS">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisBonech">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisBonecr">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisBootSo">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisBrainw">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisBuboni">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisBykoFv">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisCackle">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisChillb">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisDemFev">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisDevilC">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisDysent">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisEidite">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisEnteri">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisErgia">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisFilthF">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisFiregu">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisFungFl">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisGhoulF">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisGlacPl">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisDemFvG">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisGreenH">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisGreens">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisLeproc">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisMalari">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisManaFv">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisMindfi">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisMortas">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisPulsPu">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisRabies">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisRedAch">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisRedDri">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisRotDea">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisShakes">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisSleepS">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisSlimyD">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisTallow">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisTetanu">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisScales">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisUrgaBr">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisVChill">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisVorelP">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisWstTmb">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <bootstrap thing="xDisSetsTo">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    </thing>
+  <thing id="xDisFilthF" name="Filth Fever" description="Type disease, injury; Save Fortitude DC 12\nOnset 1d3 days; Frequency 1/day\nEffect 1d3 Dex damage and 1d3 Con damage; Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="12"/>
+    <fieldval field="abValue2" value="3"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Filth Fever"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d3 Dex and 1d3 Con damage"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisDemFev" name="Demon Fever" description="Type disease, injury; Save Fortitude DC 18\nOnset 1 day; Frequency 1/day\nEffect 1d6 Con damage, target must make a second Fort save or 1 point of the damage is drain instead; Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="18"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Demon Fever"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d6 Con damage, target must make a second Fort save or 1 point of the damage is drain instead"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisRedAch" name="Red Ache" description="Type disease, injury; Save Fortitude DC 15\nOnset 1d3 days; Frequency 1/day\nEffect 1d6 Str damage; Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="15"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="3"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Red Ache"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d6 Str damage"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisGhoulF" name="Ghoul Fever" description="Type disease, injury; Save Fortitude negates\nOnset 1 day; Frequency 1/day\nEffect 1d3 Con and 1d3 Dex damage; Cure 2 consecutive saves\n\nA humanoid who dies of ghoul fever rises as a ghoul at the next midnight. A humanoid who becomes a ghoul in this way retains none of the abilities it possessed in life. It is not under the control of any other ghouls, but it hungers for the flesh of the living and behaves like a normal ghoul in all respects. A humanoid of 4 Hit Dice or more rises as a ghast. The save DC is Charisma-based." compset="RaceSpec">
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="Bestiary1"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Ghoul Fever"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d3 Con and 1d3 Dex damage"
+disSaves = ""
+disExtra = "{br}{br}A humanoid who dies of ghoul fever rises as a ghoul at the next midnight. A humanoid who becomes a ghoul in this way retains none of the abilities it possessed in life. It is not under the control of any other ghouls, but it hungers for the flesh of the living and behaves like a normal ghoul in all respects. A humanoid of 4 Hit Dice or more rises as a ghast. The save DC is Charisma-based."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisAnthra" name="Anthrakitis" description="Type disease, contact, inhaled, or ingested; Save Fortitude DC 20\nOnset 1d6 days; Frequency 1/day\nEffect 1d8 Con; Cure 2 consecutive saves\n\nThis disease spreads through particles exuded from the decomposing corpses of infected animals. Infective particles can survive in the soil for decades or even centuries. The disease typically occurs when grazing mammals ingest or breathe the spores while eating ground vegetation. Anthrakitis causes a wide variety of symptoms as it attacks the skin, digestive system, or respiratory system; symptoms include fatigue, difficulty breathing, ulcers, loss of appetite, and nausea.\n\nAny victim infected with anthrakitis can also spread the disease. Those who come into contact with a victim must save versus the disease or become infected themselves. The bodies of those killed by anthrakitis are also infectious and remain so until destroyed." compset="RaceSpec">
+    <fieldval field="abValue4" value="20"/>
+    <fieldval field="shortname" value="anthrakitis"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="6"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathCurse"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Inhaled"/>
+    <tag group="DiseaseCat" tag="Ingested"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Anthrakitis"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d8 Con"
+disSaves = ""
+disExtra = "{br}{br}This disease spreads through particles exuded from the decomposing corpses of infected animals. Infective particles can survive in the soil for decades or even centuries. The disease typically occurs when grazing mammals ingest or breathe the spores while eating ground vegetation. Anthrakitis causes a wide variety of symptoms as it attacks the skin, digestive system, or respiratory system; symptoms include fatigue, difficulty breathing, ulcers, loss of appetite, and nausea.{br}{br}Any victim infected with anthrakitis can also spread the disease. Those who come into contact with a victim must save versus the disease or become infected themselves. The bodies of those killed by anthrakitis are also infectious and remain so until destroyed."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisBlindS" name="Blinding Sickness" description="Type disease, ingested; Save Fortitude DC 16\nOnset 1d3 days; Frequency 1/day\nEffect 1d4 Str damage, if more than 2 Str damage, target must make an additional Fort save or be permanently blinded; Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="16"/>
+    <fieldval field="shortname" value="Blinding Sickeness"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="3"/>
+    <fieldval field="abDuration" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Ingested"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Blinding Sickness"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Str damage, if more than 2 Str damage, target must make an additional Fort save or be permanently blinded"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisBonech" name="Bonechill" description="Type disease, injury; Save Fortitude DC 16\nOnset 1 day; Frequency 1/day\nEffect 1d4 Dex damage, and any nonlethal damage incurred from being in a cold environment becomes lethal damage (though it can still cause hypothermia); Cure 2 consecutive saves\n\nCreatures that take lethal damage from cold weather exposure may contract this debilitating ailment." compset="RaceSpec">
+    <fieldval field="abValue4" value="16"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathJadeRe"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Bonechill"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Dex damage, and any nonlethal damage incurred from being in a cold environment becomes lethal damage (though it can still cause hypothermia)"
+disSaves = ""
+disExtra = "{br}{br}Creatures that take lethal damage from cold weather exposure may contract this debilitating ailment."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisBonecr" name="Bonecrusher Fever" description="Type disease, injury; Save Fortitude DC 12\nOnset 1 day; Frequency 1/day\nEffect 1d4 Dex damage; Cure 2 consecutive saves\n\nSpread by mosquitoes and other infected insects in tropical climes, the moniker for bonecrusher fever-also called dengue fever-comes from the sensation sufferers experience, described as a great force squeezing their bones from within. Those suffering from bonecrusher fever endure severe headaches, high fevers, and a distinctive rash characterized by bright red dots caused by capillaries under their skin hemorrhaging. The rash appears first on the lower limbs and the chest, spreading to cover the entire body in severe cases." compset="RaceSpec">
+    <fieldval field="abValue4" value="12"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <usesource source="PathCurse"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Bonecrusher Fever"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Dex damage"
+disSaves = ""
+disExtra = "{br}{br}Spread by mosquitoes and other infected insects in tropical climes, the moniker for bonecrusher fever-also called dengue fever-comes from the sensation sufferers experience, described as a great force squeezing their bones from within. Those suffering from bonecrusher fever endure severe headaches, high fevers, and a distinctive rash characterized by bright red dots caused by capillaries under their skin hemorrhaging. The rash appears first on the lower limbs and the chest, spreading to cover the entire body in severe cases."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisBootSo" name="Boot Soup" description="Type disease (fungus), contact; Save Fortitude DC 16\nOnset 1 day; Frequency 1/day\nEffect speed reduced by 5 feet and 1d3 Dex damage, creatures reduced to speed 0 feet are permanently paralyzed; Cure 2 consecutive saves, or completely skinning or burning the affected area (inflicting 1d8 points of damage)\n\nThis infection is named for its ultimate result, should it go untreated for long periods of time. A fuzzy reddish-brown fungus grows painlessly between the toes and spreads from there to the top of the foot over the course of a day. If not removed within 24 hours, the character&apos;s movement speed is reduced by 5 feet for every day the infection is left to spread. It is only at this point that the character begins to feel pain as the fungus starts consuming living tissue and nerves, eventually leading to paralysis." compset="RaceSpec">
+    <fieldval field="abValue4" value="16"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="DisSave" tag="Override"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="Ailment" tag="Fungus"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Boot Soup"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "speed reduced by 5 feet and 1d3 Dex damage, creatures reduced to speed 0 feet are permanently paralyzed"
+disSaves = "2 consecutive saves, or completely skinning or burning the affected area (inflicting 1d8 points of damage)"
+disExtra = "{br}{br}This infection is named for its ultimate result, should it go untreated for long periods of time. A fuzzy reddish-brown fungus grows painlessly between the toes and spreads from there to the top of the foot over the course of a day. If not removed within 24 hours, the character's movement speed is reduced by 5 feet for every day the infection is left to spread. It is only at this point that the character begins to feel pain as the fungus starts consuming living tissue and nerves, eventually leading to paralysis."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisBrainw" name="Brainworms" description="Type disease (parasite), contact or injury; Save Fortitude DC 14\nOnset 1 day; Frequency 1/day\nEffect 1d3 Wis damage and 1d3 Int damage, if damaged in combat, target must make a second Fort save or gain the confused condition for the duration of the encounter; Cure 2 consecutive saves\n\nIndividually, these tiny parasites are almost invisible to the naked eye, yet en masse they&apos;re capable of taking down even the strongest animals. Entering the body through contact with an infected host or corpse (especially through open wounds), these thin worms quickly migrate to the brain and begin reproducing. The infestation is typically evidenced by a dulling of the senses and intellect and by erratic bouts of irrational rage toward other creatures during which the worms attempt to spread to other hosts through combat and injury. Examining the brain of a late-stage victim reveals a living carpet of thousands of tiny parasites." compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="Ailment" tag="Parasite"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Brainworms"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d3 Wis damage and 1d3 Int damage, if damaged in combat, target must make a second Fort save or gain the confused condition for the duration of the encounter"
+disSaves = ""
+disExtra = "{br}{br}Individually, these tiny parasites are almost invisible to the naked eye, yet en masse they're capable of taking down even the strongest animals. Entering the body through contact with an infected host or corpse (especially through open wounds), these thin worms quickly migrate to the brain and begin reproducing. The infestation is typically evidenced by a dulling of the senses and intellect and by erratic bouts of irrational rage toward other creatures during which the worms attempt to spread to other hosts through combat and injury. Examining the brain of a late-stage victim reveals a living carpet of thousands of tiny parasites."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisBuboni" name="Bubonic Plague" description="Type disease, injury or inhaled; Save Fortitude DC 17\nOnset 1 day; Frequency 1/day\nEffect 1d4 Con damage and 1 Cha damage and target is fatigued; Cure 2 consecutive saves\n\nInfected vermin and parasites spread this disease, also known as Daemon&apos;s Touch or the Black Death, through their bites. Once contracted, the disease spreads quickly, polluting the victim&apos;s body with toxins. As the disease reaches the lymph nodes, the victim suffers extreme inflammation of glands, and his skin might take on a black pallor. Symptoms include fever, headaches, nausea, fatigue, and swelling of the lymph nodes (called buboes) on the neck, underarms, and inner thigh areas, and eventually bleeding beneath the skin." compset="RaceSpec">
+    <fieldval field="abValue4" value="17"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathCurse"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Inhaled"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Bubonic Plague"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Con damage and 1 Cha damage and target is fatigued"
+disSaves = ""
+disExtra = "{br}{br}Infected vermin and parasites spread this disease, also known as Daemon's Touch or the Black Death, through their bites. Once contracted, the disease spreads quickly, polluting the victim's body with toxins. As the disease reaches the lymph nodes, the victim suffers extreme inflammation of glands, and his skin might take on a black pallor. Symptoms include fever, headaches, nausea, fatigue, and swelling of the lymph nodes (called buboes) on the neck, underarms, and inner thigh areas, and eventually bleeding beneath the skin."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisCackle" name="Cackle Fever" description="Type disease, inhaled; Save Fortitude DC 16\nOnset 1 day; Frequency 1/day\nEffect 1d6 Wis damage; Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="16"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Inhaled"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Cackle Fever"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d6 Wis damage"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisChillb" name="Chillbane Fever" description="Type disease, inhaled, injury; Save Fortitude DC 17\nOnset 1 day; Frequency 1/day\nEffect 1d4 Con damage and target is sickened and fatigued; Cure 2 consecutive saves\n\nNot to be confused with the far more potent earlier strain that swept across Bleakmarch during the reign of Queen Velikas, this infectious disease is characterized by the sufferer&apos;s constant shaking, as though he were unable to get warm. The khala dragon is one known carrier of the illness, though many other forms of exposure are possible." compset="RaceSpec">
+    <fieldval field="abValue4" value="17"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSIrrisen"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Inhaled"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="Ailment" tag="Disease"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Chillbane Fever"
+disWeap = ""
+disOnset = "1 day"
+disFreq = "1/day"
+disEffect = "1d4 Con damage and target is sickened and fatigued"
+disSaves = "2 consecutive saves"
+disExtra = "{br}{br}Not to be confused with the far more potent earlier strain that swept across Bleakmarch during the reign of Queen Velikas, this infectious disease is characterized by the sufferer's constant shaking, as though he were unable to get warm. The khala dragon is one known carrier of the illness, though many other forms of exposure are possible."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisDemFvG" name="Greater Demon Fever" description="Type disease, contact; Save Fortitude DC 22\nOnset 1 day; Frequency 1/day\nEffect 1d6+2 Con damage, target must make a second Fort save or 2 points of the damage is drain instead; Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="22"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathJadeRe"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Greater Demon Fever"
+disWeap = ""
+disOnset = "1 day"
+disFreq = "1/day"
+disEffect = "1d6+2 Con damage, target must make a second Fort save or 2 points of the damage is drain instead"
+disSaves = "2 consecutive saves"
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisDevilC" name="Devil Chills" description="Type disease, injury; Save Fortitude DC 14\nOnset 1d4 days; Frequency 1/day\nEffect 1d4 Str damage; Cure 3 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue2" value="4"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue3" value="3"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Devil Chills"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Str damage"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisDysent" name="Dysentery" description="Type disease (parasite), contact or injury; Save Fortitude DC 16\nOnset 1d3 days; Frequency 1/day\nEffect 1d6 nonlethal damage and target is fatigued and staggered; Cure 2 consecutive saves\n\nA broad family of intestinal afflictions caused by everything from bacteria to viruses to parasitic worms, dysentery is characterized by explosive and sometimes bloody diarrhea, leading to dehydration and occasionally death." compset="RaceSpec">
+    <fieldval field="abValue4" value="16"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="3"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="Ailment" tag="Parasite"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Dysentery"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d6 nonlethal damage and target is fatigued and staggered"
+disSaves = ""
+disExtra = "{br}{br}A broad family of intestinal afflictions caused by everything from bacteria to viruses to parasitic worms, dysentery is characterized by explosive and sometimes bloody diarrhea, leading to dehydration and occasionally death."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisEnteri" name="Enteric Fever" description="Type disease, ingested; Save Fortitude DC 15\nOnset 3 days; Frequency 1/day\nEffect 1d4 Str, 1d4 Con, sickened; Cure 2 consecutive saves\n\nEnteric fever, also known as typhoid fever in temperate climates, breeds within contaminated foods, especially raw or undercooked meats. Symptoms include high fever, profuse sweating, and nausea. As the disease progresses, enteric fever victims become sickened and suffer from severe headaches, exhaustion, and abdominal pain, as rose-colored spots appear on the chest and abdominal areas. At that point, the victim is prone to dehydration and falls into bouts of delirium and nervous shakes." compset="RaceSpec">
+    <fieldval field="abValue4" value="15"/>
+    <fieldval field="abValue2" value="3"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathCurse"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Ingested"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Enteric Fever"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Str, 1d4 Con, sickened"
+disSaves = ""
+disExtra = "{br}{br}Enteric fever, also known as typhoid fever in temperate climates, breeds within contaminated foods, especially raw or undercooked meats. Symptoms include high fever, profuse sweating, and nausea. As the disease progresses, enteric fever victims become sickened and suffer from severe headaches, exhaustion, and abdominal pain, as rose-colored spots appear on the chest and abdominal areas. At that point, the victim is prone to dehydration and falls into bouts of delirium and nervous shakes."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisErgia" name="Ergia" description="Type disease, contact; Save Fortitude DC 20\nOnset 1 day; Frequency 1/day\nEffect 1d4 Str damage and 1d4 Con damage, target must make a second Fort save or 1 point of the damage is drain instead, and a creature that has suffered ability drain glows blue as if limned with faerie fire; Cure 2 consecutive saves\n\nExposure to the strange arcane energies of the Nameless Spires taints those that come within 10 feet with their alien emanations and begins converting their vital tissues into liquefied blue energy. If a creature dies from ergia, its body dissolves and it cannot be raised." compset="RaceSpec">
+    <fieldval field="abValue4" value="20"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathJadeRe"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Ergia"
+disWeap = ""
+disOnset = "1 day"
+disFreq = "1/day"
+disEffect = "1d4 Str damage and 1d4 Con damage, target must make a second Fort save or 1 point of the damage is drain instead, and a creature that has suffered ability drain glows blue as if limned with {i}faerie fire{/i}"
+disSaves = "2 consecutive saves"
+disExtra = "{br}{br}Exposure to the strange arcane energies of the Nameless Spires taints those that come within 10 feet with their alien emanations and begins converting their vital tissues into liquefied blue energy. If a creature dies from ergia, its body dissolves and it cannot be raised."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisFiregu" name="Firegut" description="Type disease, injury or inhaled; Save Fortitude DC 17\nOnset 1 day; Frequency 1/day\nEffect target is staggered; Cure 3 consecutive saves\n\nThough less extreme than true dysentery, this disease is characterized by occasional vomiting of burning bile. It is extremely tenacious." compset="RaceSpec">
+    <fieldval field="abValue4" value="17"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="3"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseCat" tag="Inhaled"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Firegut"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "target is staggered"
+disSaves = ""
+disExtra = "{br}{br}Though less extreme than true dysentery, this disease is characterized by occasional vomiting of burning bile. It is extremely tenacious."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisFungFl" name="Fungal Flu" description="Type disease, inhaled; Save Fortitude DC 12\nOnset 3d6 days; Frequency 1/day\nEffect 1d4 Con, blindness on rolling 1 on Fort save until disease cured; Cure 2 consecutive saves\n\nThis disease is spread by white rot fungus. The blindness caused by fungal flu persists until disease is cured, even resisting magical cures such as remove blindness/deafness" compset="RaceSpec">
+    <fieldval field="abValue4" value="12"/>
+    <fieldval field="abValue" value="3"/>
+    <fieldval field="abValue2" value="6"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathSecond"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Inhaled"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Fungal Flu"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Con, blindness on rolling 1 on Fort save until disease cured"
+disSaves = ""
+disExtra = "{br}{br}This disease is spread by white rot fungus. The blindness caused by fungal flu persists until disease is cured, even resisting magical cures such as {i}remove blindness/deafness{/i}."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisGlacPl" name="Glacier Plague" description="Type disease, contact, or injury; Save Fortitude DC 15\nOnset 1 day; Frequency 1/day\nEffect 1d6 points of Dex damage and target is exhausted, its speed is reduced by half, and it is unable to speak; Cure 2 consecutive saves\n\nKnown to take root in places long buried by supernatural cold, this affliction infects ruins and deep forests throughout Irrisen. It slowly freezes creatures from the inside out without dealing cold damage, so sufferers simply feel the weariness and fatigue of exerting themselves in a cold environment. The affliction reduces an affected creature&apos;s range of movement and acts in many ways like very gradual petrification. A sufferer is unable to speak, is severely slowed, and takes Dexterity damage; if the victim&apos;s Dexterity score drops below 5, it is unable to move at all. Creatures suffering from this plague don&apos;t die from it, but it often strands them out in the cold where they die from exposure." compset="RaceSpec">
+    <fieldval field="abValue4" value="15"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSIrrisen"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Glacier Plague"
+disWeap = ""
+disOnset = "1 day"
+disFreq = "1/day"
+disEffect = "1d6 points of Dex damage and target is exhausted, its speed is reduced by half, and it is unable to speak"
+disSaves = "2 consecutive saves"
+disExtra = "{br}{br}Known to take root in places long buried by supernatural cold, this affliction infects ruins and deep forests throughout Irrisen. It slowly freezes creatures from the inside out without dealing cold damage, so sufferers simply feel the weariness and fatigue of exerting themselves in a cold environment. The affliction reduces an affected creature's range of movement and acts in many ways like very gradual petrification. A sufferer is unable to speak, is severely slowed, and takes Dexterity damage; if the victim's Dexterity score drops below 5, it is unable to move at all. Creatures suffering from this plague don't die from it, but it often strands them out in the cold where they die from exposure."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisGreenH" name="Green Haze" description="Type disease (fungus), contact; Save Fortitude DC 13\nOnset 1 day; Frequency 1/day\nEffect -4 on Perception checks, target is permanently blinded if fails 3 saves; Cure 2 consecutive saves\n\nThis mold tends to begin growing in the folds of the eyelids. Over the course of a day, it spreads to cover the eyelids and begins to cover the eyeball. If left untreated, this mold can cause the character to go permanently blind." compset="RaceSpec">
+    <fieldval field="abValue4" value="13"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="Ailment" tag="Fungus"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Green Haze"
+disWeap = ""
+disOnset = "1 day"
+disFreq = "1/day"
+disEffect = "-4 on Perception checks, target is permanently blinded if fails 3 saves"
+disSaves = "2 consecutive saves"
+disExtra = "{br}{br}This mold tends to begin growing in the folds of the eyelids. Over the course of a day, it spreads to cover the eyelids and begins to cover the eyeball. If left untreated, this mold can cause the character to go permanently blind."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisGreens" name="Greenscale" description="Type disease, injury; Save Fortitude DC 15\nOnset 1d6 day; Frequency 1/week\nEffect 1d2 Cha damage and 1d2 Dex damage, target must make a second Fort save or 1 point of the Cha damage is drain instead; Cure 2 consecutive saves\n\nThis disgusting disease causes patches of skin to harden and crack, weeping greenish pus and covering the body with putrid, scale-like patterns. The disease is most commonly contracted through injury or other blood-to-blood contact with an infected creature, though certain carrion eaters of the jungle-particularly birds-have been known to play host to the disease without themselves suffering from it." compset="RaceSpec">
+    <fieldval field="abValue4" value="15"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="6"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerWeek"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Greenscale"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d2 Cha damage and 1d2 Dex damage, target must make a second Fort save or 1 point of the Cha damage is drain instead"
+disSaves = ""
+disExtra = "{br}{br}This disgusting disease causes patches of skin to harden and crack, weeping greenish pus and covering the body with putrid, scale-like patterns. The disease is most commonly contracted through injury or other blood-to-blood contact with an infected creature, though certain carrion eaters of the jungle_particularly birds_have been known to play host to the disease without themselves suffering from it."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisLeproc" name="Leprosy" description="Type disease, contact, inhaled, or injury; Save Fortitude DC 12 negates, Fortitude DC 20 to avoid effects\nOnset 2d4 weeks; Frequency 1/week\nEffect 1d2 Cha damage; Cure 2 consecutive saves\n\nTerrifyingly common throughout Qadira, leprosy is spread by victims of the disease through direct-even casual-contact. Leprosy results in skin lesions, extreme nasal congestion, and wounds that do not heal. A highly visible malady, leprosy can permanently disfigure those who don&apos;t receive magical aid. If left untreated, the victim develops sores and becomes easily fatigued. While leprosy can prove difficult to contract, few overcome the disease once infected. Suffering from a slow deterioration, particularly hardy lepers can remain quite active for years after first exhibiting signs of the disease." compset="RaceSpec">
+    <fieldval field="abValue4" value="12"/>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="4"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathCurse"/>
+    <tag group="DiseaseCat" tag="Inhaled"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DisOnset" tag="Week"/>
+    <tag group="DisFreq" tag="PerWeek"/>
+    <tag group="Ailment" tag="Disease"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Leprosy"
+disWeap = ""
+disOnset = "2d4 weeks"
+disFreq = "1/week"
+disEffect = "1d2 Cha damage (Fortitude DC 20 to avoid effects)"
+disSaves = "2 consecutive saves"
+disExtra = "{br}{br}Terrifyingly common throughout Qadira, leprosy is spread by victims of the disease through direct_even casual_contact. Leprosy results in skin lesions, extreme nasal congestion, and wounds that do not heal. A highly visible malady, leprosy can permanently disfigure those who don't receive magical aid. If left untreated, the victim develops sores and becomes easily fatigued. While leprosy can prove difficult to contract, few overcome the disease once infected. Suffering from a slow deterioration, particularly hardy lepers can remain quite active for years after first exhibiting signs of the disease."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisMalari" name="Malaria" description="Type disease, injury; Save Fortitude DC 18\nOnset 1d3 days; Frequency 1/day\nEffect 1d3 Str damage and 1d3 Con damage and target is fatigued; Cure 2 consecutive saves\n\nA classic traveler&apos;s nightmare, malaria is transmitted by the bites of mosquitoes and leads to fever, vomiting, shivering, and convulsions, and sometimes even severe brain damage, particularly in children." compset="RaceSpec">
+    <fieldval field="abValue4" value="18"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="3"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Malaria"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d3 Str damage and 1d3 Con damage and target is fatigued"
+disSaves = ""
+disExtra = "{br}{br}A classic traveler's nightmare, malaria is transmitted by the bites of mosquitoes and leads to fever, vomiting, shivering, and convulsions, and sometimes even severe brain damage, particularly in children."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisMindfi" name="Mindfire" description="Type disease, inhaled; Save Fortitude DC 12\nOnset 1 day; Frequency 1/day\nEffect 1d4 Int damage; Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="12"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Inhaled"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Mindfire"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Int damage"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisPulsPu" name="Pulsing Puffs" description="Type disease (fungus), injury; Save Fortitude DC 16\nOnset 1 day; Frequency 1/day\nEffect 1d4 Dex damage; Cure 2 consecutive saves\n\nA character who has taken a wound (or even a small scratch) that remains unhealed for any length of time may soon find small blue-white spores sprouting within it. These spores quickly grow into phosphorescent, domed mounds that pulse along with the bearer&apos;s heartbeat. At first, the only effect of the growths is to prevent natural healing of the wound. However, if left untreated for more than a day, the spores take deeper root and begin to damage the character&apos;s Dexterity. Due to the fungus&apos;s beauty, some jungle tribes are known to cultivate it on the bound bodies of their prisoners." compset="RaceSpec">
+    <fieldval field="abValue4" value="12"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="Ailment" tag="Fungus"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Pulsing Puffs"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Dex damage"
+disSaves = ""
+disExtra = "{br}{br}A character who has taken a wound (or even a small scratch) that remains unhealed for any length of time may soon find small blue-white spores sprouting within it. These spores quickly grow into phosphorescent, domed mounds that pulse along with the bearer's heartbeat. At first, the only effect of the growths is to prevent natural healing of the wound. However, if left untreated for more than a day, the spores take deeper root and begin to damage the character's Dexterity. Due to the fungus's beauty, some jungle tribes are known to cultivate it on the bound bodies of their prisoners."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisRedDri" name="Red Drip" description="Type disease (fungus), contact; Save Fortitude DC 18\nOnset 1 day; Frequency 1/day\nEffect 1d4 Dex damage and 1d2 Cha damage; Cure 2 consecutive saves or amputation of infected hand\n\nThe first sign that a character has the red drip is an inflammation of the cuticles and hands. If left untreated, the cuticles begin to bleed and the hands swell until the nails blacken and fall off entirely. From there, the hands become a mess of oozing sores, festering and rotting. The infection then spreads up the arms and into the chest, killing the victim. Fortunately, this fungus generally only attacks one hand at a time, making amputation an effective cure." compset="RaceSpec">
+    <fieldval field="abValue4" value="18"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisSave" tag="Override"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="Ailment" tag="Fungus"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Red Drip"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Dex damage and 1d2 Cha damage"
+disSaves = "2 consecutive saves or amputation of infected hand"
+disExtra = "{br}{br}The first sign that a character has the red drip is an inflammation of the cuticles and hands. If left untreated, the cuticles begin to bleed and the hands swell until the nails blacken and fall off entirely. From there, the hands become a mess of oozing sores, festering and rotting. The infection then spreads up the arms and into the chest, killing the victim. Fortunately, this fungus generally only attacks one hand at a time, making amputation an effective cure."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisRabies" name="Rabies" description="Type disease, injury; Save Fortitude DC 14\nOnset 2d6 weeks; Frequency 1/day\nEffect 1 Con damage plus 1d3 Wis damage (minimum reduction to 1 Wis); Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="15"/>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="6"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DisOnset" tag="Week"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Rabies"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1 Con damage plus 1d3 Wis damage (minimum reduction to 1 Wis)"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisShakes" name="Shakes" description="Type disease, contact; Save Fortitude DC 13\nOnset 1 day; Frequency 1/day\nEffect 1d8 Dex damage; Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="13"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Shakes"
+disWeap = ""
+disOnset = "1 day"
+disFreq = "1/day"
+disEffect = "1d8 Dex damage"
+disSaves = "2 consecutive saves"
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisSleepS" name="Sleeping Sickness" description="Type disease (parasite), injury; Save Fortitude DC 14\nOnset 1d2 days; Frequency 1/day\nEffect 1d4 Wis damage and target is fatigued; Cure 2 consecutive saves or arsenic (see text)\n\nEndemic throughout the Sodden Lands and the Mwangi Expanse, this parasitic affliction is spread by flying insects injecting tiny parasites into the victim&apos;s bloodstream and inducing fever, headache, joint pain, swelling of glands in the back and neck, and most notably fatigue. The disease gradually infects the brain, causing confusion, reduced coordination, difficulty keeping track of time, and insomnia.\n\nThe best cure for this disease is dosing the patient with the poison arsenic-if the patient survives, there&apos;s a cumulative 30% chance that the disease is immediately cured." compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSHeartJun"/>
+    <usesource source="PathCurse"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="DisSave" tag="Override"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Ailment" tag="Parasite"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Sleeping Sickness"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Wis damage and target is fatigued"
+disSaves = "2 consecutive saves or arsenic (see text)"
+disExtra = "{br}{br}Endemic throughout the Sodden Lands and the Mwangi Expanse, this parasitic affliction is spread by flying insects injecting tiny parasites into the victim's bloodstream and inducing fever, headache, joint pain, swelling of glands in the back and neck, and most notably fatigue. The disease gradually infects the brain, causing confusion, reduced coordination, difficulty keeping track of time, and insomnia.{br}{br}The best cure for this disease is dosing the patient with the poison arsenic-if the patient survives, there's a cumulative 30% chance that the disease is immediately cured."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisSlimyD" name="Slimy Doom" description="Type disease, contact; Save Fortitude DC 14\nOnset 1 day; Frequency 1/day\nEffect 1d4 Con damage, target must make a second Fort save or 1 point of the damage is drain instead; Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abDuration" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Slimy Doom"
+disWeap = ""
+disOnset = "1 day"
+disFreq = "1/day"
+disEffect = "1d4 Con damage, target must make a second Fort save or 1 point of the damage is drain instead"
+disSaves = "2 consecutive saves"
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisTallow" name="Tallowthroat" description="Type disease, ingested or contact; Save Fortitude DC 14\nOnset 1d3 days; Frequency 1/day\nEffect 1d3 Cha damage and -4 penalty on saving throws to resist mind-affecting effects in areas of bright illumination (does not stack). A creature dies if this Charisma damage equals or exceeds its actual Charisma score, releasing 1d3 shadows as its swollen neck explodes; Cure 2 consecutive saves\n\nShortly after Stepan reneged on his agreement with Nicasor, the shae&apos;s rage infused the shadow essence that leaked from the midnight mirror and manifested in the Material Plane as a strange new disease that locals of Karpad have named tallowthroat. Victims sweat constantly, giving their skin a waxy appearance, and their throats swell as though suffering from goiter as the shadow essence infusing them takes form into hostile creatures. An infected creature becomes increasingly irritable, to the point of possessing an attitude of unfriendly with even its closest friends and relatives. Intimidate check DCs are treated as Diplomacy checks to change an infected creature&apos;s starting attitude (regardless of the actual skill used).\n\nBecause of their ties to the Plane of Shadow, fetchlings are immune to the effects of tallowthroat, though they often act as carriers; only the town&apos;s existing system of fetchling segregation has prevented the spread of the disease to the entire town. In fact, it was the fetchling Sergyev, a groundskeeper at Baroi Manor, who first came into contact with the disease, which leaked into the Material Plane through the water in the manor&apos;s courtyard fountain. Sergyev spread the disease to several other members of the household staff, and later around Karpad when Stepan fired all but one of the fetchlings working in the manor." compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="3"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Ingested"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Tallowthroat"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d3 Cha damage and -4 penalty on saving throws to resist mind-affecting effects in areas of bright illumination (does not stack). A creature dies if this Charisma damage equals or exceeds its actual Charisma score, releasing 1d3 shadows as its swollen neck explodes"
+disSaves = ""
+disExtra = "{br}{br}Shortly after Stepan reneged on his agreement with Nicasor, the shae's rage infused the shadow essence that leaked from the midnight mirror and manifested in the Material Plane as a strange new disease that locals of Karpad have named tallowthroat. Victims sweat constantly, giving their skin a waxy appearance, and their throats swell as though suffering from goiter as the shadow essence infusing them takes form into hostile creatures. An infected creature becomes increasingly irritable, to the point of possessing an attitude of unfriendly with even its closest friends and relatives. Intimidate check DCs are treated as Diplomacy checks to change an infected creature's starting attitude (regardless of the actual skill used).{br}{br}Because of their ties to the Plane of Shadow, fetchlings are immune to the effects of tallowthroat, though they often act as carriers; only the town's existing system of fetchling segregation has prevented the spread of the disease to the entire town. In fact, it was the fetchling Sergyev, a groundskeeper at Baroi Manor, who first came into contact with the disease, which leaked into the Material Plane through the water in the manor's courtyard fountain. Sergyev spread the disease to several other members of the household staff, and later around Karpad when Stepan fired all but one of the fetchlings working in the manor."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisTetanu" name="Tetanus" description="Type disease, ingested; Save Fortitude DC 14\nOnset 1d6 days; Frequency 1/day\nEffect 1d4 Dex and lockjaw; Cure 2 consecutive saves\n\nThis disease, also called “lockjaw” or “ironmaw,” is typically introduced via deep wounds from contaminated objects like rusty metal. Tetanus victims become more and more prone to violent muscle spasms, splitting headaches, fever, and difficulty swallowing. Stiffness of the jaw is a common result of tetanus infection. Each time a victim takes Dexterity damage from tetanus, there is a 50% chance his jaw muscles stiffen-preventing speech, the casting of spells with verbal components, or even eating-for the next 24 hours." compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="6"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathCurse"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Ingested"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3">~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = &quot;Tetanus&quot;
+disWeap = &quot;&quot;
+disOnset = &quot;&quot;
+disFreq = &quot;&quot;
+disEffect = &quot;1d4 Dex and lockjaw&quot;
+disSaves = &quot;&quot;
+disExtra = &quot;{br}{br}This disease, also called “lockjaw” or “ironmaw,” is typically introduced via deep wounds from contaminated objects like rusty metal. Tetanus victims become more and more prone to violent muscle spasms, splitting headaches, fever, and difficulty swallowing. Stiffness of the jaw is a common result of tetanus infection. Each time a victim takes Dexterity damage from tetanus, there is a 50% chance his jaw muscles stiffen-preventing speech, the casting of spells with verbal components, or even eating-for the next 24 hours.&quot;
+
+~ call procedure
+call DiseaseTxt</eval>
+    </thing>
+  <thing id="xDisScales" name="The Scales" description="Type disease, contact or injury; Save Fortitude DC 16\nOnset 1d4 days; Frequency 1/2 days\nEffect 1d2 Dex damage and 1d2 Cha damage; Cure 2 consecutive saves. Reptiles and creatures with the reptilian subtype receive a -2 penalty on saving throws and require 3 consecutive saves to recover.\n\nThe scales causes a thickening of the skin and cracking it into dry, flaky scales. The disease is particularly devastating to reptiles." compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="4"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="CSLostCit"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerTwoDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "The Scales"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d2 Dex damage and 1d2 Cha damage"
+disSaves = "2 consecutive saves. Reptiles and creatures with the reptilian subtype receive a -2 penalty on saving throws and require 3 consecutive saves to recover."
+disExtra = "{br}{br}The scales causes a thickening of the skin and cracking it into dry, flaky scales. The disease is particularly devastating to reptiles."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisUrgaBr" name="Urgathoa&apos;s Breath" description="Type disease, inhaled; Save Fortitude DC 18\nOnset 1d4 days; Frequency 1/day\nEffect 1d4 Str, 1d4 Con; Cure 2 consecutive saves\n\nThis disease, also known as tuberculosis in some regions, flourishes in unsanitary conditions, places of stale air, and many humanoid cities. Symptoms include chest pain and a productive, prolonged, bloody cough. If left untreated, the disease quickly progresses, leading to high fever, chills, night sweats, appetite loss, pallor, and fatigue. While the disease can take years, even decades, to manifest, Urgathoa&apos;s cult has long possessed a faster, more virulent version that they often use to inspire fear of their festering goddess." compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="4"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathCurse"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Inhaled"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Urgathoa's Breath"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Str and 1d4 Con"
+disSaves = ""
+disExtra = "{br}{br}This disease, also known as tuberculosis in some regions, flourishes in unsanitary conditions, places of stale air, and many humanoid cities. Symptoms include chest pain and a productive, prolonged, bloody cough. If left untreated, the disease quickly progresses, leading to high fever, chills, night sweats, appetite loss, pallor, and fatigue. While the disease can take years, even decades, to manifest, Urgathoa's cult has long possessed a faster, more virulent version that they often use to inspire fear of their festering goddess."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisVorelP" name="Vorel&apos;s Phage" description="Type disease, contact or ingested; Save Fortitude DC 20\nOnset 1 day; Frequency 1/day\nEffect 1d4 Cha, 1d4 Con; Cure 2 consecutive saves\n\nA relatively new and still exceedingly rare malady, this hideous disease is found only in southern Varisia. The phage causes a painful and hideous outbreak of facial tumors and a sickening deterioration of the skin across the entire body, and also works on the minds of some, slowly driving them insane. This affliction has recently fallen into the hands of the Red Mantis and, through them, the cult of Urgathoa, making its destructive spread nearly inevitable." compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathCurse"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Ingested"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Vorel's Plague"
+disWeap = ""
+disOnset = "1 day"
+disFreq = "1/day"
+disEffect = "1d4 Cha and 1d4 Con"
+disSaves = "2 consecutive saves"
+disExtra = "{br}{br}A relatively new and still exceedingly rare malady, this hideous disease is found only in southern Varisia. The phage causes a painful and hideous outbreak of facial tumors and a sickening deterioration of the skin across the entire body, and also works on the minds of some, slowly driving them insane. This affliction has recently fallen into the hands of the Red Mantis and, through them, the cult of Urgathoa, making its destructive spread nearly inevitable."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisBykoFv" name="Bykolakas Fever" description="Type disease, injury;  Save Fortitude negates\nOnset 1 minute; Frequency 1/day \nEffect 1d4 Con and 1d4 Dex damage; Cure 1 save.\n\nA brykolakas&apos;s claw attacks deliver a virulent disease that breaks down the victim&apos;s internal organs (causing internal bleeding and a darkening of the skin). This supernatural disease is called brykolakas fever. The save DC is Charisma-based." compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="1"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DisOnset" tag="Minute"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Brykolakas Fever"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Con and 1d4 Dex"
+disSaves = ""
+disExtra = "{br}{br}Brykolakas fever breaks down the victim's internal organs (causing internal bleeding and a darkening of the skin). The save DC is Charisma-based."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisRotDea" name="Rotting Death" description="Type disease (curse), injury; Save Fortitude negates\nOnset 1 day; Frequency 1/day\nEffect  1d6 Con; Cure -\n\nRotting death is both a curses and disease and can only be cured if the curse is first removed, at which point the disease can be magically removed. The save DC is Dexterity-based." compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="StandardDC" tag="aDEX"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="DisSave" tag="Override"/>
+    <tag group="Ailment" tag="Curse"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Rotting Death"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d6 Con"
+disSaves = "special"
+disExtra = "\n\nRotting death is both a curses and disease and can only be cured if the curse is first removed, at which point the disease can be magically removed. The save DC is Dexterity-based."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisMortas" name="Mortasheen" description="Type disease, contact; Save Fortitude negates\nOnset immediate; Frequency 1/day\nEffect 1d4 Con and target is fatigued; Cure 2 consecutive saves\n\nAnimals take a -2 penalty on their saves against this disease. The save DC is Constitution-based." compset="RaceSpec">
+    <fieldval field="abValue4" value="24"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="Bestiary1"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="DisOnset" tag="Immediate"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="1000"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Mortasheen"
+disWeap = ""
+disOnset = "immediate"
+disFreq = "1/day"
+disEffect = "1d4 Con damage and fatigue"
+disSaves = "2 consecutive saves"
+disExtra = "Animals take a -2 penalty on their saves."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisVChill" name="Virulent Chillbane Fever" description="Type disease, inhaled or injury; Save Fortitude DC 23\nOnset 1 day; Frequency 1/day\nEffect 1d6 Con damage and target is shaken and fatigued, target must make a second Fortitude save or 1 point of the damage is drain instead and target is exhausted instead of fatigued; Cure 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="14"/>
+    <fieldval field="abValue2" value="1"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathRgnWin"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="DiseaseCat" tag="Inhaled"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Virulent chillbane fever"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d6 Con damage and target is shaken and fatigued, target must make a second Fortitude save or 1 point of the damage is drain instead and target is exhausted instead of fatigued"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xxDisease" name="_Disease Base" description="Base for disease. When you make a new disease use this thing as a template.\n\nRemove the Helper.Helper tag when you make your own." compset="RaceSpec">
+    <comment><![CDATA[This is the base to other diseases. All variables to be used need to be declared as strings before calling proceedure.
+
+Disease text structure -
+
+disName: name of the disease
+  
+-disease catagory -
+DiseaseCat.Contact 
+DiseaseCat.Ingested 
+DiseaseCat.Inhaled
+DiseaseCat.Injury
+
+- save type - 
+DiseaseSave.Fort
+DiseaseSave.Ref
+DiseaseSave.Will
+abValue4 - fixed DC
+
+StandardDC used for calculating DCs if they aren't fixed.
+
+- onset -
+abValue d abValue2
+DisOnset.Day
+DisOnset.Immediate
+DisOnset.Override
+  disOnset: disease onset text
+
+- frequency -
+abDuration
+DisFreq.PerDay
+DisFreq.PerWeek
+DisOnset.Override
+  disFreq: disease frequency text
+
+- effect -
+disEffect: disease effect text  
+
+- saves -
+abValue3  
+DisSave.Override
+  disSaves: disease save text
+
+- extra text -
+disExtra: any extra text]]></comment>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="Hide" tag="Special"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="Helper"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = ""
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = ""
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xxDiseaSel" name="_Disease Selector" description="Example of how to do a selector for the diseases." compset="RaceSpec">
+    <fieldval field="usrCandid1" value="Ailment.Disease"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    </thing>
+  <thing id="cfgxxDisea" name="_Disease Configurable" description="Example of using diseases in a configurable" compset="Configure" uniqueness="unique">
+    <fieldval field="cfgAllow1" value="Ailment.Disease"/>
+    <fieldval field="cfgObject1" value="Diseases"/>
+    </thing>
+  <thing id="xDisWstTmb" name="Waste Trembles" description="{b}Type{/b} disease, injury; {b}save{/b} Fort DC 19; {b}onset{/b} 1d3 days; {b}frequency{/b} 1 day; effect 1d3 Str and 1d3 Dex damage, target must succeed at a second Fort save or be drained of 1 point of each type of ability damage instead; {b}cure 2 consecutive saves." compset="RaceSpec">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="3"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abValue4" value="19"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DisFreq" tag="Override"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Waste Trembles"
+disWeap = ""
+disOnset = ""
+disFreq = "1 day"
+disEffect = "1d3 Str and 1d3 Dex damage, target must succeed at a second Fort save or be drained of 1 point of each type of ability damage instead"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisManaFv" name="Mana Fever" description="{b}Type{/b} disease, injury; {b}Save{/b} Fortitude DC 17\n{b}Onset{/b} 1d4 minutes; {b}Frequency{/b} 1/day\n{b}Effect{/b} 1d3 Con damage, 1d3 Cha drain. Anyone who lives with mana fever for a week straight without dying becomes immune to the disease, but also becomes a Mana Wastes mutant; {b}Cure{/b} 2 consecutive saves" compset="RaceSpec">
+    <fieldval field="abValue4" value="1"/>
+    <fieldval field="abValue2" value="4"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <fieldval field="abValue" value="1"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DisOnset" tag="Minute"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Mana Fever"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d3 Con damage, 1d3 Cha drain. Anyone who lives with mana fever for a week straight without dying becomes immune to the disease, but also becomes a Mana Wastes mutant"
+disSaves = ""
+disExtra = ""
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <thing id="xDisEidite" name="Eidite Sickness" description="{b}Type{/b} disease, ingested, injury, or touch; {b}Save{/b} Fortitude DC 20\n{b}Onset{/b} 1d3 days; {b}Frequency{/b} 1/day\n{b}Effect{/b} 1d3 Wis damage and –4 penalty on saving throws against poisons and diseases.; {b}Cure{/b} 2 consecutive saves\n\nUnlike other diseases, constructs are not immune to eidite sickness. After 3 days of being affected by the disease, a construct gains the advanced simple template and loses any programming or instructions given to it, effectively going berserk, and attacks all living creatures in sight until it is destroyed or the disease is removed" compset="RaceSpec">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="3"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abValue4" value="20"/>
+    <fieldval field="abDuration" value="1"/>
+    <tag group="DiseaseCat" tag="Ingested"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DiseaseCat" tag="Contact"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Eidite Sickness"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d3 Wis damage and -4 penalty on saving throws against poisons and diseases"
+disSaves = ""
+disExtra = "{br}{br}Unlike other diseases, constructs are not immune to eidite sickness. After 3 days of being affected by the disease, a construct gains the advanced simple template and loses any programming or instructions given to it, effectively going berserk, and attacks all living creatures in sight until it is destroyed or the disease is removed."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    </thing>
+  <thing id="xDisSetsTo" name="Set&apos;s Touch" description="Type disease, contact; Save Fortitude negates\nOnset 1d3 days; Frequency 1/day\nEffect 1d4 Wis and 1d4 Cha damage; Cure 2 consecutive saves\n\nA sha transmits a potent disease with its bite. The most common form of disease carried by a sha drives its victims insane, reducing them to babbling fools or raving lunatics" compset="RaceSpec">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="3"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="PathMuMask"/>
+    <tag group="DiseaseCat" tag="Injury"/>
+    <tag group="DisOnset" tag="Day"/>
+    <tag group="DisFreq" tag="PerDay"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Ailment" tag="Disease"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="DiseaseSve" tag="Fort"/>
+    <eval phase="Final" priority="9000" index="3"><![CDATA[~ set up disease text
+
+~disName: name of the disease
+~disWeap: name of non standard weapon
+~disOnset: disease onset text
+~disFreq: disease frequency text
+~disEffect: disease effect text
+~disSaves: disease save text
+~disExtra: any extra text
+
+var disName as string
+var disWeap as string
+var disOnset as string
+var disFreq as string
+var disEffect as string
+var disSaves as string
+var disExtra as string
+
+disName = "Set's Touch"
+disWeap = ""
+disOnset = ""
+disFreq = ""
+disEffect = "1d4 Wis and 1d4 Cha damage"
+disSaves = ""
+disExtra = "{br}{br}A sha transmits a potent disease with its bite. The most common form of disease carried by a sha drives its victims insane, reducing them to babbling fools or raving lunatics."
+
+~ call procedure
+call DiseaseTxt]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~if we're an ability on a custom monster, we'll need to allow the user to
+      ~select the particular attack we're tied to
+      if (hero.tagis[RaceType.CustomMon] <> 0) then
+        perform assign[fShowWhat.WeaponsNat]
+        endif]]></eval>
+    </thing>
+  <hidden id="pCBDisease"/>
+  </document>

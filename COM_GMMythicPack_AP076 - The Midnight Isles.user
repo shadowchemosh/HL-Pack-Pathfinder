@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <fileinfo>
+    <info_history><![CDATA[
+May 21, 2014 - Tim Shadow
+-Changed the scripts on id="raAP76BapD" name="Baphomet&apos;s Displeasure" to be soft-coded so we could load without needing the extra packages.]]></info_history>
+    </fileinfo>
+  <thing id="raAP76BapD" name="Baphomet&apos;s Displeasure" description="Minagho currently suffers from a powerful effect placed on her via a miracle by Baphomet: she has 10 permanent negative levels and is in constant minor pain until she can convince the demon lord to forgive her for allowing the PCs to destroy the Kenabres wardstone fragment. As long as she suffers from these negative levels, she takes a &#150;10 penalty on many rolls and her hit points are reduced by 50-these penalties are incorporated into the stats above. This weakness reduces her CR by 4, to CR 16. As long as she suffers this effect, she loses her branding, profane grace, and profane pact abilities, along with her quickened charm monster and her unholy aura spell-like abilities. Only by earning back Baphomet's favor are the negative levels are removed; should that happen, Minagho regains her lost abilities, and she is restored to a CR 20 foe-see page 48 of The Worldwound for further details on these currently unavailable lilitu powers." compset="RaceSpec">
+    <fieldval field="actUserMin" value="0"/>
+    <fieldval field="actUserMax" value="10"/>
+    <usesource source="PathWraRig"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="Weakness"/>
+    <eval phase="First"><![CDATA[
+doneif (field[abilActive].value = 0)
+
+~ negative levels
+ herofield[tNegLevel].value += field[actUser].value
+ herofield[tCR].value -= 4
+~ Tim Shadow 5/21/2014 changed to use find child so that
+~ we are soft-coded and don't Require Lost Kingdoms to load.
+perform hero.findchild[Ability,"thingid.raLilBrand"].assign[Helper.SpcDisable]
+perform hero.findchild[Ability,"thingid.raLilProfP"].assign[Helper.SpcDisable]
+perform hero.findchild[Ability,"thingid.raLilProfG"].assign[Helper.SpcDisable]
+
+
+hero.child[Initiative].field[Penalty].value -= field[actUser].value
+hero.child[Attack].field[Penalty].value -= field[actUser].value
+perform hero.child[spUnhoAur8].assign[Hide.Spell]
+
+foreach pick in hero from BaseFeat where "thingid.fQuickSpel"
+  perform eachpick.assign[Helper.FtDisable]
+  perform eachpick.assign[Hide.Spell]
+nexteach
+
+hero.child[cHelpRog].field[cGiveSpec].value -= 3
+
+trustme
+hero.child[pAuUnholy].field[pIsOn].value = 0]]></eval>
+    </thing>
+  <thing id="pAP76Minag" name="Specific Individual: Minagho" description="Specific abilities for Minagho." compset="InPlay">
+    <usesource source="PathWraRig"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <bootstrap thing="raAP76BapD"></bootstrap>
+    <eval phase="First" priority="1000">perform hero.child[skKnowRel].assign[Helper.ClassSkill]
+
+perform hero.child[wTailSlap].tagreplace[Value.?,Value.2]</eval>
+    </thing>
+  <thing id="pAP76Hepza" name="Specific Individual: Hepzamirah" description="Specific abilities for Hepzamirah." compset="InPlay">
+    <usesource source="PathWraRig"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <bootstrap thing="raPowCharg">
+      <autotag group="Target" tag="wGore"/>
+      <autotag group="wMain" tag="4d6_106"/>
+      <assignval field="wDamBonus" value="3"/>
+      </bootstrap>
+    <bootstrap thing="wGore">
+      <autotag group="wMain" tag="2d6_104"/>
+      </bootstrap>
+    </thing>
+  </document>

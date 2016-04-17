@@ -1,0 +1,1273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_LegGames - Legendary Planet Players Guide"/>
+  <fileinfo>
+    <info_author>Author:  Tim Shadow
+      Email: shadowchemosh@yahoo.com
+      -XML and HL Scripts logic copyrighted Tim Shadow 2015.
+      -Use allowed for gaming groups only. No reselling of the XML or HL script is allowed nor is permission given.</info_author>
+    </fileinfo>
+  <thing id="rX1Auttain" name="Auttaine" description="Amalgamations of man and machine, it is rare for one auttaine to look strikingly similar to another. Their human ancestry still runs the full gamut of ethnicity.....\n\nSee the &quot;Legendary Planet Player&apos;s Guide&quot; for full details." compset="Race">
+    <fieldval field="rGiveSpec" value="3"/>
+    <fieldval field="rSpecSing" value="Artificial Component"/>
+    <fieldval field="rAgeMin" value="15"/>
+    <fieldval field="rHeightMnF" value="53"/>
+    <fieldval field="rWeightMnF" value="110"/>
+    <fieldval field="rHeightMnM" value="58"/>
+    <fieldval field="rWeightMnM" value="140"/>
+    <fieldval field="srcBookInf" value="Legendary Planet Player&apos;s Guide"/>
+    <fieldval field="srcPageNum" value="2"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Language" tag="lElven"/>
+    <tag group="Language" tag="lGiant"/>
+    <tag group="Language" tag="lGnome"/>
+    <tag group="Language" tag="lHalfling"/>
+    <tag group="Language" tag="lOrc"/>
+    <tag group="Language" tag="lUndercomm"/>
+    <tag group="RaceType" tag="Feature"/>
+    <tag group="AgeC1Dice" tag="1"/>
+    <tag group="AgeC1Size" tag="4"/>
+    <tag group="AgeC2Dice" tag="1"/>
+    <tag group="AgeC2Size" tag="6"/>
+    <tag group="AgeC3Dice" tag="2"/>
+    <tag group="AgeC3Size" tag="6"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="HeightDice" tag="2"/>
+    <tag group="HeightSize" tag="10"/>
+    <tag group="WeightMult" tag="5"/>
+    <tag group="Language" tag="lDwarven"/>
+    <tag group="Language" tag="lDraconic"/>
+    <bootstrap thing="raAttr2Sel"></bootstrap>
+    <bootstrap thing="stPUHalfCo"></bootstrap>
+    <bootstrap thing="raX1BuildP"></bootstrap>
+    </thing>
+  <thing id="rcX1BreWep" name="Breath Weapon" description="Choose one of the following energy types: acid, cold, electricity, or fire. If the creature is an outsider (native), it must have ties to an elemental plane, and it must pick an energy that corresponds to the plane it has ties to (acid [earth], cold [water], electricity [air], or fire [fire]). Then pick either a 15-foot cone or a 20-foot line. Once per day, as a standard action, members of this race can make a supernatural breath weapon attack that deals 1d6 points of the damage type chosen in the area chosen. All creatures within the affected area must make a Reflex saving throw to avoid taking damage. The save DC against this breath weapon is 10 + 1/2 the user’s character level + the user’s Constitution modifier. Those who succeed at the save take no damage from the attack. \n\n{b}Special{/b}: You can take this trait more than once. Each time you do so, the cost of this trait increases by 1 RP. When do, you can augment the breath weapon in the following ways (augmentations marked with an asterisk [*] can be taken more than once).\nExtra Breath*: The member of this race can use its breath weapon an additional time per day.\nIncreased Area: Increase the cone’s size to 30 feet or the line to 50 feet.\nIncreased Damage*: Increase the damage by an additional d6.\nPowerful Breath: The breath weapon deals half damage on a failed saving throw." compset="RaceCustom" uniqueness="useronce">
+    <fieldval field="usrCandid2" value="component.SelectHelp &amp; Selection.S2BreWepB2"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="fShowWhat" tag="EnergyBase"/>
+    <tag group="ChooseSrc2" tag="Thing"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="CustomCost" tag="1"/>
+    <bootstrap thing="xCBBreathW">
+      <autotag group="BreathSve" tag="Reflex"/>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="SaveEff" tag="Negates"/>
+      <autotag group="HasAbility" tag="rcX1BreWep"/>
+      <assignval field="abValue" value="1"/>
+      <assignval field="abValue2" value="6"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+      doneif (field[usrChosen2].ischosen = 0)
+
+      ~ Pull Energy Type
+      perform field[usrChosen1].chosen.pulltags[BloodEner.?]
+      ~ Pull Line or Cone
+      perform field[usrChosen2].chosen.pulltags[BreathShp.?]
+
+      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus      
+      doneif (state.isfocus = 0)
+      
+      ~ Push Energy Type and Breath Weapon Shape to breath weapon helper
+      perform focus.pushtags[BloodEner.?]
+      perform focus.pushtags[BreathShp.?]
+      
+      ~ If cone shape give 15ft if line make us 20ft
+      if (tagis[BreathShp.Cone] = 1) then
+        focus.field[abRange].value += 15
+      else
+        focus.field[abRange].value += 20
+      endif]]></eval>
+    </thing>
+  <thing id="rcX1BrWeEx" name="Breath Weapon, Extra Breath" description="The member of this race can use its breath weapon an additional time per day.\n\n{b}Special{/b}: This counts as Breath Weapon, and you can take this trait more than once." compset="RaceCustom" summary="Gain another use of a breath weapon.">
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="CustomCost" tag="1"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Set pointer to the breath weapon ability
+      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus      
+      doneif (state.isfocus = 0)
+      
+      ~ Give one extra use of breath weapon
+      focus.field[trkMax].value += 1]]></eval>
+    <exprreq message="Breath Weapon ability required."><![CDATA[#hasability[rcX1BreWep] <> 0]]></exprreq>
+    </thing>
+  <thing id="rcX1BrWeIA" name="Breath Weapon, Increased Area" description="Increase the cone’s size to 30 feet or the line to 50 feet.\n\n{b}Special{/b}: This counts as the Breath Weapon trait." compset="RaceCustom" summary="Increase the area of effect of your breath weapon." uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="CustomCost" tag="1"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Set pointer to the breath weapon ability
+      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus      
+      doneif (state.isfocus = 0)
+      
+      ~ Increase cone by 15ft and line by 30ft
+      if (focus.tagis[BreathShp.Cone] = 1) then
+        focus.field[abRange].value += 15
+      else
+        focus.field[abRange].value += 30
+      endif]]></eval>
+    <exprreq message="Breath Weapon ability required."><![CDATA[#hasability[rcX1BreWep] <> 0]]></exprreq>
+    </thing>
+  <thing id="rcX1BrWeID" name="Breath Weapon, Increased Damage" description="The member of this race increases its breath weapond damage by an additional 1d6.\n\n{b}Special{/b}: This counts as Breath Weapon, and you can take this trait more than once." compset="RaceCustom" summary="Increase damage by another 1d6.">
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="CustomCost" tag="1"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Set pointer to the breath weapon ability
+      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus      
+      doneif (state.isfocus = 0)
+      
+      ~ Give one dice of damage to breath weapon
+      focus.field[abValue].value += 1]]></eval>
+    <exprreq message="Breath Weapon ability required."><![CDATA[#hasability[rcX1BreWep] <> 0]]></exprreq>
+    </thing>
+  <thing id="rcX1BrWePo" name="Breath Weapon, Powerful" description="Those that make the save vs your breath weapon still take half-damage.\n\n{b}Special{/b}: This counts as the Breath Weapon trait." compset="RaceCustom" summary="Half damage to those that make the save." uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="CustomCost" tag="1"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Set pointer to the breath weapon ability
+      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus      
+      doneif (state.isfocus = 0)
+      
+      ~ Change to half damage on a successful save
+      perform focus.delete[SaveEff.Negates]
+      perform focus.assign[SaveEff.Half]]]></eval>
+    <exprreq message="Breath Weapon ability required."><![CDATA[#hasability[rcX1BreWep] <> 0]]></exprreq>
+    </thing>
+  <thing id="raX1BuildP" name="Build Points" description="Auttaine receive a number of build points equal to 3 + their initial Constitution modifier, which they may use to customize the artificial components comprising their half-construct nature. These build points may be spent on a one for one basis as additional racial points (RPs) as defined in Chapter 4 of the {i}Pathfinder RPG Advanced Race Guide{/i}. Auttaine may only spend these RPs on the following enhancements: breath weapon, desert runner, energy resistance, fleet-footed, gifted linguist, jumper, natural armor, skill bonus, skill training, sprinter, stability, weapon familiarity. In addition, auttaine may also select from the special racial traits as part of their gear.\n\n{b}Note:{/b} Hero Lab can not track your characters starting Constiution modifier. Enter in your characters&apos;s starting Con modifer.  In example if your starting Con score is 12 then you would type in 1 for build points." compset="RaceSpec" summary="Add special artificial components to your character.">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="NeedDomain"/>
+    <eval phase="First" priority="10000">~ Attempt to add in the number of the Con Modifier
+      ~ the base races number of specials
+      root.field[rGiveSpec].value += field[domDomain].text</eval>
+    </thing>
+  <thing id="rcX1ConWep" name="Concealed Weapon" description="This artificial component provides an internal, deployable weapon contained within a single arm. It may only include a light melee weapon weighing less than 3 lbs, and the initial weapon cannot be made from any special materials. While internalized, the weapon receives a +4 bonus on Sleight of Hand checks to conceal it. The weapon can be changed with 4 hours of work and a new qualifying weapon.\n\n{b}Note:{/b} Add the weapon that is concealed on the Weapons tab and then select it from the drop down list." compset="RaceCustom" summary="Conceal a 3lb light melee weapon which receives +4 bonus on Slight of Hand checks." uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fShowWhat" tag="WeaponsMel"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="CustomCost" tag="2"/>
+    </thing>
+  <thing id="rcX1HiStCo" name="Hidden Storage Compartment" description="This artificial component provides an internal storage compartment within the torso, holding up to 1 cubic foot of material. Access is secured with a simple combination lock (DC 20 Disable Device to open).\n\n{b}Note:{/b} Add the gear item concealed on the Gear tab and then select it from the drop down list." compset="RaceCustom" summary="Conceal a 1 cubic ft of material that is secure with a DC20 lock." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.MyGear"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fShowWhat" tag="Freeform"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    </thing>
+  <thing id="rcX1InScPo" name="Integrated Spell Component Pouch" description="This artificial component provides an internal storage compartment in one of the auttaine&apos;s hands which acts as a spell component pouch. Special slots in each finger allows the use of material components stored within even when they have no free hands." compset="RaceCustom" summary="An internal storage compartment in one hand acts as a spell component pouch." uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    </thing>
+  <thing id="rcX1IntToo" name="Integrated Toolset" description="This artificial component provides a customized toolset for granting a +2 circumstance bonus to one of the following skills: Climb, Craft, Disable Device, Escape Artist, Heal, Perception, Perform, Swim.\n\n{b}Note:{/b} Add the gear item concealed on the Gear tab and then select it from the drop down list." compset="RaceCustom" summary="Artificial component acts as a tool granting a +2 circumstance bonus to the skill." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.BaseSkill &amp;  !Helper.Obsolete &amp; (Helper.SkCatCraft|Helper.SkCatPerf|thingid.skClimb|thingid.skDisable|thingid.skEscape|thingid.skHeal|thingid.skPercep|thingid.skSwim)"/>
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="fShowWhat" tag="Freeform"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000">~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Give a +2 circumstance bonus to the skill selected
+      perform field[usrChosen1].chosen.field[skToolMod].modify[+,field[abValue].value,field[thingname].text]
+
+      ~ We need to set the Tools Available tag to the hero
+      ~ to let the skill know a tool is present.
+      perform field[usrChosen1].chosen.forward[ToolsAvail.?]</eval>
+    </thing>
+  <thing id="rcX1DesRun" name="Desert Runner" description="Members of this race receive a +4 racial bonus on Constitution checks and Fortitude saves to avoid fatigue and exhaustion, as well as any other ill effects from running, forced marches, starvation, thirst, and hot or cold environments." compset="RaceCustom" summary="+4 to Con checks and Fort saves vs fatigue/exhaustion, or ill effects from running, starvation, and temperature." uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Defense"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+
+      #situational[hero.child[svFort],"+4 vs. fatigue, exhaustion, running, forced marches, starvation, thirst, and hot or cold environments",field[name].text]
+      #situational[hero.child[aCON],"+4 vs. fatigue, exhaustion, running, forced marches, starvation, thirst, and hot or cold environments",field[name].text]]]></eval>
+    </thing>
+  <thing id="rcX1EneRes" name="Energy Resistance" description="Pick one of the following energy types that corresponds to the dragon type or plane the race has ties to: acid (earth), cold (water), electricity (air), or fire (fire). Members of this race have resistance 5 to the corresponding energy type. \n\n{b}Special{/b}: This trait can be taken more than once. Each time it is taken, select an additional energy type that corresponds to another dragon type or elemental plane the race has ties to." compset="RaceCustom" summary="Energy resistance 5.">
+    <fieldval field="abValue" value="5"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="fShowWhat" tag="EnergyBase"/>
+    <evalrule phase="PostLevel" priority="10000" message="We can&apos;t be vulnerable to the same energy type we have resistance/immunity to!" summary="We can&apos;t be vulnerable to the same energy type we have resistance/immunity to!"><![CDATA[
+      ~ If we are disabled get out now!
+      validif (tagis[Helper.SpcDisable] = 1)
+
+      if (field[usrChosen1].chosen.tagis[BloodEner.Acid] = 1) then
+        #applyresist[xDamRsAcid,field[abValue].value]
+
+        ~ We can't be vulnerable to the same energy type we have resistance/immunity to!
+        validif (hero.tagis[Custom.VulnAcid] = 0)
+        @message = "You can't have immunity/resistance against acid if you have acid vulnerability!"
+
+      elseif (field[usrChosen1].chosen.tagis[BloodEner.Cold] <> 0) then
+        #applyresist[xDamRsCold,field[abValue].value]
+
+        ~ We can't be vulnerable to the same energy type we have resistance/immunity to!
+        validif (hero.tagis[Custom.VulnCold] = 0)
+        @message = "You can't have immunity/resistance against cold if you have cold vulnerability!"
+
+      elseif (field[usrChosen1].chosen.tagis[BloodEner.Elec] <> 0) then
+        #applyresist[xDamRsElec,field[abValue].value]
+
+        ~ We can't be vulnerable to the same energy type we have resistance/immunity to!
+        validif (hero.tagis[Custom.VulnElec] = 0)
+        @message = "You can't have immunity/resistance against electricity if you have electricity vulnerability!"
+
+      elseif (field[usrChosen1].chosen.tagis[BloodEner.Fire] <> 0) then
+        #applyresist[xDamRsFire,field[abValue].value]
+
+        ~ We can't be vulnerable to the same energy type we have resistance/immunity to!
+        validif (hero.tagis[Custom.VulnFire] = 0)
+        @message = "You can't have immunity/resistance against fire if you have fire vulnerability!"
+      endif]]></evalrule>
+    </thing>
+  <thing id="rcX1FleFoo" name="Fleet-Footed" description="Members of this race receive Run as a bonus feat and a +2 racial bonus on initiative checks." compset="RaceCustom" uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="CustomCost" tag="3"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="fRun"></bootstrap>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ if we've been replaced, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      hero.child[Initiative].field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="rcX1GifLin" name="Gifted Linguist" description="Members of this race gain a +4 racial bonus on Linguistics checks, and they learn one additional language every time they put a rank in the Linguistics skill." compset="RaceCustom" uniqueness="useronce">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecType" tag="Skill"/>
+    <eval phase="PostAttr" priority="5000" index="2"><![CDATA[
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      herofield[tLangsSpk].value += #skillranks[skLinguist]]]></eval>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #racialbonus[skLinguist] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="rcX1Jumper" name="Jumper" description="Members of this race are always considered to have a running start when making Acrobatics checks to jump." compset="RaceCustom" summary="You always are considered to have a running start when jumping." uniqueness="useronce">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="SpecType" tag="Movement"/>
+    </thing>
+  <thing id="rcX1NatArm" name="Natural Armor" description="Members of this race gain a +1 natural armor bonus to their Armor Class." compset="RaceCustom" summary="+1 natural armor bonus." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecType" tag="Defense"/>
+    <eval phase="First" priority="10000">~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+
+      ~+1 Natural Armor
+      hero.child[ArmorClass].field[tACNatural].value += field[abValue].value</eval>
+    </thing>
+  <thing id="rcX1SkilB1" name="Skill Bonus (One at +2)" description="Pick a single skill. Members of this race gain a +2 racial bonus on skill checks made with this skill. Alternatively, pick two related skills—each member of this race gains a +1 racial bonus on these skills during character creation.\n\n{b}Special{/b}: This trait can be taken up to three times. Each time it is taken, choose a different skill (+2 bonus) or two different skills (+1 bonus on one of character’s choice)." compset="RaceCustom" uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="fShowWhat" tag="Skills"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <eval phase="PreLevel" priority="10000">~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      perform hero.assign[Custom.SkillBon]
+
+      field[usrChosen1].chosen.field[Bonus].value += field[abValue].value
+      perform field[usrChosen1].chosen.assign[Helper.CustChosen]</eval>
+    <exprreq message="You may only choose this option 3 times."><![CDATA[hero.tagcount[Custom.SkillBon] - @ispick <= 2]]></exprreq>
+    </thing>
+  <thing id="rcX1SkilB2" name="Skill Bonus (Two at +1)" description="Pick a single skill. Members of this race gain a +2 racial bonus on skill checks made with this skill. Alternatively, pick two related skills—each member of this race gains a +1 racial bonus on these skills during character creation.\n\n{b}Special{/b}: This trait can be taken up to three times. Each time it is taken, choose a different skill (+2 bonus) or two different skills (+1 bonus on one of character’s choice)." compset="RaceCustom" uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="fShowWhat" tag="Skills"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="fShowWhat2" tag="Skills"/>
+    <tag group="ChooseSrc2" tag="Hero"/>
+    <eval phase="PreLevel" priority="10000">~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+      doneif (field[usrChosen2].ischosen = 0)
+
+      perform hero.assign[Custom.SkillBon]
+
+      field[usrChosen1].chosen.field[Bonus].value += field[abValue].value
+      perform field[usrChosen1].chosen.assign[Helper.CustChosen]
+      field[usrChosen2].chosen.field[Bonus].value += field[abValue].value
+      perform field[usrChosen2].chosen.assign[Helper.CustChosen]</eval>
+    <exprreq message="You may only choose this option 3 times."><![CDATA[hero.tagcount[Custom.SkillBon] - @ispick <= 2]]></exprreq>
+    </thing>
+  <thing id="rcX1SkiTra" name="Skill Training" description="Pick up to two skills. These skills are always considered class skills for members of this race." compset="RaceCustom" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="fShowWhat" tag="Skills"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="fShowWhat2" tag="Skills"/>
+    <tag group="ChooseSrc2" tag="Hero"/>
+    <eval phase="PreLevel" priority="10000">~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+      doneif (field[usrChosen2].ischosen = 0)
+
+      ~ Make the selected skills class skills
+      perform field[usrChosen1].chosen.assign[Helper.ClassSkill]
+      perform field[usrChosen2].chosen.assign[Helper.ClassSkill]</eval>
+    <exprreq message="You may only choose this option 3 times."><![CDATA[hero.tagcount[Custom.SkillBon] - @ispick <= 2]]></exprreq>
+    </thing>
+  <thing id="rcX1Sprint" name="Sprinter" description="Members of this race gain a +10 foot racial bonus to their speed when using the charge, run, or withdraw actions." compset="RaceCustom" summary="+10 ft to speed when charge, run, or withdraw." uniqueness="useronce">
+    <fieldval field="abValue" value="10"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecType" tag="Movement"/>
+    <eval phase="PreLevel" priority="4000">~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+
+      #value[pstRunning] += field[abValue].value
+      #value[pstChargin] += field[abValue].value
+      #value[pstWithdr] += field[abValue].value</eval>
+    </thing>
+  <thing id="rcX1Stabil" name="Stability" description="Members of this race receive a +4 racial bonus to their CMD when resisting bull rush or trip attempts while standing on the ground." compset="RaceCustom" summary="Gain +4 bonus to CMD vs bull rush/trip while standing on ground." uniqueness="useronce">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecType" tag="Defense"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+
+      #situational[hero.child[manBullRus],signed(field[abValue2].value) & " CMD while standing on the ground",field[name].text]
+      #situational[hero.child[manTrip],signed(field[abValue2].value) & " CMD while standing on the ground",field[name].text]]]></eval>
+    </thing>
+  <thing id="rcX1WeaFam" name="Weapon Familiarity" description="Members of this race are proficient with two weapons. For the purposes of weapon familiarity, all bows are considered one weapon." compset="RaceCustom" summary="Gain proficieny with two weapons." uniqueness="useronce">
+    <fieldval field="abValue" value="4"/>
+    <fieldval field="usrCandid1" value="component.BaseWep | thingid.siBows &amp; !Helper.NoSelect &amp; !component.Specific &amp; !wCategory.Amm? &amp; !wFtrGroup.Bows"/>
+    <fieldval field="usrCandid2" value="component.BaseWep | thingid.siBows &amp; !Helper.NoSelect &amp; !component.Specific &amp; !wCategory.Amm? &amp; !wFtrGroup.Bows"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="fShowWhat" tag="Freeform"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ChooseSrc2" tag="Thing"/>
+    <tag group="fShowWhat2" tag="Freeform"/>
+    <tag group="AllowRCust" tag="rX1Auttain"/>
+    <eval phase="First" priority="10000">~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+      doneif (field[usrChosen2].ischosen = 0)
+
+     ~ First pull the tags from our chosen weapons
+     perform field[usrChosen1].chosen.pulltags[WepProf.?]
+     perform field[usrChosen2].chosen.pulltags[WepProf.?]
+
+     ~ Forward all collected tags to the hero.
+     perform forward[WepProf.?]</eval>
+    </thing>
+  <thing id="rX1Chlorvi" name="Chlorvian" description="Chlorvians are a race of humanoid plants known for their diplomatic grace and easy charm. Most have vibrant personalities and impressive analytical abilities....\n\nSee the &quot;Legendary Planet Player&apos;s Guide&quot; for full details." compset="Race">
+    <fieldval field="rCON" value="2"/>
+    <fieldval field="rCHA" value="2"/>
+    <fieldval field="rSTR" value="-2"/>
+    <fieldval field="rAgeMin" value="40"/>
+    <fieldval field="rHeightMnF" value="60"/>
+    <fieldval field="rWeightMnF" value="90"/>
+    <fieldval field="rHeightMnM" value="64"/>
+    <fieldval field="rWeightMnM" value="150"/>
+    <fieldval field="srcBookInf" value="Legendary Planet Player&apos;s Guide"/>
+    <fieldval field="srcPageNum" value="4"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Language" tag="lTerran"/>
+    <tag group="Language" tag="lTreant"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="Language" tag="lElven"/>
+    <tag group="AgeC1Dice" tag="2"/>
+    <tag group="AgeC1Size" tag="6"/>
+    <tag group="AgeC2Dice" tag="4"/>
+    <tag group="AgeC2Size" tag="6"/>
+    <tag group="AgeC3Dice" tag="6"/>
+    <tag group="AgeC3Size" tag="6"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="RaceType" tag="Feature"/>
+    <tag group="Language" tag="lAklo"/>
+    <tag group="Language" tag="lDraconic"/>
+    <tag group="HeightDice" tag="2"/>
+    <tag group="HeightSize" tag="8"/>
+    <tag group="WeightMult" tag="4"/>
+    <tag group="Language" tag="lHalfling"/>
+    <tag group="Language" tag="lGnome"/>
+    <bootstrap thing="lSylvan"></bootstrap>
+    <bootstrap thing="stX1Chlorv"></bootstrap>
+    <bootstrap thing="raLowLight"></bootstrap>
+    <bootstrap thing="raX1NatArm"></bootstrap>
+    <bootstrap thing="raX1Camouf"></bootstrap>
+    <bootstrap thing="raX1VerHea"></bootstrap>
+    <bootstrap thing="raX1Sociab"></bootstrap>
+    <bootstrap thing="raX1Symbio"></bootstrap>
+    </thing>
+  <thing id="stX1Chlorv" name="Chlorvian" compset="Subtype" uniqueness="unique">
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="NeedType" tag="tpHumanoid"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  <thing id="raX1Camouf" name="Camouflage" description="Chlorvians gain a +4 racial bonus on Stealth checks while in forest, jungle, or swamp terrain." compset="RaceSpec">
+    <fieldval field="abValue" value="4"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+ 
+      #racialsituational[hero.child[skStealth],signed(field[abValue].value) & " racial bonus while in forest, jungle, or swamp terrain.", field[name].text]]]></eval>
+    </thing>
+  <thing id="raX1Sociab" name="Sociable" description="When Chlorvians attempt to change a creature&apos;s attitude with a Diplomacy check and fail by 5 or more, they can try to influence the creature a second time, even if 24 hours have not passed." compset="RaceSpec" summary="Try a 2nd time after a failed Diplomancy check.">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="raX1Symbio" name="Symbiotic" description="A chlorvian is permanently bonded to a symbiotic chlorva seed, counting as both humanoids and plants for any effect related to race. In addition, a chlorvian gains a +2 racial bonus on saving throws against all mind-affecting effects as well as paralysis, poison, and sleep effects. A chlorvian and her symbiotic plant are considered the same creature for all effects." compset="RaceSpec" summary="+2 racial bonus vs all mind-affecting effects as well as paralysis, poison, and sleep effects.">
+    <fieldval field="abValue" value="2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+
+      #situational[hero.child[svAll],signed(field[abValue].value) & " racial bonus vs all mind-affecting effects as well as paralysis, poison, and sleep effects.",field[name].text]]]></eval>
+    </thing>
+  <thing id="raX1VerHea" name="Verdant Heart" description="Chlorvian sorcerers with the verdant bloodline treat their Charisma score as 2 points higher for all sorcerer spells and class abilities. Chlorvian spellcasters with the Plant domain use their domain powers and spells at +1 caster level." compset="RaceSpec" summary="Verdant bloodline treat Cha as 2 higher and Plant domain powers/spells at +1CL.">
+    <fieldval field="abValue" value="2"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ if we have the elemental: verdant bloodline
+      if (hero.tagcountstr["Ability.cSorVerdan"] <> 0) then
+        ~ Show us on the special tab
+        perform assign[Helper.ShowSpec]
+
+        ~ Add 2 to the effective attribute for the sorcerer class
+        hero.childfound[cHelpSor].field[cSplAttVal].value += field[abValue].value
+      endif
+
+      ~ find all of the cleric's fire domain powers, and add +1 extra level
+      foreach pick in hero from BaseClSpec where "SpecSource.cHelpClr"
+        if (eachpick.root.tagis[HasDomain.cdPlant] <> 0) then
+          eachpick.field[xEffectLev].value += 1
+        endif
+      nexteach
+
+      ~ Note that there are a few bloodline powers that depend on 
+      ~ CHA for their uses/day or DC. Those modifications are made 
+      ~ on the individual abilities.]]></eval>
+    </thing>
+  <thing id="rX1Trethar" name="Tretharri" description="A tretharri’s four arms present their most striking feature, the use of which can create a mesmerizing grace to onlookers. Tall and sleek, they possess....\n\nSee the &quot;Legendary Planet Player&apos;s Guide&quot; for full details." compset="Race">
+    <fieldval field="rSTR" value="2"/>
+    <fieldval field="rWIS" value="2"/>
+    <fieldval field="rCHA" value="-2"/>
+    <fieldval field="rNumHands" value="4"/>
+    <fieldval field="srcBookInf" value="Legendary Planet Player&apos;s Guide"/>
+    <fieldval field="srcPageNum" value="5"/>
+    <fieldval field="rAgeMin" value="20"/>
+    <fieldval field="rHeightMnF" value="64"/>
+    <fieldval field="rWeightMnF" value="130"/>
+    <fieldval field="rHeightMnM" value="64"/>
+    <fieldval field="rWeightMnM" value="150"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Language" tag="lGiant"/>
+    <tag group="Language" tag="lHalfling"/>
+    <tag group="Language" tag="lOrc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="RaceType" tag="Feature"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Language" tag="lElven"/>
+    <tag group="AgeC1Dice" tag="1"/>
+    <tag group="AgeC1Size" tag="6"/>
+    <tag group="AgeC2Dice" tag="2"/>
+    <tag group="AgeC2Size" tag="6"/>
+    <tag group="AgeC3Dice" tag="3"/>
+    <tag group="AgeC3Size" tag="6"/>
+    <tag group="Language" tag="lAklo"/>
+    <tag group="Language" tag="lCelestial"/>
+    <tag group="Language" tag="lDraconic"/>
+    <tag group="Language" tag="lDwarven"/>
+    <tag group="HeightDice" tag="2"/>
+    <tag group="HeightSize" tag="8"/>
+    <tag group="WeightMult" tag="6"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="stX1Tretha"></bootstrap>
+    <bootstrap thing="raX1MulArm"></bootstrap>
+    <bootstrap thing="raX1Athlet"></bootstrap>
+    </thing>
+  <thing id="stX1Tretha" name="Tretharri" compset="Subtype" uniqueness="unique">
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="NeedType" tag="tpHumanoid"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  <thing id="raX1Athlet" name="Athletic" description="Tretharri receive a +2 racial bonus on Climb and Swim checks." compset="RaceSpec">
+    <fieldval field="abValue" value="2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="40000"><![CDATA[       
+      ~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+      
+      ~ Give bonus to Climb & Swim
+      #racialbonus[skClimb] += field[abValue].value
+      #racialbonus[skSwim] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="rX1Zvarr" name="Zvarr" description="Zvarr are a race of winged, saurian humanoids with an eclectic range of ethnic distinctions displaying traits and similarities with salamanders, dinosaurs, and even dragons. Renowned for their cunning....\n\nSee the &quot;Legendary Planet Player&apos;s Guide&quot; for full details." compset="Race">
+    <fieldval field="srcBookInf" value="Legendary Planet Player&apos;s Guide"/>
+    <fieldval field="srcPageNum" value="6"/>
+    <fieldval field="rDEX" value="2"/>
+    <fieldval field="rINT" value="2"/>
+    <fieldval field="rWIS" value="-2"/>
+    <fieldval field="rAgeMin" value="60"/>
+    <fieldval field="rHeightMnF" value="50"/>
+    <fieldval field="rWeightMnF" value="105"/>
+    <fieldval field="rHeightMnM" value="53"/>
+    <fieldval field="rWeightMnM" value="120"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Language" tag="lAuran"/>
+    <tag group="Language" tag="lDwarven"/>
+    <tag group="Language" tag="lElven"/>
+    <tag group="Language" tag="lGnome"/>
+    <tag group="Language" tag="lOrc"/>
+    <tag group="Language" tag="lUndercomm"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="AgeC1Dice" tag="4"/>
+    <tag group="AgeC1Size" tag="6"/>
+    <tag group="AgeC2Dice" tag="6"/>
+    <tag group="AgeC2Size" tag="6"/>
+    <tag group="AgeC3Dice" tag="8"/>
+    <tag group="AgeC3Size" tag="6"/>
+    <tag group="RaceType" tag="Feature"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="HeightDice" tag="2"/>
+    <tag group="HeightSize" tag="6"/>
+    <tag group="WeightMult" tag="3"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="lDraconic"></bootstrap>
+    <bootstrap thing="stReptilia"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d3"/>
+      </bootstrap>
+    <bootstrap thing="raDarkVis"></bootstrap>
+    <bootstrap thing="raX1NatArm"></bootstrap>
+    <bootstrap thing="raGreed"></bootstrap>
+    <bootstrap thing="raX1ZvarrA"></bootstrap>
+    <bootstrap thing="raX1ZvarVW"></bootstrap>
+    </thing>
+  <thing id="raX1ZvarrA" name="Agile" description="Zvarr receive a +1 racial bonus on Acrobatics and Fly checks." compset="RaceSpec">
+    <fieldval field="abValue" value="1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="40000"><![CDATA[       
+      ~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+      
+      ~ Give bonus to Acrobatics & Fly
+      #racialbonus[skAcrobat] += field[abValue].value
+      #racialbonus[skFly] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="raX1ZvarVW" name="Vestigial Wings" description="Zvarr can use their wings to glide by making a DC 15 Fly check to fall safely from any height without taking falling damage, as if using {i}feather fall{/i}. When falling safely, a zvarr may make an additional DC 15 Fly check to glide, moving 5 feet in any horizontal direction for every 1 foot he falls, at a speed of 60 feet per round. A zvarr cannot gain height with these wings alone; merely coasting in other directions as it falls. If subjected to a strong wind or any other effect that causes a creature with gliding wings to rise, a zvarr can take advantage of the updraft to increase the distance it can glide." compset="RaceSpec" summary="Make two DC15 fly checks to glide with a 5:60ft ratio.">
+    <fieldval field="abValue" value="1"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpInfo" tag="spFeatFal1"/>
+    <eval phase="PreLevel" priority="40000"><![CDATA[       
+      ~ If we are disabled get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+      
+      ~ Give bonus to Acrobatics & Fly
+      #racialbonus[skAcrobat] += field[abValue].value
+      #racialbonus[skFly] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="lX1Bahgra" name="Bahgra" description="The language of the Bahgra." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Bildjoo" name="Bil’djooli" description="The language of the Bil’djooli." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Divymm" name="Divymm" description="The language of the Divymm." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Elali" name="Elali" description="The language of the Elali." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Hetzuud" name="Hetzuud" description="The language of the Hetzuud." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Jagladi" name="Jagladine" description="The language of the Jagladine." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Krang" name="Krang" description="The language of the Krang." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Onaryx" name="Onaryx" description="The language of the Onaryx." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Trethar" name="Tretharri" description="The language of the Tretharri." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Ultari" name="Ultari" description="The language of the Ultari." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Yllosan" name="Yllosan" description="The language of the Yllosan." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="lX1Zoress" name="Zor’ess" description="The language of the Zor’ess." compset="Language" uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="LangPreval" tag="Planar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="deiX1GarPe" name="Gar-Peru" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="crafting, defense, loyalty, perseverance"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="WepProf" tag="wWarhammer"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="LawGood"/>
+    <tag group="AllowDom" tag="cdArtifice"/>
+    <tag group="AllowDom" tag="cdCommun"/>
+    <tag group="AllowDom" tag="cdGood"/>
+    <tag group="AllowDom" tag="cdLaw"/>
+    <tag group="AllowDom" tag="cdProtect"/>
+    <tag group="AllowDom" tag="cdStrength"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    </thing>
+  <thing id="deiX1LegPl" name="{bmp npcclass} Legendary Planet {bmp npcclass}" description="Deities associated with the Legendary Planet adventure path." compset="Deity" uniqueness="unique" isshowonly="yes">
+    <usesource source="PathMuMask" parent="PathAdvent" name="Mummy&apos;s Mask"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  <thing id="deiX1Rarme" name="Rarmezarn" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="armor, honor, honorable combat, strength"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="LawGood"/>
+    <tag group="AllowDom" tag="cdGood"/>
+    <tag group="AllowDom" tag="cdLaw"/>
+    <tag group="AllowDom" tag="cdProtect"/>
+    <tag group="AllowDom" tag="cdStrength"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="AllowDom" tag="cdGlory"/>
+    <tag group="WepProf" tag="wMornStar"/>
+    </thing>
+  <thing id="deiX1Liant" name="Lianthus" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="nature, plants, renewal, symbiosis"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="NeutGood"/>
+    <tag group="AllowDom" tag="cdCommun"/>
+    <tag group="AllowDom" tag="cdGood"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="WepProf" tag="wSpear"/>
+    <tag group="AllowDom" tag="cdCharm"/>
+    <tag group="AllowDom" tag="cdEarth"/>
+    <tag group="AllowDom" tag="cdPlant"/>
+    <tag group="AllowDom" tag="cdWeather"/>
+    </thing>
+  <thing id="deiX1Olali" name="Olalis" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="fate, knowledge, psionics, stars, will"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="NeutGood"/>
+    <tag group="AllowDom" tag="cdGood"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="WepProf" tag="wQtrstaff"/>
+    <tag group="AllowDom" tag="cdFire"/>
+    <tag group="AllowDom" tag="cdKnow"/>
+    <tag group="AllowDom" tag="cdLuck"/>
+    <tag group="AllowDom" tag="cdMagic"/>
+    <tag group="AllowDom" tag="cdRune"/>
+    </thing>
+  <thing id="deiX1Alren" name="Alrenjae" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="cleverness, exploration, kinship, survival"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="ChaotGood"/>
+    <tag group="AllowDom" tag="cdGood"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="WepProf" tag="wScimitar"/>
+    <tag group="AllowDom" tag="cdAnimal"/>
+    <tag group="AllowDom" tag="cdChaos"/>
+    <tag group="AllowDom" tag="cdCharm"/>
+    <tag group="AllowDom" tag="cdCommun"/>
+    <tag group="AllowDom" tag="cdLiberat"/>
+    </thing>
+  <thing id="deiX1Kythe" name="Kytheklo" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="ancestors, deception, light, love, spirits"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="ChaotGood"/>
+    <tag group="AllowDom" tag="cdGood"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="AllowDom" tag="cdChaos"/>
+    <tag group="AllowDom" tag="cdKnow"/>
+    <tag group="AllowDom" tag="cdRepose"/>
+    <tag group="AllowDom" tag="cdSun"/>
+    <tag group="AllowDom" tag="cdTrickery"/>
+    <tag group="WepProf" tag="wLongsword"/>
+    </thing>
+  <thing id="deiX1Erone" name="Eroneinem" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="art, language, magic, trade, travel"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="LawNeut"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="AllowDom" tag="cdKnow"/>
+    <tag group="WepProf" tag="wQtrstaff"/>
+    <tag group="AllowDom" tag="cdLaw"/>
+    <tag group="AllowDom" tag="cdMagic"/>
+    <tag group="AllowDom" tag="cdProtect"/>
+    <tag group="AllowDom" tag="cdRune"/>
+    <tag group="AllowDom" tag="cdTravel"/>
+    </thing>
+  <thing id="deiX1HaySA" name="Haymot Steel-Arm" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="metal, industry, transformation"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="LawNeut"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="AllowDom" tag="cdLaw"/>
+    <tag group="AllowDom" tag="cdMagic"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="WepProf" tag="wCrsHeavy"/>
+    <tag group="WepProf" tag="wCrsLight"/>
+    <tag group="AllowDom" tag="cdArtifice"/>
+    <tag group="AllowDom" tag="cdStrength"/>
+    <tag group="AllowDom" tag="cdWar"/>
+    </thing>
+  <thing id="deiX1Idnis" name="Idniskow" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="adaptability, air, earth, fire, survival, water"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="NeutNeut"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="WepProf" tag="wShortbow"/>
+    <tag group="AllowDom" tag="cdAir"/>
+    <tag group="AllowDom" tag="cdEarth"/>
+    <tag group="AllowDom" tag="cdFire"/>
+    <tag group="AllowDom" tag="cdProtect"/>
+    <tag group="AllowDom" tag="cdWater"/>
+    </thing>
+  <thing id="deiX1Nimsh" name="Nimsharu" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="creation, preservation, wisdom, reflection"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="NeutNeut"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="AllowDom" tag="cdProtect"/>
+    <tag group="WepProf" tag="wMace"/>
+    <tag group="AllowDom" tag="cdArtifice"/>
+    <tag group="AllowDom" tag="cdCommun"/>
+    <tag group="AllowDom" tag="cdHealing"/>
+    <tag group="AllowDom" tag="cdKnow"/>
+    </thing>
+  <thing id="deiX1Qarn" name="Qarn the Twice-Eternal" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="life, death, undeath, secrets"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="NeutNeut"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="AllowDom" tag="cdProtect"/>
+    <tag group="AllowDom" tag="cdHealing"/>
+    <tag group="AllowDom" tag="cdKnow"/>
+    <tag group="WepProf" tag="wTrident"/>
+    <tag group="AllowDom" tag="cdDeath"/>
+    <tag group="AllowDom" tag="cdRepose"/>
+    </thing>
+  <thing id="deiX1Siora" name="Sioraattu" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="ecology, extinction, nature"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AlignTemp" tag="NeutNeut"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="WepProf" tag="wSickle"/>
+    <tag group="AllowDom" tag="cdAnimal"/>
+    <tag group="AllowDom" tag="cdDestruct"/>
+    <tag group="AllowDom" tag="cdPlant"/>
+    <tag group="AllowDom" tag="cdSun"/>
+    <tag group="AllowDom" tag="cdWeather"/>
+    </thing>
+  <thing id="deiX1Macul" name="Maculatu the Sly" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="stealth, survival, thievery"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="AlignTemp" tag="ChaotNeut"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="WepProf" tag="wShortswd"/>
+    <tag group="AllowDom" tag="cdAir"/>
+    <tag group="AllowDom" tag="cdChaos"/>
+    <tag group="AllowDom" tag="cdCharm"/>
+    <tag group="AllowDom" tag="cdDarkness"/>
+    <tag group="AllowDom" tag="cdTrickery"/>
+    </thing>
+  <thing id="deiX1Yajaa" name="Yajaan the World-Dreamer" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="cycles of life, stars, space travel"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AllowDom" tag="cdChaos"/>
+    <tag group="AllowDom" tag="cdTrickery"/>
+    <tag group="AlignTemp" tag="ChaotNeut"/>
+    <tag group="WepProf" tag="wScythe"/>
+    <tag group="AllowDom" tag="cdArtifice"/>
+    <tag group="AllowDom" tag="cdGlory"/>
+    <tag group="AllowDom" tag="cdMadness"/>
+    <tag group="AllowDom" tag="cdTravel"/>
+    </thing>
+  <thing id="deiX1Dakor" name="Dakorian Rooth" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="crafting, mutation, science, technology"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AllowDom" tag="cdTrickery"/>
+    <tag group="AlignTemp" tag="LawEvil"/>
+    <tag group="AllowDom" tag="cdArtifice"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="WepProf" tag="wDagger"/>
+    <tag group="AllowDom" tag="cdEvil"/>
+    <tag group="AllowDom" tag="cdHealing"/>
+    <tag group="AllowDom" tag="cdKnow"/>
+    <tag group="AllowDom" tag="cdLaw"/>
+    </thing>
+  <thing id="deiX1Thrax" name="Thraxes the Warlord" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="conquest, invention, rulership, warfare"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="LawEvil"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="AllowDom" tag="cdEvil"/>
+    <tag group="AllowDom" tag="cdLaw"/>
+    <tag group="WepProf" tag="wLongsword"/>
+    <tag group="AllowDom" tag="cdAir"/>
+    <tag group="AllowDom" tag="cdNobility"/>
+    <tag group="AllowDom" tag="cdStrength"/>
+    <tag group="AllowDom" tag="cdWar"/>
+    </thing>
+  <thing id="deiX1Cyshr" name="Cyshrn the Gentle" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="dominance, persuasion, psionics"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="NeutEvil"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="AllowDom" tag="cdEvil"/>
+    <tag group="WepProf" tag="wQtrstaff"/>
+    <tag group="AllowDom" tag="cdCharm"/>
+    <tag group="AllowDom" tag="cdKnow"/>
+    <tag group="AllowDom" tag="cdMagic"/>
+    <tag group="AllowDom" tag="cdProtect"/>
+    <tag group="AllowDom" tag="cdRune"/>
+    </thing>
+  <thing id="deiX1Nilot" name="Niloticus the Explorer" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="ambition, colonization/conquest, pride"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="NeutEvil"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="AllowDom" tag="cdEvil"/>
+    <tag group="WepProf" tag="wBattleaxe"/>
+    <tag group="AllowDom" tag="cdNobility"/>
+    <tag group="AllowDom" tag="cdStrength"/>
+    <tag group="AllowDom" tag="cdTravel"/>
+    <tag group="AllowDom" tag="cdTrickery"/>
+    <tag group="AllowDom" tag="cdWar"/>
+    </thing>
+  <thing id="deiX1Lurn" name="Lurn Shadowhand" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="murder, night, rage, terror"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="ChaotEvil"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="AllowDom" tag="cdEvil"/>
+    <tag group="WepProf" tag="wShortswd"/>
+    <tag group="AllowDom" tag="cdChaos"/>
+    <tag group="AllowDom" tag="cdDarkness"/>
+    <tag group="AllowDom" tag="cdDeath"/>
+    <tag group="AllowDom" tag="cdMadness"/>
+    <tag group="AllowDom" tag="cdRune"/>
+    </thing>
+  <thing id="deiX1WolPi" name="Wol&apos;Pi&apos;Io Five-Shells" compset="Deity" uniqueness="unique">
+    <fieldval field="deiPortfol" value="armor/protection, fear, oceans, volcanos"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="explicit" tag="50"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlignTemp" tag="ChaotEvil"/>
+    <tag group="DeityCat" tag="CB"/>
+    <tag group="AllowDom" tag="cdEvil"/>
+    <tag group="AllowDom" tag="cdChaos"/>
+    <tag group="WepProf" tag="wSpear"/>
+    <tag group="AllowDom" tag="cdDestruct"/>
+    <tag group="AllowDom" tag="cdFire"/>
+    <tag group="AllowDom" tag="cdProtect"/>
+    <tag group="AllowDom" tag="cdWater"/>
+    </thing>
+  <thing id="trX1FarFlu" name="Far-flung Gladiator" description="You&apos;ve always been a bit quicker than others at learning new things, especially weapons, regardless of how strange they may be. Whether you were an actual gladiator, you studied the unusual weaponry of ancient cultures, or just an extremely martial talent, the end effect is that the use of strange weaponry come more easily for you. The non-proficiency penalty for using an exotic weapon is only -2 for you." compset="Trait" summary="The non-proficiency penalty for using an exotic weapon is only -2 for you." uniqueness="useronce">
+    <fieldval field="abValue" value="-2"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Find all exotic weapons we are not proficient with and change
+      ~ to only -2 penalty instead of 4.
+      foreach pick in hero from BaseWep where "wProfReq.Exotic & !Helper.Proficient"
+        eachpick.field[wNoProfPen].value += field[abValue].value
+      nexteach]]></eval>
+    </thing>
+  <thing id="trX1JagExp" name="Jagladine Experiment #14073" description="Long ago, the insidious alien bioengineers known as jagladine abducted you and kept you around for routine experimentation, lacing the jagladine script for the number 14073 into the flesh of your shoulder. Most of your captivity has been a blur to you, with long periods of nightmares interspersed with brief moments of lucidity. The jagladine experiments you endured were designed to enhance the agility of your race, possibly in ways to enhance any Klaven thralls they intended to craft from your species. However, the experiments did not go entirely as planned. While you now possess more agility than most others of your race, it lasts only for a limited duration. A few times per day, equal to 1 + your Constitution bonus (minimum 2), you can increase your move speed for 1 round by 5 feet. This is a free action." compset="Trait" summary="As a free action increase your move speed for 1r by 5ft." uniqueness="useronce">
+    <fieldval field="abValue" value="5"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      field[trkMax].value += maximum(2,#attrbonus[aCON] + 1)
+      field[actName].text = signed(field[abValue].value) & "ft."]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If not activated get out now!
+      doneif (field[abilActive].value = 0)
+
+      hero.childfound[Speed].field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="trX1KlavSu" name="Klaven Survivor" description="The klaven are known on many planets as the horrific shocktroops of the jagladine, sent to clear a path for interplanetary domination. Tales of klaven brutality have spread far and wide, and are almost as effective as the klaven themselves at causing panic in the communities they assault. While most know to run when the klaven approach, at one point you found yourself within reach of such a creature due to bravery, poor luck, or foolhardiness. Looking past the horrifically misshapen body modifications imposed by the jagladine on the unfortunate creature, you saw the tortured look of a once sentient being which now only knows pain and hatred. Since then, you&apos;ve felt pity for the klaven, and, while you know they must be destroyed, you are able to defeat them in more gentle ways than most. Whenever you deal nonlethal damage to a klaven creature, you deal an additional 2 points of nonlethal damage." compset="Trait" summary="When you deal nonlethal dmg to a klaven creature increase by +2 nonlethal dmg." uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="trX1PatSta" name="Patron of the Stars" description="You come from a culture which revered the stars as holy entities, learning how to meditate upon them and later bless others with the stars&apos; benefaction. By meditating for 30 minutes under a clear nighttime sky, you may make a Wisdom check against DC 13. If successful, you can add a +1 trait bonus to any single d20 roll in the next 24 hours, but only before the roll is made. Applying this bonus is an immediate action, and you cannot apply it more than once per day, regardless of how many times you meditate under the stars." compset="Trait" summary="Once per day gain a +1 trait bonus to a single d20 roll." uniqueness="useronce">
+    <fieldval field="trkMax" value="1"/>
+    <fieldval field="actName" value="Meditated"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If not activated get out now!
+      doneif (field[abilActive].value = 0)
+
+      perform assign[User.Tracker]]]></eval>
+    </thing>
+  <thing id="trX1PriSta" name="Principle of the Stars" description="You come from a culture which saw the stars and starlight as revealing the flaws in others, and you learned how to call upon them to jinx those who wrong you. By meditating for 30 minutes under a clear nighttime sky, you may make a Wisdom check against DC 13. If successful, you can apply a -1 penalty to any single d20 roll which occurs within 30 feet of you during the next 24 hours, but only before the roll is made. Applying this penalty is an immediate action, and you cannot apply it more than once per day, regardless of how many times you meditate under the stars." compset="Trait" summary="Once per day give a -1 penalty to a single d20 roll within 30ft." uniqueness="useronce">
+    <fieldval field="trkMax" value="1"/>
+    <fieldval field="actName" value="Meditated"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If not activated get out now!
+      doneif (field[abilActive].value = 0)
+
+      perform assign[User.Tracker]]]></eval>
+    </thing>
+  <thing id="trX1ResPec" name="Resilient Peculiarity" description="Throughout the multiverse various traditions exist for harnessing energy for a wielder&apos;s purpose, whether as arcane magic, divine magic, innate magic (such as spell-like abilities), psionic magic, technology, or other similar effects. Whether born under auspicious stars, experimented upon as a child, or caught in an influx of energy which left you permanently altered, your mind has become particularly resilient to one of these methods. Pick one of the above traditions. Against effects of that type, you receive a +2 trait bonus on Will saving throws." compset="Trait" summary="You gain receive a +2 trait bonus on Will saving throws against the selected effect." uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <tag group="User" tag="NeedDomain"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #situational[hero.child[svWill],signed(field[abValue].value) & " trait bonus vs " & field[domDomain].text & ".",field[name].text]]]></eval>
+    </thing>
+  <thing id="trX1RuiDel" name="Ruin Delver" description="Your home planet held a number of ruins from an ancient, long lost civilization dotting its landscape. At some point, you explored them and, during one such foray, you found a small trinket with curious properties, keeping it with you ever since. You gain a +2 trait bonus on Appraise checks. In addition, you gain a small bauble of your choice worth 100 gp. If sold, the trait bonus on Appraise checks is reduced to +1. Examples of such objects include: \n\nA fist-sized, solid black sphere which can hover up to 6 feet off the ground, but cannot otherwise move. The sphere has a button flush with the curvature that when pressed reveals a small indentation which can hold a tiny object weighing 1 lb. or less.\n\nA small, clear pyramid that houses a smaller black spindle which always points towards a specific, unchangeable star.\n\nA cracked mirror which can capture the reflection of the last creature to look at it, holding such an image for up to 8 hours.\n\nThe GM has the final discretion on what sort of baubles might qualify for this trait.\n\n{b}Note:{/b} If you want to represent losing your bauble or not having it select the &quot;{b}Dropped to ground{/b}&quot; gear item." compset="Trait" summary="As long as you have your bauble gain a +2 trait bonus on Appraise Checks." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.MyGear"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fShowWhat" tag="Freeform"/>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ If nothing chosen then only give +1
+      if (field[usrChosen1].ischosen = 0) then
+         #skillbonus[skAppraise] += 1
+
+      ~..If "dropped to ground" chosen then only give +1
+      elseif (field[usrChosen1].chosen.tagis[thingid.gGround] = 1) then
+         #skillbonus[skAppraise] += 1
+
+      ~..otherwise we have a bauble so give +2 bonus
+      else
+         #skillbonus[skAppraise] += 2
+      endif]]></eval>
+    </thing>
+  <thing id="trX1SeeSta" name="Seeker of the Stars" description="You&apos;ve always been drawn to the stars - but one star in particular holds your primary interest. You always know the direction to one single, unchangeable star. When you&apos;ve asked astronomers about it, none have any information on it, and it seems that as far as anyone else can tell, it doesn&apos;t actually exist. Some astronomers have heard the same question from others, and they suspect anyone asking about it are asking about the same one, if it exists. By spending 10 minutes in meditation, you can mentally visualize a star chart for your location, regardless of where you are and the time of day. The star you&apos;re drawn to always appears in this visualization, even if it wouldn&apos;t appear in your current location. In addition, once per day you may cast {i}know direction{/i} as a spell-like ability (CL 1st)." compset="Trait" summary="As long as you have your bauble gain a +2 trait bonus on Appraise Checks." uniqueness="useronce">
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="spKnowDir0">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ If nothing chosen then only give +1
+      if (field[usrChosen1].ischosen = 0) then
+         #skillbonus[skAppraise] += 1
+
+      ~..If "dropped to ground" chosen then only give +1
+      elseif (field[usrChosen1].chosen.tagis[thingid.gGround] = 1) then
+         #skillbonus[skAppraise] += 1
+
+      ~..otherwise we have a bauble so give +2 bonus
+      else
+         #skillbonus[skAppraise] += 2
+      endif]]></eval>
+    </thing>
+  <thing id="trX1Smuggl" name="Smuggler" description="You made a name for yourself as a smuggler on your home planet. Whether transporting alcohol, psionically-charged crystals, weapons, or more insidious things, you excelled at hiding objects from those searching for contraband. As such, you&apos;ve learned a number of tricks related to body positioning, loose clothing, and misdirection which aid you in hiding these goods. Sleight of Hand is a class skill for you. In addition, at the beginning of each day, you can select one small object in your possession. You gain a +5 trait bonus on Sleight of Hand checks to hide that object until you choose another object to hide instead." compset="Trait" summary="+5 bonus on Sleight of Hand checks to hide a single seleted item each day." uniqueness="useronce">
+    <fieldval field="abValue" value="5"/>
+    <fieldval field="usrCandid1" value="component.MyGear"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fShowWhat" tag="Freeform"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      #situational[hero.childfound[skSleight],signed(field[abValue].value) & " bonus to hide " & field[usrChosen1].chosen.field[name].text & ".",field[name].text]]]></eval>
+    </thing>
+  <thing id="trX1StrLan" name="Stranger In A Strange Land" description="Unlike many, you are already aware of the larger multiverse and the politics which abound within it. You&apos;ve intentionally traveled to other worlds, and gained exposure to a variety of alien cultures. As a result, Knowledge (local) is always a class skill for you, and you receive a +1 trait bonus on Knowledge (local) checks. In addition, you receive no penalties on Knowledge (local) checks to ascertain the rules and peculiarities of any culture you encounter. In addition, your GM may share any additional information with you about the current political situation affecting the Legendary Planet multiverse." compset="Trait" uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #makeclassskill[skKnowLoc]
+      #applybonus[BonTrait,hero.childfound[skKnowLoc],field[abValue].value]
+      #situational[hero.childfound[skKnowLoc],"You receive no penalties on Knowledge (local) checks to ascertain the rules and peculiarities of any culture you encounter.",field[name].text]]]></eval>
+    </thing>
+  <thing id="trX1Xenobi" name="Xenobiologist" description="You&apos;ve devoured every unusual bestiary you could acquire, and your voracious appetite for such knowledge has better informed your ability to determine facts about unfamiliar creatures, drawing parallels to other beasts you already know. As such, you gain a +1 trait bonus on all Knowledge skill checks to identify creatures and their abilities. In addition, the base DC to identify creatures from a planet other than your own is treated as if you were from the location or planet spawned it. For example, if an auroch is normally a very rare creature on your home planet, but common on the planet Argosa, the Knowledge skill&apos;s DC to identify the auroch would be 10 + its CR." compset="Trait" summary="You are treated as if you were from the location or planet to identify monsters." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #makeclassskill[skKnowLoc]
+      #applybonus[BonTrait,hero.childfound[AllKnow],field[abValue].value]
+
+      ~ Note: Currently setting a situational note on to AllKnow does
+      ~ not populate down to the children. I am hoping in a future 
+      ~ patch this is fixed. Tim Shadow 9/18/2015
+      #situational[hero.childfound[AllKnow],"The base DC to identify creatures from a planet other than your own is treated as if you were from the location or planet spawned it.",field[name].text]]]></eval>
+    </thing>
+  <thing id="trX1Xenopi" name="Xenopidgin" description="While many people dabble in a wide range of hobbies, you&apos;ve explored a wide range of languages and dialects. When exposed to a new language, you may make a Linguistics check against a DC of 15. If successful, you gain a very rough understanding of the nuances of such conversation. This understanding only amounts to an informed hunch, but is usually enough to give the same level of understanding as a human toddler would be capable." compset="Trait" summary="DC15 Lignuistics checks lets you gain a rough understanding of conversations." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcLegPlAP"/>
+    <tag group="trCategory" tag="Campaign"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  </document>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_PFUnchainedPack_Domains"/>
+  <thing id="cdP6Rage" name="Rage (Unchained)" description="{b}Unchained{/b}: This version of the Rage domain gives access to the Unchained version of Rage." compset="ClerDomain" uniqueness="useronce">
+    <usesource source="srcUnDom"/>
+    <tag group="SpecSource" tag="arDrdApSha"/>
+    <tag group="SpecSource" tag="arDrdBligh"/>
+    <tag group="SpecSource" tag="arDrdBoSha"/>
+    <tag group="HasDomain" tag="cdDestruct"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Subdomain"/>
+    <tag group="ClsScAllSp" tag="spTrueStr1"/>
+    <tag group="ClsScAllSp" tag="spShout5"/>
+    <tag group="ClsScAllSp" tag="spRage3"/>
+    <tag group="ClsScAllSp" tag="spMoonstr6"/>
+    <tag group="ClsScAllSp" tag="spInflCri4"/>
+    <tag group="ClsScAllSp" tag="spImplosi9"/>
+    <tag group="ClsScAllSp" tag="spEarthqu8"/>
+    <tag group="ClsScAllSp" tag="spDisinte7"/>
+    <tag group="ClsScAllSp" tag="spBullStr2"/>
+    <bootstrap thing="cBbnRageUn">
+      <autotag group="ClSpecWhen" tag="8"/>
+      <assignval field="DescAppend" value="{b}Rage Domain:{/b} At 8th level, you can enter a fearsome rage, like a barbarian, for a number of rounds per day equal to your cleric level."/>
+      </bootstrap>
+    <bootstrap thing="dDesSmite">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="5000"><![CDATA[
+      ~ If we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~modify our linked class to add barbarian rage powers
+
+      ~we'll use the tertiary abilities slot for these
+      linkage[table].field[cCustTeTot].arrayvalue[11] += 1
+      linkage[table].field[cCustTeTot].arrayvalue[15] += 2
+      linkage[table].field[cSpec3rdSi].text = "Rage Power"
+
+      ~ Set pointer to our bootstrapped Unchained Rage     
+      perform hero.findchild[BaseClSpec,"SpecSource.cHelpClr & ClSpecWhen.8"].setfocus
+      ~ if can't find then get out now!
+      doneif (state.isfocus = 0)
+ 
+      ~ Adjust so that we are only equal to cleric level rounds/day
+      perform focus.delete[ChargeAttr.aCON]
+      perform focus.delete[ChargeCalc.LevelX2]
+      focus.field[trkMax].value += -2]]></eval>
+    <eval phase="Final" priority="99999999" index="2"><![CDATA[
+      ~ If we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~Use the new abCategory tag to give the ability to select
+      ~Unchained Rage Powers
+      linkage[table].field[cCstS3Expr].text = "(abCategory.BbnRaPowUn) & !Helper.Helper & !Helper.Obsolete"]]></eval>
+    <eval phase="PreLevel" priority="10000" index="3"><![CDATA[
+      ~ If we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += round(linkage[table].field[cTotalLev].value/2,0,-1)
+
+      foreach pick in hero from BaseCustSp where "CustTaken.cHelpClr & abCategory.BbnRaPowUn"
+        eachpick.field[xExtraLev].value -= field[abValue].value
+      nexteach]]></eval>
+    </thing>
+  </document>

@@ -1,0 +1,962 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_CampaignPack_Eberron - Races Player"/>
+  <fileinfo>
+    <info_author>Tim Shadow
+Email: ShadowChemosh@yahoo.com</info_author>
+    <info_history><![CDATA[
+January 30, 2014 - Tim Shadow
+-Fixed load errors and to work with the new Psionics.
+
+Nov 4, 2013 - Tim Shadow
+-Changed text on the "Iron Wood" body of the warforged to be correct.
+
+Feb 15, 2013 - Tim Shadow
+-Fixed Ethnicities so they work correctly even when "Inner Sea World Guide" is not check marked.
+
+v1.5 - May 28, 2012
+=Tim Shadow=
+-Weapons split off to their own .user file.
+-Feats split off to their own .user file.
+-Classes split off to their own .user file.
+-Spells split off to their own .user file.
+-Lots of small Structural fixes to the way the Warforged armor works.  This will make it compatable with Pathfinder v7.2.  It also fixes the problem of the Armor needing to be made masterwork.  The armor will now be made masterwork as soon as it goes on to the hero.
+
+v1.4 Tim Shadow May 28, 2012
+-Finalized for release through Powered by Hero Lab.
+-Fixed "Shape Change" so that if you activate Medium it disables "Small" and activating Small disables "Medium".  No more being a Medium/Small creature at the same time.
+-Lots of small script fixes on the Racial Abilities.
+-Added in the Kalashtar race.
+--Added "Quor" Language
+--Added "Kalashtar" subtype.
+--This races Psionics ability is scripted to work with the community "Psionics Unleashed" package.
+-Added a check to all racial abilities to check for being disabled.
+    
+v1.3 - December 18, 2011 - Tim Shadow
+-Fixed "Warforged Immunities" from incorrectly printing to the character sheet.
+-Added in "Double Scimitar" from ECS.
+
+v1.2 - November 28, 2011 - Tim Shadow
+-Added missing Racial Custom Specials that prevented selecing Warforged Body Types.
+    
+v1.1 - 10/2/2011 - Tim Shadow
+-Added Warforged.
+-Fixed many Shifter issues.
+-Added some Action Point feats from Eberron.
+-Added some Favored Class options.
+-Added the "Shifter Ranger" archetype.
+
+v1.0 - 4/22/2011
+-Changed the unique ID of the Changeling race to NOT clash with the official version name.]]></info_history>
+    </fileinfo>
+  <thing id="rShifters" name="Shifter" description="{b}Shapechanger Subtype:{/b} Shifters are humanoids with the shapechanger subtype.\n\nShifters, sometimes called &quot;the weretouched,&quot; are descended from humans and natural lycanthropes, now nearly extinct on Khorvaire. Shifters cannot fully change shape but can take on animalistic features&apos;a state they call shifting. Shifters have evolved into a unique race that breeds true. They have a distinct culture with its own traditions and identity.\n\n{b}Personality:{/b} The personality and behavior of shifters are infl uenced by their animal natures. Many are boorish and crude, while others are quiet, shifty, and solitary. Just as most lycanthropes are carnivores, shifters have a predatory personality and think of most activities in terms of hunting and prey. They view survival as a challenge, striving to be self-reliant, adaptable, and resourceful.\n\n{b}Physical Description:{/b} Shifters are basically humanoid in shape, but their bodies are exceptionally lithe. They often move in a crouched posture, springing and leaping while their companions walk normally alongside. Their faces have a bestial cast, with wide, fl at noses, large eyes and heavy eyebrows, pointed ears, and long sideburns (in both sexes). Their forearms and lower legs grow long hair, and the hair of their heads is thick and worn long.\n\n{b}Relations:{/b} Many races feel uncomfortable around shifters, the same way they feel around any large predator. Of course, some grow to appreciate individual shifters despite their natural aversion, and halflings in general get along well with them. For their part, shifters are accustomed to distrust and don’t expect better treatment from members of the other races, although some shifters try to earn respect and companionship through acts and deeds.\n\n{b}Alignment:{/b} Shifters are usually neutral, viewing the struggle to survive as more important than moral or ethical concerns about how survival is maintained.\n\n{B}Pathfinder:{/b} The ability score bonus/penalties have been changed slightly to no longer get a -2 Cha penalty and instead gain a +2 bonus to Wis. This fits with other Pathfinder core races better.  Shfiting has also been changed to be rounds per day simliar to the Barbarian rage ability." compset="Race">
+    <fieldval field="rDEX" value="2"/>
+    <fieldval field="rINT" value="-2"/>
+    <fieldval field="rWIS" value="2"/>
+    <usesource source="S2Eberron"/>
+    <tag group="Language" tag="lElven"/>
+    <tag group="Language" tag="lGnome"/>
+    <tag group="Language" tag="lHalfling"/>
+    <tag group="Language" tag="lSylvan"/>
+    <tag group="Language" tag="lGnoll"/>
+    <tag group="Language" tag="lGoblin"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="RaceType" tag="Normal"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Eberron" tag="Race"/>
+    <bootstrap thing="raShftAgil"></bootstrap>
+    <bootstrap thing="stShapecha"></bootstrap>
+    <bootstrap thing="raLowLight"></bootstrap>
+    <bootstrap thing="fcBbnShift"></bootstrap>
+    <bootstrap thing="fcRgrShift"></bootstrap>
+    <bootstrap thing="raShifting"></bootstrap>
+    <eval phase="First" priority="499"><![CDATA[
+~because custom class specials test their existnace at First/500, 
+~they can't run a script before then
+~however, we need to find out what shifter has been selected, so we
+~know which set of abilities to add
+~therefore, we make the check from the class, rather than the
+~racial special, and forward that tag to the hero
+
+if (hero.findchild[RaceAbil,"thingid.raShifting"].field[usrChosen1].ischosen <> 0) then
+    perform hero.findchild[RaceAbil,"thingid.raShifting"].field[usrChosen1].chosen.forward[Shifter.?]
+endif]]></eval>
+    </thing>
+  <thing id="raShifting" name="Shifting" description="A shifter can tap into her lycanthropic heritage to gain short bursts of physical power. A shifter can enter a state that is superficially similar to a barbarian’s rage. Each shifter has one of six shifter traits-characteristics that manifest themselves when a character is shifting. Each shifter trait provides a +2 bonus to one of the character’s physical ability scores (Strength, Dexterity, or Constitution) and grants some other advantage as well. Shifter traits are described in the following section.\n\nA shifter can shift for a number of rounds per day equal to 3 + Constitution modifier + half her character level. Starting a shift or ending is a free action that can only happen on a characters turn. Every shifter feat a character takes allows her to shift for 1 additional round per day.  For every two shifter feats a character takes, the shifter gains a bonus 1 round per day on top of the one gained for the shifter feat itself. In example if a shifter has two shifter feats they can shift for 3 additional rounds per day not 2." compset="RaceSpec">
+    <fieldval field="usrCandid1" value="thingid.raSTbeasth|thingid.raSTcliffw| thingid.raSTdreams|thingid.raSTgorebu|thingid.raSTlongst|thingid.raSTlongto|thingid.raSTrazorc|thingid.raSTswiftw|thingid.raSTtruedi|thingid.raSTwildhu"/>
+    <fieldval field="actName" value="Shifting"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Usage" tag="DayRound"/>
+    <tag group="User" tag="Tracker"/>
+    <bootstrap thing="raSTgorebu">
+      <containerreq phase="First" priority="500">Shifter.Gorebrute</containerreq>
+      </bootstrap>
+    <bootstrap thing="raSTswiftw">
+      <containerreq phase="First" priority="500">Shifter.Swiftwing</containerreq>
+      </bootstrap>
+    <bootstrap thing="raSTtruedi">
+      <containerreq phase="First" priority="500">Shifter.Truedive</containerreq>
+      </bootstrap>
+    <bootstrap thing="raSTlongto">
+      <containerreq phase="First" priority="500">Shifter.Longtooth</containerreq>
+      </bootstrap>
+    <bootstrap thing="raSTrazorc">
+      <containerreq phase="First" priority="500">Shifter.Razorclaw</containerreq>
+      </bootstrap>
+    <bootstrap thing="raSTbeasth">
+      <containerreq phase="First" priority="500">Shifter.Beasthide</containerreq>
+      </bootstrap>
+    <bootstrap thing="raSTwildhu">
+      <containerreq phase="First" priority="500">Shifter.Wildhunt</containerreq>
+      </bootstrap>
+    <bootstrap thing="raSTcliffw">
+      <containerreq phase="First" priority="500">Shifter.Cliffwalk</containerreq>
+      </bootstrap>
+    <bootstrap thing="raSTdreams">
+      <containerreq phase="First" priority="500">Shifter.Dreamsight</containerreq>
+      </bootstrap>
+    <bootstrap thing="raSTlongst">
+      <containerreq phase="First" priority="500">Shifter.Longstride</containerreq>
+      </bootstrap>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ We get a bonus of 1.5 rounds per shifter feat taken
+      field[abValue].value += round(hero.tagcount[Shifter.Feat] * 1.5,0,-1)
+
+      ~We get 3 + 1/2 Level + CON + Feats rounds of shift/day
+      field[trkMax].value += 3 + round(herofield[tLevel].value/2,0,-1) + hero.child[aCON].field[aBonus].value + field[abValue].value
+      ]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+      ~ If we are not activated get out now
+      doneif (field[abilActive].value = 0)
+
+      ~ Set the shifting tag on to the hero
+      perform hero.assign[Shifter.Shifting]
+      ]]></eval>
+    </thing>
+  <thing id="raShftAgil" name="Shifter Agility" description="A shifter’s animalistic heritage enhances many of her physical skills. Shifters gain a +2 racial bonus on Acrobatics, Climb, and Swim checks." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="Skill"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+
+      ~ Give bonus to to Acrobatics, Climb, Swim
+      #skillbonus[skAcrobat] += field[abValue].value
+      #skillbonus[skClimb] += field[abValue].value
+      #skillbonus[skSwim] += field[abValue].value]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+      ~ Set bonus to +2
+      field[abValue].value += 2
+      ]]></eval>
+    </thing>
+  <thing id="raSTbeasth" name="Beasthide" description="While shifting, a beasthide shifter gains a +2 bonus to Constitution and natural armor that provides a +2 bonus to AC." compset="RaceSpec" summary="+2 Con and +2 AC when shifting.">
+    <comment>abValue = Ability Score bonus, abValue2 = Misc ability bonus, abValue3 = Natural Attack dmg bonus, abValue4 = Not Used</comment>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue" value="2"/>
+    <tag group="Shifter" tag="Beasthide"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreAttr" priority="1000"><![CDATA[
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Giving shifting bonus
+      hero.child[aCON].field[Bonus].value += field[abValue].value
+      hero.child[ArmorClass].field[tACNatural].value += field[abValue2].value]]></eval>
+    </thing>
+  <thing id="raSTlongto" name="Longtooth" description="While shifting, a longtooth shifter gains a +2 bonus to Strength and grows fangs that can be used as a natural weapon, dealing 1d6 points of damage (plus an additional +1 for every four character levels she has) with a successful bite attack. She cannot attack more than once per round with her bite, even if her base attack bonus is high enough to give her multiple attacks. She can use her bite as a secondary attack (taking a -5 penalty on her attack roll) while wielding a weapon." compset="RaceSpec" summary="+2 Str and 1d6 bite attack when shifting.">
+    <comment>abValue = Ability Score bonus, abValue2 = Misc ability bonus, abValue3 = Natural Attack dmg bonus, abValue4 = Not Used</comment>
+    <fieldval field="abValue" value="2"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Shifter" tag="Longtooth"/>
+    <tag group="AbilType" tag="Super"/>
+    <bootstrap thing="wBite">
+      <containerreq phase="First" priority="500">Shifter.Shifting</containerreq>
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Shifter" tag="Longtooth"/>
+      </bootstrap>
+    <eval phase="PreAttr" priority="1000"><![CDATA[
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Give shifting bonus
+      hero.child[aSTR].field[Bonus].value += field[abValue].value
+      ~ Increase all Longtooth natural attacks damage
+      Call ShifterDmg]]></eval>
+    </thing>
+  <thing id="raSTcliffw" name="Cliffwalk" description="While shifting, a cliffwalk shifter gains a +2 bonus to Dexterity and has a climb speed of 20 feet. Gaining a climb speed grants him a +8 racial bonus on Climb checks. A cliffwalk shifter gains the Climb skill as a class skill." compset="RaceSpec" summary="+2 Dex and 20ft climb speed when shifting.">
+    <comment>abValue = Ability Score bonus
+abValue2 = Misc ability bonus
+abValue3 = Natural Attack dmg bonus
+abValue4 = Not Used</comment>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="20"/>
+    <tag group="Shifter" tag="Cliffwalk"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="First" priority="1000">~ Make climb a class skill
+      #makeclassskill[skClimb]</eval>
+    <eval phase="PreAttr" priority="50" index="2"><![CDATA[
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Give shifting bonus
+      hero.child[aDEX].field[Bonus].value += field[abValue].value
+      #value[xClimb] += field[abValue2].value]]></eval>
+    </thing>
+  <thing id="raSTrazorc" name="Razorclaw" description="While shifting, a razorclaw shifter gains a +2 bonus to Strength and grows claws that can be used as natural weapons. These claws deal 1d4 points of damage (plus an additional +1 for every four character levels she has) with each successful attack. She can attack with one claw as a standard action or with two claws as a full attack action (as a primary natural weapon). She can not attack more than once per round with a single claw, even if her base attack bonus is high enough to give her multiple attacks. She can attack with a claw as a light off-hand weapon while wielding a weapon in her primary hand, but all her attacks in that round take a -2 penalty." compset="RaceSpec" summary="+2 Str and 1d4 Claws when shifting.">
+    <comment>abValue = Ability Score bonus
+abValue2 = Misc ability bonus
+abValue3 = Natural Attack dmg bonus
+abValue4 = Not Used</comment>
+    <fieldval field="abValue" value="2"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="Shifter" tag="Razorclaw"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <bootstrap thing="wClaw">
+      <containerreq phase="First" priority="500">Shifter.Shifting</containerreq>
+      <autotag group="Value" tag="2"/>
+      <autotag group="wMain" tag="1d4_4"/>
+      <autotag group="Shifter" tag="Razorclaw"/>
+      </bootstrap>
+    <eval phase="PreAttr" priority="1000" index="2"><![CDATA[
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Give shifting bonus
+      hero.child[aSTR].field[Bonus].value += field[abValue].value
+      ~ Increase Razorclaw damage
+      Call ShifterDmg]]></eval>
+    </thing>
+  <thing id="raSTlongst" name="Longstride" description="While shifting, a longstride shifter gains a +2 bonus to Dexterity and a bonus of +10 feet to her base land speed." compset="RaceSpec" summary="+2 Dex and +10ft land speed when shifting.">
+    <comment>abValue = Ability Score bonus
+abValue2 = Misc ability bonus
+abValue3 = Natural Attack dmg bonus
+abValue4 = Not Used</comment>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="10"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Movement"/>
+    <tag group="Shifter" tag="Longstride"/>
+    <eval phase="PreAttr" priority="1000"><![CDATA[
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Give shifting bonus
+      hero.child[aDEX].field[Bonus].value += field[abValue].value
+      hero.child[Speed].field[Bonus].value += field[abValue2].value]]></eval>
+    </thing>
+  <thing id="raSTwildhu" name="Wildhunt" description="While shifting, a wildhunt shifter gains a +2 bonus to Constitution and the scent ability. This ability allows the shifter to detect approaching enemies, sniff out hidden foes, and track by sense of smell. A wildhunt shifter can identify familiar odors just as a human does familiar sights.\n\nA wildhunt shifter can detect opponents within 30 feet by sense of smell. If the opponent is upwind, the range increases to 60 feet; if downwind, it drops to 15 feet. Strong scents, such as smoke or rotting garbage, can be detected at twice the ranges noted above. Overpowering scents, such as skunk musk or troglodyte stench, can be detected at triple normal range. These stronger scents block other scents, so they can sometimes be used to confuse or hamper this shifter trait.\n\nWhen a wildhunt shifter detects a scent, the exact location of the source isn’t revealed - only its presence somewhere within range. The shifter can take a move action to note the direction of the scent. Whenever the shifter comes within 5 feet of the source, she pinpoints the source’s location.\n\nEven when not shifting, a wildhunt shifter gains a +2 bonus on Survival checks due to the lingering effects of the scent ability\n\nWhile shifting, a wildhunt shifter can follow tracks by smell, making Survival checks to find or follow a trail. The typical DC for a fresh trail is 10 (regardless of the surface that holds the scent). This DC increases or decreases depending on how strong the quarry’s odor is, the number of creatures producing the odor, and the age of the trail. For each hour that the trail grows cold, the DC increases by 2. This ability otherwise follows the rules for the Tracking with Survival skill. Shifters tracking by scent ignore the effects of surface conditions and poor visibility." compset="RaceSpec" summary="+2 Con and the scent ability when shifting.">
+    <comment>abValue = Ability Score bonus
+abValue2 = Misc ability bonus
+abValue3 = Natural Attack dmg bonus
+abValue4 = Not Used</comment>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="2"/>
+    <tag group="Shifter" tag="Wildhunt"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <bootstrap thing="xScent">
+      <containerreq phase="First" priority="500">Shifter.Shifting</containerreq>
+      </bootstrap>
+    <eval phase="PreAttr" priority="1000" index="2"><![CDATA[
+      ~ Bonus to Survival even when not shifting
+      #skillbonus[skSurvival] += field[abValue2].value
+
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Give shifting bonus
+      hero.child[aCON].field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="raSTdreams" name="Dreamsight" description="The dreamsight trait is the rarest of all shifter traits, and many dreamsight shifters become druids within shifter communities. Unlike other shifter traits, which increase a shifter’s physical abilities, the dreamsight trait sharpens a shifter’s instincts and awareness. While shifting, a dreamsight shifter temporarily gains a +2 bonus to Wisdom and gains the ability to communicate with animals as if under the effect of a {i}speak with animals{/i} spell. In addition, the shifter gains a +2 bonus on Handle Animal and wild empathy checks, even while not shifting." compset="RaceSpec" summary="+2 Wis and can {i}speak with animals{/I} when shifting.">
+    <comment>abValue = Ability Score bonus
+abValue2 = Misc ability bonus
+abValue3 = Natural Attack dmg bonus
+abValue4 = Not Used</comment>
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Shifter" tag="Dreamsight"/>
+    <bootstrap thing="spSpeawit1">
+      <containerreq phase="First" priority="250">Shifter.Shifting</containerreq>
+      <autotag group="Usage" tag="AtWill"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      </bootstrap>
+    <eval phase="First" priority="1000">~ +2 to Handle Animal
+      #skillbonus[skHandleAn] += 2
+      ~ +2 bonus to wild empathy
+      #value[cWildEmp] += 2</eval>
+    <eval phase="PreAttr" priority="1000" index="2"><![CDATA[
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Give shifting bonus
+      hero.child[aWIS].field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="raSTgorebu" name="Gorebrute" description="While shifting, a gorebrute shifter temporarily gains a +2 bonus to Strength and manifests powerful horns that can be used as a natural weapon, but only during a charge attack. (The horns are too awkward to use as a natural weapon in any circumstance other than a charge.) If a gorebrute shifter uses his horns in a charge attack, the horns function as a natural weapon, dealing 2d6 points of damage (plus an extra 1 point for every four character levels he has). A gorebrute shifter can’t combine a charge attack with his horns with any other attack, even if he has the ability to make more than one attack as part of a charge (such as from the pounce ability)." compset="RaceSpec" summary="+2 Str and 2d6 Horn attack when charging and shifting.">
+    <comment>abValue = Ability Score bonus
+abValue2 = Misc ability bonus
+abValue3 = Natural Attack dmg bonus
+abValue4 = Not Used</comment>
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Shifter" tag="Gorebrute"/>
+    <bootstrap thing="wGore">
+      <containerreq phase="First" priority="599">Shifter.Shifting</containerreq>
+      <autotag group="wMain" tag="2d6_104"/>
+      <autotag group="Helper" tag="NatTwoHand"/>
+      <autotag group="Helper" tag="NatPrimary"/>
+      <autotag group="Shifter" tag="Gorebrute"/>
+      <assignval field="livename" value="Charging Horns"/>
+      </bootstrap>
+    <eval phase="PreAttr" priority="1000"><![CDATA[
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Give shifting bonus
+      hero.child[aSTR].field[Bonus].value += field[abValue].value
+      ~ Give a bonus to all our Gorebrute natural damage
+      Call ShifterDmg]]></eval>
+    </thing>
+  <thing id="raSTswiftw" name="Swiftwing" description="While shifting, a swiftwing shifter temporarily gains a +2 bonus to Dexterity. His arms grow leathery flaps of skin or black feathers, which grant him a fly speed of 20 feet (average maneuverability). While airborne, the shifter can’t use his hands for anything other than flying, though he can still hold or carry objects. A shifter can’t fly while carrying a medium or heavy load or while wearing medium or heavy armor. A swiftwing shifter gains the Fly skill as a class skill." compset="RaceSpec" summary="+2 Dex and 20ft fly speed when shifting.">
+    <comment>abValue = Ability Score bonus
+abValue2 = Misc ability bonus
+abValue3 = Natural Attack dmg bonus
+abValue4 = Not Used</comment>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="20"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Shifter" tag="Swiftwing"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreAttr" priority="1000" index="2"><![CDATA[
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Give shifting bonus
+      hero.child[aDEX].field[Bonus].value += field[abValue].value
+      #value[xFly] += field[abValue2].value
+      perform hero.child[xFly].assign[Maneuver.Average]]]></eval>
+    <eval phase="First" priority="1000">~ Make Fly into a class skill
+      #makeclassskill[skFly]</eval>
+    </thing>
+  <thing id="raSTtruedi" name="Truedive" description="While shifting, a truedive shifter temporarily gains a +2 bonus to Constitution and a swim speed of 30 feet. Gaining a swim speed grants him a +8 racial bonus on Swim checks. In addition, the shifter can hold his breath for a number of rounds equal to 5 x his Constitution score before he risks drowning. A truedive shifter gains this benefit even when he isn’t shifting. A truedive shifter gains the Swim skill as a class skill." compset="RaceSpec" summary="+2 Con and 30ft swim speed when shifting.">
+    <comment>abValue = Ability Score bonus,abValue2 = Misc ability bonus,abValue3 = Natural Attack dmg bonus,abValue4 = Not Used</comment>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="30"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Shifter" tag="Truedive"/>
+    <eval phase="First" priority="1000">
+      ~ Make swim a class skill
+      #makeclassskill[skSwim]</eval>
+    <eval phase="PreAttr" priority="1000" index="2"><![CDATA[
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Give shifting bonus
+      hero.child[aCON].field[Bonus].value += field[abValue].value
+      #value[xSwim] += field[abValue2].value]]></eval>
+    </thing>
+  <thing id="rS2Changel" name="Changeling" description="Changelings are subtle shapeshifters capable of disguising their appearance. They evolved through the union of doppelgangers and humans, eventually becoming a separate race distinct from either ancestral tree. They do not possess the full shapechanging ability of a doppelganger, but they can create effective disguises at will. This ability makes them consummate spies and criminals, and many changelings live up to that potential.\n\n{b}Personality:{/b} In general, changelings are prudent and cautious, preferring to take risks only when they feel that their chances of success are good or the payoff is worth it. They appreciate the fi ner things in life and take great pleasure in the comforts of a wealthy lifestyle when they can obtain it. They avoid direct confrontation, preferring stealthy s trikes and h asty retreats whenev er possible. In conversation, they are soft-spoken but have a gift for drawing out more information than the other party intends to reveal.\n\n{b}Physical Description:{/b} Changelings strongly resemble their doppelganger lineage, with only a passing nod to their human heritage. All changelings fall within the boundaries of Medium size, usually standing between 5 and 6 feet tall. Unlike true doppelgangers, changelings do have gender in their natural form, although they can adopt any shape they like. Changelings have pale gray skin, and their hair is thin and fair. Their limbs are long and slightly out of proportion compared to other humanoids. Their faces have slightly more distinct features than a doppelganger’s, including a hint of nose and lips, though their eyes remain blank white and the rest of their facial features don’t look quite as fi nished as those on a human.\n\n{b}Alignment:{/b} Changelings of all alignments exist, but most gravitate toward the neutral alignment. They focus on their own concerns without any meaningful regard for laws or morals. Many have their own code of honor but are also fi ercely independent. Some refuse to engage in assassination, while others embrace that path as the most perfect form of the changeling art of deception.\n\n{b}Natural Linguist:{/b} Changelings add Linguistics to their list of class skills for any class they adopt.\n\n{B}Pathfinder:{/b} The changeling&apos;s &quot;Shape Change&quot; ability has been changed to act as Alter Self now instead of Disguse Self. This means when shape changing into a Medium creature they gain a +2 size bonus to Str.  When shape changed into a small sized creature they gain a +2 size bonus to Dex. This hopefully balances the race better vs Pathfinder core classes." compset="Race">
+    <usesource source="S2Eberron"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="ClassSkill" tag="skLinguist"/>
+    <tag group="Language" tag="lAuran"/>
+    <tag group="Language" tag="lDwarven"/>
+    <tag group="Language" tag="lElven"/>
+    <tag group="Language" tag="lGiant"/>
+    <tag group="Language" tag="lGnome"/>
+    <tag group="Language" tag="lHalfling"/>
+    <tag group="Language" tag="lTerran"/>
+    <tag group="Language" tag="lAboleth"/>
+    <tag group="Language" tag="lAbyssal"/>
+    <tag group="Language" tag="lAklo"/>
+    <tag group="Language" tag="Any"/>
+    <tag group="Language" tag="lAquan"/>
+    <tag group="Language" tag="lBoggard"/>
+    <tag group="Language" tag="lCelestial"/>
+    <tag group="Language" tag="lPFChelaxi"/>
+    <tag group="Language" tag="lCommonND"/>
+    <tag group="Language" tag="lCommon"/>
+    <tag group="Language" tag="lCyclops"/>
+    <tag group="Language" tag="lDarkFolk"/>
+    <tag group="Language" tag="lDraconic"/>
+    <tag group="Language" tag="lEttin"/>
+    <tag group="Language" tag="lGnoll"/>
+    <tag group="Language" tag="lGoblin"/>
+    <tag group="Language" tag="lPFHallit"/>
+    <tag group="Language" tag="lIgnan"/>
+    <tag group="Language" tag="lInfernal"/>
+    <tag group="Language" tag="lwdKitchen"/>
+    <tag group="Language" tag="lOrc"/>
+    <tag group="Language" tag="lOther"/>
+    <tag group="Language" tag="lSahaugin"/>
+    <tag group="Language" tag="lPFShoanti"/>
+    <tag group="Language" tag="lPFSkald"/>
+    <tag group="Language" tag="lSphinx"/>
+    <tag group="Language" tag="lPFStrix"/>
+    <tag group="Language" tag="lSylvan"/>
+    <tag group="Language" tag="lTengu"/>
+    <tag group="Language" tag="lTreant"/>
+    <tag group="Language" tag="lPFVarisia"/>
+    <tag group="Language" tag="lVegepygmy"/>
+    <tag group="Language" tag="lWorg"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="RaceType" tag="Normal"/>
+    <tag group="Eberron" tag="Race"/>
+    <bootstrap thing="raChangeMe"></bootstrap>
+    <bootstrap thing="raChangeSm"></bootstrap>
+    <bootstrap thing="raCHGslipm"></bootstrap>
+    <bootstrap thing="stShapecha"></bootstrap>
+    <bootstrap thing="raCHGmcsha"></bootstrap>
+    <bootstrap thing="raCHGintui"></bootstrap>
+    </thing>
+  <thing id="raCHGintui" name="Intuition" description="Changelings are inherently skilled in deception and intimidation, and though they cannot actually detect thoughts as doppelgangers can, they can intuitively read body language and attitude with surprising accuracy.  Changelings gain a +2 racial bonus on Bluff, Intimidate, and Sense Motive checks." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+
+      ~ set bonus to be +2
+      field[abValue].value += 2
+
+      ~ Bonus to Bluff, Intimdate, Sense Movtive
+      #skillbonus[skBluff] += field[abValue].value
+      #skillbonus[skIntim] += field[abValue].value
+      #skillbonus[skSenseMot] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="raCHGmcsha" name="Minor Change Shape" description="Changelings have the super natural ability to alter their appearance as though using a {i}disguise self{/i} or {i}alter self{/i} spell that affects their bodies but not their possessions. This ability is not an illusory effect, but a minor physical alteration of a changeling’s facial features, skin color and texture, and size, within the limits described for the spells. A changeling can use this ability at will, and the alteration lasts until she changes shape again. A changeling reverts to her natural form when killed. A true seeing spell reveals her natural form. When using this ability to create a disguise, a changeling receives a +10 circumstance bonus on Disguise checks. Using this ability is a full-round action." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="raCHGslipm" name="Slippery Minds" description="Changelings have slippery minds and gain a +2 racial bonus on saving throws a gainst sleep and charm effects." compset="RaceSpec">
+    <fieldval field="abValue" value="2"/>
+    <tag group="SpecType" tag="Defense"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ Situational note to all saves
+      #situational[hero.child[svAll],signed(field[abValue].value) & " racial bonus vs sleep and charm effects.",field[name].text]
+      ]]></eval>
+    </thing>
+  <thing id="raChangeMe" name="Shape Change (Medium)" description="If the form you take is that of a Medium humanoid, you gain a +2 size bonus to your Strength." compset="RaceSpec">
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ If we are not activated get out now
+      doneif (field[abilActive].value = 0)
+
+      ~ Add a +2 shape change bonus to our Strength
+      hero.child[aSTR].field[aStartMod].value += 2]]></eval>
+    <eval phase="PreLevel" priority="5000" index="2"><![CDATA[
+      ~ If we are not activated get out now
+      doneif (field[abilActive].value = 0)
+
+      #applybonus[ModCirc,hero.child[skDisguise],10]
+
+      ~Disable the other shape change
+      perform hero.child[raChangeSm].assign[Helper.ChgDisab1]]]></eval>
+    </thing>
+  <thing id="raChangeSm" name="Shape Change (Small)" description="If the form you take is that of a Small humanoid, you gain a +2 size bonus to your Dexterity." compset="RaceSpec">
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ If we are not activated get out now
+      doneif (field[abilActive].value = 0)
+
+      ~ Add a +2 shape change bonus
+      hero.child[aDEX].field[aStartMod].value += 2
+      ~Disable the other shape change
+      perform hero.child[raChangeMe].assign[Helper.ChgDisab1]
+      ]]></eval>
+    <eval phase="First" priority="20000" index="2"><![CDATA[
+      ~ If we are not activated get out now
+      doneif (field[abilActive].value = 0)
+
+      ~ Add to size - must come after race and template size set
+      herofield[tSize].value -= 1
+      ~ +10 circumstance bonus to disguise skill
+      #applybonus[ModCirc,hero.child[skDisguise],10]
+      ]]></eval>
+    </thing>
+  <thing id="fcBbnShift" name="Shifter Barbarian" description="Add 1 to the shifter&apos;s total number of rage rounds per day." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1 rage round/day"/>
+    <usesource source="S2Eberron"/>
+    <tag group="FavClass" tag="cBarbarian" name="Barbarian" abbrev="Barbarian"/>
+    <tag group="IsRace" tag="rShifters"/>
+    <eval phase="PostAttr" priority="10000">
+      field[abValue].value += field[fcCount].value
+      #trkmax[cBbnRage] += field[abValue].value</eval>
+    </thing>
+  <thing id="fcRgrShift" name="Shifter Ranger" description="Add a +1/2 bonus on wild empathy checks to influence animals and magical beasts." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ Wild Empathy"/>
+    <usesource source="S2Eberron"/>
+    <tag group="IsRace" tag="rShifters"/>
+    <tag group="FavClass" tag="cRanger" name="Ranger" abbrev="Ranger"/>
+    <eval phase="PostAttr" priority="10000">
+      field[abValue].value += round(field[fcCount].value/2,0,-1)
+      #value[cWildEmp] += field[abValue].value</eval>
+    </thing>
+  <thing id="raS2ShftTA" name="Shifter TAGS" description="This thing just holds all the Shifter Tags." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Custom" tag="ShifterBH" name="Shifter Beast Hide"/>
+    <tag group="Custom" tag="ShifterCW" name="Shifter Cliff Walker"/>
+    <tag group="Custom" tag="ShifterDS" name="Shifter Dreamsight"/>
+    <tag group="Custom" tag="ShifterGB" name="Shifter Gorebrute"/>
+    <tag group="Custom" tag="ShifterLS" name="Shifter Longstrider"/>
+    <tag group="Custom" tag="ShifterLT" name="Shifter Longtooth"/>
+    <tag group="Custom" tag="ShifterRC" name="Shifter Razorclaw"/>
+    <tag group="Custom" tag="ShifterSW" name="Shifter Swiftwing"/>
+    <tag group="Custom" tag="ShifterTD" name="Shifter Truedive"/>
+    <tag group="Custom" tag="ShifterWH" name="Shifter Wildhunt"/>
+    </thing>
+  <thing id="stS2Living" name="Living" description="Warforged are constructs with the living construct subtype. A living construct is a created being given sentience and free will through powerful and complex creation enchantments.{br}{br}Warforged are living constructs that combine aspects of both constructs and living creatures, as detailed below.{br}{br}{i}Features:{/i} As a living construct, a warforged has the following features.{br}{br} - A warforged derives its Hit Dice, base attack bonus progression, saving throws, and skill points from the class it selects.{br}{br}{i}Traits:{/i} A warforged possesses the following traits.{br}{br} - Unlike other constructs, a warforged has a Constitution score.{br}{br} - Unlike other constructs, a warforged does not have low-light vision or darkvision.{br}{br} - Unlike other constructs, a warforged is not immune to mind-affecting spells and abilities.{br}{br} - Immunity to poison, sleep effects, paralysis, disease, nausea, fatigue, exhaustion, effects that cause the sickened condition, and energy drain.{br}{br} - A warforged cannot heal damage naturally.{br}{br} - Unlike other constructs, warforged are subject to critical hits, nonlethal damage, stunning, ability damage, ability drain, and death effects or necromancy effects.{br}{br} - As living constructs, warforged can be affected by spells that target living creatures as well as by those that target constructs. Damage dealt to a warforged can be healed by a {i}cure light wounds{/i} spell or a {i}repair light damage{/i} spell, for example, and a warforged is vulnerable to {i}disable construct{/i} and {i}harm{/i}. However, spells from the healing subschool and supernatural abilities that cure hit point damage or ability damage provide only half their normal effect to a warforged." compset="Subtype" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="NeedType" tag="tpConst"/>
+    <bootstrap thing="raS2WarImm"></bootstrap>
+    <eval phase="First" priority="510">perform hero.assign[NoTypeAbil.tpConst]</eval>
+    </thing>
+  <thing id="raS2WarImm" name="Warforged Immunity" description="Immunity to poison, sleep effects, paralysis, disease, nausea, fatigue, exhaustion, effects that cause the sickened condition, and energy drain." compset="RaceSpec">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="rS2Warforg" name="Warforged" description="Built as mindless machines to fight in the Last War, the warforged developed sentience as a side effect of the arcane experiments that sought to make them the ultimate weapons of destruction. With each successive model that emerged from the creation forges of House Cannith, the warforged evolved until they became a new kind of creature - living constructs.\n\nWarforged are renowned for their combat prowess, their size, and their single-minded focus. They make steadfast allies and fearsome enemies. Earlier warforged models are true constructs; some of these remnants of the Last War appear in monstrous varieties, such as the warforged titan (described on page 302).\n\n{b}Personality:{/b} The warforged were made to fight in the Last War, and they continue to fulfill their purpose with distinction. They fight fiercely and usually without remorse, displaying adaptability impossible for mindless constructs. Now that the war has ended, the warforged seek to adapt to life in this era of relative peace. Some have settled easily into new roles as artisans or laborers, while others wander as adventurers or even continue fi ghting the Last War despite the return of peace.\n\n{b}Physical Description:{/b} Warforged appear as massive humanoids molded from a composite of materials - obsidian, iron, stone, darkwood, silver, and organic material - though they move with a surprising grace and fl exibility. Flexible plates connected by fi brous bundles make up the body of a warforged, topped by a mostly featureless head.\n\nWarforged have no physical distinction of gender; all of them have a basically muscular, sexless body shape. In personality, some warforged seem more masculine or feminine, but different people might judge the same warforged in different ways. The warforged themselves seem unconcerned with matters of gender. They do not age naturally, though their bodies do decay slowly even as their minds improve through learning and experience.\n\n{b}Relations:{/b} As the warforged strive to fi nd a place in society for themselves after the Last War, they simultaneously struggle to fi nd ways to relate to the races that created them. In general, the humanoid races of Khorvaire regard the warforged as an unpleasant reminder of the brutality of the Last War and avoid dealing with them when possible.\n\nIn Thrane and Karrnath, the warforged are still seen as the property of the military forces that paid to have them built, and most warforged in those nations serve as slave labor, often used to repair buildings and roads damaged or destroyed in the war. Throughout the rest of Khorvaire, they have freedom but sometimes fi nd themselves the victims of discrimination, hard-pressed to fi nd work or any kind of acceptance. Most warforged, not being particularly emotional creatures, accept their struggles and servitude with equanimity, but others seethe with resentment against all other races as well as those warforged whose only desire is to please their &amp;quot;masters.&amp;quot;\nUnique among constructs, warforged have learned to modify their bodies through magic and training. Many warforged are adorned with heavier metal plates than those their creator originally endowed them with. This customized armor, built-in weaponry, and other enhancements to their physical form help to differentiate one warforged from another.\n\n{B}Pathfinder:{/b} The warforged body feats have been changed to racial option that you select at character creation. This fits into the pathfinder design much better." compset="Race">
+    <fieldval field="rCON" value="2"/>
+    <fieldval field="rWIS" value="-2"/>
+    <fieldval field="rCHA" value="-2"/>
+    <fieldval field="rGiveSpec" value="1"/>
+    <fieldval field="rSpecSing" value="Warforged Armor"/>
+    <fieldval field="rSpecName" value="Warforged Armors"/>
+    <fieldval field="rAgeMin" value="1"/>
+    <usesource source="S2Eberron"/>
+    <tag group="HasType" tag="tpConst"/>
+    <tag group="RaceType" tag="Normal"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Eberron" tag="Race"/>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d4_4"/>
+      <autotag group="Value" tag="1"/>
+      <autotag group="Warforged" tag="Slam"/>
+      </bootstrap>
+    <bootstrap thing="fcFtrWarfo"></bootstrap>
+    <bootstrap thing="stS2Living"></bootstrap>
+    <bootstrap thing="raS2WarDie"></bootstrap>
+    <bootstrap thing="raS2WarVul"></bootstrap>
+    <bootstrap thing="raS2WarCon"></bootstrap>
+    <bootstrap thing="raWfFortif"></bootstrap>
+    <eval phase="Final" priority="50000"><![CDATA[
+       ~ Set Warforged Paladin lay on hands special note
+       #appenddesc[cPalLayHnd,"{b}ECS pg39{/b} When a warforged paladin gains the ability to lay on hands to heal wounds, he can use this ability to repair his own damage or damage sustained by other constructs and constructlike beings, as well as wounds sustained by his nonwarforged companions. The ability functions as either curative or repair magic, as appropriate to the subject."]]]></eval>
+    </thing>
+  <thing id="mS2CompBod" name="Composite Plating" compset="Armor" holdable="no">
+    <usesource source="S2Eberron"/>
+    <tag group="ArmorMaxDx" tag="1000"/>
+    <tag group="ArmorCheck" tag="0"/>
+    <tag group="ArmorArcFl" tag="5"/>
+    <tag group="ArmorClass" tag="Light"/>
+    <tag group="Helper" tag="AutoEquip"/>
+    <tag group="ArmorAC" tag="2"/>
+    <tag group="Helper" tag="NoPrereq"/>
+    <tag group="Helper" tag="NoSelect" name="NoSelect" abbrev="NoSelect"/>
+    <tag group="Helper" tag="Helper" name="Helper" abbrev="Helper"/>
+    <tag group="Helper" tag="AlwaysMast"/>
+    <eval phase="Final" priority="10000" index="2">perform hero.assign[Warforged.Armor]</eval>
+    <eval phase="PreLevel" priority="5000">perform assign[Helper.Proficient]</eval>
+    <prereq message="If you want a special material composite plating pick a different body type.">
+      <validate><![CDATA[
+        ~ If not a pick then we are valid
+        validif (@ispick <> 1)
+        ~ We can't have any other special material
+        validif (tagcount[Ability.e?] - tagcount[Ability.eNormal] = 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="iS2CompBod" name="Composite Plating" description="The plating used to build a warforged provides a +2 armor bonus. This plating is not natural armor and does not stack with other effects that give an armor bonus (other than natural armor). This composite plating occupies the same space on the body as a suit of armor or a robe, and thus a warforged cannot wear armor or magic robes. Composite plating also provides a warforged with a 5% arcane spell failure chance, similar to the penalty for wearing light armor. Any class ability that allows a warforged to ignore the arcane spell failure chance for light armor lets him ignore this penalty as well.\n\nWarforged can be enchanted just as armor can be. The character must be present for the entire time it takes to enchant him.\n\n{B}Note:{/b} With the Pathfinder changes this will now count as Light armor for all purposes meaning it will not work for a Monk character.  In such a case please take the &quot;Unarmored Body&quot; instead which will apply as NO armor." compset="MagicArmor">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="Helper" name="Helper" abbrev="Helper"/>
+    <tag group="Helper" tag="CustomItem" name="CustomItem" abbrev="CustomItem"/>
+    <tag group="Helper" tag="Shadow" name="Shadow" abbrev="Shadow"/>
+    <tag group="Helper" tag="NoSelect" name="NoSelect" abbrev="NoSelect"/>
+    <containerreq phase="GlobalTest" priority="0">TRUE</containerreq>
+    <eval phase="PreLevel" priority="5000">
+      ~ Call Magic Armor Gizmo
+      Call iMagArmor
+      ~ Make us proficient with our own bodies
+      perform assign[Helper.Proficient]</eval>
+    <eval phase="Render" priority="99999999" index="2"><![CDATA[
+      ~ Do to the way the Material bootstrap changes the name we need to
+      ~ add this line to make the name correct again.
+      field[livename].text &= " " & field[thingname].text]]></eval>
+    <child entity="gMagArmor">
+      <tag group="Helper" tag="NoSelChild" name="NoSelChild"/>
+      <bootstrap thing="mS2CompBod">
+        <autotag group="Helper" tag="Forward"/>
+        </bootstrap>
+      </child>
+    </thing>
+  <thing id="raWfFortif" name="Fortification" description="When a critical hit or sneak attack is scored on a warforged, there is a chance that the critical hit or sneak attack is negated and damage is instead rolled normally." compset="RaceSpec">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Defense"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+
+      ~ Set the livename
+      field[livename].text = field[thingname].text & " " & field[abValue].value & "%"]]></eval>
+    <eval phase="First" priority="10000" index="2">
+      ~ Set fortification to 25% as default for race
+      field[abValue].value += 25</eval>
+    </thing>
+  <thing id="mS2AdamBod" name="Adamantine Body" compset="Armor" holdable="no">
+    <usesource source="S2Eberron"/>
+    <tag group="ArmorMaxDx" tag="1"/>
+    <tag group="ArmorCheck" tag="5"/>
+    <tag group="ArmorArcFl" tag="35"/>
+    <tag group="ArmorClass" tag="Heavy"/>
+    <tag group="Helper" tag="AutoEquip"/>
+    <tag group="ArmorAC" tag="8"/>
+    <tag group="Helper" tag="NoPrereq"/>
+    <tag group="Helper" tag="NoSelect" name="NoSelect" abbrev="NoSelect"/>
+    <tag group="Helper" tag="Helper" name="Helper" abbrev="Helper"/>
+    <tag group="ArmorCateg" tag="Slows"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="Helper" tag="AlwaysMast"/>
+    <eval phase="First" index="2">perform hero.assign[Warforged.Armor]</eval>
+    <eval phase="PreLevel" priority="5000">perform assign[Helper.Proficient]</eval>
+    <prereq message="This body armor is already made out of a special material and can&apos;t add another.">
+      <validate><![CDATA[
+        ~ If not a pick then we are valid
+        validif (@ispick <> 1)
+        ~ We can't have any other special material
+        validif (tagcount[Ability.e?] - tagcount[Ability.eNormal] = 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="iS2AdamBod" name="Adamantine Body" description="The plating used to build a warforged provides a +8 armor bonus and you gain damage reduction 2/adamantine. However, your base land speed is reduced to 20 feet, and you are considered to be wearing heavy armor. You have a +1 maximum Dexterity bonus to AC, a -5 armor check penalty, and an arcane spell failure chance of 35%.\n\nThis plating is not natural armor and does not stack with other effects that give an armor bonus (other than natural armor). This composite plating occupies the same space on the body as a suit of armor or a robe, and thus a warforged cannot wear armor or magic robes. Warforged can be enchanted just as armor can be. The character must be present for the entire time it takes to enchant him." compset="MagicArmor">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="CustomItem"/>
+    <tag group="Helper" tag="Shadow"/>
+    <tag group="Helper" tag="NoSelect"/>
+    <containerreq phase="GlobalTest" priority="0">TRUE</containerreq>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ Call Magic Armor Gizmo
+      Call iMagArmor
+      ~ Make us proficient in the use of our own body
+      perform assign[Helper.Proficient]
+      ~ Give 2/Adamatine DR
+      #applydr[xDamRdAdam,2]
+      ]]></eval>
+    <eval phase="Render" priority="99999999" index="2"><![CDATA[
+      ~ Do to the way the Material bootstrap changes the name we need to
+      ~ add this line to make the name correct again.
+      field[livename].text &= " Body"
+      ]]></eval>
+    <child entity="gMagArmor">
+      <tag group="Helper" tag="NoSelChild" name="NoSelChild"/>
+      <bootstrap thing="mS2AdamBod">
+        <autotag group="Helper" tag="Forward"/>
+        </bootstrap>
+      <bootstrap thing="eAdamant"></bootstrap>
+      </child>
+    </thing>
+  <thing id="mS2MithBod" name="Mithral Body" compset="Armor" holdable="no">
+    <usesource source="S2Eberron"/>
+    <tag group="ArmorMaxDx" tag="3"/>
+    <tag group="ArmorCheck" tag="4"/>
+    <tag group="ArmorArcFl" tag="25"/>
+    <tag group="ArmorClass" tag="Light"/>
+    <tag group="Helper" tag="AutoEquip"/>
+    <tag group="ArmorAC" tag="5"/>
+    <tag group="Helper" tag="NoPrereq"/>
+    <tag group="Helper" tag="NoSelect" name="NoSelect" abbrev="NoSelect"/>
+    <tag group="Helper" tag="Helper" name="Helper" abbrev="Helper"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="Helper" tag="AlwaysMast"/>
+    <eval phase="First" index="2">perform hero.assign[Warforged.Armor]</eval>
+    <eval phase="PreLevel" priority="5000">perform assign[Helper.Proficient]</eval>
+    <prereq message="This body armor is already made out of a special material and can&apos;t add another.">
+      <validate><![CDATA[
+~ If not a pick then we are valid
+validif (@ispick <> 1)
+~ We can't have any other special material
+validif (tagcount[Ability.e?] - tagcount[Ability.eNormal] = 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="iS2MithBod" name="Mithral Body" description="The plating used to build a warforged provides a +5, and you are considered to be wearing light armor. You now have a +5 maximum Dexterity bonus to AC, a -2 armor check penalty, and an arcane spell failure chance of 15%.\n\nThis plating is not natural armor and does not stack with other effects that give an armor bonus (other than natural armor). This composite plating occupies the same space on the body as a suit of armor or a robe, and thus a warforged cannot wear armor or magic robes. Warforged can be enchanted just as armor can be. The character must be present for the entire time it takes to enchant him." compset="MagicArmor">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="Helper" name="Helper" abbrev="Helper"/>
+    <tag group="Helper" tag="CustomItem" name="CustomItem" abbrev="CustomItem"/>
+    <tag group="Helper" tag="Shadow" name="Shadow" abbrev="Shadow"/>
+    <tag group="Helper" tag="NoSelect" name="NoSelect" abbrev="NoSelect"/>
+    <containerreq phase="GlobalTest" priority="0">TRUE</containerreq>
+    <eval phase="PreLevel" priority="5000">Call iMagArmor
+perform assign[Helper.Proficient]</eval>
+    <eval phase="Render" priority="99999999" index="2"><![CDATA[~ Do to the way the Material bootstrap changes the name we need to
+~ add this line to make the name correct again.
+field[livename].text &= " Body"]]></eval>
+    <child entity="gMagArmor">
+      <tag group="Helper" tag="NoSelChild" name="NoSelChild"/>
+      <bootstrap thing="mS2MithBod">
+        <autotag group="Helper" tag="Forward"/>
+        </bootstrap>
+      <bootstrap thing="eMithral"></bootstrap>
+      </child>
+    </thing>
+  <thing id="mS2IronBod" name="Ironwood Body" compset="Armor" holdable="no">
+    <usesource source="srcRaOfEb"/>
+    <tag group="ArmorCheck" tag="4"/>
+    <tag group="ArmorArcFl" tag="20"/>
+    <tag group="ArmorClass" tag="Light"/>
+    <tag group="Helper" tag="AutoEquip"/>
+    <tag group="ArmorAC" tag="3"/>
+    <tag group="Helper" tag="NoPrereq"/>
+    <tag group="Helper" tag="NoSelect" name="NoSelect" abbrev="NoSelect"/>
+    <tag group="Helper" tag="Helper" name="Helper" abbrev="Helper"/>
+    <tag group="Helper" tag="AlwaysMast"/>
+    <tag group="ArmorMaxDx" tag="4"/>
+    <eval phase="Final" priority="10000" index="2">perform hero.assign[Warforged.Armor]</eval>
+    <eval phase="PreLevel" priority="5000">perform assign[Helper.Proficient]</eval>
+    <prereq message="This body armor is already made out of a special material and can&apos;t add another.">
+      <validate><![CDATA[
+~ If not a pick then we are valid
+validif (@ispick <> 1)
+~ We can't have any other special material
+validif (tagcount[Ability.e?] - tagcount[Ability.eNormal] = 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="iS2IronBod" name="Ironwood Body" description="The plating used to build a warforged provides a +5, and you are considered to be wearing light armor. You now have a +5 maximum Dexterity bonus to AC, a -2 armor check penalty, and an arcane spell failure chance of 15%.  Unlike the other body feats, a warforged druid who takes ironwood body can cast druid spells and use the druid&apos;s supernatural and spell-like abilities.\n\nThis plating is not natural armor and does not stack with other effects that give an armor bonus (other than natural armor). This composite plating occupies the same space on the body as a suit of armor or a robe, and thus a warforged cannot wear armor or magic robes. Warforged can be enchanted just as armor can be. The character must be present for the entire time it takes to enchant him." compset="MagicArmor">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="CustomItem" name="CustomItem" abbrev="CustomItem"/>
+    <tag group="Helper" tag="Shadow" name="Shadow" abbrev="Shadow"/>
+    <tag group="Helper" tag="NoSelect" name="NoSelect" abbrev="NoSelect"/>
+    <tag group="Helper" tag="Helper" name="Helper" abbrev="Helper"/>
+    <containerreq phase="GlobalTest" priority="0">TRUE</containerreq>
+    <eval phase="Render" priority="99999999" index="2"><![CDATA[~ Do to the way the Material bootstrap changes the name we need to
+~ add this line to make the name correct again.
+field[livename].text &= " Body"]]></eval>
+    <eval phase="PreLevel" priority="5000">~ Call magic armor gizmo
+Call iMagArmor
+~ Make us profcient with our own body
+perform assign[Helper.Proficient]
+~ Give us 2/Slashing DR
+#applydr[xDamRdS,2]</eval>
+    <child entity="gMagArmor">
+      <tag group="Helper" tag="NoSelChild" name="NoSelChild"/>
+      <bootstrap thing="mS2IronBod">
+        <autotag group="Helper" tag="Forward"/>
+        </bootstrap>
+      <bootstrap thing="eIronwood"></bootstrap>
+      </child>
+    </thing>
+  <thing id="fcFtrWarfo" name="Warforged Fighter" description="Add a +1 bonus on initiative checks." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1 initiative"/>
+    <usesource source="S2Eberron"/>
+    <tag group="FavClass" tag="cFighter"/>
+    <tag group="IsRace" tag="rS2Warforg"/>
+    <eval phase="PostAttr" priority="10000">field[abValue].value += field[fcCount].value
+hero.child[Initiative].field[Bonus].value += field[abValue].value</eval>
+    </thing>
+  <thing id="raS2WarVul" name="Warforged Vulnerabilities" description="The unusual physical construction of warforged makes them vulnerable to certain spells and effects that normally don&apos;t affect living creatures. A warforged takes damage from {i}heat metal{/i} and {i}chill metal{/i} as if he were wearing metal armor. Likewise, a warforged is affected by {i}repel metal or stone{/i} as if he were wearing metal armor. A warforged is repelled by {i}repel wood.{/i} The iron in the body of a warforged makes him vulnerable to {i}rusting grasp.{/i} The creature takes 2d6 points of damage from the spell (Refl ex half; save DC 14 + caster&apos;s ability modifier). A warforged takes the same damage from a rust monster&apos;s touch (Refl ex DC 17 half). Spells such as {i}stone to flesh, stone shape, warp wood,{/i} and {i}wood shape{/i} affect objects only, and thus cannot be used on the stone and wood parts of a warforged." compset="RaceSpec">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="Weakness"/>
+    </thing>
+  <thing id="raS2WarDie" name="Die Hard" description="A warforged responds slightly differently from other living creatures when reduced to 0 hit points.  A warforged with 0 hit points is disabled, just like a living creature. He can only take a single move action or standard action in each round, but strenuous activity does not risk further injury. When his hit points are less than 0 and greater than -10, a warforged is inert. He is unconscious and helpless, and he cannot perform any actions. However, an inert warforged does not lose additional hit points unless more damage is dealt to him, as with a living creature that is stable." compset="RaceSpec">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raS2WarCon" name="Consume" description="A warforged does not need to eat, sleep, or breathe, but he can still benefit from the effects of consumable spells and magic items such as {i}heroes&apos; feast{/i} and potions." compset="RaceSpec">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="rcWFBody01" name="Composite Plating" description="The plating used to build a warforged provides a +2 armor bonus. This plating is not natural armor and does not stack with other effects that give an armor bonus (other than natural armor). This composite plating occupies the same space on the body as a suit of armor or a robe, and thus a warforged cannot wear armor or magic robes. Composite plating also provides a warforged with a 5% arcane spell failure chance, similar to the penalty for wearing light armor. Any class ability that allows a warforged to ignore the arcane spell failure chance for light armor lets him ignore this penalty as well.\n\nWarforged can be enchanted just as armor can be. The character must be present for the entire time it takes to enchant him.\n\n{B}Note:{/b} With the Pathfinder changes this will now count as Light armor for all purposes meaning it will not work for a Monk character.  In such a case please take the &quot;Unarmored Body&quot; instead which will apply as NO armor." compset="RaceCustom" summary="+2 armor bonus and 5% spell failure." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="rS2Warforg"/>
+    <bootstrap thing="iS2CompBod">
+      <autotag group="Helper" tag="Displace"/>
+      </bootstrap>
+    <eval phase="First">~ Assign Body tag to hero
+perform hero.assign[Warforged.Composite]
+~ Assign Armored tag to hero
+perform hero.assign[Warforged.Armored]</eval>
+    </thing>
+  <thing id="rcWFBody02" name="Adamantine Body" description="{i}At the cost of mobility, a warforged character&apos;s body can be crafted with a layer of adamantine that provides formidable protective armor and some damage reduction.{/i}\n\nThe plating used to build a warforged provides a +8 armor bonus and you gain damage reduction 2/adamantine. However, your base land speed is reduced to 20 feet, and you are considered to be wearing heavy armor. You have a +1 maximum Dexterity bonus to AC, a -5 armor check penalty, and an arcane spell failure chance of 35%.\n\nThis plating is not natural armor and does not stack with other effects that give an armor bonus (other than natural armor). This composite plating occupies the same space on the body as a suit of armor or a robe, and thus a warforged cannot wear armor or magic robes. Warforged can be enchanted just as armor can be. The character must be present for the entire time it takes to enchant him." compset="RaceCustom" summary="+8AC, +1 Dex, -5ACP, DR 2/adamantine, 35% spell failure." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="rS2Warforg"/>
+    <bootstrap thing="iS2AdamBod">
+      <autotag group="Helper" tag="Displace"/>
+      </bootstrap>
+    <eval phase="First">
+      ~ Assign Body tag to hero
+      perform hero.assign[Warforged.Adamantine]
+      ~ Assign Armored tag to hero
+      perform hero.assign[Warforged.Armored]</eval>
+    </thing>
+  <thing id="rcWFBody03" name="Mithral Body" description="{i}Your body is crafted with a layer of mithral that provides some protection without hindering speed or gracefulness.{/i}\n\nThe plating used to build a warforged provides a +5, and you are considered to be wearing light armor. You now have a +5 maximum Dexterity bonus to AC, a -2 armor check penalty, and an arcane spell failure chance of 15%.\n\nThis plating is not natural armor and does not stack with other effects that give an armor bonus (other than natural armor). This composite plating occupies the same space on the body as a suit of armor or a robe, and thus a warforged cannot wear armor or magic robes. Warforged can be enchanted just as armor can be. The character must be present for the entire time it takes to enchant him." compset="RaceCustom" summary="+5 AC, +5 Dex, -2ACP, 15% spell failure." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="rS2Warforg"/>
+    <bootstrap thing="iS2MithBod">
+      <autotag group="Helper" tag="Displace"/>
+      </bootstrap>
+    <eval phase="First">
+      ~ Assign Body tag to hero
+      perform hero.assign[Warforged.Mithral]
+      ~ Assign Armored tag to hero
+      perform hero.assign[Warforged.Armored]</eval>
+    </thing>
+  <thing id="rcWFBody04" name="Ironwood Body" description="{I}Your body is crafted with a layer of hard ironwood that cushions blows{/i}\n\nThe plating used to build a warforged provides a +3 armor bonus and you gain damage reduction 2/slashing, and you are considered to be wearing light armor. You have a +4 maximum Dexterity bonus to AC, a -3 armor check penalty, and an arcane spell failure chance of 20%.\n\nThis plating is not natural armor and does not stack with other effects that give an armor bonus (other than natural armor). This composite plating occupies the same space on the body as a suit of armor or a robe, and thus a warforged cannot wear armor or magic robes. Unlike the Adamantine Body and Mithral Body, warforged druids who take this feat can cast druid spells and use the druid&apos;s supernatural and spell-like abilites.\n\nWarforged can be enchanted just as armor can be. The character must be present for the entire time it takes to enchant him." compset="RaceCustom" summary="+5 AC, +5 Dex, -2ACP, 15% spell failure." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="AllowRCust" tag="rS2Warforg"/>
+    <bootstrap thing="iS2IronBod">
+      <autotag group="Helper" tag="Displace"/>
+      </bootstrap>
+    <eval phase="First">
+      ~ Assign Body tag to hero
+      perform hero.assign[Warforged.Ironwood]
+      ~ Assign Armored tag to hero
+      perform hero.assign[Warforged.Armored]</eval>
+    </thing>
+  <thing id="rcWFBody05" name="Unarmored Body" description="{I}Your body is crafted without its normal layer of armor trading off physical strength for magical potential.{/i}\n\nYou lose the normal +2 armor bonus common to warforged characters, but you have no inherent chance of spell failure, do not count to be wearing armor, gain a +1 natural armor bonus and can wear armor or magic robes and gain their full effects." compset="RaceCustom" summary="+1AC and you can wear armor or magic robes." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="rS2Warforg"/>
+    <eval phase="First">
+      ~ +1 Natural AC Bonus
+      hero.child[ArmorClass].field[tACNatural].value += 1
+      ~ Assign Unarmored tag to hero
+      perform hero.assign[Warforged.Unarmored]</eval>
+    </thing>
+  <thing id="rS2Kalasht" name="Kalashtar" description="The kalashtar are a compound race: incorporeal entities from the alien plane of Dal Quor, the Region of Dreams, merged with human bodies and spirits to form a distinct species. They were once a minority among the quori, the native race of Dal Quor, hunted and persecuted for their religious beliefs. Thousands of years after the quori invaded Eberron and the connection between their plane and the Material Plane was severed, the kalashtar were the fi rst of the quori to discover a means to reach the Material Plane once more. Fleeing persecution, they transformed their physical forms into psychic projections that allowed them to enter the Material Plane and possess willing humans. Today, new kalashtar are born, not possessed; neither spirit nor human, they are a new race that breeds true.\n\nIt took three hundred years for the other quori to discover a similar means to psychically project their spirits out of Dal Quor and possess human bodies, forming the Inspired (see page 290), while leaving their own bodies behind - much as mortals project their minds to Dal Quor when they dream. For fi fteen hundred years now, the Inspired in their vast kingdom of Riedra have continued to persecute and oppress the kalashtar.\n\n{b}Personality:{/b} As a true hybrid of human hosts and quori spirits, the kalashtar possess keen intellects but are not ruled by logic. They seek the perfection of their minds and spirits, often to the exclusion of any physical pursuits.\n\nThey are generally warm and compassionate, but their manners and ways of thinking are alien to the native races of Eberron. They are more interested in psionics than in the magic that pervades Khorvaire, and often lace their discourse with esoteric terms such as &quot;matter,&quot; &quot;kinetics,&quot; and &quot;ectoplasm.&quot; The kalashtar are outcasts from their home plane and can never return there - not even in dream. The combination of life in exile and a dreamless existence makes the kalashtar slightly inclined toward madness, and some have speculated that the kalashtar devote themselves to psychic and physical discipline in order to keep themselves safely sane." compset="Race">
+    <fieldval field="rGiveSpec" value="1"/>
+    <fieldval field="rSpecSing" value="Ethnicity"/>
+    <fieldval field="rSpecName" value="Ethnicities"/>
+    <usesource source="S2Eberron"/>
+    <tag group="HasType" tag="tpHumanoid"/>
+    <tag group="Eberron" tag="Race"/>
+    <tag group="Helper" tag="OptCustom"/>
+    <tag group="Language" tag="lDraconic"/>
+    <tag group="RaceType" tag="Normal"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <bootstrap thing="raS2NoDrea"></bootstrap>
+    <bootstrap thing="raS2NatPsi"></bootstrap>
+    <bootstrap thing="raS2Mindli"></bootstrap>
+    <bootstrap thing="lS2Quor"></bootstrap>
+    <bootstrap thing="stS2Kalash"></bootstrap>
+    <bootstrap thing="raS2DualSp"></bootstrap>
+    <bootstrap thing="raS2SocInt"></bootstrap>
+    <bootstrap thing="raS2HumLoo"></bootstrap>
+    </thing>
+  <thing id="lS2Quor" name="Quori" description="Quor is a hissing, guttural tongue more suited to the alien forms of the quori than their humanoid hosts. It has its own written form, a flowing, elegant script with many circular letters." compset="Language" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    </thing>
+  <thing id="stS2Kalash" name="Kalashtar" compset="Subtype" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="NeedType" tag="tpHumanoid"/>
+    </thing>
+  <thing id="raS2DualSp" name="Dual Spirts" description="The kalashtar&apos;s dual spirits help them resist spells that target their minds as such gain a +2 racial bonus on saving throws against mind-affecting spells and abilities, and possession." compset="RaceSpec" summary="+2 racial bonus vs mind-affecting spells and effects.">
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #situational[hero.child[svAll],"+2 racial bonus vs mind-affecting spells and effects.",field[name].text]]]></eval>
+    </thing>
+  <thing id="raS2SocInt" name="Social Interaction" description="Kalashtar are masters of social interaction, influencing others through their commanding presence and subtle psychic powers and gain a +2 racial bonus on Bluff, Diplomacy, and Intimidate checks." compset="RaceSpec">
+    <fieldval field="abValue" value="2"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      
+      ~ Give a racial bonus to Bluff, Diplomacy, and Intimidate
+      #racialbonus[skBluff] += field[abValue].value
+      #racialbonus[skDiplo] += field[abValue].value
+      #racialbonus[skIntim] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="raS2HumLoo" name="Human Looking" description="Kalashtar have a close physical resemblance to humans and gain a +2 racial bonus on Disguise checks made to impersonate a human." compset="RaceSpec" summary="+2 racial bonus on Disguise checks made to impersonate a human.">
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #situational[hero.childfound[skDisguise],"+2 racial bonus to impersonate a human.",field[name].text]]]></eval>
+    </thing>
+  <thing id="raS2NoDrea" name="No Dreams" description="Kalashtar sleep but they do not dream. As such, they have immunity to the {i}dream{/i} and {i}nightmare{/i} spells, as well as any other effect that relies on the target&apos;s ability to dream." compset="RaceSpec" summary="Immunity to the {i}dream{/i} and {i}nightmare{/i} spells">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="Defense"/>
+    </thing>
+  <thing id="raS2NatPsi" name="Naturally Psionic" description="Gain 1 extra power point per character level, regardless of whether you choose a psionic class.\n\n{B}Note:{/b} This ability works with {i}Ultimate Psionics{/i} that can be found in the Community 3PP Pack." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="PsiLike"/>
+    <eval phase="PostLevel" priority="20000"><![CDATA[
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+
+      ~ give level bonus to Pisonics Power Points Max value
+      #resmax[resPowerPt] += #totallevelcount[]]]></eval>
+    </thing>
+  <thing id="raS2Mindli" name="Mindlink" description="Psi-Like Abilities: {i}Mindlink{/i} (1/day){i}.{/i} This ability is like the power manifested by a wilder of 1/2 the kalashtar&apos;s Hit Dice (minimum 1st level).\n\nIf you are not using the {i}Ultimate Psionics{/i} in your game, use this description of the {i}mindlink{/i} power: You forge a telepathic bond with another creature within 30 feet, which must have an Intelligence score of 3 or higher. The bond can be established only with a willing subject, who therefore receives no saving throw and gains no benefit from spell resistance.\n\nYou can communicate telepathically through the bond even if you do not share a common language.\n\nNo special power or influence is established as a result of the bond. Once the bond is formed, it works over any distance (although not from one plane to another), but only lasts for 1 round per character level. This is a mind-affecting ability." compset="RaceSpec">
+    <fieldval field="trkMax" value="1"/>
+    <tag group="AbilType" tag="PsiLike"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    </thing>
+  <thing id="lS2Argon" name="Argon" description="Barbarians of Argonnessen and Seren." compset="Language" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    </thing>
+  <thing id="lS2Daelkyr" name="Daelkyr" description="Daelkyr, mind flayers, other aberrations, creatures of Xoriat." compset="Language" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    </thing>
+  <thing id="lS2Irial" name="Irial" description="Ravids, positive energy users of Irian." compset="Language" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    </thing>
+  <thing id="lS2Kythric" name="Kythric" description="Slaadi, chaotic outsiders of Kythri." compset="Language" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    </thing>
+  <thing id="lS2Mabran" name="Mabran" description="Nightshades, shadows, creatures of Mabar." compset="Language" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    </thing>
+  <thing id="lS2Riedran" name="Riedran" description="Lower classes of Sarlona." compset="Language" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    </thing>
+  <thing id="lS2Risian" name="Risian" description="Ice-based creatures." compset="Language" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    </thing>
+  <thing id="lS2Syrania" name="Syranian" description="Angels of Syrania." compset="Language" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    </thing>
+  <thing id="raS2ValeWF" name="Valenar Weapon Familiarity" description="Proficient with longbows (including composite longbows). scimitars, rapiers, and shortbows (including composite shortbows), and treat all weapons with the word &quot;elven&quot; or &quot;valenar&quot; in its name as a martial weapon." compset="AltRaceTrt" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="rElf"/>
+    <tag group="Helper" tag="WeaponFam"/>
+    <tag group="WepProf" tag="wCompLong"/>
+    <tag group="WepProf" tag="wCompShort"/>
+    <tag group="WepProf" tag="wLongbow"/>
+    <tag group="WepProf" tag="wShortbow"/>
+    <tag group="WepProf" tag="wRapier"/>
+    <tag group="WepProf" tag="wScimitar"/>
+    <tag group="EasyWeapon" tag="wElfCurve"/>
+    <tag group="EasyWeapon" tag="wS2ScimDbl"/>
+    <tag group="RaReplace" tag="raElWeps"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="First" priority="11000">~assign our weapon proficiencies to the hero
+perform hero.pushtags[WepProf.?]
+~assign our martial named weaopns to the hero
+perform hero.pushtags[EasyWeapon.?]</eval>
+    </thing>
+  </document>

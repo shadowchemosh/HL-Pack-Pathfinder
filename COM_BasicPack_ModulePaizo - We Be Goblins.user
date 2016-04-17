@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_ModulePaizo - We Be Goblins.user"/>
+  <fileinfo>
+    <info_history><![CDATA[  
+      12/2/2011 ShadowChemosh
+      -Remove the Replace "Bouncy" and "Pustular" to be only "We Be Goblins".
+
+      11/30/2011 ShadowChemosh
+      -Fixed missing Sources file
+
+      8/18/2011 ShadowChemosh
+      -Replaced "Bouncy" and "Pustular" to both be "We Be Goblins" and "Goblins of Goliarian".]]></info_history>
+    </fileinfo>
+  <thing id="trBllnHded" name="Balloon Headed" description="Your head is particularly wide and large, even for a goblin. You gain a +1 bonus on Perception checks, and Perception is always a class skill for you. Any Escape Artist checks that requires you to squeeze your head through a tight space take a –8 penalty." compset="Trait">
+    <usesource source="srcWeGob"/>
+    <tag group="Race" tag="rGoblin"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="trCategory" tag="Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000">#applybonus[BonTrait,hero.childfound[skPercep],1]
+
+      #makeclassskill[skPercep]</eval>
+    </thing>
+  <thing id="trS2Pustul" name="Pustular" description="Your face is covered in unpleasant pimples and outright boils that have a tendency to pop at inopportune moments. Although this makes you particularly ugly, you’re also used to discomfort. Whenever you’re subjected to an effect that causes the sickened condition, you may make two saving throws to avoid the effect (if a saving throw is allowed), taking the better of the two results as your actual saving throw." compset="Trait">
+    <usesource source="srcWeGob"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="trCategory" tag="Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Race" tag="rGoblin"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="trGblnBrav" name="Goblin Bravery" description="You have a worrying propensity for overconfidence in combat. When facing an enemy that’s larger than you, if you have no allies in any adjacent squares, your posturing, bravado, and cussing grant a +1 trait bonus on attack rolls with nonreach melee weapons." compset="Trait">
+    <usesource source="srcWeGob"/>
+    <tag group="Race" tag="rGoblin"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="trCategory" tag="Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="UserPostLv" priority="10000"><![CDATA[
+      field[livename].text = "Larger Enemy - Non-Reach Weapon"
+
+      if (field[abilActive].value <> 0) then
+        hero.child[Attack].field[tAtkMelee].value += 1
+        endif]]></eval>
+    </thing>
+  <thing id="trS2Bouncy" name="Bouncy" description="Your bones, flesh, and skin are a bit more elastic than those of most goblins—when you fall, you tend to bounce a little better than them as a result. Whenever you take falling damage, the first 1d6 points of lethal damage suffered in the fall are automatically converted to nonlethal damage. You also gain a +2 bonus on all Reflex saves made to avoid unexpected falls." compset="Trait">
+    <usesource source="srcWeGob"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="trCategory" tag="Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Race" tag="rGoblin"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="fDogSniff" name="Dog-Sniff-Hate" description="Unlike many goblins, you’re not particularly afraid of dogs. You know what dogs smell like, and that smell makes you mad. Very mad.\n\n{b}Prerequisite:{b} Goblin, Skill Focus (Perception) \n\n{b}Benefit:{/b} You gain the scent ability, but only against canines (including dogs, goblin dogs, wolves, worgs, yeth hounds, and any similar creature, subject to GM approval). Against these creatures, you gain a +1 morale bonus on attack rolls and a +2 morale bonus on weapon damage rolls." compset="Feat" summary="Scent ability usable on dogs; bonus attack and damage vs dogs." uniqueness="useronce">
+    <fieldval field="actName" value="Canine Bonus"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="2"/>
+    <usesource source="srcWeGob"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If not active get out now!
+      doneif (field[abilActive].value <> 1)
+
+      #applybonus[BonMorale,hero.child[Attack],field[abValue].value]
+      #applybonus[BonMorale,hero.child[Damage],field[abValue2].value]]]></eval>
+    <exprreq message="You must have the Skill Focus: Perception feat."><![CDATA[hero.child[skPercep].tagis[Helper.SkillFocus] <> 0]]></exprreq>
+    <exprreq message="Goblin race required."><![CDATA[#hasrace[rGoblin] <> 0]]></exprreq>
+    </thing>
+  </document>

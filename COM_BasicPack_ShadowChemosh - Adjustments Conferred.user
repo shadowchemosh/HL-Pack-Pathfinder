@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_ShadowChemosh - Adjustments Conferred"/>
+  <fileinfo>
+    <info_author>Author:  Tim Shadow
+      Email: shadowchemosh@yahoo.com</info_author>
+    <info_history/>
+    </fileinfo>
+  <thing id="pS2FlankBo" name="Combat: Flanking Bonus" description="Add this adjustment so that you can increase/decrease the amount of flanking bonus you get when flanking.  This is very useful if you have the Outflank feat or the Menacing weapon property. This adjustment does not actually change your attack bonus instead it changes the amount of bonus the &quot;Flanking&quot; combat action has on the &quot;Condition&quot; tab.  So if you set the counter to +2 then when you activate the flanking condition a +4 bonus will be applied to your attacks.\n\n{b}Note:{/b} You can type a note to yourself in the (source) text box that will appear on the Flanking condition." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="20000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+     
+      ~ Give a bonus/penalty to the Flanking Condition
+      #value2[pstFlankin] += field[pAdjust].value
+
+      ~ put custom note on Flanking
+      #appenddesc[pstFlankin,"{b}" & field[name].text & " " & signed(field[pAdjust].value) & ":{/b} " & field[pSource].text]]]></eval>
+    </thing>
+  <thing id="pS2CanOfIn" name="Wondrous Item: Candle of Invocation" description="Each of these special tapers is dedicated to one of the nine alignments. Simply burning the candle generates a favorable aura for the individual if the candle&apos;s alignment matches that of the character. Characters of the same alignment as the burning candle add a +2 morale bonus on Attack rolls, saving throws, and skill checks while within 30 feet of the flame.\n\nA cleric whose alignment matches the candle&apos;s operates as if two levels higher for purposes of determining spells per day if he burns the candle during or just prior to his spell preparation time. He can even cast spells normally unavailable to him As if he were of that higher level, but only so long as the candle continues to burn. Except in special cases (see below), a candle burns for 4 hours. It is possible to extinguish the candle simply by blowing it out, so users often place it in a lantern to protect it from drafts And the like. Doing this doesn&apos;t interfere with its magical properties.\n\nIn addition, burning a candle also allows the owner to cast a gate spell, the respondent being of the same alignment as the candle, but the taper is immediately consumed in the process.\n\n{b}Note:{/b} This adjustment assumes you are adding it because you are the correct alignment." compset="InPlay">
+    <fieldval field="pMinimum" value="2"/>
+    <fieldval field="pMaximum" value="2"/>
+    <fieldval field="pDuration" value="4 hours"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Adjustment" tag="Class"/>
+    <tag group="SpInfo" tag="spGate9"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      field[abValue].value += field[pAdjust].value
+
+      ~ Give bonus to Attack, Saves, and all Skills
+      #applybonus[BonMorale,hero.child[Attack],field[abValue].value]    
+      #applybonus[BonMorale,hero.child[svAll],field[abValue].value]    
+      #applybonus[BonMorale,hero.child[AllSkills],field[abValue].value]
+
+      ~ If we're not chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
+
+      ~ Hide the weapon always
+      ~field[pChosen].chosen.assign[Hide.Weapon]]]></eval>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If we're not chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
+
+      field[pChosen].chosen.field[cMagicLev].value += field[abValue].value
+      field[pChosen].chosen.field[cCasterLev].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="pS2FavEnem" name="Ranger: Favored Enemy" description="A ranger gains a +2 bonus on Bluff, Knowledge, Perception, Sense Motive, and Survival checks against creatures of his selected favored enemy type. Likewise, he gets a +2 bonus on weapon attack and damage rolls against them. A ranger may make Knowledge skill checks untrained when attempting to identify these creatures.\n\n{B}Note:{/b} This version is different than the official one as it places an activation on the &quot;In-Play&quot; tab instead of leaving it here as an adjustment. This is much more helpful for those using the iPad." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="abS2FavEne"></bootstrap>
+    </thing>
+  <thing id="abS2FavEne" name="Favored Enemy" description="At 1st level, a ranger selects a creature type from the ranger favored enemies table. He gains a +2 bonus on Bluff, Knowledge, Perception, Sense Motive, and Survival checks against creatures of his selected type. Likewise, he gets a +2 bonus on weapon attack and damage rolls against them. A ranger may make Knowledge skill checks untrained when attempting to identify these creatures.\n\nAt 5th level and every five levels thereafter (10th, 15th, and 20th level), the ranger may select an additional favored enemy. In addition, at each such interval, the bonus against any one favored enemy (including the one just selected, if so desired) increases by +2.\n\nIf the ranger chooses humanoids or outsiders as a favored enemy, he must also choose an associated subtype, as indicated on the table below. (Note that there are other types of humanoid to choose from—those called out specifically on the table below are merely the most common.) If a specific creature falls into more than one category of favored enemy, the ranger&apos;s bonuses do not stack; he simply uses whichever bonus is higher." compset="Ability" summary="Bluff, Knowledge, Perception, Sense Motive, Survival checks, Attack and dmg.">
+    <fieldval field="actUserMin" value="2"/>
+    <fieldval field="actUserMax" value="8"/>
+    <fieldval field="usrCandid1" value="component.BaseCustUs &amp; !Helper.Secondary"/>
+    <fieldval field="actName" value="vs Favored Enemy"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="Hide" tag="Statblock"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+      ~ Add to our attack bonus
+      hero.child[Attack].field[Bonus].value += field[actUser].value
+
+      ~ Add to the listed skills
+      #skillbonus[skBluff] += field[actUser].value
+      #skillbonus[AllKnow] += field[actUser].value
+      #skillbonus[skPercep] += field[actUser].value
+      #skillbonus[skSenseMot] += field[actUser].value
+      #skillbonus[skSurvival] += field[actUser].value]]></eval>
+    <eval phase="PreAttr" priority="10000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+      ~ Add to our damage bonus
+      hero.child[Damage].field[tDamBonus].value += field[actUser].value]]></eval>
+    <eval phase="Final" priority="50000" index="3"><![CDATA[
+      ~ if nothing chosen get out now
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Set short name and bonus
+      field[livename].text = field[name].text & " (" & field[usrChosen1].chosen.field[shortname].text & ") " & signed(field[actUser].value)]]></eval>
+    <eval phase="First" index="4"><![CDATA[
+      ~ If we're in output mode hide so that two Ability
+      ~ specials do not display.
+      If (state.isoutput <> 0) Then
+        perform assign[Hide.Special]
+        done
+      endif]]></eval>
+    </thing>
+  <thing id="abS2FavTer" name="Favored Terrain" description="At 3rd level, a ranger may select a type of terrain from Table: Ranger Favored Terrains. The ranger gains a +2 bonus on initiative checks and Knowledge (geography), Perception, Stealth, and Survival skill checks when he is in this terrain. A ranger traveling through his favored terrain normally leaves no trail and cannot be tracked (though he may leave a trail if he so chooses).{br}{br}At 8th level and every five levels thereafter, the ranger may select an additional favored terrain. In addition, at each such interval, the skill bonus and initiative bonus in any one favored terrain (including the one just selected, if so desired), increases by +2.{br}{br}If a specific terrain falls into more than one category of favored terrain, the ranger&apos;s bonuses do not stack; he simply uses whichever bonus is higher." compset="Ability" summary="Bonus on Initiative, Know (Geography), Perception, Stealth and Survival.">
+    <fieldval field="actUserMin" value="2"/>
+    <fieldval field="actUserMax" value="8"/>
+    <fieldval field="usrCandid1" value="component.BaseCustUs &amp; Helper.Secondary"/>
+    <fieldval field="actName" value="in Favored Terrain"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Hide" tag="Statblock"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+      ~ Initiative bonus
+      hero.child[Initiative].field[Bonus].value += field[actUser].value
+
+      ~ Add to the listed skills
+      #skillbonus[skKnowGeog] += field[actUser].value
+      #skillbonus[skPercep] += field[actUser].value
+      #skillbonus[skStealth] += field[actUser].value
+      #skillbonus[skSurvival] += field[actUser].value]]></eval>
+    <eval phase="Final" priority="50000" index="2"><![CDATA[
+      ~ if nothing chosen get out now
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Set short name and bonus
+      field[livename].text = field[name].text & " (" & field[usrChosen1].chosen.field[shortname].text & ") " & signed(field[actUser].value)]]></eval>
+    <eval phase="First" index="3"><![CDATA[
+      ~ If we're in output mode hide so that two Ability
+      ~ specials do not display.
+      If (state.isoutput <> 0) Then
+        perform assign[Hide.Special]
+        done
+      endif]]></eval>
+    </thing>
+  <thing id="pS2FavTerr" name="Ranger: Favored Terrain" description="A ranger gains a +2 bonus on initiative checks and Knowledge (geography), Perception, Stealth, and Survival skill checks when he is in his favored terrain. A ranger traveling through his favored terrain normally leaves no trail and cannot be tracked (though he may leave a trail if he so chooses).\n\n{B}Note:{/b} This version is different than the official one as it places an activation on the &quot;In-Play&quot; tab instead of leaving it here as an adjustment. This is much more helpful for those using the iPad." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjConfer" name="Conferred Ability Adjustment" abbrev="Conferred Ability Adjustment"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <bootstrap thing="abS2FavTer"></bootstrap>
+    </thing>
+  <thing id="pS2SneakAt" name="Combat: Sneak Attack" description="This adjustment allows you to have a Sneak Attack option display on the &apos;In-Play&apos; tab and be activated. This makes it easier to roll damage on the iPad.\n\n{b}Note:{/b} Use the counter to increase/decrease the number of sneak attack dice if you wish." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="AdjConfer" name="Conferred Ability Adjustment" abbrev="Conferred Ability Adjustment"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="abS2SneakA"></bootstrap>
+    <eval phase="PostLevel" priority="15000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      
+      ~ If something is chosen then use it to set the SA dice
+      If (field[pChosen].ischosen <> 0) then
+        ~ Set the number of sneak attack dice into our helper Thing
+        ~ We do this by using the xCount field and the abValue because
+        ~ the class ability abValue is not fully calcuated until Final/10000
+        ~ which is too late.
+        #value[abS2SneakA] += field[pChosen].chosen.field[abValue].value + field[pChosen].chosen.field[xCount].value
+      Endif
+      
+      ~ Increase/decrease the number of sneak attack dice by the counter
+      #value[abS2SneakA] += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="abS2SneakA" name="Sneak Attack" description="If a rogue can catch an opponent when he is unable to defend himself effectively from her attack, she can strike a vital spot for extra damage.\n\nThe rogue&apos;s attack deals extra damage anytime her target would be denied a Dexterity bonus to AC (whether the target actually has a Dexterity bonus or not), or when the rogue flanks her target. This extra damage is 1d6 at 1st level, and increases by 1d6 every two rogue levels thereafter. Should the rogue score a critical hit with a sneak attack, this extra damage is not multiplied. Ranged attacks can count as sneak attacks only if the target is within 30 feet.\n\nWith a weapon that deals nonlethal damage (like a sap, whip, or an unarmed strike), a rogue can make a sneak attack that deals nonlethal damage instead of lethal damage. She cannot use a weapon that deals lethal damage to deal nonlethal damage in a sneak attack, not even with the usual –4 penalty.{br}{br}{b}Note:{/b} The drop down lets you select the size of your damage dice. By default it assumes 1d6 but some archetypes/feats can change this value up to 1d8 or down to 1d4." compset="Ability" summary="Apply sneak attack damage to weapons.">
+    <comment>NOTE: This has features you can NOT see in the editor.</comment>
+    <fieldval field="actName" value="Activate"/>
+    <fieldval field="actName2" value="Flanking"/>
+    <arrayval field="usrArray" index="0" value="SA Dmg Xd6"/>
+    <arrayval field="usrArray" index="1" value="SA Dmg Xd8"/>
+    <arrayval field="usrArray" index="2" value="SA Dmg Xd4"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="LvNameApp" tag="DieSizVal2"/>
+    <tag group="LvNameApp" tag="DieCntVal"/>
+    <tag group="LvNameApp" tag="SignDieCnt"/>
+    <tag group="Hide" tag="Statblock"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First"><![CDATA[
+      ~ If we're in output mode hide so that two Ability
+      ~ specials do not display.
+      If (state.isoutput <> 0) Then
+        perform assign[Hide.Special]
+        done
+      endif]]></eval>
+    <eval phase="PostLevel" priority="20050" index="2">~ If we are NOT active get out now
+      doneif (field[abilAct2].value = 0)
+      ~ If the combat Flanking is already active get out now
+      doneif (hero.tagis[Condition.pstFlankin] = 1)
+
+      ~ Give flanking condition bonus value to hit
+      hero.child[Attack].field[atmBonus].value += #value2[pstFlankin]
+      perform hero.assign[Condition.pstFlankin]</eval>
+    <eval phase="Final" priority="10100" index="3"><![CDATA[
+      ~ Setup the sneak attack die size = d6
+      if (field[usrIndex].value = 0) then
+        field[abValue2].value += 6
+      ~ d8
+      elseif (field[usrIndex].value = 1) then
+        field[abValue2].value += 8
+      ~ d4
+      elseif (field[usrIndex].value = 2) then
+        field[abValue2].value += 4
+      endif
+
+      var sneakatt as number
+      call NumSnkDice 
+      field[abValue].value += sneakatt 
+
+      ~ If we are NOT active get out now
+      doneif (field[abilActive].value = 0)
+
+      var sSneak as string
+      sSneak = signed(field[abValue].value) & "d" & field[abValue2].value & " SA"
+
+      ~ Loop through all weapons and apply sneak attack extra damage
+      foreach pick in hero from BaseWep
+         #extradamage[eachpick, sSneak ,field[name].text]
+      nexteach]]></eval>
+    </thing>
+  <thing id="pS2wBane" name="Inquisitor: Bane" description="At 5th level, an inquisitor can imbue one of her weapons with the bane weapon special ability as a swift action. She must select one creature type when she uses this ability (and a subtype if the creature type selected is humanoid or outsider). Once selected, the type can be changed as a swift action. This ability only functions while the inquisitor wields the weapon. If dropped or taken, the weapon resumes granting this ability if it is returned to the inquisitor before the duration expires. This ability lasts for a number of rounds per day equal to the inquisitor’s level. These rounds do not need to be consecutive.\n\n{b}Calculated Effects:{/b} Gives the Bane weapon enhacement of +2 bonus on to hit and damage and +2d6 vs text next to the weapon. Enter in the creature type into the &quot;(Source)&quot; section. \n\n{B}Note:{/b} If you see this adjustment twice then remove it and re-add it under the Adjust-&gt;Convferred abiltity section." compset="InPlay">
+    <fieldval field="pSource" value="Bane"/>
+    <fieldval field="pMaximum" value="2"/>
+    <fieldval field="pMinimum" value="2"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="AdjInfo"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="Adjustment" tag="YourWep"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <eval phase="PreLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~if nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
+
+      ~ Give a +2 bonus to hit and damage
+      field[pChosen].chosen.field[Bonus].value += field[pAdjust].value
+      ~ Display extra damage on the chosen weapon
+      #extradamage[field[pChosen].chosen,"+2d6 vs. " & field[pSource].text,field[name].text]]]></eval>
+    </thing>
+  <thing id="pS2wGrBane" name="Inquisitor: Greater Bane" description="At 5th level, an inquisitor can imbue one of her weapons with the bane weapon special ability as a swift action. She must select one creature type when she uses this ability (and a subtype if the creature type selected is humanoid or outsider). Once selected, the type can be changed as a swift action. This ability only functions while the inquisitor wields the weapon. If dropped or taken, the weapon resumes granting this ability if it is returned to the inquisitor before the duration expires. This ability lasts for a number of rounds per day equal to the inquisitor’s level. These rounds do not need to be consecutive.\n\nAt 12th level, whenever an inquisitor uses her bane ability, the amount of bonus damage dealt by the weapon against creatures of the selected type increases to 4d6.\n\n{b}Calculated Effects:{/b} Gives the Bane weapon enhacement of +2 bonus on to hit and damage and +4d6 vs text next to the weapon. Enter in the creature type into the &quot;(Source)&quot; section. \n\n{B}Note:{/b} If you see this adjustment twice then remove it and re-add it under the Adjust-&gt;Convferred abiltity section." compset="InPlay">
+    <fieldval field="pSource" value="Bane"/>
+    <fieldval field="pMaximum" value="2"/>
+    <fieldval field="pMinimum" value="2"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="AdjInfo"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="Adjustment" tag="YourWep"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <eval phase="PreLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~if nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
+
+      ~ Give a +2 bonus to hit and damage
+      field[pChosen].chosen.field[Bonus].value += field[pAdjust].value
+      ~ Display extra damage on the chosen weapon
+      #extradamage[field[pChosen].chosen,"+4d6 vs. " & field[pSource].text,field[name].text]]]></eval>
+    </thing>
+  <thing id="abS2OvrHan" name="Overhand Chop/Backswing" description="At 3rd level, when a two-handed fighter makes a single attack (with the attack action or a charge) with a two-handed weapon, he adds double his Strength bonus on damage rolls.\n\nAt 7th level, when a two-handed fighter makes a full-attack with a two-handed weapon, he adds double his Strength bonus on damage rolls for all attacks after the first." compset="Ability" summary="Double Str bonus with two-handed weapons.">
+    <fieldval field="actName" value="2x Str Bonus"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Hide" tag="Statblock"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PostAttr" priority="10" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+      ~ If we don't have a positive bonus get out now!
+      doneif (#attrmod[aSTR] <= 0)
+
+      ~ Calculate the difference to get 2x Str bonus
+      hero.child[Damage].field[tDamTwo].value +=  (#attrmod[aSTR] * 2) - (round(#attrmod[aSTR]/2,0,-1) + #attrmod[aSTR])]]></eval>
+    <eval phase="First"><![CDATA[
+      ~ If we're in output mode hide so that two Ability
+      ~ specials do not display.
+      If (state.isoutput <> 0) Then
+        perform assign[Hide.Special]
+        done
+      endif]]></eval>
+    </thing>
+  <thing id="pS2OvrHan" name="Fighter: Overhand Chop/Backswing" description="At 3rd level, when a two-handed fighter makes a single attack (with the attack action or a charge) with a two-handed weapon, he adds double his Strength bonus on damage rolls.\n\nAt 7th level, when a two-handed fighter makes a full-attack with a two-handed weapon, he adds double his Strength bonus on damage rolls for all attacks after the first.\n\n{B}Note:{/b} This adjustment places an activation on the &quot;In-Play&quot; tab instead of leaving it here as an adjustment. This is much more helpful." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="abS2OvrHan"></bootstrap>
+    </thing>
+    
+  <thing id="pS2ImBeMu" name="Alchemist: Improved Beastform Mutagen" description="At 6th level, a beastmorph's mutagen grants him additional abilities and options. The alchemist gains his choice of two of the abilities listed in the {i}beast shape I{/} spell, which persist as long as the mutagen. He may select two different abilities each time he creates a mutagen." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.1"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <bootstrap thing="xScent">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Scent]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raLowLight">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.LowLight]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Darkvision]]></containerreq>
+      <assignval field="abValue" value="60"/>
+      </bootstrap>
+    <eval phase="First" priority="450"><![CDATA[
+      ~ Polymorph Adjustment & Setup scripts
+      perform field[pChosen].chosen.pulltags[PolyAdjust.?]
+      perform hero.pushtags[PolyAdjust.?]
+      ]]></eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value <> 1)
+      ~ If nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      #value[xSwim]  += field[pChosen].chosen.field[phSwim].value
+      #value[xClimb] += field[pChosen].chosen.field[phClimb].value
+      #value[xFly]   += field[pChosen].chosen.field[phFly].value
+      ]]></eval>
+    <eval phase="PreLevel" priority="11000" index="3"><![CDATA[
+      ~ Set custom expression to "All Things on Hero"
+      field[pUsePicks].value = 0
+      ]]></eval>
+    </thing>
+
+  <thing id="pS2GrBeMu" name="Alchemist: Greater Beastform Mutagen" description="At 10th level, a beastmorph's mutagen grants him three of the abilities listed in the {i}beast shape II{/i} spell, which persist as long as the mutagen. He may select three different abilities each time he creates a mutagen." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.2"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <bootstrap thing="xScent">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Scent]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raLowLight">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.LowLight]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Darkvision]]></containerreq>
+      <assignval field="abValue" value="60"/>
+      </bootstrap>
+
+    <bootstrap thing="raGrab">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Grab]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raPounce">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Pounce]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raTrip">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Trip]]></containerreq>
+      </bootstrap>
+
+    <eval phase="First" priority="450"><![CDATA[
+      ~ Polymorph Adjustment & Setup scripts
+      perform field[pChosen].chosen.pulltags[PolyAdjust.?]
+      perform hero.pushtags[PolyAdjust.?]
+      ]]></eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value <> 1)
+      ~ If nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      #value[xSwim]  += field[pChosen].chosen.field[phSwim].value
+      #value[xClimb] += field[pChosen].chosen.field[phClimb].value
+      #value[xFly]   += field[pChosen].chosen.field[phFly].value
+      ~ If fly speed set maneuverability to good
+      If (field[pChosen].chosen.field[phFly].value <> 0) Then
+        perform hero.childfound[xFly].assign[Maneuver.Good]
+      Endif
+
+      ]]></eval>
+    <eval phase="PreLevel" priority="11000" index="3"><![CDATA[
+      ~ Set custom expression to "All Things on Hero"
+      field[pUsePicks].value = 0
+      ]]></eval>
+    </thing>
+
+
+  <thing id="pS2GaBeMu" name="Alchemist: Grand Beastform Mutagen" description="At 14th level, a beastmorph's mutagen grants him four of the abilities listed in the {i}beast shape III{/i} spell, which persist as long as the mutagen. He may select four different abilities each time he creates a mutagen." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.3"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <bootstrap thing="xScent">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Scent]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raLowLight">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.LowLight]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Darkvision]]></containerreq>
+      <assignval field="abValue" value="60"/>
+      </bootstrap>
+    <bootstrap thing="wConstrict">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & wConstrict.?]]></containerreq>
+      <autotag group="PolyAdjust" tag="Weapon"/>
+      </bootstrap>
+    <bootstrap thing="wRake">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & wRake.?]]></containerreq>
+      <autotag group="PolyAdjust" tag="Weapon"/>
+      </bootstrap>
+    <bootstrap thing="wTrample">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & wTrample.?]]></containerreq>
+      <autotag group="PolyAdjust" tag="Weapon"/>
+      </bootstrap>
+    <bootstrap thing="raS2Poison">
+      <containerreq phase="First" priority="490"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Poison]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="rBlindsen">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Blindsense]]></containerreq>
+      <assignval field="abValue" value="30"/>
+      </bootstrap>
+    <bootstrap thing="raFerocity">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Ferocity]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raGrab">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Grab]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raS2Jet">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Jet]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raPounce">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Pounce]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raS2Web">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Web]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raTrip">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Trip]]></containerreq>
+      </bootstrap>
+    <eval phase="First" priority="450"><![CDATA[
+      ~ Polymorph Adjustment & Setup scripts
+      perform field[pChosen].chosen.pulltags[PolyAdjust.?]
+      perform field[pChosen].chosen.pulltags[wConstrict.?]
+      perform field[pChosen].chosen.pulltags[wRake.?]
+      perform field[pChosen].chosen.pulltags[wTrample.?]
+
+      ~ Push to hero
+      perform hero.pushtags[wConstrict.?]
+      perform hero.pushtags[wRake.?]
+      perform hero.pushtags[wTrample.?]
+      perform hero.pushtags[PolyAdjust.?]
+      ]]></eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value <> 1)
+      ~ If nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      #value[xSwim]  += field[pChosen].chosen.field[phSwim].value
+      #value[xClimb] += field[pChosen].chosen.field[phClimb].value
+      #value[xFly]   += field[pChosen].chosen.field[phFly].value
+      ~ If fly speed set maneuverability to good
+      If (field[pChosen].chosen.field[phFly].value <> 0) Then
+        perform hero.childfound[xFly].assign[Maneuver.Good]
+      Endif
+
+      #value[xBurrow] += field[pChosen].chosen.field[phBurrow].value
+      #value[raS2Jet] += field[pChosen].chosen.field[phJet].value
+      ]]></eval>
+    <eval phase="PreLevel" priority="11000" index="3"><![CDATA[
+      ~ Set custom expression to "All Things on Hero"
+      field[pUsePicks].value = 0
+      ]]></eval>
+    </thing>
+  </document>

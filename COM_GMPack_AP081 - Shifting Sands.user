@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_AP081 - Shifting Sands"/>
+  <thing id="raAP81Chil" name="Chilling Touch" description="This mummy&apos;s touch carries the chill of glaciers and mountain heights. Its slam attack deals an additional 1d6 points of cold damage, and creatures struck by it are  slowed for 1d4 rounds (Fortitude negates). The save DC is equal to 10 + 1/2 the mummy&apos;s Hit Dice + the mummy&apos;s Charisma modifier. This ability replaces mummy rot." compset="AltRaceTrt" summary="Touch deals cold damage and slows foe." uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="RaReplace" tag="raMumMummR"/>
+    <tag group="AllowRCust" tag="rMummy"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="Final"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #extradamage[hero.child[wSlam]," plus 1d6 cold and slowed",field[name].text]]]></eval>
+    </thing>
+  <thing id="raAP81Ent1" name="Entangling Wrappings (replaces mummy rot)" description="A mummy with entangling wrappings can unravel and detach some of its linen strips to make a grapple check against a creature up to 10 feet away (or twice the mummy&apos;s reach for larger mummies). This attack doesn&apos;t provoke an attack of opportunity. It can constrict for an amount of damage equal to its slam attack with a successful grapple check. The linen strips remain wrapped around the victim and attempt a grapple check to pin each round on the mummy&apos;s turn. They continue to deal constrict damage on a successful grapple check. The wrappings cannot be damaged by any attack or effect while detached, but turn to dust if their victim escapes or dies, or if the mummy is destroyed. If the mummy still lives, its wrappings reappear at the end of its next turn.\n\nThe mummy is not inconvenienced in any way while its wrappings are detached and grappling, but it cannot use its wrappings to entangle again until they return. This ability replaces either despair or mummy rot." compset="AltRaceTrt" uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="AllowRCust" tag="rMummy"/>
+    <tag group="RaReplace" tag="raMumMummR"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="wConstrict"></bootstrap>
+    <eval phase="PostLevel"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      perform hero.childfound[wSlam].pulltags[wMain.?]
+      perform hero.child[wConstrict].pushtags[wMain.?]]]></eval>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      var rch as number
+      rch = herofield[tReach].value * 2
+
+      herofield[tReachNote].text &= rch & " ft. with wrappings"]]></eval>
+    <eval phase="First" index="3"><![CDATA[
+      field[livename].text = "Entangling Wrappings"]]></eval>
+    </thing>
+  <thing id="raAP81Ent2" name="Entangling Wrappings (replaces despair)" description="A mummy with entangling wrappings can unravel and detach some of its linen strips to make a grapple check against a creature up to 10 feet away (or twice the mummy&apos;s reach for larger mummies). This attack doesn&apos;t provoke an attack of opportunity. It can constrict for an amount of damage equal to its slam attack with a successful grapple check. The linen strips remain wrapped around the victim and attempt a grapple check to pin each round on the mummy&apos;s turn. They continue to deal constrict damage on a successful grapple check. The wrappings cannot be damaged by any attack or effect while detached, but turn to dust if their victim escapes or dies, or if the mummy is destroyed. If the mummy still lives, its wrappings reappear at the end of its next turn.\n\nThe mummy is not inconvenienced in any way while its wrappings are detached and grappling, but it cannot use its wrappings to entangle again until they return. This ability replaces either despair or mummy rot." compset="AltRaceTrt" uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="AllowRCust" tag="rMummy"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="RaReplace" tag="raMumDespa"/>
+    <bootstrap thing="wConstrict"></bootstrap>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      var rch as number
+      rch = herofield[tReach].value * 2
+
+      herofield[tReachNote].text &= rch & " ft. with wrappings"]]></eval>
+    <eval phase="First" index="3"><![CDATA[
+      field[livename].text = "Entangling Wrappings"]]></eval>
+    <eval phase="PostLevel"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      perform hero.childfound[wSlam].pulltags[wMain.?]
+      perform hero.child[wConstrict].pushtags[wMain.?]]]></eval>
+    </thing>
+  <thing id="raAP81Infe" name="Infested (CR +1)" description="An infested mummy carries a scarab swarm (Pathfinder Adventure Path #79 89) inside its body cavity. The mummy can release its swarm as a standard action, or it can do so as an immediate action after taking damage from a slashing weapon. The swarm is completely under the mummy&apos;s control, and can&apos;t be harmed while inside the mummy, though it streams out of the mummy&apos;s body if the mummy is destroyed. If the swarm is destroyed, a new swarm grows to replace it in 24 hours. For variation, instead of carrying a scarab swarm, an infested mummy can hold any swarm of CR 3 or lower. An infested mummy&apos;s CR is 1 higher than that of a normal mummy, or this ability can replace despair and mummy rot and not affect the mummy&apos;s final CR." compset="AltRaceTrt" summary="Mummy contains a swarm under mummy&apos;s control." uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="User" tag="NeedDomain"/>
+    <tag group="AllowRCust" tag="rMummy"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="Final"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      herofield[tCR].value += 1]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+      field[livename].text = "Infested"
+
+      doneif (field[abValue4].value <> 0)
+
+      trustme
+      field[domDomain].text = "scarab swarm"
+      field[abValue4].value = 1]]></eval>
+    </thing>
+  <thing id="raAP81Inf2" name="Infested (CR +0)" description="An infested mummy carries a scarab swarm (Pathfinder Adventure Path #79 89) inside its body cavity. The mummy can release its swarm as a standard action, or it can do so as an immediate action after taking damage from a slashing weapon. The swarm is completely under the mummy&apos;s control, and can&apos;t be harmed while inside the mummy, though it streams out of the mummy&apos;s body if the mummy is destroyed. If the swarm is destroyed, a new swarm grows to replace it in 24 hours. For variation, instead of carrying a scarab swarm, an infested mummy can hold any swarm of CR 3 or lower. An infested mummy&apos;s CR is 1 higher than that of a normal mummy, or this ability can replace despair and mummy rot and not affect the mummy&apos;s final CR." compset="AltRaceTrt" summary="Mummy contains a swarm under mummy&apos;s control." uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="User" tag="NeedDomain"/>
+    <tag group="RaReplace" tag="raMumDespa"/>
+    <tag group="RaReplace" tag="raMumMummR"/>
+    <tag group="AllowRCust" tag="rMummy"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="First" index="2"><![CDATA[
+      field[livename].text = "Infested"
+
+      doneif (field[abValue4].value <> 0)
+
+      trustme
+      field[domDomain].text = "scarab swarm"
+      field[abValue4].value = 1]]></eval>
+    </thing>
+  <thing id="raAP81LSps" name="Lesser Spellscribed" description="When scrolls and magical texts are used in place of linen wrappings, the result is a spellscribed mummy. A spellscribed mummy has the complete text of up to three spells written on its wrappings. The total spell levels scribed cannot exceed the mummy&apos;s Hit Dice, and the spells must be of a level no higher than half the mummy&apos;s Hit Dice. This allows a standard 8 HD mummy spells of up to 4th level that add up to no more than 8 levels. The spells need not be from the same spell list, and arcane and divine spells can both be used in the creation of a spellscribed mummy. Individual spells cannot be repeated. The mummy can use each spell scribed in its wrappings once per day as a spell-like ability, with a caster level equal to its Hit Dice. Save DCs are Charisma-based. A spellscribed mummy&apos;s CR is 1 higher than that of a normal mummy.\n\n{b}Lesser:{/b} A lesser spellscribed mummy bears a single 1stor 2nd-level spell in its wrappings, usable once per day with a caster level equal to half its Hit Dice. Its CR does not increase.\n\n{b}Greater:{/b} A greater spellscribed mummy operates as a normal spellscribed mummy, but its wrappings can hold as many spells as it has Hit Dice. The total spell levels scribed cannot exceed twice its Hit Dice, and the spells must be of a level no higher than half its Hit Dice. Spells cannot be repeated, but spells of a level no higher than one-quarter the mummy&apos;s hit dice can be used 3 times per day instead of 1. (For example, a standard greater spellscribed mummy with 8 Hit Dice can have up to 8 different spells, of no higher than 4th level, and a total of not more than 16 spell levels. It can use spells of 2nd level or lower 3 times per day, and spells of higher levels once per day.)\n\nIn addition, a greater spellscribed mummy has spell resistance equal to its adjusted CR + 11. A greater spellscribed mummy&apos;s CR is 2 higher than that of a normal mummy.\n\n{b}Creating a Spellscribed Mummy:{/b} Spellscribed abilities are added to a mummy in a manner similar to magic item creation. The cost is equal to a command-word item that&apos;s usable once per day: 1,800 gp &#215; the spell level &#215; spell&apos;s caster level &#247; 5. For example, spellscribing a mummy with {i}fireball{/i} costs 1,800 &#215; 3 &#215; 8 (the mummy&apos;s HD) &#247; 5, for a total of 3,375 gp. The creator of a spellscribed mummy must possess the Scribe Scroll feat." compset="AltRaceTrt" summary="Use one 1st or 2nd level spell as a spell like ability 1/day" uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="AllowRCust" tag="rMummy"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="cfgAP81SpL"></bootstrap>
+    <eval phase="PostLevel" priority="5000">perform hero.findchild[BaseRace].setfocus
+
+focus.field[rSpCastLev].value = maximum(round(hero.tagcount[Hero.HitDice]/2,0,-1),focus.field[rSpCastLev].value)
+
+perform state.clearfocus</eval>
+    </thing>
+  <thing id="cfgAP81SpL" name="Spellscribed" compset="Configure" uniqueness="unique">
+    <fieldval field="cfgMaxSp1" value="1"/>
+    <usesource source="PathMuMask"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+
+field[cfgAllwSp1].text &= "component.BaseSpell & (sLevel.1 | sLevel.2)"]]></eval>
+    <eval phase="Final" index="2"><![CDATA[foreach pick in hero from BaseSpell where "CfgSpell.cfgAP81SpL"
+  perform eachpick.assign[Helper.SpellLike]
+  perform eachpick.assign[Usage.Day]
+  eachpick.field[trkMax].value = 1
+  perform eachpick.assign[Helper.NoPrepCnt]
+nexteach]]></eval>
+    </thing>
+  <thing id="cfgAP81Sps" name="Spellscribed" compset="Configure" uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="SpCountLev"/>
+    <eval phase="Final" index="2"><![CDATA[foreach pick in hero from BaseSpell where "CfgSpell.cfgAP81SpL"
+  perform eachpick.assign[Helper.SpellLike]
+  perform eachpick.assign[Usage.Day]
+  eachpick.field[trkMax].value = 1
+  perform eachpick.assign[Helper.NoPrepCnt]
+nexteach]]></eval>
+    <eval phase="PostAttr" priority="50000"><![CDATA[
+
+var lvlMax as number
+lvlMax = round(hero.tagcount[Hero.HitDice]/2,0,-1)
+
+field[cfgMaxSp1].value = hero.tagcount[Hero.HitDice]
+
+field[cfgAllwSp1].text &= "component.BaseSpell & (val:sLevel.? <= " & lvlMax & "& val:sLevel.? > 0)"]]></eval>
+    <eval phase="Final" priority="1000" index="3"><![CDATA[
+field[cfgAdTxSp1].text = "Add new Spells (" & field[cfgSpenSp1].value & "/" & field[cfgMaxSp1].value & " levels spent)"]]></eval>
+    </thing>
+  <thing id="raAP81Spel" name="Spellscribed" description="When scrolls and magical texts are used in place of linen wrappings, the result is a spellscribed mummy. A spellscribed mummy has the complete text of up to three spells written on its wrappings. The total spell levels scribed cannot exceed the mummy&apos;s Hit Dice, and the spells must be of a level no higher than half the mummy&apos;s Hit Dice. This allows a standard 8 HD mummy spells of up to 4th level that add up to no more than 8 levels. The spells need not be from the same spell list, and arcane and divine spells can both be used in the creation of a spellscribed mummy. Individual spells cannot be repeated. The mummy can use each spell scribed in its wrappings once per day as a spell-like ability, with a caster level equal to its Hit Dice. Save DCs are Charisma-based. A spellscribed mummy&apos;s CR is 1 higher than that of a normal mummy.\n\n{b}Lesser:{/b} A lesser spellscribed mummy bears a single 1stor 2nd-level spell in its wrappings, usable once per day with a caster level equal to half its Hit Dice. Its CR does not increase.\n\n{b}Greater:{/b} A greater spellscribed mummy operates as a normal spellscribed mummy, but its wrappings can hold as many spells as it has Hit Dice. The total spell levels scribed cannot exceed twice its Hit Dice, and the spells must be of a level no higher than half its Hit Dice. Spells cannot be repeated, but spells of a level no higher than one-quarter the mummy&apos;s hit dice can be used 3 times per day instead of 1. (For example, a standard greater spellscribed mummy with 8 Hit Dice can have up to 8 different spells, of no higher than 4th level, and a total of not more than 16 spell levels. It can use spells of 2nd level or lower 3 times per day, and spells of higher levels once per day.)\n\nIn addition, a greater spellscribed mummy has spell resistance equal to its adjusted CR + 11. A greater spellscribed mummy&apos;s CR is 2 higher than that of a normal mummy.\n\n{b}Creating a Spellscribed Mummy:{/b} Spellscribed abilities are added to a mummy in a manner similar to magic item creation. The cost is equal to a command-word item that&apos;s usable once per day: 1,800 gp &#215; the spell level &#215; spell&apos;s caster level &#247; 5. For example, spellscribing a mummy with {i}fireball{/i} costs 1,800 &#215; 3 &#215; 8 (the mummy&apos;s HD) &#247; 5, for a total of 3,375 gp. The creator of a spellscribed mummy must possess the Scribe Scroll feat." compset="AltRaceTrt" summary="Use chosen spells as spell-like abilities." uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="AllowRCust" tag="rMummy"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="cfgAP81Sps"></bootstrap>
+    <eval phase="First" index="2"><![CDATA[doneif (tagis[Helper.SpcDisable] <> 0)
+
+hero.findchild[BaseRace].field[rCR].value += 1]]></eval>
+    </thing>
+  <thing id="raAP81GSps" name="Greater Spellscribed" description="When scrolls and magical texts are used in place of linen wrappings, the result is a spellscribed mummy. A spellscribed mummy has the complete text of up to three spells written on its wrappings. The total spell levels scribed cannot exceed the mummy&apos;s Hit Dice, and the spells must be of a level no higher than half the mummy&apos;s Hit Dice. This allows a standard 8 HD mummy spells of up to 4th level that add up to no more than 8 levels. The spells need not be from the same spell list, and arcane and divine spells can both be used in the creation of a spellscribed mummy. Individual spells cannot be repeated. The mummy can use each spell scribed in its wrappings once per day as a spell-like ability, with a caster level equal to its Hit Dice. Save DCs are Charisma-based. A spellscribed mummy&apos;s CR is 1 higher than that of a normal mummy.\n\n{b}Lesser:{/b} A lesser spellscribed mummy bears a single 1stor 2nd-level spell in its wrappings, usable once per day with a caster level equal to half its Hit Dice. Its CR does not increase.\n\n{b}Greater:{/b} A greater spellscribed mummy operates as a normal spellscribed mummy, but its wrappings can hold as many spells as it has Hit Dice. The total spell levels scribed cannot exceed twice its Hit Dice, and the spells must be of a level no higher than half its Hit Dice. Spells cannot be repeated, but spells of a level no higher than one-quarter the mummy&apos;s hit dice can be used 3 times per day instead of 1. (For example, a standard greater spellscribed mummy with 8 Hit Dice can have up to 8 different spells, of no higher than 4th level, and a total of not more than 16 spell levels. It can use spells of 2nd level or lower 3 times per day, and spells of higher levels once per day.)\n\nIn addition, a greater spellscribed mummy has spell resistance equal to its adjusted CR + 11. A greater spellscribed mummy&apos;s CR is 2 higher than that of a normal mummy.\n\n{b}Creating a Spellscribed Mummy:{/b} Spellscribed abilities are added to a mummy in a manner similar to magic item creation. The cost is equal to a command-word item that&apos;s usable once per day: 1,800 gp &#215; the spell level &#215; spell&apos;s caster level &#247; 5. For example, spellscribing a mummy with {i}fireball{/i} costs 1,800 &#215; 3 &#215; 8 (the mummy&apos;s HD) &#247; 5, for a total of 3,375 gp. The creator of a spellscribed mummy must possess the Scribe Scroll feat." compset="AltRaceTrt" summary="Use chosen spells as spell-like abilities." uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="AllowRCust" tag="rMummy"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="cfgAP81SpG"></bootstrap>
+    <eval phase="First" index="2"><![CDATA[
+
+doneif (tagis[Helper.SpcDisable] <> 0)
+
+hero.findchild[BaseRace].field[rCR].value += 2]]></eval>
+    <eval phase="Final" priority="5000" index="3"><![CDATA[doneif (tagis[Helper.SpcDisable] <> 0)
+
+var sr as number
+sr = 11 + herofield[tCR].value
+#applysr[sr]]]></eval>
+    </thing>
+  <thing id="cfgAP81SpG" name="Spellscribed" compset="Configure" uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="SpCountLev"/>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[ 
+      var mxLvl as number
+      mxLvl = round(hero.tagcount[Hero.HitDice]/4,0,-1)
+
+      foreach pick in hero from BaseSpell where "CfgSpell.cfgAP81SpG"
+        perform eachpick.assign[Helper.SpellLike]
+        perform eachpick.assign[Usage.Day]
+        perform eachpick.assign[Helper.NoPrepCnt]
+
+        if (eachpick.tagvalue[sLevel.?] <= mxLvl) then
+          eachpick.field[trkMax].value = 3
+        else
+          eachpick.field[trkMax].value = 1
+        endif
+
+      nexteach]]></eval>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      var lvlMax as number
+      lvlMax = round(hero.tagcount[Hero.HitDice]/2,0,-1)
+
+      field[cfgMaxSp1].value = 2 * hero.tagcount[Hero.HitDice]
+
+      field[cfgAllwSp1].text &= "component.BaseSpell & (val:sLevel.? <= " & lvlMax & " & val:sLevel.? > 0)"]]></eval>
+    <eval phase="Render" priority="50000" index="3"><![CDATA[
+      field[cfgAdTxSp1].text = "Add new Spells (" & field[cfgSpenSp1].value & "/" & field[cfgMaxSp1].value & " levels spent)"]]></eval>
+    </thing>
+  <thing id="raAP81CpC" name="Corpse Chills" description="Curse and disease-slam; save Fort DC 16; onset 1 minute; frequency 1/day; effect 1d6 Con and 1d6 Cha; cure -. \n\nCorpse chills manifest as bitter cold and frostbite. Those suffering from corpse chills gain vulnerability to cold and resist fire 10. Immunity to cold prevents and suppresses corpse chills, but does not cure the disease if it has already been contracted.\n\nMummy rot is both a curse and disease and can only be cured if the curse is first removed, at which point the disease can be magically removed. Even after the curse element of mummy rot is lifted, a creature suffering from it cannot recover naturally over time. Anyone casting a conjuration (healing) spell on the afflicted creature must succeed on a DC 20 caster level check, or the spell is wasted and the healing has no effect. Anyone who dies from mummy rot turns to dust and cannot be raised without a {i}resurrection{/i} or greater magic. The save DC is Charisma-based." compset="AltRaceTrt" uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="RaReplace" tag="raMumMummR"/>
+    <tag group="AllowRCust" tag="rHuman"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="xVulCold"></bootstrap>
+    <bootstrap thing="xDamRsFire">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    </thing>
+  <thing id="raAP81GrvI" name="Grave Ichor" description="Curse and disease-slam; save Fort DC 16; onset 1 minute; frequency 1/day; effect 1d4 Dex, Con, and Cha; cure -. \n\nWater saturates the skin of victims of grave ichor until their very f lesh breaks down and sloughs off their bodies. Grave ichor deals 1d4 points of Dexterity, Constitution, and Charisma damage. The loose skin caused by grave ichor grants the victim a +4 bonus to CMD against grappling.\n\nMummy rot is both a curse and disease and can only be cured if the curse is first removed, at which point the disease can be magically removed. Even after the curse element of mummy rot is lifted, a creature suffering from it cannot recover naturally over time. Anyone casting a conjuration (healing) spell on the afflicted creature must succeed on a DC 20 caster level check, or the spell is wasted and the healing has no effect. Anyone who dies from mummy rot turns to dust and cannot be raised without a {i}resurrection{/i} or greater magic. The save DC is Charisma-based." compset="AltRaceTrt" uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="RaReplace" tag="raMumMummR"/>
+    <tag group="AllowRCust" tag="rHuman"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="First"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      hero.child[manGrapple].field[manCMD].value += 4]]></eval>
+    </thing>
+  <thing id="raAP81PhIn" name="Phantom Infestation" description="Curse and disease-slam; save Fort DC 16; onset 1 minute; frequency 1/day; effect 1d6 Con and 1d6 Cha; cure -. \n\nThe victim&apos;s skin breaks out in welts, but it exhibits no other trace of infestation until the body bursts in an eruption of scarab beetles at the instant of the victim&apos;s death. Phantom infestation imposes a &#150;2 penalty on all ability and skill checks.\n\nMummy rot is both a curse and disease and can only be cured if the curse is first removed, at which point the disease can be magically removed. Even after the curse element of mummy rot is lifted, a creature suffering from it cannot recover naturally over time. Anyone casting a conjuration (healing) spell on the afflicted creature must succeed on a DC 20 caster level check, or the spell is wasted and the healing has no effect. Anyone who dies from mummy rot turns to dust and cannot be raised without a {i}resurrection{/i} or greater magic. The save DC is Charisma-based." compset="AltRaceTrt" uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="RaReplace" tag="raMumMummR"/>
+    <tag group="AllowRCust" tag="rHuman"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="First"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      hero.child[AllSkills].field[Penalty].value -= 4]]></eval>
+    </thing>
+  <thing id="raAP81SwCr" name="Swamp Crumble" description="Curse and disease-slam; save Fort DC 16; onset 1 minute; frequency 1/day; effect 1d3 Dex, Con, and Cha; cure -. \n\nThis aff liction causes 1d3 points of Dexterity, Constitution, and Charisma damage. The disease dissolves the bones, leaving behind a putrid mass of skin and organs after death. Bludgeoning weapons and effects deal 1 additional point of damage per die against those afflicted with swamp crumble. As the diseases progresses, the victim&apos;s hair turns the color of fresh-spilled blood.\n\nMummy rot is both a curse and disease and can only be cured if the curse is first removed, at which point the disease can be magically removed. Even after the curse element of mummy rot is lifted, a creature suffering from it cannot recover naturally over time. Anyone casting a conjuration (healing) spell on the afflicted creature must succeed on a DC 20 caster level check, or the spell is wasted and the healing has no effect. Anyone who dies from mummy rot turns to dust and cannot be raised without a {i}resurrection{/i} or greater magic. The save DC is Charisma-based." compset="AltRaceTrt" uniqueness="unique">
+    <usesource source="PathMuMask"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="RaReplace" tag="raMumMummR"/>
+    <tag group="AllowRCust" tag="rHuman"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  </document>

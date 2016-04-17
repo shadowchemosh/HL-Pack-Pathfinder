@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_Technology - Artificial Intelligence"/>
+  <thing id="tpCBArtInt" name="Artificial Intelligence" description="Among the most marvelous of technological wonders are artificial intelligences. Each artificial intelligence (or AI) has its own personality and interests, but its actual ability to interact with the world requires a being installed into a robot or structure (known as a host).\n\nWhen an AI is installed in a technological structure with an integrated computer network, it can manipulate anything that is connected to that structure, such as traps, doors, or weapons. To destroy an AI in a host structure, either the physical device that contains the AI’s programming must be destroyed (the magnitude of this task can vary widely—the host may be merely a single computer with hardness 10 and 20 hit points or an entire building that must be destroyed over multiple encounters or adventures) or all three of its ability scores must be reduced to 0 via ability drain effects directed at the AI’s core processor (typically a large computer in the most well-defended part of a complex, but sometimes a processor housed in a robot). Ability damage dealt to an AI at best merely inconveniences it, and at worst renders it comatose for a limited time.\n\nAn AI that is installed in a robot enhances that robot with the aggregate template.\n\n{b}Creating an AI{/b}\nAn artificial intelligence’s stat block is similar to that of an intelligent magic item. Note that these statistics reflect only the intelligence itself, not the host. Building an AI stat block requires the following statistics.\n\n{b}CR:{/b} An artificial intelligence’s CR sets its ability scores, saves, and skill checks. It also sets its XP value for defeating it—this award is typically granted as a story award once the AI has been overcome, but in some cases (such as when an AI is installed in a single robot), this XP award is replaced by the standard XP for defeating that robot.\n\n{b}Alignment and Type:{/b} An AI can be any alignment. Its type is “artificial intelligence,” and it counts as a construct for all effects that target creature type.\n\n{b}Initiative:{/b} The installed AI modifies its initiative check with its Intelligence modifier, not its Dexterity modifier.\n\n{b}Senses:{/b} An AI needs access to a robot, cameras, microphones, or other mechanical sensory tools in order to be able to notice things in the outside world. These senses should be listed in the appropriate encounter areas, not in the AI’s stats, since it’s likely that an AI will have access to a variety of sensory devices over a large area.\n\n{b}Defenses:{/b} An AI doesn’t have an AC, hit points, or other statistics related to a physical form; it relies on its host robot or structure for those scores. An AI uses its own saving throws only against attacks that target its mind—in most cases, this means it primarily uses its Will save. An AI uses its CR as its effective Hit Dice for determining its base saves—it has good Will saves and poor Fortitude and Reflex saves.\n\n{b}Ability Scores:{/b} An AI’s base ability scores are 14, 12, and 10. Arrange them in any order desired. For every 2 points of CR it possesses, it gains a +2 bonus to an ability score (assigned by the GM).\n\n{b}Skills:{/b} An AI has skill points equal to 6 + its Intelligence modifier per point of CR. An AI has a number of class skills equal to its Charisma modifier. These may be any skill, though the most common class skills for AIs are: Bluff, Diplomacy, Intimidate, Knowledge (all), Linguistics, Perception, and Sense Motive.\n\n{b}Feats:{/b} An AI has a number of feats equal to half its CR (minimum 1). An AI must meet all prerequisites of its feats. AIs also gain Technologist as a bonus feat.\n\n{b}Languages:{/b} AIs speak Androffan. An AI knows a number of additional languages equal to its Intelligence modifier.\n\n{b}Special Abilities:{/b} Use this section to cover any unusual abilities the AI possesses." compset="Type">
+    <fieldval field="tpSkillPts" value="6"/>
+    <tag group="SaveGood" tag="svWill"/>
+    <tag group="Type" tag="tpConst"/>
+    <tag group="NotLiving" tag="Construct"/>
+    <tag group="cAttack" tag="Medium"/>
+    <tag group="NoScore" tag="aSTR"/>
+    <tag group="NoScore" tag="aCON"/>
+    <tag group="NoScore" tag="aDEX"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fTechnolog">
+      <containerreq phase="First" priority="600" name="Bootstrap Type Abilities"><![CDATA[
+
+        (HasType.tpCBArtInt | TypeAndAug.tpCBArtInt | OverType.tpCBArtInt) & !NoTypeAbil.tpCBArtInt]]>
+        <after name="Activate Normal Type"/>
+        </containerreq>
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="lAndroffen">
+      <containerreq phase="First" priority="600" name="Bootstrap Type Abilities"><![CDATA[
+        (HasType.tpCBArtInt | TypeAndAug.tpCBArtInt | OverType.tpCBArtInt) & !NoTypeAbil.tpCBArtInt]]>
+        <after name="Activate Normal Type"/>
+        </containerreq>
+      </bootstrap>
+    <bootstrap thing="raCBArtInt">
+      <containerreq phase="First" priority="600" name="Bootstrap Type Abilities"><![CDATA[
+        (HasType.tpCBArtInt | TypeAndAug.tpCBArtInt | OverType.tpCBArtInt) & !NoTypeAbil.tpCBArtInt]]>
+        <after name="Activate Normal Type"/>
+        </containerreq>
+      </bootstrap>
+    </thing>
+  <thing id="cfgCBAI" name="AI" compset="Configure" uniqueness="unique">
+    <fieldval field="cfgMax1" value="1"/>
+    <fieldval field="cfgObject1" value="AI"/>
+    <fieldval field="cfgObject2" value="Memory Facets"/>
+    <tag group="Helper" tag="Allow2Abil"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="raCBArtInt" name="Artifical Intelligence Abilities" description="AIs use their CR in place of HD for caclulating number of feats, skill points and base save bonuses. They have no physical ability scores and use their Int mod for initiative." compset="RaceSpec" summary="AIs use CR instead of HD and use Int for initiative." uniqueness="unique">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Hide" tag="Statblock"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="1000" index="4"><![CDATA[
+      ~ If disabled get out now!    
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ AIs dont move
+      hero.child[Speed].field[tSpeed].value = 0]]></eval>
+    <eval phase="PostAttr" priority="9400"><![CDATA[
+      ~ If disabled get out now!    
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ an artifical intelligence uses its Int modifier for initiative
+      ~ Dex mod should be 0, but we include it just in case
+      hero.child[Initiative].field[Bonus].value += #attrmod[aINT] - #attrmod[aDEX]]]>
+      <before name="Initiative Final"/>
+      </eval>
+    <eval phase="First" priority="1000" index="3"><![CDATA[
+      ~ If disabled get out now!    
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ push various helper tags to hero
+      perform hero.assign[Hero.NoDefComm]
+      perform hero.assign[Hero.IgnoreEnc]]]></eval>
+    </thing>
+  <thing id="rCBAIAnaly" name="Analyst AI" description="Analyst AIs serve as expert systems to assist researchers. When not actively engaged in a project, they use their vast intellects and processing capabilities to ponder profound philosophical questions of existence." compset="Race">
+    <fieldval field="rCR" value="12"/>
+    <fieldval field="rINT" value="14"/>
+    <fieldval field="rWIS" value="2"/>
+    <fieldval field="rCHA" value="2"/>
+    <fieldval field="srcPageNum" value="58"/>
+    <fieldval field="rNumHands" value="0"/>
+    <fieldval field="rReach" value="0"/>
+    <fieldval field="rSpace" value="0"/>
+    <fieldval field="rSpeed" value="0"/>
+    <fieldval field="rFeat" value="-6"/>
+    <fieldval field="rHitDice" value="12"/>
+    <usesource source="CSTechGuid"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="HasType" tag="tpCBArtInt"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="raCBAIExpK"></bootstrap>
+    <bootstrap thing="fImpIronWi"></bootstrap>
+    <bootstrap thing="fAlertness"></bootstrap>
+    <bootstrap thing="raCBAIMulC"></bootstrap>
+    <bootstrap thing="raCBAIRemC"></bootstrap>
+    <bootstrap thing="fComExpert"></bootstrap>
+    <bootstrap thing="skCrafMech"></bootstrap>
+    <bootstrap thing="skKnowEng"></bootstrap>
+    <bootstrap thing="skKnowGeog"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="skKnowHist"></bootstrap>
+    <bootstrap thing="skKnowNat"></bootstrap>
+    <bootstrap thing="fCBCraTech"></bootstrap>
+    <bootstrap thing="skKnowRel"></bootstrap>
+    <eval phase="PreLevel" priority="4000">
+      #skillinnate[skAppraise] += 12
+      #skillinnate[skCrafMech] += 12
+      #skillinnate[skDiplo] += 12
+      #skillinnate[skDisable] += 12
+      #skillinnate[skHeal] += 12
+      #skillinnate[skKnowEng] += 12
+      #skillinnate[skKnowGeog] += 12
+      #skillinnate[skKnowHist] += 12
+      #skillinnate[skKnowNat] += 12
+      #skillinnate[skKnowRel] += 12
+      #skillinnate[skPercep] += 12
+      #skillinnate[skSenseMot] += 12
+      #skillinnate[skLinguist] += 12
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="raCBAIExpK" name="Expert Knowledge" description="An analyst AI treats all Knowledge skills as class skills and can make all Knowledge skill checks untrained." compset="RaceSpec" uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Custom" tag="AIAbility" name="AI Ability"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+      ~ If disabled get out now!    
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ make every knowledge skill a class skill
+      ~ and can be used untrained
+      foreach pick in hero from BaseSkill where "Helper.SkCatKnow"
+        perform eachpick.delete[Helper.TrainOnly]
+        perform hero.assignstr["ClassSkill." & eachpick.idstring]
+      nexteach]]></eval>
+    </thing>
+  <thing id="raCBAIMulC" name="Multi-Core Processer" description="When an analyst AI takes 10 on an Intelligence- or Wisdom-based skill check, it rolls a d20 as well. If the die exceeds 10, it uses that instead." compset="RaceSpec" uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Custom" tag="AIAbility"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="raCBAIRemC" name="Remote Consult" description="An analyst AI uses its Intelligence modifier instead of its Dexterity modifier on Disable Device checks. Additionally, while in contact with an ally, it can use aid another on that ally’s skill checks. This adds an additional round to the skill check, or multiple rounds for complicated questions. For every 5 points by which the AI’s result exceeds 10, the bonus on the ally’s check increases by 1." compset="RaceSpec" uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Custom" tag="AIAbility"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreAttr" priority="1000"><![CDATA[
+      ~ If disabled get out now!    
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      perform hero.child[skDisable].assign[SkillOver.aINT]]]></eval>
+    </thing>
+  <thing id="raCBAIPerT" name="Precision Targeting" description="Robots and technological traps controlled by a security AI gain an insight bonus equal to the AI’s Intelligence bonus on ranged attack rolls." compset="RaceSpec" uniqueness="useronce">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Custom" tag="AIAbility"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="tmCBAggreg" name="Aggregate" description="“Aggregate” is an acquired template that can be added to any robot (referred to hereafter as the base robot), that gains some of the characteristics of an AI installed in it (referred to hereafter as the base AI). The base robot must have the storage capacity to house the base AI (subject to the GM’s discretion). An aggregate retains all the base robot’s statistics and special abilities except as noted here. The base AI is not damaged by the destruction of the aggregate, unless the AI is wholly contained within the aggregate’s processors (in which case the destruction of the aggregate also destroys the base AI).\n\n{b}CR:{/b} Same as the base robot + 1. When a base AI is housed entirely in an aggregate, defeating the robot is considered the same as defeating the AI—at the GM’s discretion this may replace the normal XP award for an AI on its own. Alignment: The aggregate’s alignment changes to match the base AI’s alignment.\n\n{b}Initiative:{/b} The aggregate modifies initiative with the base AI Intelligence modifier instead of the base robot’s Dexterity. This stacks with any other modifiers the base robot possesses.\n\n{b}Senses:{/b} An aggregate retains all of the base robot’s senses. An aggregate gains all-around vision when it is located in an area fitted with cameras or other sensors that are under the control of the base AI.\n\n{b}Saves:{/b} An aggregate uses the base robot’s saves, though adjust its Will save to account for its new Wisdom score. \n\n{b}Defensive Abilities:{/b} An aggregate retains all of the base robot’s defensive abilities and gains those possessed by the base AI.\n\n{b}Attacks:{/b} An aggregate uses the base robot’s BAB and retains all of the base robot’s natural attacks. Special Attacks: An aggregate retains all of its special attacks and gains those possessed by the base AI.\n\n{b}Abilities:{/b} An aggregate uses the base AI’s Intelligence, Wisdom, and Charisma scores.\n\n{b}Skills:{/b} An aggregate retains all the base robot’s skills (recalculated as appropriate for its new Intelligence, Wisdom, and Charisma scores), and gains all of the base AI’s skill ranks as bonus skill ranks. These bonus skill ranks do not stack with skill ranks the base robot already has; use the higher of the two for each skill.\n\n{b}Feats:{/b} An aggregate retains its feats, and gains all of the base AI’s feats as bonus feats.\n\n{b}Languages:{/b} An aggregate retains all of the base robot’s languages, and gains any additional languages known by the base AI as bonus languages." compset="Template" uniqueness="unique">
+    <comment>for AIs for aggregrate use the following
+
+abValue - AI Int Mod
+abValue2 - AI WIs Mod
+abValue3 - AI Cha Mod
+abValue4 - CR
+abValue5 - MR
+
+add tag Custom.ArtificInt</comment>
+    <arrayval field="tmCRArray" index="0" value="1"/>
+    <usesource source="CSTechGuid"/>
+    <tag group="TemplHelp" tag="Acquired"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ClVaryName" tag="Prepend"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cfgCBAI"></bootstrap>
+    <eval phase="Final" priority="1000">
+      ~ remove no score for Int, Wis, and Cha
+      perform hero.child[aINT].delete[Helper.NoScore]
+      perform hero.child[aWIS].delete[Helper.NoScore]
+      perform hero.child[aCHA].delete[Helper.NoScore]</eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ remove all class skills and give us the ones of our AI
+      foreach pick in hero from BaseSkill
+        perform eachpick.delete[ClassSkill.?]
+        perform hero.deletestr["ClassSkill." & eachpick.idstring]
+      nexteach]]></eval>
+    </thing>
+  <thing id="rcCBAIAnly" name="Analysist AI" description="Analyst AIs serve as expert systems to assist researchers. When not actively engaged in a project, they use their vast intellects and processing capabilities to ponder profound philosophical questions of existence." compset="RaceCustom" uniqueness="unique">
+    <comment>use abValue for AI Int
+use abValue2 for AI Wis
+use abValue3 for AI Cha
+use abValue4 for AI CR</comment>
+    <fieldval field="abValue" value="14"/>
+    <fieldval field="abValue2" value="2"/>
+    <fieldval field="abValue3" value="2"/>
+    <fieldval field="abValue4" value="12"/>
+    <tag group="Custom" tag="ArtificInt" name="Artifical Intelligence" abbrev="Artifical Intelligence"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgCBAI"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raCBAIRemC"></bootstrap>
+    <bootstrap thing="fAlertness">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fComExpert">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fCBCraTech">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fImpInit">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fImpIronWi">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fIronWill">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fTechnolog">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="skKnowEng"></bootstrap>
+    <bootstrap thing="skKnowGeog"></bootstrap>
+    <bootstrap thing="skKnowHist"></bootstrap>
+    <bootstrap thing="skKnowNat"></bootstrap>
+    <bootstrap thing="skKnowRel"></bootstrap>
+    <bootstrap thing="skCrafMech"></bootstrap>
+    <bootstrap thing="raCBAIExpK"></bootstrap>
+    <bootstrap thing="raCBAIMulC"></bootstrap>
+    <eval phase="First" priority="500"><![CDATA[
+      hero.child[tmCBAggreg].field[livename].text = "Aggregate Analysist AI"]]></eval>
+    <eval phase="First" priority="500" index="2">
+      ~ adjust ability scores
+      perform hero.child[tmCBAggreg].setfocus
+      focus.field[tmINT].value = field[abValue].value - hero.findchild[BaseRace].field[rINT].value
+      focus.field[tmWIS].value = field[abValue2].value - hero.findchild[BaseRace].field[rWIS].value
+      focus.field[tmCHA].value = field[abValue3].value - hero.findchild[BaseRace].field[rCHA].value</eval>
+    <eval phase="PreLevel" priority="4000" index="3"><![CDATA[
+      ~ bonus skill points
+      perform hero.findchild[BaseRace].setfocus
+
+      if (#skillranks[skAppraise] < 12) then
+        hero.child[skAppraise].field[skExtRanks].value += 12 - #skillranks[skAppraise]
+      endif
+      if (#skillranks[skCrafMech] < 12) then
+        hero.child[skCrafMech].field[skExtRanks].value += 12 - #skillranks[skCrafMech]
+      endif
+      if (#skillranks[skDiplo] < 12) then
+        hero.child[skDiplo].field[skExtRanks].value += 12 - #skillranks[skDiplo]
+      endif
+      if (#skillranks[skDisable] < 12) then
+        hero.child[skDisable].field[skExtRanks].value += 12 - #skillranks[skDisable]
+      endif
+      if (#skillranks[skHeal] < 12) then
+        hero.child[skHeal].field[skExtRanks].value += 12 - #skillranks[skHeal]
+      endif
+      if (#skillranks[skLinguist] < 12) then
+        hero.child[skLinguist].field[skExtRanks].value += 12 - #skillranks[skLinguist]
+      endif
+      if (#skillranks[skKnowEng] < 12) then
+        hero.child[skKnowEng].field[skExtRanks].value += 12 - #skillranks[skKnowEng]
+      endif
+      if (#skillranks[skKnowGeog] < 12) then
+        hero.child[skKnowGeog].field[skExtRanks].value += 12 - #skillranks[skKnowGeog]
+      endif
+      if (#skillranks[skKnowHist] < 12) then
+        hero.child[skKnowHist].field[skExtRanks].value += 12 - #skillranks[skKnowHist]
+      endif
+      if (#skillranks[skKnowNat] < 12) then
+        hero.child[skKnowNat].field[skExtRanks].value += 12 - #skillranks[skKnowNat]
+      endif
+      if (#skillranks[skKnowRel] < 12) then
+        hero.child[skKnowRel].field[skExtRanks].value += 12 - #skillranks[skKnowRel]
+      endif
+      if (#skillranks[skPercep] < 12) then
+        hero.child[skPercep].field[skExtRanks].value += 12 - #skillranks[skPercep]
+      endif
+      if (#skillranks[skSenseMot] < 12) then
+        hero.child[skSenseMot].field[skExtRanks].value += 12 - #skillranks[skSenseMot]
+      endif]]></eval>
+    </thing>
+  <thing id="rCBAISecur" name="Security AI" description="Security AIs control the defenses and robots of highsecurity Androffan facilities." compset="Race">
+    <fieldval field="rCR" value="8"/>
+    <fieldval field="rINT" value="4"/>
+    <fieldval field="rWIS" value="6"/>
+    <fieldval field="rCHA" value="4"/>
+    <fieldval field="srcPageNum" value="59"/>
+    <fieldval field="rNumHands" value="0"/>
+    <fieldval field="rReach" value="0"/>
+    <fieldval field="rSpace" value="0"/>
+    <fieldval field="rSpeed" value="0"/>
+    <fieldval field="rFeat" value="-4"/>
+    <fieldval field="rHitDice" value="8"/>
+    <usesource source="CSTechGuid"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="HasType" tag="tpCBArtInt"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="ClassSkill" tag="skPercep"/>
+    <tag group="ClassSkill" tag="skSenseMot"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fAlertness"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="fPointBlnk"></bootstrap>
+    <bootstrap thing="fPrecShot"></bootstrap>
+    <bootstrap thing="skProfSold"></bootstrap>
+    <bootstrap thing="raCBAIPerT"></bootstrap>
+    <bootstrap thing="skKnowRel"></bootstrap>
+    <bootstrap thing="skKnowEng"></bootstrap>
+    <bootstrap thing="skKnowGeog"></bootstrap>
+    <eval phase="PreLevel" priority="4000">
+      ~ skills
+      #skillinnate[skBluff] += 8
+      #skillinnate[skDiplo] += 8
+      #skillinnate[skIntim] += 8
+      #skillinnate[skKnowEng] += 8
+      #skillinnate[skKnowGeog] += 8
+      #skillinnate[skPercep] += 8
+      #skillinnate[skProfSold] += 8
+      #skillinnate[skSenseMot] += 8
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="rcCBAISecu" name="Security AI" description="Security AIs control the defenses and robots of highsecurity Androffan facilities." compset="RaceCustom" uniqueness="unique">
+    <comment>use abValue for AI Int
+use abValue2 for AI Wis
+use abValue3 for AI Cha
+use abValue4 for AI CR</comment>
+    <fieldval field="abValue" value="4"/>
+    <fieldval field="abValue2" value="6"/>
+    <fieldval field="abValue3" value="4"/>
+    <fieldval field="abValue4" value="8"/>
+    <tag group="Custom" tag="ArtificInt" name="Artifical Intelligence" abbrev="Artifical Intelligence"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgCBAI"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="skProfSold"></bootstrap>
+    <bootstrap thing="fAlertness">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fImpInit">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fPointBlnk">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fPrecShot">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="raCBAIPerT"></bootstrap>
+    <bootstrap thing="skKnowEng"></bootstrap>
+    <bootstrap thing="fTechnolog">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="skKnowGeog"></bootstrap>
+    <eval phase="First" priority="500" index="2">
+      ~ adjust ability scores
+      perform hero.child[tmCBAggreg].setfocus
+      focus.field[tmINT].value = field[abValue].value - hero.findchild[BaseRace].field[rINT].value
+      focus.field[tmWIS].value = field[abValue2].value - hero.findchild[BaseRace].field[rWIS].value
+      focus.field[tmCHA].value = field[abValue3].value - hero.findchild[BaseRace].field[rCHA].value</eval>
+    <eval phase="PreLevel" priority="4000" index="3"><![CDATA[
+      ~ bonus skill points
+      perform hero.findchild[BaseRace].setfocus
+
+      if (#skillranks[skBluff] <= 8) then
+        hero.child[skBluff].field[skExtRanks].value += 8 - #skillranks[skBluff]
+      endif
+      if (#skillranks[skDiplo] <= 8) then
+        hero.child[skDiplo].field[skExtRanks].value += 8 - #skillranks[skDiplo]
+      endif
+      if (#skillranks[skDisguise] <= 8) then
+        hero.child[skDisguise].field[skExtRanks].value += 8 - #skillranks[skDisguise]
+      endif
+      if (#skillranks[skIntim] <= 8) then
+        hero.child[skIntim].field[skExtRanks].value += 8 - #skillranks[skIntim]
+      endif
+      if (#skillranks[skKnowEng] <= 8) then
+        hero.child[skKnowEng].field[skExtRanks].value += 8 - #skillranks[skKnowEng]
+      endif
+      if (#skillranks[skKnowGeog] <= 8) then
+        hero.child[skKnowGeog].field[skExtRanks].value += 8 - #skillranks[skKnowGeog]
+      endif
+      if (#skillranks[skPercep] <= 8) then
+        hero.child[skPercep].field[skExtRanks].value += 8 - #skillranks[skPercep]
+      endif
+      if (#skillranks[skProfSold] <= 8) then
+        hero.child[skProfSold].field[skExtRanks].value += 8 - #skillranks[skProfSold]
+      endif
+      if (#skillranks[skSenseMot] <= 8) then
+        hero.child[skSenseMot].field[skExtRanks].value += 8 - #skillranks[skSenseMot]
+      endif]]></eval>
+    <eval phase="First" priority="500"><![CDATA[
+      hero.child[tmCBAggreg].field[livename].text = "Aggregate Security AI"]]></eval>
+    </thing>
+  <thing id="rcCBMemFAg" name="Aggression Facet" description="This memory facet enhances an AI’s offensive protocols, imparting a +2 bonus on all attack rolls and weapon damage rolls, and granting Deadly Aim and Power Attack as bonus feats when the AI is controlling a robot." compset="RaceCustom">
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AllowRCust" tag="cfgCBAI"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fPowerAtt">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fDeadAim">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="1000">
+      ~ gain +2 attack and damage
+      hero.child[Attack].field[Bonus].value += 2
+      hero.child[Damage].field[Bonus].value += 2</eval>
+    <pickreq thing="ioMemFaceA"/>
+    </thing>
+  <thing id="rcCBMemFEg" name="Ego Facet" description="An ego facet bolsters an AI’s sense of selfesteem and sense of worth, imparting a +2 bonus on all Fortitude saving throws and a +4 bonus on Intimidate checks, as well as granting Toughness as a bonus feat when the AI is controlling a robot." compset="RaceCustom">
+    <tag group="AllowRCust" tag="cfgCBAI"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fToughness">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="1000">
+      ~ +2 Fort and +4 Intimidate
+      hero.child[svFort].field[Bonus].value += 2
+      hero.child[skIntim].field[Bonus].value += 4</eval>
+    <pickreq thing="ioMemFaceE"/>
+    </thing>
+  <thing id="rcCBMemFIn" name="Inhibitor Facet" description="An inhibitor facet is unusual among memory facets in that it isn’t intended to augment an AI at all, but rather to hinder and impair its functionality. When installed, an inhibitor facet reduces an AI’s Charisma by 4 and imposes a –4 penalty on all skill checks, saving throws, initiative checks, and attack rolls. The effects of multiple inhibitor facets do not stack." compset="RaceCustom" uniqueness="useronce">
+    <tag group="AllowRCust" tag="cfgCBAI"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="1000">
+      ~ -4 on charisma
+      hero.child[aCHA].field[aPostMod].value -= 4
+
+      ~ -4 on skill checks, saves, initiative checks, and attacks
+      hero.child[Attack].field[Penalty].value -= 4
+      hero.child[svAll].field[Penalty].value -= 4
+      hero.child[AllSkills].field[Penalty].value -= 4
+      hero.child[Initiative].field[Penalty].value -= 4</eval>
+    <pickreq thing="ioMemFaceI"/>
+    </thing>
+  </document>

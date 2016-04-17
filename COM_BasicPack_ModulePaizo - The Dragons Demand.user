@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_ModulePaizo - The Dragons Demand"/>
+  <thing id="spuWallLg5" name="Wall of Light" description="An immobile, blinding curtain of white light that blocks line of sight springs into existence. The wall sheds bright light to a range of 60 feet in all directions. A creature adjacent to the wall is blinded as long as it remains adjacent plus an additional 1d4 rounds thereafter-closing its eyes or succeeding at a Fortitude save negates the effect for 1 round. A creature that passes through the wall is automatically blinded, even if its eyes are closed. A creature from the Plane of Shadow gains 1d4 negative levels each round it spends within 5 feet of the wall (Fortitude negates). Passing through the wall imposes a -4 penalty on the save for that round. Twenty-four hours after gaining these negative levels, the subject must attempt a new Fortitude saving throw for each negative level. If a save succeeds, 1 negative level is removed. If it fails, the negative level becomes permanent. Wall of light can be made permanent with permanency (with a minimum caster level of 13th and cost of 11,000 gp)." compset="Spell">
+    <fieldval field="sCompDesc" value="a chip of mica"/>
+    <fieldval field="sRange" value="medium (100 ft. + 10 ft./level)"/>
+    <fieldval field="sEffect" value="10-ft.-high vertical sheet of light up to 5 ft. long/level"/>
+    <fieldval field="sDuration" value="1 minute/level (D)"/>
+    <fieldval field="sSave" value="Fortitude partial; see text"/>
+    <fieldval field="sResist" value="yes"/>
+    <usesource source="srcDrgDem"/>
+    <tag group="sComp" tag="V"/>
+    <tag group="sComp" tag="S"/>
+    <tag group="sComp" tag="MorDF"/>
+    <tag group="sClass" tag="cHelpWiz"/>
+    <tag group="sRange" tag="Medium"/>
+    <tag group="sLevel" tag="5"/>
+    <tag group="sCastTime" tag="Action1"/>
+    <tag group="sSchool" tag="Evocation"/>
+    <tag group="sDuration" tag="Minute"/>
+    <tag group="sDuration" tag="Dismiss"/>
+    <tag group="sDescript" tag="Light"/>
+    <tag group="sSave" tag="FortPart"/>
+    <tag group="sSave" tag="SeeText"/>
+    <tag group="sClass" tag="cHelpDrd"/>
+    <tag group="sResist" tag="Yes"/>
+    <tag group="sClass" tag="cHelpSor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="muVoidglas" name="Voidglass" description="Grioths wield weapons fashioned from a strange sort of transparent material called voidglass. This material is as hard as steel, but made of crystals that voidglass shapers on unknown worlds grow into the desired shapes. Voidglass resonates with a creature&apos;s mind, bolstering thought and mental defenses. Any suit of armor normally made from metal can be made of voidglass. A suit of light voidglass armor grants a +1 resistance bonus on all saving throws against mind-affecting magic. This bonus increases to +2 for medium voidglass armor, and +3 for heavy voidglass armor. Voidglass armor isn&apos;t often worn by grioths, but voidglass weapons are another story. The creatures (and perhaps other strange beings with similar psychic capabilities) can funnel violent bursts of psychic energy through these weapons on a hit. In the hands of any creature, a voidglass piercing or slashing weapon deals 1 additional damage on a hit-bludgeoning weapons gain no benefit. \n\nVoidglass has 30 hit points per inch of thickness and hardness 10. A pound of raw, unworked voidglass is worth 100 gp." compset="Material">
+    <fieldval field="mtCostLb" value="100"/>
+    <fieldval field="mtCALight" value="1000"/>
+    <fieldval field="mtCAMedium" value="2000"/>
+    <fieldval field="mtCAHeavy" value="4500"/>
+    <fieldval field="mtCostWep" value="1000"/>
+    <fieldval field="mtDesc" value="Bolsters mental defenses and channel psychic energy."/>
+    <usesource source="srcDrgDem"/>
+    <tag group="EquipType" tag="NotMetal"/>
+    <tag group="Helper" tag="MatArmOK"/>
+    <tag group="Helper" tag="MatWepOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="500"><![CDATA[
+      perform container.parent.setfocus
+      ~ if can't find then get out now!
+      doneif (state.isfocus = 0)
+      var bon as number
+
+      if (focus.tagis[component.BaseWep] <> 0) then
+        if (focus.tagis[wType.P] + focus.tagis[wType.S] <> 0) then
+          focus.field[wDamage].value += 1
+        endif  
+
+      ~ Armor grants a bonus to saves vs. mind-affecting effects, depending on it's class.
+      else
+        if (focus.field[gIsEquip].value <> 0) then
+          if (focus.tagis[ArmorClass.Heavy] <> 0) then
+            bon = 3
+          elseif (focus.tagis[ArmorClass.Medium] <> 0) then
+            bon = 2
+          elseif (focus.tagis[ArmorClass.Light] <> 0) then
+            bon = 1
+          endif
+          #situational[hero.child[svAll],signed(bon) & " vs. mind-affecting effects",field[name].text]
+        endif
+      endif]]></eval>
+    <prereq message="Piercing/Slashing weapons only.">
+      <validate><![CDATA[
+        ~ If we are not a weapon we are valid.
+        validif (tagis[IsWeapon.?] = 0)
+
+        ~ If we are a P/S weapon we are valid.
+        validif (tagis[wType.P] + tagis[wType.S] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  </document>

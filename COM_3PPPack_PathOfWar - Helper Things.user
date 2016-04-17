@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <fileinfo>
+    <info_author>Tim Shadow
+      Email: ShadowChemosh@yahoo.com</info_author>
+    <info_history><![CDATA[
+      v1.3 December 5, 2014
+      (Shatterjack)
+      -Added Manuevers from all disciplines, including coded stance effects.
+      -All three initiating classes are now included.
+      -Added All archetypes except the Pathwalker and Warsoul (psionic archetypes).
+      -All feats included, though not all at 100% completion.
+      -Martial Training feats are scripted and 100% working!
+      -Added Adjustments for characters affected by someone else's Golden Lion stance.
+      -Added Adjustments to add or remove an initiating class's access to a particular discipline.
+      (ShadowChemosh)
+      -Misc changes/adjustments to merge into package.
+      -Misc Unique ID changes.
+    
+      v1.2 October 12, 2014 - Tim Shadow
+      -Added stalker class. (Shatterjack).
+      -Warlord manuvers/stances updated to the final book text (radionausea).
+      -Manuevers used by the Stalker clas added. (Shatterjack)
+      -Manuevers now calculate their IL level in field[mIL].value. (Tim Shadow)
+      -Manuevers now calculate their DC in field[mDC].value (Tim Shadow)
+
+      v1.1 April 13, 2014 - Tim Shadow
+      -Fixed mechPoW to work with the new component fields.
+      -Fixed "Deadly Agility" feat pre-req scripts.
+      Note: You will get some errors when loading a character that will look like this:
+      Field 'wCustMonDm' is no longer associated with pick 'manPWBlBr1'
+      Field 'gUserEquip' is no longer associated with pick 'manPWBlBr1'
+      This is not an issue and as soon as you save your character these errors will not come back after. Sorry about this but it will make things much better in the future.
+      Data File Authoring
+      -This version has a Major New feature that will allow entering New Maneuvers much easier. It does mean anyone with any maneuvers they custom created won't work anymore. But in good news you can email me the .user files and I can easily convert them over.
+      -I added a new "tab" in the Editor for "PoW Maneuvers" now. This means entering maneuvers just became allot easier. See below for details on this new Editor Tab.
+
+      v1.0 December 15, 2013 - Tim Shadow
+      -Initial release to the community.
+    
+      August 13, 2013 - Tim Shadow
+      -Created New]]></info_history>
+    </fileinfo>
+  <thing id="mechPoW" name="Path of War Mechanic" description="{B}Feat Total Table{/b}\nThis now holds the level of the Manuever/Stance that an initiate can select." compset="Mechanics">
+    <arrayval field="mechFeat" index="0" value="1"/>
+    <arrayval field="mechFeat" index="1" value="1"/>
+    <arrayval field="mechFeat" index="2" value="2"/>
+    <arrayval field="mechFeat" index="3" value="2"/>
+    <arrayval field="mechFeat" index="4" value="3"/>
+    <arrayval field="mechFeat" index="5" value="3"/>
+    <arrayval field="mechFeat" index="6" value="4"/>
+    <arrayval field="mechFeat" index="7" value="4"/>
+    <arrayval field="mechFeat" index="8" value="5"/>
+    <arrayval field="mechFeat" index="9" value="5"/>
+    <arrayval field="mechFeat" index="10" value="6"/>
+    <arrayval field="mechFeat" index="11" value="6"/>
+    <arrayval field="mechFeat" index="12" value="7"/>
+    <arrayval field="mechFeat" index="13" value="7"/>
+    <arrayval field="mechFeat" index="14" value="8"/>
+    <arrayval field="mechFeat" index="15" value="8"/>
+    <arrayval field="mechFeat" index="16" value="9"/>
+    <arrayval field="mechFeat" index="17" value="9"/>
+    <arrayval field="mechFeat" index="18" value="9"/>
+    <arrayval field="mechFeat" index="19" value="9"/>
+    <arrayval field="mechFeat" index="20" value="9"/>
+    <tag group="Usage" tag="PWEncounte" name="/Encounter"/>
+    <tag group="fCategory" tag="PWStyle" name="Style"/>
+    <tag group="abCategory" tag="PWStalkArt" name="Stalker Art" abbrev="Stalker Art"/>
+    <eval phase="First" priority="25000" name="PoW Build Maneuvers Text"><![CDATA[
+    
+      ~ The below logic costs huge amount of CPU. To lessen this for
+      ~ those not using the Path of War adding we are going to only
+      ~ do the below when the Path of War source is turned on.
+      doneif (hero.tagis[source.srcPathOfW] + hero.tagis[source.srcPOWEx] = 0)
+    
+      ~ Set text fields
+      var sBreak  as string
+      var sText   as string
+      var sName   as string
+      ~ Default to the HL new line
+      sBreak = "{br}"
+
+      ~ Loop through all the Path of War Maneuvers
+      foreach thing in Ability where "PathOfWar.Manuever|PathOfWar.Stance & !PathOfWar.StanceClSp"
+        sText = "{b}Discipline:{/b} " &eachthing.tagnames[Discipline.?] & " (" & eachthing.tagnames[mType.?] & ")"
+
+        ~ If we have a descriptor tag then add it into the header text
+        If (eachthing.tagis[mDescript.?] <> 0) Then
+          sText &= " [" & eachthing.tagnames[mDescript.?] & "]"
+        Endif
+        sText &= sBreak & "{b}Level:{/b} " & eachthing.tagnames[mLevel.?]
+        sText &= sBreak & "{b}Initiation Action:{/b} " & eachthing.tagnames[mInitAct.?]
+
+        ~ If we have a range tag then add it into the header text
+        If (eachthing.tagis[mRange.?] <> 0) Then
+          sText &= sBreak & "{b}Range:{/b} " & eachthing.tagnames[mRange.?]
+        ~.. If we have a manually entered range text then use it
+        ElseIf ( empty(eachthing.field[mRange].text) = 0 ) Then
+          sText &= sBreak & "{b}Range:{/b} " & eachthing.field[mRange].text
+        Endif  
+
+        ~If we have a manually entered area text then use it
+        If ( empty(eachthing.field[mArea].text) = 0 ) Then
+          sText &= sBreak & "{b}Area:{/b} " & eachthing.field[mArea].text
+        Endif  
+
+        ~ If we have a target tag then add it into the header text
+        If (eachthing.tagis[mTarget.?] <> 0) Then
+          sText &= sBreak & "{b}Target:{/b} " & eachthing.tagnames[mTarget.?]
+        ~.. If we have a manually entered target text then use it
+        ElseIf ( empty(eachthing.field[mTarget].text) = 0 ) Then
+          sText &= sBreak & "{b}Target:{/b} " & eachthing.field[mTarget].text
+        Endif  
+
+        ~ If we have a Duration tag then add it into the header text
+        If (eachthing.tagis[mDuration.?] <> 0) Then
+          sText &= sBreak & "{b}Duration:{/b} " & eachthing.tagnames[mDuration.?]
+        ~.. If we have a manually entered Duration text then use it
+        ElseIf ( empty(eachthing.field[mDuration].text) = 0 ) Then
+          sText &= sBreak & "{b}Duration:{/b} " & eachthing.field[mDuration].text
+        Endif  
+
+        ~ If we have a saving throw tag then add it into the header text
+        If (eachthing.tagis[mSave.?] <> 0) Then
+          sText &= sBreak & "{b}Saving Throw:{/b} " & eachthing.tagnames[mSave.?]
+        ~.. If we have a manually entered Saving Throw text then use it
+        ElseIf ( empty(eachthing.field[mDuration].text) = 0 ) Then
+          sText &= sBreak & "{b}Saving Throw:{/b} " & eachthing.field[mSave].text
+        Endif
+
+        ~ Combine the Manuever text to after the header
+        sText &= sBreak & sBreak & eachthing.field[descript].text
+        sName = eachthing.tagnames[mLevel.?] & " " & eachthing.field[name].text
+
+        ~ Set maneuver text
+        perform eachthing.amendthing[description,sText]
+        perform eachthing.amendthing[name,sName]
+      nexteach]]></eval>
+    </thing>
+
+  <thing id="zPWBlkSrph" name="Black Seraph" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="BlackSerph"/>
+    <tag group="wFtrGroup" tag="Axes"/>
+    <tag group="wFtrGroup" tag="Flails"/>
+    <tag group="wFtrGroup" tag="PoleArms"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skIntim"/>
+    </thing>
+  <thing id="zPWBrknBld" name="Broken Blade" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="BrokenBlad"/>
+    <tag group="wFtrGroup" tag="Close"/>
+    <tag group="wFtrGroup" tag="Monk"/>
+    <tag group="wFtrGroup" tag="Natural"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skAcrobat"/>
+    </thing>
+  <thing id="zPWCreWin" name="Crescent Wind" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="CresceWind"/>
+    <tag group="wFtrGroup" tag="Axes"/>
+    <tag group="wFtrGroup" tag="Flails"/>
+    <tag group="wFtrGroup" tag="PoleArms"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skIntim"/>
+    </thing>
+  <thing id="zPWGolLio" name="Golden Lion" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="GoldenLion"/>
+    <tag group="wFtrGroup" tag="BladeHeavy"/>
+    <tag group="wFtrGroup" tag="Hammers"/>
+    <tag group="wFtrGroup" tag="PoleArms"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skAcrobat"/>
+    </thing>
+  <thing id="zPWIronTrt" name="Iron Tortoise" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="IronTort"/>
+    <tag group="wFtrGroup" tag="BladeHeavy"/>
+    <tag group="wFtrGroup" tag="Axes"/>
+    <tag group="wFtrGroup" tag="Close"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skBluff"/>
+    </thing>
+  <thing id="zPWPriFur" name="Primal Fury" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="PrimalFury"/>
+    <tag group="wFtrGroup" tag="BladeHeavy"/>
+    <tag group="wFtrGroup" tag="Axes"/>
+    <tag group="wFtrGroup" tag="Hammers"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skSurvival"/>
+    </thing>
+  <thing id="zPWScaThr" name="Scarlet Throne" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="ScarletThr"/>
+    <tag group="wFtrGroup" tag="BladeHeavy"/>
+    <tag group="wFtrGroup" tag="BladeLight"/>
+    <tag group="wFtrGroup" tag="Spears"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skSenseMot"/>
+    </thing>
+  <thing id="zPWSlvrCrn" name="Silver Crane" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="SilvrCrane"/>
+    <tag group="wFtrGroup" tag="Bows"/>
+    <tag group="wFtrGroup" tag="Hammers"/>
+    <tag group="wFtrGroup" tag="Spears"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skPercep"/>
+    </thing>
+  <thing id="zPWSolWin" name="Solar Wind" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="SolarWind"/>
+    <tag group="wFtrGroup" tag="Bows"/>
+    <tag group="wFtrGroup" tag="Crossbows"/>
+    <tag group="wFtrGroup" tag="Firearms"/>
+    <tag group="wFtrGroup" tag="Thrown"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skPercep"/>
+    </thing>
+  <thing id="zPWSteSer" name="Steel Serpent" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="SteelSerp"/>
+    <tag group="wFtrGroup" tag="BladeLight"/>
+    <tag group="wFtrGroup" tag="Close"/>
+    <tag group="wFtrGroup" tag="Monk"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skHeal"/>
+    </thing>
+  <thing id="zPWThraDra" name="Thrashing Dragon" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="ThrashDrag"/>
+    <tag group="wFtrGroup" tag="BladeLight"/>
+    <tag group="wFtrGroup" tag="Close"/>
+    <tag group="wFtrGroup" tag="Double"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skAcrobat"/>
+    </thing>
+  <thing id="zPWVldMoon" name="Veiled Moon" compset="PWDisc" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="Discipline" tag="VeiledMoon"/>
+    <tag group="wFtrGroup" tag="BladeLight"/>
+    <tag group="wFtrGroup" tag="Double"/>
+    <tag group="wFtrGroup" tag="Spears"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="powDiscSk1" thing="skStealth"/>
+    </thing>
+
+  <thing id="PWDisLevel" name="Martial Discpline Helper" description="abValue = Max Inititor Level\nabValue2 = Max Disciple Level" compset="Ability" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostAttr" priority="25000"><![CDATA[
+      ~ Calculate the Max Inititor Level
+      foreach pick in hero where "PathOfWar.Config & component.Configure"
+         field[abValue].value = maximum(field[abValue].value,eachpick.field[cfgLevel].value)
+      nexteach
+
+      ~ Calculate the Max Disciple Level
+      foreach pick in hero from Class where "PathOfWar.Class"
+         field[abValue2].value = maximum(field[abValue2].value,eachpick.field[cTotalLev].value)
+      nexteach]]></eval>
+    <eval phase="Final" index="2"><![CDATA[
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we have no IL or DL then get out now!
+      doneif (field[abValue].value + field[abValue2].value = 0)
+      
+      ~ Set "Can Initiate Maneuvers" tag to hero so that Pre-Reqs can test for this
+      ~ tag.
+      perform hero.assign[PathOfWar.HeroInit]]]></eval>
+    </thing>
+
+  <!-- ============================================================================================ -->
+  <!-- New Path of War Base Class Headers                                                           -->
+  <!-- ============================================================================================ -->
+  <thing id="arHdPWStal" name="Stalker" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Stalker" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPW2"/>
+  </thing>
+  <thing id="arHdPWWard" name="Warder" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Warder" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPW3"/>
+  </thing>
+  <thing id="arHdPWWarl" name="Warlord" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Warlord" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPW1"/>
+  </thing>
+
+
+  </document>

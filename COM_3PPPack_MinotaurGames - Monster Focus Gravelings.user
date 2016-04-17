@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_MinotaurGames - Monster Focus Gravelings"/>
+  <fileinfo>
+    <info_author>
+      Data Input by Bodrin
+      bodrinbarlow@gmail.com
+      20/12/2013
+      20th December 2013</info_author>
+    </fileinfo>
+  <thing id="f3PGraFam" name="Graveling Familiar" description="Your familiar is a wretched undead thing called a graveling.\n\nPrerequisite: Arcane bond class feature.\n\n{b}Benefit:{/b} You can select a graveling as a familiar. A graveling&apos;s special ability that it grants to its master is a +2 bonus on Fortitude saving throws.\n\nIn addition, you may add animate graveling to your spellbook (at no cost) or list of spells known (if you cast spontaneously).\n\nIf your graveling familiar is destroyed, you can create a new one using animate graveling and designate it as you familiar. This does not take the usual 8 hours and you do not need to wait one week. Your familiar does not count against the total number of Hit Dice of undead you can control. Your graveling familiar is immune to Command Undead, control undead, and other similar effects." compset="Feat" summary="Your familiar is a wretched undead thing called a graveling." uniqueness="useronce">
+    <fieldval field="shortname" value="Graveling Familiar"/>
+    <fieldval field="usrCandid1" value="component.Class &amp; CasterType.MemBook"/>
+    <usesource source="srcMoFoGra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpInfo" tag="sp3PGAniGr"/>
+    <tag group="fCategory" tag="General"/>
+    <eval phase="PostLevel" priority="500"><![CDATA[doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~if we haven't chosen anything yet, just get out now
+      doneif (field[usrChosen1].ischosen = 0)
+
+      field[actUserMin].value += maximum(field[usrChosen1].chosen.field[cSplMinLvl].value - field[usrIsCheck].value, 0)
+
+      field[actUserMax].value += maximum(field[usrChosen1].chosen.field[cSplMaxLvl].value - field[usrIsCheck].value, 0)]]></eval>
+    <prereq message="Arcane bond class feature Required.">
+      <validate><![CDATA[validif (childfound[cHelpWiz].field[cGiveSpec].value > 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="f3PGGraMas" name="Graveling Master" description="You are served by a swarm of gravelings.\n\n{b}Prerequisite: {/b}Arcane bond class feature, Graveling Familiar, Spell Focus (necromancy).\n\n{b}Benefit:{/b} You can have a number of graveling familiars equal to 1/2 your caster level in the class that grants you the arcane bond class feature.\n\nAs long as you have more than one graveling familiar, you are treated as 1/2 your class level for any abilities possessed by your graveling familiars (except for Hit Dice, hit points, attacks, saving throws, and skills).\n\nThe ability to share spells and deliver touch spells only applies to one of your familiars, decided each time you cast such a spell.\n\nIf any of these familiars are destroyed, you can replace it as you could any graveling familiar." compset="Feat" summary="You are served by a swarm of gravelings." uniqueness="useronce">
+    <fieldval field="actName" value="Graveling Swarm"/>
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcMoFoGra"/>
+    <tag group="Usage" tag="Uses"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChargeCalc" tag="LevelHalf"/>
+    <exprreq message="Spell Focus (necromancy) Required." iserror="no"><![CDATA[child[ssNecro].tagis[Broadcast.SpellFocus] <> 0]]></exprreq>
+    <exprreq message="Graveling Familiar Required."><![CDATA[tagis[CompAvail.cArcFamil] <> 0]]></exprreq>
+    <prereq message="Arcane Bond Class Feature Required.">
+      <validate><![CDATA[validif (childfound[cHelpWiz].field[cGiveSpec].value > 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="r3PGGravel" name="Graveling" description="\nCreated by fledgling necromancers, these undead things can often be found skulking about their lair performing menial tasks. A graveling stands about 1 foot tall and weighs 10 pounds." compset="Race">
+    <fieldval field="rDescript" value="Made from dead flesh stretched over an odd assortment of bones, this small twisted thing moves with surprising speed. It rushes forward with a snapping maw of mismatched teeth."/>
+    <fieldval field="rHitDice" value="1"/>
+    <fieldval field="rHPStart" value="4"/>
+    <fieldval field="rSTR" value="-4"/>
+    <fieldval field="rDEX" value="3"/>
+    <fieldval field="rINT" value="-8"/>
+    <fieldval field="rCHA" value="3"/>
+    <fieldval field="shortname" value="Graveling"/>
+    <fieldval field="rCR" value=".3333333333333333333333"/>
+    <fieldval field="rOrgan" value="solitary, brood (2d4 gravelings)"/>
+    <fieldval field="rTreasure" value="None"/>
+    <fieldval field="rEnviron" value="any land "/>
+    <fieldval field="rFeat" value="-1"/>
+    <fieldval field="rInfFamBon" value="+2 bonus on Fortitude saving throws."/>
+    <usesource source="srcMoFoGra"/>
+    <tag group="RaceType" tag="Animal"/>
+    <tag group="NoScore" tag="aCON"/>
+    <tag group="RaceSize" tag="Tiny12"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="CompIs" tag="cArcFamil"/>
+    <tag group="ClassSkill" tag="skStealth"/>
+    <tag group="AlgnImpFam" tag="NeutEvil"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="HasType" tag="tpUndead"/>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d3_3"/>
+      <autotag group="Value" tag="1"/>
+      <assignval field="livename" value="Bite (Plus Shivers)"/>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="ra3PGChEva"></bootstrap>
+    <bootstrap thing="ra3PGShive">
+      <autotag group="Target" tag="wBite"/>
+      </bootstrap>
+    <bootstrap thing="fWepFin"></bootstrap>
+    <eval phase="PreLevel" priority="4000">#skillinnate[skStealth] += 1</eval>
+    </thing>
+  <thing id="ra3PGChEva" name="Channel Evasion" description="Whenever a graveling succeeds at a saving throw to reduce the damage from channel positive energy, it takes no damage instead of half damage.\n\nThis does not apply to spells, such as cure spells, that deal damage to undead." compset="RaceSpec" uniqueness="useronce">
+    <usesource source="srcMoFoGra"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Defense"/>
+    </thing>
+  <thing id="ra3PGShive" name="Shivers" description="Living creatures bit by a graveling must make a DC 11 Will saving throw.\n\nThose that fail take a - 1 penalty on ranged attack rolls and Will saving throws for 1 minute.\n\nThe DC of this ability is Charisma-based." compset="RaceSpec" uniqueness="useronce">
+    <usesource source="srcMoFoGra"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abAction" tag="Attack"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Attack"/>
+    </thing>
+  <thing id="sp3PGAniGr" name="Animate Graveling" description="This spell functions like animate dead, but it causes one or more lumps of flesh and bone to animate as a graveling under your control.\n\nYou can animate one graveling per casting of this spell, plus one additional graveling for every two caster levels you possess, maximum 5.\n\nThese gravelings count against the total number of undead you can control, as per animate dead." compset="Spell">
+    <fieldval field="sCompDesc" value="an onyx gemstone worth 25 gp per graveling created"/>
+    <fieldval field="sTarget" value="one or more lumps of flesh touched"/>
+    <usesource source="srcMoFoGra"/>
+    <tag group="sComp" tag="V"/>
+    <tag group="sComp" tag="S"/>
+    <tag group="sComp" tag="M"/>
+    <tag group="sLevel" tag="1"/>
+    <tag group="sClass" tag="arHdCleric"/>
+    <tag group="sClass" tag="cHelpClr"/>
+    <tag group="sClass" tag="Cleric"/>
+    <tag group="sClass" tag="cHelpSor"/>
+    <tag group="sClass" tag="arHdSorcer"/>
+    <tag group="sClass" tag="arHdWizard"/>
+    <tag group="sRange" tag="Touch"/>
+    <tag group="sCastTime" tag="Action1"/>
+    <tag group="sDuration" tag="Instant"/>
+    <tag group="sSave" tag="None"/>
+    <tag group="sResist" tag="No"/>
+    <tag group="sClass" tag="cHelpWiz"/>
+    <tag group="sSchool" tag="Necromancy"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="sClass" tag="cHelpAPa"/>
+    <tag group="sClass" tag="arHdAntipa"/>
+    <tag group="sDescript" tag="Evil"/>
+    </thing>
+  <thing id="g3PGGraWin" name="Graveling Wing" description="This alchemical component is made from the shriveled black wings of a dead bat. \n\nIf used in the creation of a graveling with animate graveling, the creature gains a fly speed of 10 feet with a maneuverability of clumsy. This causes the graveling to lose its channel evasion ability and its base land speed is reduced to 20 feet.\n\nA graveling with wings can still be taken as a familiar." compset="Gear" summary="If used in the creation of a graveling with animate graveling, the creature gains a fly speed of 10 feet with a maneuverability of clumsy" uniqueness="useronce">
+    <fieldval field="gCraftDC" value="16"/>
+    <fieldval field="shortname" value="Graveling Wing"/>
+    <fieldval field="gCost" value="100"/>
+    <usesource source="srcMoFoGra"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    <tag group="gType" tag="Pets"/>
+    <tag group="CraftSkill" tag="skCrafAlch"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Hero" tag="EqpBody"/>
+    <bootstrap thing="xFly">
+      <containerreq phase="First" priority="5000"><![CDATA[fieldval:gIsEquip <> 0]]></containerreq>
+      <autotag group="Maneuver" tag="Clumsy"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000" index="3"><![CDATA[
+      ~ We don't need this to run if we arent' a Graveling
+      doneif (#hasrace[r3PGGravel] = 0)
+
+      ~ Lets give our Graveling a fly speed of 10 and Clumsy
+      if (field[gIsEquip].value <> 0) then
+
+        ~ Give fly speed of 10
+        #value[xFly] += 10
+        ~ assign the Clumsy Maneuver tag to Fly
+        perform hero.child[xFly].assign[Maneuver.Clumsy]
+
+      endif]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ We don't need this to run if we arent' a Graveling
+      doneif (#hasrace[r3PGGravel] = 0)
+
+      ~ Remove the Channel Evasion ability if we are equipped
+      if (field[gIsEquip].value <> 0) then
+
+      perform hero.childfound[ra3PGChEva].delete[Helper.ShowSpec]
+      perform hero.childfound[ra3PGChEva].assign[Helper.SpcDisable]
+
+      endif]]></eval>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ We don't need this to run if we arent' a Graveling
+      doneif (#hasrace[r3PGGravel] = 0)
+
+      ~ Lets give our Graveling a reduced base movement
+      if (field[gIsEquip].value <> 0) then
+
+      ~ Make our speed 20 feet
+      hero.child[Speed].field[Bonus].value -= 10
+
+      endif]]></eval>
+    <exprreq message="Graveling Race Required"><![CDATA[#hasrace[r3PGGravel] <> 0]]></exprreq>
+    </thing>
+  <thing id="g3PGRotSna" name="Rot Snack" description="Made from choice bits of rotting flesh and necromantic unguents, these tiny morsels help heal the wounds of an undead creature.\n\nConsuming a rot snack is a standard action that heals an undead creature of 1 point of damage. Rot snacks cannot heal more than three points of damage per hour.\n\nIf a living creature eats a rot snack, it must make a DC 11 Fortitude saving throw or be sickened for 10 minutes." compset="Gear" summary="These tiny morsels help heal the wounds of an undead creature.">
+    <fieldval field="shortname" value="Rot Snack"/>
+    <fieldval field="gCost" value="15"/>
+    <fieldval field="gWeight" value=".5"/>
+    <fieldval field="gCraftDC" value="15"/>
+    <usesource source="srcMoFoGra"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="UsesQty"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="SpecSubs"/>
+    </thing>
+  <thing id="sp3PGGraBr" name="Graveling Brood" description="\nThis spell summons a 2d4 gravelings, which crawl up out of the ground upon completion of the spell at a point you designate. \n\nThe gravelings understand common and serve you without question, even if it would mean their destruction. \n\nThey must be given orders as a group; individual gravelings cannot be given commands. These gravelings do not count against your total number of undead you can control." compset="Spell">
+    <fieldval field="sTarget" value="one summoned creature"/>
+    <fieldval field="sFocusDesc" value="dried eyeball"/>
+    <fieldval field="sDuration" value="1 round / level"/>
+    <usesource source="srcMoFoGra"/>
+    <tag group="sLevel" tag="3"/>
+    <tag group="sClass" tag="arHdCleric"/>
+    <tag group="sClass" tag="cHelpClr"/>
+    <tag group="sClass" tag="Cleric"/>
+    <tag group="sClass" tag="cHelpSor"/>
+    <tag group="sClass" tag="arHdSorcer"/>
+    <tag group="sClass" tag="arHdWizard"/>
+    <tag group="sCastTime" tag="Round1"/>
+    <tag group="sSave" tag="None"/>
+    <tag group="sResist" tag="No"/>
+    <tag group="sClass" tag="cHelpWiz"/>
+    <tag group="sSchool" tag="Necromancy"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="sComp" tag="V"/>
+    <tag group="sComp" tag="F"/>
+    <tag group="sComp" tag="DF"/>
+    <tag group="sRange" tag="Medium"/>
+    <tag group="sDuration" tag="Round"/>
+    <tag group="sDescript" tag="Evil"/>
+    <tag group="sComp" tag="S"/>
+    </thing>
+  <thing id="io3PGCalCo" name="Calling Collar" description="\nThis collar is sized to fit around the neck of a Tiny creature, such as a familiar. When placed around a creature&apos;s neck, the owner can remove a leather tag from the collar.\n\nAs a standard action, the owner can focus on the tag to send a telepathic summons to the creature wearing the collar along with a simple image of the location of the summons.\n\nThe creature is under no compulsion to go to the location, but if it is friendly to the owner, it attempts to travel to the location immediately. This does not impart any knowledge of the route to be traveled, the creature must be familiar with the area to travel to the destination.\n\n{b}Construction Requirements {/b} Craft Wondrous Item, {i}message{/i}; {b}Cost {/b}200 gp" compset="Wondrous">
+    <fieldval field="shortname" value="Calling Collar"/>
+    <fieldval field="gCost" value="400"/>
+    <fieldval field="iCL" value="3"/>
+    <fieldval field="gWeight" value=".5"/>
+    <usesource source="srcMoFoGra"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="iSchool" tag="Divination"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="Hero" tag="EqpNeck"/>
+    </thing>
+  <thing id="io3PGAmuUn" name="Amulet of Undead Passage" description="\nThis simple bone amulet has a mirrored piece of glass at its center. \n\nWhen created, the amulet is keyed to up to 5 unintelligent undead creatures under the crafters control. \nThose creatures cannot see anyone wearing this amulet, as per hide from undead. \n\nIf the wearer attacks any of the undead keyed to this amulet, the mirrored glass cracks and the amulet is destroyed.\n\n{b}Construction Requirements {/b} Craft Wondrous Item, {i}hide from undead{/i}; {b}Cost{/b} 500 gp" compset="Wondrous">
+    <fieldval field="shortname" value="Amulet of Undead Passage"/>
+    <fieldval field="gCost" value="1000"/>
+    <fieldval field="iCL" value="5"/>
+    <fieldval field="gWeight" value=".5"/>
+    <usesource source="srcMoFoGra"/>
+    <tag group="Hero" tag="EqpNeck"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="iSchool" tag="Abjur"/>
+    <tag group="gType" tag="Wonder"/>
+    </thing>
+  </document>

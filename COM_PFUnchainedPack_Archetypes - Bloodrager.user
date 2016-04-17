@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_PFUnchainedPack_Archetypes - Bloodrager"/>
+  <thing id="arP6BlrUnc" name="Unchained" description="You are an unchained Bloodrager and use the Unchained Rage mechanics instead of the normal Blood Rage. You will still count as having the Bloodrage class ability.{BR}{BR}{b}Community Created:{/b} As this is a community created archetype that expands the unchained rules be sure you have your GM's approval before taking this archetype." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="1"/>
+    <fieldval field="srcBookInf" value="Community Created"/>
+    <usesource source="srcUnBlrAr"/>
+    <tag group="AbReplace" tag="cBlrRage"/>
+    <tag group="AbReplace" tag="cBlrRageGt"/>
+    <tag group="AbReplace" tag="cBlrRageMt"/>
+    <tag group="AbReplace" tag="cBlrRageTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="cBbnRaTrUn">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cBbnRaGtUn">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <bootstrap thing="cBbnRaMtUn">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cBbnRageUn">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpBlr"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ We still need to count as having Bloodrage class ability
+      perform hero.assign[HasAbility.cBlrRage]
+      ]]></eval>
+    </thing>
+  <thing id="arP6PrimUn" name="Primalist Unchained" description="While bloodrage powers come from the very essence of a bloodrager&apos;s being and are often strict and immutable, some bloodragers tap into ancient traditions and primitive wisdom to enhance their rages with something more primal. The primalist mixes his bloodline with more traditional rage powers.\n\n{b}Unchained:{/b} You can select if the rage powers you have access too are Unchained Rage Powers or both Unchained and Core Rage powers.{BR}{BR}{b}Community Created:{/b} As this is a community created archetype that expands the unchained rules be sure you have your GM's approval before taking this archetype." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="84"/>
+    <fieldval field="srcBookInf" value="Advanced Class Guide"/>
+    <fieldval field="cvSpec2ndS" value="Rage Power"/>
+    <usesource source="srcUnBlrAr"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <bootstrap thing="cBlrPriCho">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cBlrPriCho">
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="cBlrPriCho">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cBlrPriCho">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cBlrP6RPwr">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cBlrPriCho">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpBlr"/>
+    <eval phase="First" priority="400"><![CDATA[
+      ~ find all the class specials that were added by our 
+      ~ bloodlines, except those that have been tagged as chosen 
+      ~ by our Bloodline Power Choice
+      ~ abilities, and set them as replaced
+      perform delete[Ability.cBlrPriCho]
+
+      var searchexpr as string
+      if (tagis[Ability.?] = 0) then
+        done
+      else
+        searchexpr = "(" & tagids[Ability.?, " | "] & ")"
+        endif
+
+      foreach pick in hero from BaseClSpec where searchexpr
+        if (eachpick.isroot <> 0) then
+          if (eachpick.root.tagexpr[CustSpPick.Primary & CustTaken.cHelpBlr & abCategory.BlrBlood] <> 0) then
+            perform eachpick.assign[Helper.SpcDisable]
+            perform eachpick.forward[AbReplace.?]
+            endif
+          endif
+        nexteach]]></eval>
+    </thing>
+  <thing id="cBlrP6RPwr" name="Rage Powers" description="Please select the type of Rage Powers you should have access too.  \n\nEither only Unchained Rage powers, only Core Rage powers, or both Unchained and Core Rage powers." compset="ClSpecial">
+    <arrayval field="usrArray" index="0" value="Core"/>
+    <arrayval field="usrArray" index="1" value="Unchained"/>
+    <arrayval field="usrArray" index="2" value="Both"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="99999999"><![CDATA[
+      ~ If our linked class does not exist get out now!
+      doneif (root.islinkage[varies] = 0)
+
+      ~ If Core only set here
+      if (field[usrIndex].value = 0) then
+        root.linkage[varies].field[cCstS2Expr].text = "abCategory.BbnRagePow"
+
+      ~ If Unchained only set here
+      elseif (field[usrIndex].value = 1) then
+        root.linkage[varies].field[cCstS2Expr].text = "abCategory.BbnRaPowUn"
+        
+      ~ If both set here
+      elseif (field[usrIndex].value = 2) then
+        root.linkage[varies].field[cCstS2Expr].text = "abCategory.BbnRagePow|abCategory.BbnRaPowUn"
+      endif]]></eval>
+    </thing>
+  </document>

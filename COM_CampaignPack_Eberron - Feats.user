@@ -1,0 +1,2615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_CampaignPack_Eberron - Feats"/>
+  <fileinfo>
+    <info_author>Tim Shadow
+Email: ShadowChemosh@yahoo.com</info_author>
+    <info_history><![CDATA[
+v1.5 - May 28, 2012
+=Tim Shadow=
+-Weapons split off to their own .user file.
+-Feats split off to their own .user files.
+-Classes split off to their own .user files.
+
+v1.4 Tim Shadow May 28, 2012
+-Finalized for release through Powered by Hero Lab.
+-Fixed "Shape Change" so that if you activate Medium it disables "Small" and activating Small disables "Medium".  No more being a Medium/Small creature at the same time.
+-Lots of small script fixes on the Racial Abilities.
+-Added in the Kalashtar race.
+--Added "Quor" Language
+--Added "Kalashtar" subtype.
+--This races Psionics ability is scripted to work with the community "Psionics Unleashed" package.
+-Added a check to all racial abilities to check for being disabled.
+    
+v1.3 - December 18, 2011 - Tim Shadow
+-Fixed "Warforged Immunities" from incorrectly printing to the character sheet.
+-Added in "Double Scimitar" from ECS.
+
+v1.2 - November 28, 2011 - Tim Shadow
+-Added missing Racial Custom Specials that prevented selecing Warforged Body Types.
+    
+v1.1 - 10/2/2011 - Tim Shadow
+-Added Warforged.
+-Fixed many Shifter issues.
+-Added some Action Point feats from Eberron.
+-Added some Favored Class options.
+-Added the "Shifter Ranger" archetype.
+
+v1.0 - 4/22/2011
+-Changed the unique ID of the Changeling race to NOT clash with the official version name.]]></info_history>
+    <info_todo>VERMIN COMPANION feat not done.
+TOTEM COMPANION feat not done.</info_todo>
+    </fileinfo>
+  <thing id="fShftBeEli" name="Beasthide Elite" description="Your shifter trait improves.\n\n{b}Prerequisite:{/b} Shifter with the beasthide trait.\n\n{b}Benefit:{/b} While shifting, your natural armor bonus increases to +4.\n\n{b}Normal:{/b} Without this feat, a beasthide shifter has a natural armor bonus of +2 while shifting." compset="Feat" summary="While shifting, your natural armor bonus increases to +4." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+~ Set the Shifter Feat Tag on the hero
+perform hero.assign[Shifter.Feat]
+
+~ If Beasthide not live get out now
+doneif (hero.childlives[raSTbeasth] <> 1)
+~ Adjust Beasthide AC bonus by 2
+#value2[raSTbeasth] += 2]]></eval>
+    <exprreq message="Must be a Beasthide shifter required."><![CDATA[hero.tagis[Shifter.Beasthide] <> 0]]></exprreq>
+    </thing>
+  <thing id="fShftGrBit" name="Great Bite" description="You know how to hit where it hurts with your fangs.\n\n{b}Prerequisite:{/b} Shifter with the longtooth trait, +6 base attack bonus.\n\n{b}Benefit:{/b} Your fang attacks now have a critical hit multiplier of x3.\n\n{b}Normal:{/b} Without this feat, your fang attacks have a multiplier of x2." compset="Feat" summary=" Your fang attacks now have a critical hit multiplier of x3." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+      ~ Change bite from x2 to x3
+      foreach pick in hero from BaseWep where "Shifter.Longtooth"
+        perform eachpick.delete[wCritMult.?]
+        perform eachpick.assign[wCritMult.3]
+      nexteach]]></eval>
+    <exprreq message="Shifter with longtooth trait required."><![CDATA[hero.tagis[Shifter.Longtooth] <> 0]]></exprreq>
+    <exprreq message="Must have a Base Attack Bonus of +6 or greater." iserror="no"><![CDATA[child[Attack].field[tAtkBase].value >= 6]]></exprreq>
+    </thing>
+  <thing id="fShftGrRen" name="Great Rend" description="You know how to hit where it hurts with your claws.\n\n{b}Prerequisite:{/b}Shifter with the razorclaw trait, +4 base attack bonus.\n\n{b}Benefit:{/b} If you hit with both of your claw attacks in a round, you deal extra damage equal to 1d4 + 1 1/2 your Str modifier, plus 1 additional point for every four character levels you have." compset="Feat" summary="If you hit with both of your claw attacks in a round, you deal extra damage equal to 1d4 + 1 1/2 your Str modifier, plus 1 additional point for every four character levels you have." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <bootstrap thing="wRend">
+      <containerreq phase="First" priority="500">Shifter.Shifting</containerreq>
+      <autotag group="Helper" tag="NatPrimary"/>
+      <autotag group="Helper" tag="NatTwoHand"/>
+      <autotag group="Shifter" tag="Razorclaw"/>
+      <autotag group="wMain" tag="1d4_4"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000"><![CDATA[~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+~ Set the Shifter Feat Tag on the hero
+perform hero.assign[Shifter.Feat]]]></eval>
+    <exprreq message="Shifter with razorclaw trait required."><![CDATA[hero.tagis[Shifter.Razorclaw] <> 0]]></exprreq>
+    <exprreq message="Must have a Base Attack Bonus of +4 or greater." iserror="no"><![CDATA[child[Attack].field[tAtkBase].value >= 4]]></exprreq>
+    </thing>
+  <thing id="fShftGrDef" name="Greater Shifter Defense" description="By delving deeper into your shifter heritage, you develop the ability to ignore some damage from every attack.\n\n{b}Prerequisite:{/b} Shifter race, Shifter Defense feat, and three other shifter feats.\n\n{b}Benefit:{/b} When shifting, your damage reduction improves to DR 4/silver." compset="Feat" summary="When shifting, your damage reduction improves to DR 4/silver." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ Increase DR by two more
+      #value[fShftDef] += 2]]></eval>
+    <exprreq message="Shifter Race required." iserror="no"><![CDATA[#hasrace[rShifters] <> 0]]></exprreq>
+    <exprreq message="Shifter Defense feat required." iserror="no"><![CDATA[#hasfeat[fShftDef]<> 0]]></exprreq>
+    <exprreq message="At least three other shifter feats required." iserror="no"><![CDATA[tagcount[fCategory.Shifter] >=3]]></exprreq>
+    </thing>
+  <thing id="fShftDef" name="Shifter Defense" description="By delving into your shifter heritage, you have developed the ability to ignore a little damage from every attack.\n\n{b}Prerequisite:{/b} Shifter, two other shifter feats.\n\n{b}Benefit:{/b} While shifting, you gain damage reduction 2/silver." compset="Feat" summary="While shifting, you gain damage reduction 2/silver." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <eval phase="PreLevel" priority="1000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ Set default amount of DR
+      field[abValue].value += 2]]></eval>
+    <eval phase="PreAttr" priority="1000" index="2"><![CDATA[
+      ~ If not shifting get out now
+      doneif (hero.tagis[Shifter.Shifting] <> 1)
+
+      ~ Give DR Silver
+      #applydr[xDamRdSil,field[abValue].value]]]></eval>
+    <exprreq message="At least two other shifter feats required." iserror="no"><![CDATA[tagcount[fCategory.Shifter] >=2]]></exprreq>
+    <exprreq message="Shifter Race only" iserror="no"><![CDATA[#hasability[raShifting]<> 0]]></exprreq>
+    </thing>
+  <thing id="fShftFeroc" name="Shifter Ferocity" description="You are a tenacious combatant, continuing to fight when others would succumb to pain and injury.\n\n{b}Prerequisite:{/b} Shifter race, Wisdom 13.\n\n{b}Benefit:{/b} While shifting, you continue to fight without penalty if you are disabled or dying." compset="Feat" summary="While shifting, you continue to fight without penalty if you are disabled or dying." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]]]></eval>
+    <exprreq message="Wisdom 13+ required." iserror="no"><![CDATA[child[aWIS].field[aFinalVal].value >= 13]]></exprreq>
+    <exprreq message="Shifter race required." iserror="no"><![CDATA[#hasrace[rShifters] <> 0]]></exprreq>
+    </thing>
+  <thing id="fShftMulti" name="Shifter Multiattack" description="You are adept at using your natural attack in conjunction with another weapon.\n\n{b}Prerequisite:{/b} Shifter with the longtooth or razorclaw trait, base attack bonus +6.\n\n{b}Benefit:{/b} Your secondary attack with a natural weapon takes only a -2 penalty.\n\n{b}Normal:{/b} Without this feat, your secondary attack with a natural weapon takes a -5 penalty." compset="Feat" summary="Your secondary attack with a natural weapon takes only a -2 penalty." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="HasFeat" tag="fMultiAtt"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ Set the mulitattack tag on hero
+      perform hero.assign[Hero.MultiAtt]]]></eval>
+    <exprreq message="Shifter with longtooth or razorclaw trait required." iserror="no"><![CDATA[hero.tagis[Shifter.Razorclaw] + hero.tagis[Shifter.Longtooth] <> 0]]></exprreq>
+    <exprreq message="Must have a Base Attack Bonus of +6 or greater." iserror="no"><![CDATA[child[Attack].field[tAtkBase].value >= 6]]></exprreq>
+    </thing>
+  <thing id="fS2ActBoos" name="Action Boost" description="You have the ability to alter your luck drastically in dire circumstances.\n\n{B}Benefit:{/b} When you spend an action point to alter the result of an attack roll, a skill check, an ability check, a level check, or a saving throw, you roll d8s instead of d6s and add the result to the d20 roll." compset="Feat" summary="When you spend an action point roll d8s instead of d6s." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Increase die size to d8
+      #value2[ECSActionP] += 2]]></eval>
+    </thing>
+  <thing id="fS2ActSurg" name="Action Surge" description="By spending 2 action points, you can perform an additional action in a round.\n\n{B}Prerequisite:{/b} Base attack bonus +3.\n\n{B}Benefit:{/b} You can spend 2 action points to take an extra move action or standard action in a round, either before or after your regular actions." compset="Feat" summary="You can spend 2 action points to take an extra move action or standard action in a round, either before or after your regular actions." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Must have a Base Attack Bonus of +3 or greater."><![CDATA[hero.child[Attack].field[tAtkBase].value >= 3]]></exprreq>
+    </thing>
+  <thing id="fS2HeroSpi" name="Heroic Spirit" description="You have a larger reservoir of luck than the average hero.\n\n{B}Benefit:{/b} Your action point maximum per level is increased by 3. Thus, you now gain a number of action points equal to 8 + 1/2 your character level at each new level you attain. This number also represents the total number of action points you can have at each level.\n\n{B}Normal:{/b} Without this feat, player characters receive and are limited to action points equal to 5 + 1/2 their character level at each new level they attain. \n\n{B}Special:{/b} NPCs normally do not have action points. By taking this feat, an NPC gains and can use 3 action points every level." compset="Feat" summary="Your action point maximum per level is increased by 3." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <eval phase="PostLevel" priority="10050"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+~ If no action points tracker get out now
+doneif (hero.childlives[hActionPts] <> 1)
+
+~Increase Action Point total by 3
+#trkmax[hActionPts] += 3]]></eval>
+    </thing>
+  <thing id="fS2RagLuck" name="Raging Luck" description="When raging, you have a greater ability to alter your luck than most others do.\n\n{b}Prerequisite{/b}: Rage class feature.\n\n{b}Benefit:{/b} You gain 1 temporary action point while raging. If you don’t use this action point during your rage, it disappears when your rage ends." compset="Feat" summary="You gain 1 temporary action point while raging. If you don’t use this action point during your rage, it disappears when your rage ends." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Rage"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+~ If rage not active get out now
+doneif (hero.tagis[Activated.cBbnRage] <> 1)
+
+field[trkMax].value += 1]]></eval>
+    <exprreq message="Rage class feature required."><![CDATA[#hasability[cBbnRage] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2AbeDrag" name="Aberrant Dragonmark" description="Although you are not a recognized member of one of the dragonmarked families, you have manifested a dragonmark.\n\n{b}Prerequisite:{/b} Dragonmarked race (human, dwarf, elf, gnome, halfling, half-elf, or half-orc).\n\n{b}Benefit:{/b} This feat provides you with a single dragonmark spell-like ability that is not directly tied to the trueborn dragonmarked houses. All aberrant mark spell-like abilities can be used once per day.\n\nWhen you select this feat, you must choose an aberrant dragonmark spelllike ability from the following list. You can never improve this mark in any way, and you can never gain a second mark. A character with one of the true dragonmarks (least, lesser, or greater) cannot select this feat, and a character with this feat cannot later select one of the true dragonmark feats.\n\nA saving throw against your aberrant dragonmark spell-like ability has a DC of 10 + spell level + your Cha modifier. (Spell level for an aberrant dragonmark ability is always 1st.) Your caster level for your aberrant dragonmark spell-like ability is one half your character level.\n\n{b}Aberrant Mark Powers:{/b} {i}burning hands, cause fear, charm person, chill touch, detect secret doors, feather fall, inflict light wounds, jump, light, pass without trace, produce flame, shield, Tenser&apos;s floating disk.{/i}\n\nAberrant dragonmarks are mutations that appear occasionally among the dragonmarked races (usually to those not of a dragonmarked house) that can be traced back to the blood lines of corrupted dragonmarked families eliminated in the War of the Mark. At a quick glance, an aberrant mark could be mistaken for an established dragonmark, but on close inspection its differences are readily apparent." compset="Feat" summary="Although you are not a recognized member of one of the dragonmarked families, you have manifested a dragonmark." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="thingid.spBurnHan1|thingid.spCausFea1|thingid.spCharPer1|thingid.spChilTou1|thingid.spDeteSec1|thingid.spFeatFal1|thingid.spInflLig1|thingid.spJump1|thingid.spLight0|thingid.spPasswit1|thingid.spProdFla1|thingid.spShield1|thingid.spFloaDis1"/>
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <bootstrap thing="spCausFea1">
+      <containerreq phase="First" priority="99">SpInfo.spCausFea1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spCharPer1">
+      <containerreq phase="First" priority="99">SpInfo.spCharPer1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spChilTou1">
+      <containerreq phase="First" priority="99">SpInfo.spChilTou1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spDeteSec1">
+      <containerreq phase="First" priority="99">SpInfo.spDeteSec1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spFeatFal1">
+      <containerreq phase="First" priority="99">SpInfo.spFeatFal1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spInflLig1">
+      <containerreq phase="First" priority="99">SpInfo.spInflLig1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spJump1">
+      <containerreq phase="First" priority="99">SpInfo.spJump1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spLight0">
+      <containerreq phase="First" priority="99">SpInfo.spLight0</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spPasswit1">
+      <containerreq phase="First" priority="99">SpInfo.spPasswit1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spProdFla1">
+      <containerreq phase="First" priority="99">SpInfo.spProdFla1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spShield1">
+      <containerreq phase="First" priority="99">SpInfo.spShield1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spFloaDis1">
+      <containerreq phase="First" priority="99">SpInfo.spFloaDis1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spBurnHan1">
+      <containerreq phase="First" priority="99">SpInfo.spBurnHan1</containerreq>
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="First" priority="90"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+
+~ Put the Dragonmark type and Strength on the hero
+perform hero.assign[Dragonmark.Least]
+Perform hero.assign[Dragonmark.Aberrant]
+
+~ If nothing chosen get out now
+doneif (field[usrChosen1].ischosen <> 1)
+
+~ Pull Spell-Like ability tags and push to hero
+perform field[usrChosen1].chosen.pulltags[SpInfo.?]
+perform hero.pushtags[SpInfo.?]]]></eval>
+    <exprreq message="Dragonmarked race (human, dwarf, elf, gnome, halfling, half-elf, or half-orc) is required."><![CDATA[#hasrace[rHuman] + #hasrace[rDwarf] + #hasrace[rElf] + #hasrace[rGnome] + #hasrace[rHalfling] + #hasrace[rHalfElf] + #hasrace[rHalfOrc] <> 0]]></exprreq>
+    <exprreq message="You have a true dragonmark already.">hero.tagcount[Dragonmark.True] = 0</exprreq>
+    </thing>
+  <thing id="fS2Ashboun" name="Ashbound" description="You have been trained in the druidic traditions of the Ashbound, seeing yourself as one of nature&apos;s avengers. You consider the use of arcane magic to be a vile and unnatural act.\n\n{b}Prerequisite:{/b} Ability to spontaneously cast {i}summon nature&apos;s ally{/i}.\n\n{b}Benefit:{/b} The duration of your {i}summon nature&apos;s ally{/i} spells is doubled. Creatures summoned by those spells receive a +3 luck bonus on their attack rolls.\n\n{b}Note:{/b} Under the {b}Adjust{/b} tab for Conferred abilties is the &quot;Feat: Ashbound&quot; that will apply the +3 Luck bonus on attack rolls." compset="Feat" summary="The duration of your {i}summon nature&apos;s ally{/i} spells is doubled." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="DruidSect" tag="Ashbound"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+
+~ Push all Druid Sects to the hero
+perform forward[DruidSect.?]]]></eval>
+    <exprreq message="Ability to spontaneously cast {i}summon nature&apos;s ally{/i} required."><![CDATA[#hasability[cDrdSpont] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2AtMaWea" name="Attune Magic Weapon" description="Through your study of magic weapons, you have become adept at eking every advantage out of their enchanted qualities.\n\n{b}Prerequisites:{/b} Craft Magic Arms and Armor, caster level 5th.\n\n{b}Benefit:{/b} When you wield a magic weapon, you gain a +1 insight bonus on attack rolls and damage rolls.\n\n{b}Special:{/b} You must spend 24 hours with a newly acquired weapon before you can gain this benefit when wielding it.\n\n{B}NOTE:{/b} Do to how magic weapons, unique magic weapons, and masterwork weapons work in HL you have to put in an Adjustment for each of your magic weapons.  This can be done on the &quot;{B}Adjust{/b}&quot; tab under the &quot;{b}Conferred{/b}&quot; section." compset="Feat" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="ItemCreate"/>
+    <exprreq message="Craft Magic Arms and Armor feat required."><![CDATA[#hasfeat[fCraftMgc] <> 0]]></exprreq>
+    <exprreq message="Caster level 5th required."><![CDATA[herofield[tMastCraft].value >= 5]]></exprreq>
+    </thing>
+  <thing id="fS2BeaTote" name="Beast Totem" description="In the druidic custom of your people, you have claimed a kind of magical beast as your totem - a patron, protector, and source of strength.\n\n{b}Prerequisite:{/b} Wild empathy class feature.\n\n{b}Benefit:{/b} Choose one of the magical beasts on the table below. You gain a +4 circumstance bonus on saving throws against the specified attack form, thanks to the protection afforded by your connection with your magical beast totem." compset="Feat" summary="You gain a +4 circumstance bonus on saving throws against the specified attack form." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="thingid.zS2Chimera|thingid.zS2Digeste|thingid.zS2DisplBe|thingid.zS2Gorgon|thingid.zS2Krensha|thingid.zS2Unicorn|thingid.zS2WinterW|thingid.zS2Yrthak"/>
+    <usesource source="S2Eberron"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If nothing chosen get out now
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      var text as string
+      text = "+4 circumstance vs " & field[usrChosen1].chosen.tagnames[fS2BeaTote.?]
+      #situational[hero.child[svAll],text,field[name].text]]]></eval>
+    <exprreq message="Wild Empathy class feature required."><![CDATA[#hasability[cWildEmp] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2BeaShap" name="Beast Shape" description="You call upon the power of your beast totem to physically change your form.\n\n{b}Prerequisites:{/b} Wild empathy class feature, Beast Totem, ability to wild shape into Huge animal.\n\n{b}Benefit:{/b} You can use your wild shape ability to assume the form of your beast totem once per day. You gain the extraordinary and supernatural abilities of the creature. This form is in addition to your normal wild shape ability, but functions in the same way." compset="Feat" summary="You call upon the power of your beast totem to physically change your form." uniqueness="useronce">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="S2Eberron"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    <exprreq message="Wild Empathy class feature required."><![CDATA[#hasability[cWildEmp] <> 0]]></exprreq>
+    <exprreq message="Beast Totem feat requried."><![CDATA[#hasfeat[fS2BeaTote] <> 0]]></exprreq>
+    <prereq message="Ability to wild shape into Huge animal required.">
+      <validate><![CDATA[
+        ~ If we don't have the Wild Shape Animal get out
+        doneif (#hasability[cDrdWildAn] <> 1)
+
+        ~ By default we are not valid
+        @valid = 0
+        If (hero.child[cDrdWildAn].field[xAllLev].value >= 8) Then
+           @valid = 1
+        Endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fS2BindEle" name="Bind Elemental" description="You can craft magic items that use bound elementals for special effects, including weapons, armor, airships, and elemental galleons.{br}{br}{b}Prerequisites:{/b} Craft Wondrous Item, caster level 9th.{br}{br}{b}Benefit:{/b} Crafting an item with a bound elemental is similar to making a wondrous item, except that calling and binding an elemental is an integral part of creating the item. All bound-elemental items have a {i}planar binding{/i} spell as a prerequisite, but simply casting the spell as part of the item creation is not suffi cient. You must cast the spell normally, using the item that is to hold the elemental and a Khyber dragonshard as a receptacle.{br}{br}The elemental receives its normal saving throw to resist.{br}{br}While the elemental resides in the receptacle, you must compel it to accept bondage in the item by making an opposed Charisma check, as specifi ed in the {i}lesser planar binding{/i} spell description.{br}{br}If you are an artifi cer, this feat allows you to cast a {i}planar binding{/i} spell by successfully emulating it with a Use Magic Device check (DC 20 + caster level), but only when you attempt to craft a bound-elemental item. In this case, your effective caster level equals your Use Magic Device check result -20 for the purpose of opposing the elemental&apos;s attempts to escape.{br}{br}See pages 265-267 for examples of bound-elemental items and vessels." compset="Feat" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="ItemCreate"/>
+    <exprreq message="Craft Wondrous Item feat required."><![CDATA[#hasfeat[fCraftWond] <> 0]]></exprreq>
+    <exprreq message="Caster level 5th required."><![CDATA[herofield[tMastCraft].value >= 9]]></exprreq>
+    </thing>
+  <thing id="fS2ChildWi" name="Child of Winter" description="You are trained in the druidic traditions of the Children of Winter, an Eldeen Reaches sect that embraces death and decay.\n\n{b}Prerequisites:{/b} Ability to spontaneously cast {i}summon nature&apos;s ally{/i}, nongood alignment.\n\n{b}Benefit:{/b} You can use any druid spell that normally targets animals against vermin as well. A mindless vermin is considered to have an Intelligence score of 2 when dealing with you and can be charmed, calmed, or targeted by wild empathy or similar abilities. In addition, you can use your {i}summon nature&apos;s ally{/i} spells to summon vermin. Add the following monsters to the list of creatures you can summon using the appropriate {i}summon nature&apos;s ally{/i} spell." compset="Feat" summary="Your spells can target vermin and you gain additional monsters to summon." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="DruidSect" tag="ChildWint"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Push all Druid Sects to the hero
+      perform forward[DruidSect.?]]]></eval>
+    <exprreq message="Ability to spontaneously cast {i}summon nature&apos;s ally{/i} required."><![CDATA[#hasability[cDrdSpont] <> 0]]></exprreq>
+    <exprreq message="Non-good alignment required."><![CDATA[hero.tagis[Alignment.Good] <> 1]]></exprreq>
+    </thing>
+  <thing id="fS2DoStStr" name="Double Steel Strike" description="Through monastic weapon training, you have mastered a fi ghting style that makes use of an unusual monk weapon: the two-bladed sword.\n\n{b}Prerequisites:{/b} Exotic Weapon Proficiency (two-bladed sword), Weapon Focus (two-bladed sword), flurry of blows class feature.\n\n{b}Benefit:{/b} You can treat a two-bladed sword as a special monk weapon, allowing you to perform a flurry of blows with it." compset="Feat" summary="You can use the two-bladed sword as a monk weapon." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ make all two-bladed swords monk weapon
+      foreach pick in hero from BaseWep where "thingid.wSwordTwo"
+         perform eachpick.assign[wFtrGroup.Monk]
+         perform eachpick.assign[wSpecial.Monk]
+      nexteach]]></eval>
+    <exprreq message="Weapon Proficiency (two-bladed sword) feat required."><![CDATA[hero.tagis[WepProf.wSwordTwo] <> 0]]></exprreq>
+    <exprreq message="Flurry of Blows class ability required."><![CDATA[#hasability[cMnkFlurr] <> 0]]></exprreq>
+    <exprreq message="Weapon Focus (two-bladed sword) feat required."><![CDATA[hero.tagcount[WepFocus.wSwordTwo] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2DraTote" name="Dragon Totem" description="As a proud warrior of the barbarian tribes of Argonnessen and Seren, you have claimed one of the true dragon types as your totem - a patron, protector, and source of strength.\n\n{b}Prerequisites:{/b} Base attack bonus +1, region of origin Argonnessen or Seren.\n\n{b}Benefit:{/b} Choose one kind of true dragon as your totem. You gain resistance 5 to the type of energy associated with it." compset="Feat" uniqueness="useronce">
+    <comment>Prerequisite not working yet.</comment>
+    <fieldval field="usrCandid1" value="component.SelectHelp &amp; Selection.DragonDisc"/>
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If nothing chosen get out now
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      ~ Pull the energy tags down to this feat
+      perform field[usrChosen1].chosen.pulltags[BloodEner.?]
+
+      ~ Apply the correct Energy Reistance based on the dragon chosen
+      If (field[usrChosen1].chosen.tagis[BloodEner.Acid] = 1) then
+         #applyresist[xDamRsAcid,field[abValue].value]
+      ElseIf (field[usrChosen1].chosen.tagis[BloodEner.Elec] = 1) then
+         #applyresist[xDamRsElec,field[abValue].value]
+      ElseIf (field[usrChosen1].chosen.tagis[BloodEner.Fire] = 1) then
+         #applyresist[xDamRsFire,field[abValue].value]
+      ElseIf (field[usrChosen1].chosen.tagis[BloodEner.Cold] = 1) then
+         #applyresist[xDamRsCold,field[abValue].value]
+      Endif
+
+      field[abSumm].text = "You gain " & field[usrChosen1].chosen.tagnames[BloodEner.?] & " resistance 5."]]></eval>
+    <eval phase="First" priority="1000" index="2">
+      ~ set the default value of 5
+      field[abValue].value += 5</eval>
+    <exprreq message="Base attack bonus +1 required."><![CDATA[child[Attack].field[tAtkBase].value >= 1]]></exprreq>
+    </thing>
+  <thing id="fS2DraRage" name="Dragon Rage" description="You call upon the power of your dragon totem to enhance your barbarian rage.\n\n{b}Prerequisites:{/b} Base attack bonus +4, Dragon Totem, ability to rage or frenzy, region of origin Argonnessen.\n\n{b}Benefit:{/b} When you enter a rage or frenzy, your natural armor bonus improves by +2. In addition, for the duration of your rage or frenzy you gain resistance 10 to the energy type associated with your dragon totem (total resistance 15 while raging)." compset="Feat" summary="+2 natural armor bonus and plus 10 energy resistance when raging." uniqueness="useronce">
+    <comment>Prerequisite not working yet.</comment>
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="First" index="2">
+      ~ set base amount of Energy resistance
+      field[abValue].value += 10</eval>
+    <eval phase="Final"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If we don't have rage get out now
+      doneif (hero.childlives[cBbnRage] <> 1)
+      ~ If not raging get out now
+      doneif (hero.child[cBbnRage].field[abilActive].value <> 1)
+
+      ~ If raging increase Natural AC by 2
+      hero.child[ArmorClass].field[tACNatural].value += 2
+
+      ~ If no dragon totem feat get out now
+      doneif (#hasfeat[fS2DraTote] <> 1) 
+
+      ~ get total resistance bonus
+      field[abValue2].value = field[abValue].value + hero.child[fS2DraTote].field[abValue].value
+
+      ~ Apply the correct Energy Reistance based on the dragon chosen
+      If (hero.child[fS2DraTote].tagis[BloodEner.Acid] = 1) then
+         #applyresist[xDamRsAcid,field[abValue2].value]
+      ElseIf (hero.child[fS2DraTote].tagis[BloodEner.Elec] = 1) then
+         #applyresist[xDamRsElec,field[abValue2].value]
+      ElseIf (hero.child[fS2DraTote].tagis[BloodEner.Fire] = 1) then
+         #applyresist[xDamRsFire,field[abValue2].value]
+      ElseIf (hero.child[fS2DraTote].tagis[BloodEner.Cold] = 1) then
+         #applyresist[xDamRsCold,field[abValue2].value]
+      Endif]]></eval>
+    <exprreq message="Base attack bonus +4 required."><![CDATA[child[Attack].field[tAtkBase].value >= 4]]></exprreq>
+    <exprreq message="Dragon Totem feat required."><![CDATA[#hasfeat[fS2DraTote] <> 0]]></exprreq>
+    <exprreq message="Rage or frenzy class ability required."><![CDATA[#hasability[cBbnRage] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2Ecclesi" name="Ecclesiarch" description="You command a degree of respect in your church&apos;s hierarchy.\n\n{b}Prerequisite:{/b} Knowledge (religion) 3 ranks.\n\n{b}Benefit:{/b} Add Diplomancy and Knowledge (local) to your list of class skills. This benefit represents your ability to learn details about any community from the clergy of its churches.\n\nIn addition, if you take the Leadership feat, you gain a +2 bonus to your Leadership score." compset="Feat" summary="dd Diplomancy and Knowledge (local) to your list of class skills." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      perform hero.assign[ClassSkill.skDiplo]
+      perform hero.assign[ClassSkill.skKnowLoc]
+
+      ~ If leadership feat not live get out now
+      doneif (hero.childlives[fLeader] <> 1)
+      ~ Increase leadership value by 2
+      hero.child[fLeader].field[abValue].value += 2]]></eval>
+    <exprreq message="Knowledge (religion) 3+ ranks required."><![CDATA[#skillranks[skKnowRel] >= 3]]></exprreq>
+    </thing>
+  <thing id="fS2Educati" name="Education" description="Some lands hold the pen in higher regard than the sword. In your youth, you received the benefit of several years of formal schooling.\n\n{b}Prerequisite:{/b} 1st level only.\n\n{b}Benefit:{/b} All Knowledge skills are class skills for you and in addition you get a +1 bonus on all checks with any two Knowledge skills of your choice." compset="Feat" summary="All knowledge skills are class skills and you gain a +1 bonus on two skills." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.BaseSkill &amp; Helper.SkCatKnow"/>
+    <fieldval field="usrCandid2" value="component.BaseSkill &amp; Helper.SkCatKnow"/>
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="ChooseSrc2" tag="Hero"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Make all knowledge skills class skills
+      foreach pick in hero from BaseSkill where "Helper.SkCatKnow"
+         perform eachpick.assign[Helper.ClassSkill]
+      nexteach
+
+      If (field[usrChosen1].ischosen <> 0) Then
+         field[usrChosen1].chosen.field[Bonus].value += 1
+      Endif
+      If (field[usrChosen2].ischosen <> 0) Then
+         field[usrChosen2].chosen.field[Bonus].value += 1
+      Endif]]></eval>
+    <prereq message="Only available at 1st level.">
+      <validate><![CDATA[
+~ If we're level 1, we're valid
+validif (herofield[tLevel].value <= 1)
+
+~ If the pick has already been added to the hero, we're valid
+validif (@ispick <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fS2ExcArti" name="Exceptional Artisan" description="You are an expert at creating magic items faster than usual.{br}{br}{b}Prerequisites:{/b} Any item creation feat.{br}{br}{b}Benefit:{/b} When determining the time you need to craft any item, reduce the base time by 25%." compset="Feat" summary="When determining the time you need to craft any item, reduce the base time by 25%." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="fCategory" tag="ItemCreate"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Any item creation feat required."><![CDATA[hero.tagcount[fCategory.ItemCreate] > 0]]></exprreq>
+    </thing>
+  <thing id="fS2ExtRing" name="Extra Rings" description="Your familiarity with forging magic rings allows you to make use of more rings than normal.\n\n{b}Prerequisites:{/b} Forge Ring, caster level 12th.\n\n{b}Benefit:{/b} You can wear up to four magic rings, two on each hand, and all function normally.\n\n{b}Normal:{/b} Without this feat, you can only wear and use two magic rings at one time." compset="Feat" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="fCategory" tag="ItemCreate"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+
+var iX as number
+var tags as number
+~ Count current number of tags minus two
+tags = hero.tagcount[Hero.EqpRing] - 2
+~ remove all equipped rings tags
+perform hero.delete[Hero.EqpRing]
+~ put back the above tags so that when we have 5 rings we
+~ still get an error.
+while (iX < tags)
+  iX += 1
+  perform hero.assign[Hero.EqpRing]
+  ~debug "assigned"
+loop]]></eval>
+    <exprreq message="Forge Ring feat required."><![CDATA[#hasfeat[fForgeRing] <> 0]]></exprreq>
+    <exprreq message="Caster level 12th required."><![CDATA[herofield[tMastCraft].value >= 12]]></exprreq>
+    </thing>
+  <thing id="fS2ExtArti" name="Extraordinary Artisan" description="You are an expert at creating magic items at a lower cost than usual.\n\n{b}Prerequisite:{/b} Any item creation feat.\n\n{b}Benefit:{/b} When determining the gold piece cost in raw materials you need to craft any item, reduce the base price by 25%." compset="Feat" summary="When determining the gold piece cost in raw materials you need to craft any item, reduce the base price by 25%." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="fCategory" tag="ItemCreate"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Any item creation feat required."><![CDATA[hero.tagcount[fCategory.ItemCreate] > 0]]></exprreq>
+    </thing>
+  <thing id="fS2FavInHo" name="Favored In House" description="You are a member of one of the dragonmarked mercantile houses and wield some influence in that house.\n\n{b}Prerequisite:{/b} Member of appropriate dragonmarked race and house.\n\n{b}Benefit:{/b} Your family is influential and powerful, and you have the ability to call in favors from other members of your family and their extensive contacts. By making a favor check (see below), you can call upon contacts to gain important information without going through the time and trouble of a Gather Information check. Favors can also be used to acquire the loan of equipment or documents from infl uential acquaintances.\n\nTo call in a favor, you make a favor check. Roll a d20 and add a bonus based on your character level: +1 at 1st-2nd level, +2 at 3rd-6th level, +3 at 7th-11th level, +4 at 12th - 15th level, or +5 at 16th level or higher. The DM sets the DC based on the scope of the favor being requested; it can range from 10 for a simple favor to as high as 25 for highly dangerous, expensive, or illegal favors. You can&apos;t take 10 or take 20 on this check, nor can you retry the check for the same (or virtually the same) favor. Favors should help advance the plot of an adventure. A favor that would enable you to circumvent an adventure will always be unavailable to you, regardless of the result of a favor check.\n\nYou can try to call in a favor a number of times per week equal to one-half your character level, rounded down (minimum one). You can never ask for more than one favor from any one contact in a given week.\n\nFor instance, at 7th level you can try to call in a favor as many as three times per week, but each attempt must involve a different contact from among those associated with your mercantile house.\n\nThe DM will carefully monitor your use of favors to ensure that you don&apos;t abuse this ability. The success or failure of a mission shouldn&apos;t hinge on the use of a favor, and calling in favors shouldn&apos;t replace good roleplaying or the use of other skills. The DM may disallow any favor he or she deems disruptive to the campaign." compset="Feat" summary="You are a member of one of the dragonmarked mercantile houses and wield some influence in that house." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Dragonmarked race (human, dwarf, elf, gnome, halfling, half-elf, or half-orc) is required."><![CDATA[#hasrace[rHuman] + #hasrace[rDwarf] + #hasrace[rElf] + #hasrace[rGnome] + #hasrace[rHalfling] + #hasrace[rHalfElf] + #hasrace[rHalfOrc] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2FlenStr" name="Flensing Strike" description="You have studied a martial style practiced by monks devoted to the Mockery, which has taught you to cut your opponent&apos;s skin in a very painful way.\n\n{b}Prerequisites:{/b} Proficiency with kama, Weapon Focus (kama).\n\n{b}Benefit:{/b} Using Flensing Strike is a full-round action. Make an attack roll with your kama. If you hit a living, corporeal foe, that creature must make a Fortitude saving throw (DC 10 + 1/2 your character level + your Wis modifier), in addition to taking damage normally. The DC is increased by 2 if you are wielding two kamas (creatures wielding more than two kamas gain no additional bonuses).\n\nThe target adds his natural armor bonus, if any, as a bonus on this saving throw. A target that fails the saving throw is wracked with pain, receiving a -4 penalty on attack rolls, saves, and checks for 1 minute. Constructs, oozes, plants, undead, incorporeal creatures, creatures immune to extra damage from critical hits, and creatures with a special immunity to pain are not susceptible to this feat.\n\n{b}Special:{/b} A monk may select Flensing Strike as a bonus feat at 1st level." compset="Feat" summary="You can cause wracking pain to living creatures with Kamas." uniqueness="useronce">
+    <comment><![CDATA[Currently removed the "Evil" monk part as I can't get it to work correctly yet in HL.  Also not normal for Pathfinder rules. (Tim Shadow)]]></comment>
+    <usesource source="S2Eberron"/>
+    <tag group="BonusFor" tag="Monk1"/>
+    <tag group="StandardDC" tag="aWIS"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+
+~ Find all equipped kama weapons
+foreach pick in hero from BaseWep where "thingid.wKama & (Hero.MainHand|Hero.OffHand)"
+   field[abValue].value += 1
+nexteach
+~ Set our minimum to 2 if greater
+If (field[abValue].value >= 2) Then
+  field[abValue].value = 2
+Else
+  field[abValue].value = 0
+Endif
+~ increase our DC value
+field[abDC].value += field[abValue].value]]></eval>
+    <exprreq message="Proficiency with kama required."><![CDATA[hero.tagis[WepProf.wKama] <> 0]]></exprreq>
+    <exprreq message="Weapon Focus (kama) feat required."><![CDATA[hero.tagcount[WepFocus.wKama] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2GateIni" name="Gatekeeper Initiate" description="You have been trained in the ancient druidic tradition of the Gatekeepers, founded originally to ward off an extraplanar assault by aberrations.\n\n{b}Prerequisite:{/b} Ability to spontaneously cast {i}summon nature&apos;s ally{/i}.\n\n{b}Benefit:{/b} You get a +2 bonus on saving throws against the supernatural and spelllike abilities of aberrations. Add Knowledge (the planes) to your list of druid class skills. You may use Knowledge (the planes) rather than Knowledge (dungeoneering) when making skill checks to identify aberrations and their special abilities.  In addition, you can cast the following spells as if they were on the druid spell list at the indicated level.\n\n1st level: {i}protection from evil{/i} \n2nd level: {i}zone of natural purity*{/i} \n3rd level: {i}dimensional anchor{/i} \n4th level: {i}nature&apos;s wrath*{/i} \n5th level: {i}banishment{/i} \n6th level: {i}dimensional lock{/i} \n7th level: {i}return to nature*{/i} \n8th level: {i}mind blank{/i} \n9th level: {i}imprisonment{/i} \n* New spell, see Chapter 5: Magic." compset="Feat" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="DruidSect" tag="Gatekeeper"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+~ give note about situtational bonus
+#situational[hero.child[svAll],"+2 bonus on Su & Sp abilities of aberrations",field[name].text]
+~ Make Knowledge plans as class skill
+perform hero.assign[ClassSkill.skKnowPlan]
+#makeclassskill[skKnowPlan]
+~ Push all Druid Sects to the hero
+perform forward[DruidSect.?]
+
+~ If no druid class get out now
+doneif (hero.childlives[cHelpDrd] <> 1)
+~ assign the Gatekeeper feat spells to the class
+perform hero.child[cHelpDrd].assign[sClass.fS2GateIni]]]></eval>
+    <exprreq message="Ability to spontaneously cast {i}summon nature&apos;s ally{/i} required."><![CDATA[#hasability[cDrdSpont] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2DragLea" name="Least Dragonmark" description="You have a least dragonmark.\n\n{b}Prerequisite:{/b} Member of appropriate dragonmarked race and house.\n\n{b}Benefit:{/b} You gain a least dragonmark and the use of one spell-like ability associated with the least dragonmark of your house (see the next section of this chapter for information on dragonmarks). A saving throw against your dragonmark spell-like ability has a DC of 10 + the level of the spell + your Cha modifier. \n\nYour caster level for your least dragonmark spell-like ability is 1 + your level in the dragonmark heir prestige class (if any)." compset="Feat" summary="You have a least dragonmark." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="thingid.cfgS2Detec|thingid.cfgS2Findi|thingid.cfgS2Handl|thingid.cfgS2Heali|thingid.cfgS2Hospi|thingid.cfgS2Makin|thingid.cfgS2Passa|thingid.cfgS2Scrib|thingid.cfgS2Senti|thingid.cfgS2Shado|thingid.cfgS2Storm|thingid.cfgS2Wardi"/>
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="Dragonmark" tag="True"/>
+    <tag group="Dragonmark" tag="Least"/>
+    <bootstrap thing="cfgS2Detec">
+      <containerreq phase="First" priority="250">Dragonmark.Detection</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Findi">
+      <containerreq phase="First" priority="250">Dragonmark.Finding</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Handl">
+      <containerreq phase="First" priority="250">Dragonmark.Handling</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Heali">
+      <containerreq phase="First" priority="250">Dragonmark.Healing</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Hospi">
+      <containerreq phase="First" priority="250">Dragonmark.Hospitalit</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Makin">
+      <containerreq phase="First" priority="250">Dragonmark.Making</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Passa">
+      <containerreq phase="First" priority="250">Dragonmark.Passage</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Scrib">
+      <containerreq phase="First" priority="250">Dragonmark.Scribing</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Senti">
+      <containerreq phase="First" priority="250">Dragonmark.Sentinel</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Shado">
+      <containerreq phase="First" priority="250">Dragonmark.Shadow</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Storm">
+      <containerreq phase="First" priority="250">Dragonmark.Storm</containerreq>
+      </bootstrap>
+    <bootstrap thing="cfgS2Wardi">
+      <containerreq phase="First" priority="250">Dragonmark.Warding</containerreq>
+      </bootstrap>
+    <eval phase="First" priority="90"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+~ If nothing chosen get out now
+doneif (field[usrChosen1].ischosen <> 1)
+
+~ Pull Dragonmark tags and push to hero
+perform field[usrChosen1].chosen.pulltags[Dragonmark.?]
+perform hero.pushtags[Dragonmark.?]]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+~ If nothing chosen get out now
+doneif (field[usrChosen1].ischosen <> 1)
+var config as string
+
+config = field[usrChosen1].chosen.tagids[thingid.?,"|"]
+
+~ Increase the number Least dragonmarks that can be selected by 1
+hero.firstchild[config].field[cfgMax1].value += 1]]></eval>
+    <eval phase="PostLevel" priority="10000" index="3"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+
+~ Increase CL by one of all dragonmark spell-like abilites
+foreach pick in hero from BaseSpell where "Dragonmark.?"
+   eachpick.field[sCL].value += 1
+nexteach]]></eval>
+    <exprreq message="Dragonmarked race (human, dwarf, elf, gnome, halfling, half-elf, or half-orc) is required."><![CDATA[#hasrace[rHuman] + #hasrace[rDwarf] + #hasrace[rElf] + #hasrace[rGnome] + #hasrace[rHalfling] + #hasrace[rHalfElf] + #hasrace[rHalfOrc] <> 0]]></exprreq>
+    <exprreq message="You have a aberrant dragonmark already.">hero.tagcount[Dragonmark.Aberrant] = 0</exprreq>
+    </thing>
+  <thing id="cfgS2Detec" name="Mark of Detection" description="The Mark of Detection grants abilities that enable its possessor to discern the presence of threats, from poisoned food to scrying eyes.\n\n{b}House:{/b} The half-elves of House Medani carry the Mark of Detection.\n\nOne of the youngest of the dragonmarked houses, House Medani organized into a mercantile house as a result of the War of the Mark that ended fi fteen hundred years ago. Despite the fact that it has stood as an established mercantile house for fifteen centuries, some of the older houses still view House Medani as an upstart. Unconcerned with the opinions of its peers, House Medani controls the Warning Guild, which offers services related to personal protection.\n\nHouse Medani originated in Breland and continues to concentrate its efforts in the central region of Khorvaire.\n\nUnmarked members of House Medani sell their services as scouts, sentries, and similar occupations.\n\n{b}Marks:{/b} The aspects of the Mark of Detection grant the following benefits.\nLeast Mark of Detection: {i}detect magic{/i} 2/day or {i}detect poison{/i} 2/day; +2 bonus on Spot checks.\nLesser Mark of Detection: {i}detect scrying{/i} 1/day or {i}see invisibility{/i} 1/day.\n}Greater Mark of Detection: {i}true seeing{/i} 1/day{i}." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Detection"/>
+    <exprreq message="You must be a Half-elf of House Medani to have this dragonmark."><![CDATA[#hasrace[rHalfElf] <> 0]]></exprreq>
+    </thing>
+  <thing id="rcS2A1Dete" name="Detect Magic" description="You gain the use of {i}detect magic{/i} 2/day and a +2 bonus on Perception checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spDeteMag0"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Detec"/>
+    <bootstrap thing="spDeteMag0">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skPercep] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Dete" name="Detect Poison" description="You gain the use of {i}detect poison{/i} 2/day and a +2 bonus on Perception checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Detec"/>
+    <tag group="SpInfo" tag="spDetePoi0"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spDetePoi0">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">#skillbonus[skPercep] += 2</eval>
+    </thing>
+  <thing id="cfgS2Findi" name="Mark of Finding" description="The Mark of Finding bestows powers related to locating creatures or objects, making those who carry it useful as investigators or bounty hunters. In addition, members of the Finders Guild serve an essential role in locating dragonshards and selling them to other guilds for attunement.\n\n{b}House:{/b} House Tharashk is a family of half-orcs and humans originally from the region around the Shadow Marches. It controls the Finders Guild, which includes free lance inquisitives, some law enforcement agents, explorers for hire, and dragonshard prospectors. The Finders Guild concentrates its efforts in western Khorvaire, where a lucrative dragonshard prospecting business flourishes, although its members are found in every major town and city.\n\nThe unmarked members of House Tharashk assist their dragonmarked kin in every area; they offer mundane investigative services and help on dragonshard prospecting expeditions.\n\n{b}Marks:{/b} The aspects of the Mark of Finding grant the following benefits.\nLeast Mark of Finding: {i}identify{/i} 1/day, {i}know direction{/i} 2/day, or {i}locate object{/i} 1/day; +2 bonus on Perception checks.\nLesser Mark of Finding: {i}helping hand{/i} 1/day or {i}locate creature{/i} 1/day.\nGreater Mark of Finding: {i}find the path{/i} 1/day{i}." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Finding"/>
+    <exprreq message="You must be a Half-orc or Human of House Tharashk to have this dragonmark."><![CDATA[#hasrace[rHalfOrc] + #hasrace[rHuman] <> 0]]></exprreq>
+    </thing>
+  <thing id="cfgS2Handl" name="Mark of Handling" description="The Mark of Handling grants powers related to the care and control of animals.\n\n{b}House:{/b} The humans of House Vadalis carry the Mark of Handling. Their Handlers Guild controls the business of breeding and selling livestock throughout Khorvaire.\n\nThough the elves of Valenar are gaining a reputation for breeding the finest horses in Khorvaire, their steeds are rare and expensive, while House Vadalis provides a strong, loyal, and affordable mount.\n\nUnmarked members of House Vadalis are animal handlers, breeders, auctioneers, stablekeepers, drivers, and teamsters.\n\n{b}Marks:{/b} The aspects of the Mark of Handling grant the following benefits.\n\nLeast Mark of Handling: {i}calm animals{/i} 1/day, {i}charm animal{/i} 1/day, or {i}speak with animals{/i} 1/day; +2 bonus on Handle Animal checks.\n\nLesser Mark of Handling: {i}dominate animal{/i} 1/day or {i}greater magic fang{/i} 1/day.\n\nGreater Mark of Handling: {i}animal growth{/i} 1/day or {i}summon nature&apos;s ally V{/i} 1/day." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Handling"/>
+    <exprreq message="You must be a Human of House Vadalis to have this dragonmark."><![CDATA[#hasrace[rHuman] <> 0]]></exprreq>
+    </thing>
+  <thing id="cfgS2Heali" name="Mark of Healing" description="The Mark of Healing grants curative magical powers.\n\n{b}House:{/b} The halflings of House Jorasco carry the Mark of Healing and operate the Healers Guild, which controls both the mundane and magical healing trades. A sick or injured person in Khorvaire is far more likely to seek healing from the Healers Guild than from any temple, and in fact most temples do not offer healing services for sale (though they still heal their own champions and faithful when necessary).\n\nUnmarked members of House Jorasco are expertly trained in the healing arts, as well as in fi elds such as alchemy and herbalism.\n\n{b}Marks:{/b} The aspects of the Mark of Healing grant the following benefits.\n\nLeast Mark of Healing: {i}cure light wounds{/i} 1/day or {i}lesser restoration{/i} 1/day; +2 bonus on Heal checks.\n\nLesser Mark of Healing: {i}cure serious wounds{/i} 1/day, {i}neutralize poison{/i} 1/day, {i}remove disease{/i} 1/day, or {i}restoration{/i} 1/day.\n\nGreater Mark of Healing: {i}heal{/i} 1/day." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Healing"/>
+    <exprreq message="You must be a Halfling of House Jorasco to have this dragonmark."><![CDATA[#hasrace[rHalfling] <> 0]]></exprreq>
+    </thing>
+  <thing id="cfgS2Hospi" name="Mark of Hospitality" description="The Mark of Hospitality grants powers related to food and shelter.\n\n{b}House:{/b} The halflings of House Ghallanda carry the Mark of Hospitality, which is extremely useful in the halflings&apos; native nomadic culture. In the cities of Khorvaire, House Ghallanda operates the Hostelers Guild, whose members include innkeepers, chefs, and restaurateurs. While the guild does not operate every inn and dining establishment in Khorvaire, it enforces standards and performs inspections to regulate those businesses.\n\nUnmarked members of House Ghallanda run some of the finest hotels and restaurants in Khorvaire.\n\n{b}Marks:{/b} The aspects of the Mark of Hospitality grant the following benefi ts.\n\nLeast Mark of Hospitality: {i}purify food and drink{/i} 2/day, {i}prestidigitation{/i} 2/day, or {i}unseen servant{/i} 1/day; +2 bonus on Diplomacy checks.\n\nLesser Mark of Hospitality: {i}create food and water{/i} 1/day or {i}Leomund&apos;s secure shelter{/i} 1/day.\n\nGreater Mark of Hospitality: {i}heroes&apos; feast{/i} 1/day or {i}Mordenkainen&apos;s magnificent mansion{/i} 1/day." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Hospitalit"/>
+    <exprreq message="You must be a Halfling of House Gjallanda to have this dragonmark."><![CDATA[#hasrace[rHalfling] <> 0]]></exprreq>
+    </thing>
+  <thing id="cfgS2Makin" name="Mark of Making" description="The Mark of Making grants the power to mend or fabricate material goods.{br}{br}{b}House:{/b} The humans of House Cannith carry the Mark of Making. Members of their Tinkers Guild often travel as widely as more traditional tinkers, stopping in villages to repair goods as they go. House Cannith also runs the Fabricators Guild, whose members include those with lesser or greater marks who can fabricate new items rather than just repair old ones.{br}{br}Unmarked members of House Cannith are well-to-do artisans and, less often, mundane tinkers.{br}{br}{b}Marks:{/b} The aspects of the Mark of Making grant the following benefi ts.{br}{br}Least Mark of Making: {i}make whole{/i} 1/day, {i}mending{/i} 2/day, or {i}repair light damage*{/i} 1/day; +2 bonus on Craft checks.{br}{br}Lesser Mark of Making: {i}minor creation{/i} 1/day or {i}repair serious damage*{/i} 1/day.{br}{br}Greater Mark of Making: {i}fabricate{/i} 1/day or {i}major creation{/i} 1/day{i}.{/i}" compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Making"/>
+    <exprreq message="You must be a Human of House Cannith to have this dragonmark."><![CDATA[#hasrace[rHuman] <> 0]]></exprreq>
+    </thing>
+  <thing id="cfgS2Passa" name="Mark of Passage" description="The Mark of Passage bestows magical powers related to transportation and teleportation.\n\n{b}House:{/b} The humans of House Orien are the bearers of the Mark of Passage. They control a worldwide Couriers Guild that uses its powers to carry parcels, messages, and people over great distances instantaneously - for a high price. The house has holdings and operates across Khorvaire, though it traces its origins to Aundair. The house&apos;s Transportation Guild oversees lightning rail and caravan routes throughout central Khorvaire.\n\nUnmarked members of House Orien work as mundane couriers, often within the boundaries of a single city or nation.\n\n{b}Marks:{/b} The aspects of the Mark of Passage grant the following benefits.\n\nLeast Mark of Passage: {i}expeditious retreat{/i} 1/day, {i}mount{/i} 1/day, or {i}dimension leap{/i} 1/day; +2 bonus on Survival checks.\n\nA character with the {i}dimension leap{/i} spell-like ability can teleport up to a total of 10 feet per character level per use. The character can leap a shorter distance than his maximum, as long as the distance is in 10-foot increments. Using {i}dimension leap{/i} is a standard action.\n\nLesser Mark of Passage: {i}dimension door{/i} 1/day or {i}phantom steed{/i} 1/day{i}.\n\n{/i}Greater Mark of Passage: {i}overland flight{/i} 1/day or {i}teleport{/i} 1/day." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Passage"/>
+    <exprreq message="You must be a Human of House Orien to have this dragonmark."><![CDATA[#hasrace[rHuman] <> 0]]></exprreq>
+    </thing>
+  <thing id="cfgS2Scrib" name="Mark of Scribing" description="The Mark of Scribing grants powers related to writing and communication. Those who carry it specialize in the magic of the written word, serving as diplomats and translators or facilitating communication over long distances.\n\n{b}House:{/b} The gnomes of House Sivis carry the Mark of Scribing. This house controls the Speakers Guild, which offers the services of translators and mediators and can facilitate instantaneous long-range communication by means of {i}sending.{/i} In addition, House Sivis controls the Notaries Guild, which uses {i}arcane mark{/i} to certify legal documents and similar work. This guild also prepares secure documents intended for specifi c recipients using {i}illusory script{/i} and performs transcription and copying services. House Sivis originated in Zilargo and has spread along with the gnomes throughout the Five Nations. The house does not usually operate in regions where gnomes are rare. The unmarked members of House Sivis serve as mediators, scribes, messengers, go-betweens, and sometimes diplomats.\n\n{b}Marks:{/b} The aspects of the Mark of Scribing grant the following benefits.\n\nLeast Mark of Scribing: {i}arcane mark{/i} 2/day, {i}comprehend languages{/i} 1/day, or {i}whispering wind{/i} 1/day; +2 bonus on Linguistics checks.\n\nLesser Mark of Scribing: {i}illusory script{/i} 1/day, {i}secret page{/i} 1/day, or {i}tongues{/i} 1/day{i}.\n\n{/i}Greater Mark of Scribing: {i}sending{/i} 1/day (a description provided by a client makes you familiar with the recipient)." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Scribing"/>
+    <exprreq message="You must be a Gnome of House Sivis to have this dragonmark."><![CDATA[#hasrace[rGnome] <> 0]]></exprreq>
+    </thing>
+  <thing id="cfgS2Senti" name="Mark of Sentinel" description="The Mark of Sentinel conveys powers that protect creatures from harm.\n\n{b}House:{/b} The humans of House Deneith carry the Mark of Sentinel. They put their powers to use in the Defenders Guild, which offers comprehensive bodyguard services to persons of position and wealth. The house also provides sentinel marshals that have jurisdiction across national boundaries. House Deneith originated in Karrnath, but the Defenders Guild operates across Khorvaire. The unmarked members of House Deneith work as bodyguards without the benefit of magical assistance.\n\n{b}Marks:{/b} The aspects of the Mark of Sentinel grant the following benefits.\n\nLeast Mark of Sentinel: {i}mage armor{/i} 1/day, {i}protection from arrows{/i} 1/day, {i}shield of faith{/i} 1/day, or {i}shield other{/i} 1/day; +2 bonus on Sense Motive checks.\n\nLesser Mark of Sentinel: {i}protection from energy{/i} 1/day or {i}lesser globe of invulnerability{/i} 1/day.\n\nGreater Mark of Sentinel: globe of invulnerability{/i} 1/day." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Sentinel"/>
+    <exprreq message="You must be a Human of House Deneith to have this dragonmark."><![CDATA[#hasrace[rHuman] <> 0]]></exprreq>
+    </thing>
+  <thing id="cfgS2Shado" name="Mark of Shadow" description="The Mark of Shadow grants divinatory powers of clairvoyance and scrying, as well as illusory powers of deception.\n\n{b}Houses:{/b} One of the most surprising and devastating effects of the Last War was the schism of the family that carries the Mark of Shadow. House Phiarlan, an elf family of ancient lineage, carried the Mark of Shadow for millennia before the Last War and was known as an information clearinghouse.\n\nDuring the war, however, the mission of the house turned its members against each other, eventually resulting in the formation of a new house - House Thuranni. The two houses continue their ancient work of espionage, surveillance, and similar intelligence-gathering activities, while outwardly pursuing mercantile activities based on entertainment and artisan endeavors. House Phiarlan&apos;s Entertainers and Artisans Guild is based in Breland, and its spies work for (or sell information to) Thrane, Aundair, and Breland. House Thuranni, based in the Lhazaar Principalities (but with an enclave in Breland), controls the Shadow Network. Its members perform their spying activities on behalf of the Lhazaar princelings, Karrnath, Droaam, Q&apos;barra, and even the Order of the Emerald Claw.\n\nUnmarked members of both House Phiarlan and House Thuranni work as entertainers and artisans who gather information and serve as spies and rogues.\n\n{b}Marks:{/b} The aspects of the Mark of Shadow grant the following benefits.\n\nLeast Mark of Shadow: {i}darkness{/i} 1/day, {i}disguise self{/i} 1/day, or {i}minor image{/i} 1/day; +2 bonus on Diplomacy checks.\n\nLesser Mark of Shadow: {i}clairaudience/clairvoyance{/i} 1/day, {i}shadow conjuration{/i} 1/day, or {i}scrying{/i} 1/day.\n\nGreater Mark of Shadow: {i}mislead{/i} 1/day, {i}prying eyes{/i} 1/day, or {i}shadow walk{/i} 1/day." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Shadow"/>
+    <exprreq message="You must be a Elf of House Phiarlan or House Thuranni to have this dragonmark."><![CDATA[#hasrace[rElf] <> 0]]></exprreq>
+    </thing>
+  <thing id="cfgS2Storm" name="Mark of Storm" description="The Mark of Storm grants the power to control weather, primarily through the manipulation of clouds, wind, and rain. A character with this mark can create a short, localized drizzle or a powerful rainstorm, a short breeze, or enough wind to propel a ship across the sea.\n\n{b}House:{/b} The half-elves of House Lyrandar carry the Mark of Storm. Their Windwrights Guild dominates the business of shipping and transportation over both sea and sky. Their Raincallers Guild provides services to farmers across Khorvaire. Both guilds are found in every coastal nation of Khorvaire, and they proudly trace their ancestry to the elves of Aerenal and the humans of Thrane.\n\nUnmarked members of House Lyrandar are prosperous farmers, plantation owners, and sailors crewing the ships driven by their marked relatives.\n\n{b}Marks:{/b} The aspects of the Mark of Storm grant the following benefits.\n\nLeast Mark of Storm: {i}endure elements{/i} 1/day, {i}fog cloud{/i} 1/day, or {i}gust of wind{/i} 1/day; +2 bonus on Acrobatic checks.\n\nLesser Mark of Storm: {i}sleet storm{/i} 1/day, {i}wind&apos;s favor{/i} 1/day, or {i}wind wall{/i} 1/day.\nWith {i}sleet storm{/i}, a character can create either warm rain or freezing sleet. \n\nA character using {i}wind&apos;s favor{/i} can create a localized area of strong wind (approximately 30 mph) in an area 10 feet wide, 10 feet high, and 100 feet + 20 feet per caster level long. The wind blows for 1 hour per caster level or until the character dismisses it. By concentrating as a fullround action, the character can change the direction of the wind by 45 degrees.\n\nGreater Mark of Storm: {i}control winds{/i} 1/day or {i}control weather{/i} 1/day." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Storm"/>
+    <exprreq message="You must be a Half-Elf of House Lyrandar to have this dragonmark."><![CDATA[#hasrace[rHalfElf] <> 0]]></exprreq>
+    </thing>
+  <thing id="cfgS2Wardi" name="Mark of Warding" description="The Mark of Warding protects places from unwanted intruders and items from theft.\n\n{b}House:{/b} The dwarves of House Kundarak carry the Mark of Warding. They control the Warding Guild, which specializes in security for businesses and precious goods. House Kundarak originated in the Mror Holds and now has interests in many large towns and cities throughout Khorvaire.\n\nThe unmarked members of House Kundarak work as security consultants, often specializing in trapmaking as well as running the House Kundarak bank.\n\n{b}Marks:{/b} The aspects of the Mark of Warding grant the following benefits.\n\nLeast Mark of Warding: {i}alarm{/i} 1/day, {i}arcane lock{/i} 1/day, {i}firetrap{/i} 1/day, or {i}misdirection{/i} 1/day; +2 bonus on Perception checks.\n\nLesser Mark of Warding: {i}explosive runes{/i} 1/day, {i}glyph of warding{/i} 1/day, or {i}nondetection{/i} 1/day.\n\nGreater Mark of Warding: {i}Mordenkainen&apos;s faithful hound{/i} 1/day, {i}greater glyph of warding{/i} 1/day, or {i}guards and wards{/i} 1/day." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Least Dragonmark"/>
+    <fieldval field="cfgObject2" value="Lesser Dragonmark"/>
+    <fieldval field="cfgObject3" value="Greater Dragonmark"/>
+    <fieldval field="cfgObject4" value="Siberys Dragonmark"/>
+    <tag group="Dragonmark" tag="Warding"/>
+    <exprreq message="You must be a Dwarf of House Kundarak to have this dragonmark."><![CDATA[#hasrace[rDwarf] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2DragLes" name="Lesser Dragonmark" description="You have a lesser dragonmark.\n\n{b}Prerequisites:{/b} Member of appropriate dragonmarked race and house, Least Dragonmark, 6 ranks in any two skills.\n\n{b}Benefit:{/b} You gain a lesser dragonmark and the use of one spell-like ability associated with the lesser dragonmark of your house (see the next section of this chapter for information on dragonmarks). In addition, you can use your least dragonmark spell-like ability one additional time per day. A saving throw against one of your dragonmark spell-like abilities has a DC of 10 + the level of the spell + your Cha modifier.\n\nYour caster level for your dragonmark spell-like abilities increases to 6 + your level in the dragonmark heir prestige class (if any)." compset="Feat" summary="You have a lesser true dragonmark." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Dragonmark" tag="True"/>
+    <tag group="Dragonmark" tag="Lesser"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+~ If we don't have least feat get out now
+doneif (hero.childlives[fS2DragLea] = 0)
+~ Put the Dragonmark type and Strength on the hero
+perform hero.pushtags[Dragonmark.?]
+var config as string
+~ Get the configuators thingid tag
+config = hero.child[fS2DragLea].field[usrChosen1].chosen.tagids[thingid.?,"|"]
+~ Increase the number Lesser dragonmarks that can be selected by 1
+hero.firstchild[config].field[cfgMax2].value += 1
+~ Increase the number of uses per day of the Least dragonmark
+foreach pick in hero from BaseSpell where "Dragonmark.Least"
+   eachpick.field[trkMax].value += 1
+nexteach]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+~ If we're disabled, do nothing
+doneif (tagis[Helper.FtDisable] <> 0)
+
+~ Increase CL by one of all dragonmark spell-like abilites
+foreach pick in hero from BaseSpell where "Dragonmark.?"
+   eachpick.field[sCL].value += 5
+nexteach]]></eval>
+    <exprreq message="You have a aberrant dragonmark already.">hero.tagcount[Dragonmark.Aberrant] = 0</exprreq>
+    <exprreq message="Least Dragonmark required."><![CDATA[hero.tagis[Dragonmark.Least] <> 0]]></exprreq>
+    <exprreq message="Dragonmarked race (human, dwarf, elf, gnome, halfling, half-elf, or half-orc) is required."><![CDATA[#hasrace[rHuman] + #hasrace[rDwarf] + #hasrace[rElf] + #hasrace[rGnome] + #hasrace[rHalfling] + #hasrace[rHalfElf] + #hasrace[rHalfOrc] <> 0]]></exprreq>
+    <prereq message="6+ ranks in any two skills required.">
+      <validate><![CDATA[@valid = 0
+var total as number
+~ Go through all skills and count the number that have 6+ ranks
+foreach pick in hero from BaseSkill
+   If (eachpick.field[skRanks].value >= 6) Then
+      total += 1
+   Endif
+nexteach
+~ if we have at least 2 skills at 6 ranks we are valid
+validif (total >= 2)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcS2B1Dete" name="Detect Scrying" description="You gain the use of {i}detect scrying{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Detec"/>
+    <tag group="SpInfo" tag="spDeteScr3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spDeteScr3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Dete" name="See Invisibility" description="You gain the use of {i}see invisibility{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Detec"/>
+    <tag group="SpInfo" tag="spSeeInv2"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spSeeInv2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Dete" name="True Seeing" description="You gain the use of {i}true seeing{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Detec"/>
+    <tag group="SpInfo" tag="spTrueSee5"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spTrueSee5">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="fS2DragGre" name="Greater Dragonmark" description="You have a greater dragonmark.\n\n{b}Prerequisites:{/b} Member of appropriate dragonmarked race and house, Least Dragonmark, Lesser Dragonmark, 9 ranks in any two skills.\n\n{b}Benefit:{/b} You gain a greater dragonmark and the use of one spell-like ability associated with the greater dragonmark of your house (see the next section of this chapter for information on dragonmarks). In addition, you can use your least and lesser dragonmark spell-like abilities one additional time per day. A saving throw against one of your dragonmark spelllike abilities has a DC of 10 + the level of the spell + your Cha modifier.\n\nYour caster level for your dragonmark spell-like abilities increases to 10 + your level in the dragonmark heir prestige class (if any)." compset="Feat" summary="You have a greater true dragonmark." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Dragonmark" tag="True"/>
+    <tag group="Dragonmark" tag="Greater"/>
+    <bootstrap thing="cfgS2Detec">
+      <containerreq phase="First" priority="250">Dragonmark.Detection</containerreq>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If we don't have least feat get out now
+      doneif (hero.childlives[fS2DragLea] = 0)
+      ~ Put the Dragonmark type and Strength on the hero
+      perform hero.pushtags[Dragonmark.?]
+      var config as string
+      ~ Get the configuators thingid tag
+      config = hero.child[fS2DragLea].field[usrChosen1].chosen.tagids[thingid.?,"|"]
+      ~ Increase the number Greater dragonmarks that can be selected by 1
+      hero.firstchild[config].field[cfgMax3].value += 1
+      ~ Increase the number of uses per day of the Least dragonmark
+      foreach pick in hero from BaseSpell where "Dragonmark.Least|Dragonmark.Lesser"
+         eachpick.field[trkMax].value += 1
+      nexteach]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Increase CL by one of all dragonmark spell-like abilites
+      foreach pick in hero from BaseSpell where "Dragonmark.?"
+         eachpick.field[sCL].value += 4
+      nexteach]]></eval>
+    <exprreq message="You have a aberrant dragonmark already.">hero.tagcount[Dragonmark.Aberrant] = 0</exprreq>
+    <exprreq message="Least True Dragonmark required."><![CDATA[hero.tagis[Dragonmark.Least] <> 0]]></exprreq>
+    <exprreq message="Lesser True Dragonmark required."><![CDATA[hero.tagis[Dragonmark.Lesser] <> 0]]></exprreq>
+    <exprreq message="Dragonmarked race (human, dwarf, elf, gnome, halfling, half-elf, or half-orc) is required."><![CDATA[#hasrace[rHuman] + #hasrace[rDwarf] + #hasrace[rElf] + #hasrace[rGnome] + #hasrace[rHalfling] + #hasrace[rHalfElf] + #hasrace[rHalfOrc] <> 0]]></exprreq>
+    <prereq message="9+ ranks in any two skills required.">
+      <validate><![CDATA[@valid = 0
+var total as number
+~ Go through all skills and count the number that have 9+ ranks
+foreach pick in hero from BaseSkill
+   If (eachpick.field[skRanks].value >= 9) Then
+      total += 1
+   Endif
+nexteach
+~ if we have at least 2 skills at 9 ranks we are valid
+validif (total >= 2)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcS2A1Find" name="Identify" description="You gain the use of {i}identify{/i} 1/day and a +2 bonus on Perception checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Findi"/>
+    <tag group="SpInfo" tag="spIdentif1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spIdentif1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skPercep] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Find" name="Know Direction" description="You gain the use of {i}know direction{/i} 2/day and a +2 bonus on Perception checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Findi"/>
+    <tag group="SpInfo" tag="spIdentif1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spKnowDir0">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skPercep] += 2</eval>
+    </thing>
+  <thing id="rcS2A3Find" name="Locate Object" description="You gain the use of {i}locate object{/i} 1/day and a +2 bonus on Perception checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Findi"/>
+    <tag group="SpInfo" tag="spLocaObj2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spLocaObj2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skPercep] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Find" name="Helping Hand" description="You gain the use of {i}helping hand{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Findi"/>
+    <tag group="SpInfo" tag="spHelpHan3"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Secondary"/>
+    <bootstrap thing="spHelpHan3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Find" name="Locate Creature" description="You gain the use of {i}locate creature{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Findi"/>
+    <tag group="SpInfo" tag="spHelpHan3"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Secondary"/>
+    <bootstrap thing="spLocaCre3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Find" name="Find the Path" description="You gain the use of {i}fi nd the path{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Findi"/>
+    <tag group="SpInfo" tag="spFindPat6"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spFindPat6">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2A1Hand" name="Calm Animals" description="You gain the use of {i}calm animals{/i} 1/day and a +2 bonus on Handle Animal checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spCalmAni1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Handl"/>
+    <bootstrap thing="spCalmAni1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skHandleAn] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Hand" name="Charm Animal" description="You gain the use of {i}Charm Animal{/i} 1/day and a +2 bonus on Handle Animal checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spCharAni1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Handl"/>
+    <bootstrap thing="spCharAni1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skHandleAn] += 2</eval>
+    </thing>
+  <thing id="rcS2A3Hand" name="Speak with Animals" description="You gain the use of {i}speak with animals{/i} 1/day and a +2 bonus on Handle Animal checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spSpeaAni2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Handl"/>
+    <bootstrap thing="spSpeaAni2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skHandleAn] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Hand" name="Dominate Animal" description="You gain the use of {i}dominate animal{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Handl"/>
+    <tag group="SpInfo" tag="spDomiAni3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spDomiAni3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Hand" name="Greater Magic Fang" description="You gain the use of {i}greater magic fang{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Handl"/>
+    <tag group="SpInfo" tag="spMagiFan3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spMagiFan3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Hand" name="Animal Growth" description="You gain the use of {i}animal growth{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Handl"/>
+    <tag group="SpInfo" tag="spAnimGro4"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spAnimGro4">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C2Hand" name="Summon Nature’s Ally V" description="You gain the use of {i}summon nature’s ally V{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Handl"/>
+    <tag group="SpInfo" tag="spSummNat5"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spSummNat5">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2A1Heal" name="Cure Light Wounds" description="You gain the use of {i}cure light wounds{/i} 1/day and a +2 bonus on Heal checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spCureLig1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Heali"/>
+    <bootstrap thing="spCureLig1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skHeal] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Heal" name="Lesser Restoration" description="You gain the use of {i}lesser restoration{/i} 1/day and a +2 bonus on Heal checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spRestLes1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Heali"/>
+    <bootstrap thing="spRestLes1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skHeal] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Heal" name="Cure Serious Wounds" description="You gain the use of {i}cure serious wounds{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Heali"/>
+    <tag group="SpInfo" tag="spCureSer3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spCureSer3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Heal" name="Neutralize Poison" description="You gain the use of {i}neutralize poison{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Heali"/>
+    <tag group="SpInfo" tag="sPNeuPoi3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="sPNeuPoi3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B3Heal" name="Remove Disease" description="You gain the use of {i}remove disease{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Heali"/>
+    <tag group="SpInfo" tag="spRemoDis2"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spRemoDis2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B4Heal" name="Restoration" description="You gain the use of {i}restoration{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Heali"/>
+    <tag group="SpInfo" tag="spRestora4"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spRestora4">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Heal" name="Heal" description="You gain the use of {i}heal{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Heali"/>
+    <tag group="SpInfo" tag="spHeal6"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spHeal6">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2A1Hosp" name="Purify Food and Drink" description="You gain the use of {i}purify food and drink{/i} 2/day and a +2 bonus on Diplomacy checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spPuriFoo0"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Hospi"/>
+    <bootstrap thing="spPuriFoo0">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skDiplo] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Hosp" name="Prestidigitation" description="You gain the use of {i}prestidigitation{/i} 2/day and a +2 bonus on Diplomacy checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spPrestid0"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Hospi"/>
+    <bootstrap thing="spPrestid0">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skDiplo] += 2</eval>
+    </thing>
+  <thing id="rcS2A3Hosp" name="Unseen Servant" description="You gain the use of {i}unseen servant{/i} 1/day and a +2 bonus on Diplomacy checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spUnseSer1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Hospi"/>
+    <bootstrap thing="spUnseSer1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skDiplo] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Hosp" name="Create Food and Water" description="You gain the use of {i}create food and water{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Hospi"/>
+    <tag group="SpInfo" tag="spCreaFoo3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spCreaFoo3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Hosp" name="Secure Shelter" description="You gain the use of {i}secure shelter{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Hospi"/>
+    <tag group="SpInfo" tag="spSecuShe4"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spSecuShe4">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Hosp" name="Heroes&apos; Feast" description="You gain the use of {i}heroes&apos; feast{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Hospi"/>
+    <tag group="SpInfo" tag="spHeroFea6"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spHeroFea6">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C2Hosp" name="Magnificent Mansion" description="You gain the use of {i}magnificent mansion{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Hospi"/>
+    <tag group="SpInfo" tag="spMageMag7"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spMageMag7">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="fS2PowerCh" name="Powerful Charge" description="You can charge with extra force.\n\n{b}Prerequisites:{/b} Medium or larger size, base attack bonus +1.\n\n{b}Benefit:{/b} When you charge, if your melee attack hits, you deal an extra 1d8 points of damage (if you are Medium size). For Large creatures, the extra damage is 2d6; for Huge, 3d6; for Gargantuan, 4d6; and for Colossal, 6d6.This feat only works when you make a charge. It does not work when you are mounted. If you have the ability to make multiple attacks after a charge, you may only apply this extra damage to one of those attacks." compset="Feat" summary="You deal extra damage on a charge." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="SpecType" tag="Attack"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      var sDice as string
+      ~ Set the value of our size here so we can be adjusted
+      ~ by outside things
+      field[abValue].value += herofield[tSize].value
+
+      ~ Set the correct damage dice size
+      If (field[abValue].value = 0) Then
+          sDice = "+1d8"
+      ElseIf (field[abValue].value = 1) Then
+          sDice = "+2d6"
+      ElseIf (field[abValue].value = 2) Then
+          sDice = "+3d6"
+      ElseIf (field[abValue].value = 3) Then
+          sDice = "+4d6"
+      ElseIf (field[abValue].value = 4) Then
+          sDice = "+6d6"
+      Endif
+      ~ Append dice damage size
+      field[abSumm].text = "You deal extra damage on a charge of " & sDice & "."
+      field[livename].text = field[name].text & " " & sDice
+
+      ~ If we are not charging get out now
+      doneif (hero.child[pstChargin].field[pIsOn].value <> 1)
+
+      ~ Display the extra damage on weapons as we are charging
+      foreach pick in hero from BaseWep
+         #extradamage[eachpick,sDice,field[name].text]
+      nexteach]]></eval>
+    <exprreq message="Base attack bonus +1 required."><![CDATA[child[Attack].field[tAtkBase].value >= 1]]></exprreq>
+    <exprreq message="Medium or larger size required."><![CDATA[herofield[tSize].value >= 0]]></exprreq>
+    </thing>
+  <thing id="fS2GrPowCh" name="Greater Powerful Charge" description="You can charge with extra force.\n\n{b}Prerequisites:{/b} Medium or larger size, Powerful Charge, base attack bonus +4.\n\n{b}Benefit:{/b} As Powerful Charge, but treat yourself as one size category larger than you are." compset="Feat" summary="Your powerful charges are treated as if you where one size larger." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If the Powerful Charge feat not live get out now
+      doneif (hero.childlives[fS2PowerCh] <> 1)
+
+      ~ Increase the size category by 1
+      #value[fS2PowerCh] += 1]]></eval>
+    <exprreq message="Medium or larger size required."><![CDATA[herofield[tSize].value >= 0]]></exprreq>
+    <exprreq message="Base attack bonus +4 required."><![CDATA[child[Attack].field[tAtkBase].value >= 4]]></exprreq>
+    <exprreq message="Powerful Charge feat required."><![CDATA[#hasfeat[fS2PowerCh] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2GreenIn" name="Greensinger Initiate" description="You have embraced the druidic traditions of the Greensingers, a chaotic Eldeen Reaches sect with close ties to the fey.\n\n{b}Prerequisites:{/b} Ability to spontaneously cast {i}summon nature&apos;s ally{/i}.\n\n{b}Benefit:{/b} Add Bluff, Stealth, and Perform to your list of druid class skills.\n\nIn addition, you can cast the following spells as if they were on the druid spell list at the indicated level.\n\n1st level: {i}charm person{/i} \n2nd level: {i}daze monster{/i} \n3rd level: {i}displacement{/i} \n4th level: {i}charm monster{/i} \n5th level: {i}hold monster{/i} \n6th level: {i}cat&apos;s grace, mass{/i} \n7th level: {i}ethereal jaunt{/i} \n8th level: {i}charm monster, mass{/i} \n9th level: {i}etherealness{/i}\n* New spell, see Chapter 5: Magic." compset="Feat" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="DruidSect" tag="Greensing"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Make Bluff a class skills
+      perform hero.assign[ClassSkill.skBluff]
+      #makeclassskill[skBluff]
+      ~ Make Stealth a class skills
+      perform hero.assign[ClassSkill.skStealth]
+      #makeclassskill[skStealth]
+      ~ Make Perform class skills
+      perform hero.assign[ClassSkill.Perform]
+      foreach pick in hero from BaseSkill where "Helper.SkCatPerf"
+         perform eachpick.assign[Helper.ClassSkill]
+      nexteach
+      ~ Push all Druid Sects to the hero
+      perform forward[DruidSect.?]
+
+      ~ If no druid class get out now
+      doneif (hero.childlives[cHelpDrd] <> 1)
+      ~ assign the Gatekeeper feat spells to the class
+      perform hero.child[cHelpDrd].assign[sClass.fS2GreenIn]]]></eval>
+    <exprreq message="Ability to spontaneously cast {i}summon nature&apos;s ally{/i} required."><![CDATA[#hasability[cDrdSpont] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2HauMelo" name="Haunting Melody" description="You can use your music to inspire fear.\n\n{b}Prerequisites:{/b} Bardic Performance class feature, Any Perform skill at 6+ ranks.\n\n{b}Benefit:{/b} When you sing or use some other Perform skill, you can unnerve enemies within 30 feet of you. Any opponent in range must succeed on a Will saving throw (DC 10 + 1/2 your bard level + your Cha modifier) or become shaken for a number of rounds equal to your ranks in the Perform skill. This is a mind-affecting fear effect.\n\n{b}Special:{/b} Using this ability uses up one round of your bardic performance.\n\n{b}Pathfinder:{/b} Adjusted ranks down to 6 and adding wording for Bardic Performance instead of bardic music. Also changed uses per day to uses per round." compset="Feat" summary="When you sing or use some other Perform skill, you can unnerve enemies within 30 feet of you." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Set our number of bard levels
+      field[abValue].value += #levelcount[Bard]
+      ~ Calc our DC of DC 10 + 1/2 your bard level + your Cha modifier
+      field[abDC].value = round(field[abValue].value/2,0,-1) + 10 + #attrbonus[aCHA]]]></eval>
+    <exprreq message="Bardic Performance class feature required."><![CDATA[#hasability[cBrdPerfor] <> 0]]></exprreq>
+    <prereq message="6+ ranks in any Perform skill required.">
+      <validate><![CDATA[
+        @valid = 0
+        var total as number
+        ~ Go through all skills and count the number that have 6+ ranks
+        foreach pick in hero from BaseSkill where "Helper.SkCatPerf"
+           If (eachpick.field[skRanks].value >= 6) Then
+              total += 1
+           Endif
+        nexteach
+        ~ if we have at least 1 perform skill at 6 ranks we are valid
+        validif (total >= 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fS2HealFac" name="Healing Factor" description="When your current period of shifting ends, you heal a limited amount of damage.\n\n{b}Prerequisites:{/b} Shifter, Constitution 13.\n\n{b}Benefit:{/b} When you stop shifting, you immediately heal a number of hit points equal to your character level. This benefit does not occur if you die before the period of shifting ends." compset="Feat" summary="When you stop shifting, you immediately heal a number of hit points equal to your character level." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      hero.child[raShifting].field[trkMax].value += 1.5]]></eval>
+    <exprreq message="Shifter Race required." iserror="no"><![CDATA[#hasability[raShifting]<> 0]]></exprreq>
+    <exprreq message="Constitution 13+ required." iserror="no"><![CDATA[#attrvalue[aCON] >= 13]]></exprreq>
+    </thing>
+  <thing id="fS2ImpDR" name="Improved Damage Reduction" description="You gain damage reduction or improve your existing damage reduction.\n\n{b}Prerequisite:{/b} Warforged.\n\n{b}Benefit:{/b} You gain damage reduction 1/adamantine or improve your existing damage reduction by 1.\n\n{b}Special:{/b} If you have the Adamantine Body, you can take this feat multiple times." compset="Feat" summary="You gain damage reduction 1/adamantine or improve your existing damage reduction by 1.">
+    <usesource source="S2Eberron"/>
+    <tag group="fCategory" tag="Warforged" name="Warforged"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Increase our DR total by 1
+      hero.childfound[xDamRdAdam].field[abValue].value += 1]]></eval>
+    <exprreq message="Warforged race required."><![CDATA[#hasrace[rS2Warforg] <> 0]]></exprreq>
+    <prereq message="Adamantine Body required to be able to take this feat multiple times.">
+      <validate><![CDATA[
+        @valid = 1
+
+        ~ Do we already have the Improved DR feat?
+        If (hero.tagcount[HasFeat.fS2ImpDR] - @ispick > 0) Then
+          ~ If we don't have the Adamantine body then we are NOT valid to take again
+          If (hero.tagis[Warforged.Adamantine] = 0) Then
+              @valid = 0
+          Endif
+        Endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fS2ImpFort" name="Improved Fortification" description="You improve your warforged fortifi cation, gaining immunity to sneak attacks and extra damage from critical hits.\n\n{b}Prerequisites:{/b} Warforged, base attack bonus +6.\n\n{b}Benefit:{/b} Your fortification against sneak attacks and extra damage from critical hits imporoves by 50%, but you lose the ability to be healed by spells of the healing subschool.\n\n{B}Pathfinder:{/b} As fortifcation in Pathfinder was changed to a max of 75% I did the same here instead of giving immunity." compset="Feat" summary="Your fortification against sneak attacks and extra damage from critical hits increases by 50%." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="fCategory" tag="Warforged" name="Warforged"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If fortification not live get out now
+      doneif (hero.childlives[raWfFortif] <> 1)
+
+      ~ Increase fortification by 50% as default for race
+      #value[raWfFortif] += 50]]></eval>
+    <exprreq message="Warforged race required."><![CDATA[#hasrace[rS2Warforg] <> 0]]></exprreq>
+    <exprreq message="Base attack bonus +6 required."><![CDATA[child[Attack].field[tAtkBase].value >= 6]]></exprreq>
+    </thing>
+  <thing id="fShftImNat" name="Shifter Improved Natural Attack" description="Attacks made by one of shifters natural attacks leave vicious wounds.\n\n{b}Prerequisite{/b}: Shifter, Natural weapon, base attack bonus +4.\n\n{b}Benefit{/b}: Choose one of the creature’s natural attack forms (not an unarmed strike). The damage for this natural weapon increases by one step, as if the creature’s size had increased by one category: 1d2, 1d3, 1d4, 1d6, 1d8, 2d6, 3d6, 4d6, 6d6, 8d6, 12d6. \n\nA weapon or attack that deals 1d10 points of damage increases as follows: 1d10, 2d8, 3d8, 4d8, 6d8, 8d8, 12d8." compset="Feat" summary="The damage of a natural attack increases by one step." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="fShowWhat" tag="WeaponsNat" name="Natural Weapons" abbrev="Natural Weapons"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="Helper" tag="AnimCompOK" name="AnimCompOK" abbrev="AnimCompOK"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <eval phase="PreLevel" priority="1000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      ~ Pull the tags from the chosen
+      var searchexpr as string
+      searchexpr = field[usrChosen1].chosen.tagids[IsWeapon.?,"|"]
+
+      foreach pick in hero from BaseNatWep where searchexpr
+         ~ Upgrade damage of this weapon
+         perform eachpick.assign[Helper.DamageUp]
+
+         ~ Assign the weapon a tag saying that it has this feat
+         perform eachpick.assign[HasFeat.fImpNatAtt]
+      nexteach]]></eval>
+    <exprreq message="Base attack bonus +4 required." iserror="no"><![CDATA[child[Attack].field[tAtkBase].value >= 4]]></exprreq>
+    <exprreq message="Shifter race required."><![CDATA[#hasrace[rShifters] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2Investi" name="Investigate" description="You can use the Perception skill to fi nd and analyze clues at the scene of a crime or a mystery.\n\n{b}Benefit:{/b} This feat expands the way you can use the Perception skill by allowing you to notice and analyze available clues in a specific area. This use of the Perception skill is a fullround action. Clues are pieces of evidence that lead to the solution of a mystery.\n\nClues are physical and can be seen, heard, touched, smelled, or tasted. A clue stands out because it&apos;s not a normal feature of the area being Perceptioned. Examples of clues include a trampled f lowerbed, a broken urn, a pin snapped off in a lock, a torn strip of cloak, a burnt scrap of scroll, or a brooch clutched in a dead man&apos;s fi st.\n\nAdd the following task to the list provided in the {i}CORE Book{/i} description of the Perception skill. \n\nSo, in addition to using Perception to fi nd a certain item, notice a secret door, or fi nd a footprint, you have the additional training and experience necessary to fi nd clues of all sorts. Modify the Perception DC according to the nature of the scene being examined, as indicated below. (This function of the Perception skill doesn&apos;t reveal clues when there are no clues to fi nd.)\n\nWhen a successful Perception check turns up a clue, you can make a second check to discern patterns, analyze evidence, and draw conclusions about what occurred in a specifi c area. In other words, the fi rst Perception check lets you fi nd something, and the second check allows you to fi gure out what you&apos;ve found.\n\nYou can make a DC 15 Perception check to analyze a clue.\n\nBy examining a body, you might determine whether the victim fought back or provided no struggle at all, or if claws, a weapon, or a spell killed the victim. By looking at a scorch mark on a wall, you might approximate the location of the spellcaster when the spell was cast.\n\nThe DC for the check is modified by the time that has elapsed since the event occurred and how signifi cant the clue is, as indicated below. All other rules concerning the Perception skill otherwise apply." compset="Feat" summary="You can make a DC 15 Perception check to analyze a clue." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="fS2LegArti" name="Legendary Artisan" description="You have mastered the method of creating magic items.\n\n{b}Prerequisite:{/b} Any item creation feat.\n\n{b}Benefit:{/b} When determining your XP cost for creating any magic item, reduce the base cost by 25%." compset="Feat" summary="When determining your XP cost for creating any magic item, reduce the base cost by 25%." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="fCategory" tag="ItemCreate"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Any item creation feat required."><![CDATA[hero.tagcount[fCategory.ItemCreate] > 0]]></exprreq>
+    </thing>
+  <thing id="fS2MithFlu" name="Mithral Fluidity" description="Your movements are smoother and more fluid than those of other warforged.\n\n{b}Prerequisites:{/b} Warforged race, Mithral Body.\n\n{b}Benefi ts{/b}: The maximum Dexterity bonus a warforged with the Mithral Body can apply to Armor Class is increased by 1. In addition, the armor check penalties to skills are reduced by 1.\n\n{b}Special:{/b} This feat can be taken multiple times. However, armor check penalties cannot be reduced to less than +0." compset="Feat" summary="Your Mithral Body has a Max Dex improved by 1 and the ACP reduced by 1.">
+    <usesource source="S2Eberron"/>
+    <tag group="fCategory" tag="Warforged" name="Warforged"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      hero.childfound[iS2MithBod].field[arMaxDex].value += 1]]></eval>
+    <eval phase="Level" priority="50000" index="2"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      hero.childfound[iS2MithBod].field[arArmorChk].value = minimum(hero.childfound[iS2MithBod].field[arArmorChk].value + 1,0)]]></eval>
+    <exprreq message="Warforged race required."><![CDATA[#hasrace[rS2Warforg] <> 0]]></exprreq>
+    <exprreq message="Mithral Body required."><![CDATA[hero.childlives[rcWFBody03] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2MusicGr" name="Music of Growth" description="Your music can enhance the power of animals and plant creatures.\n\n{b}Prerequisites:{/b} Bardic Performance class feature, Any Perform skill at 9+ ranks.\n\n{b}Benefit:{/b} By singing or playing music, you grant a +4 enhancement bonus to the Strength and Constitution scores of every creature of the animal or plant type within 30 feet of you. This bonus lasts only as long as you continue performing.\n\n{b}Special:{/b} Using this ability uses up one round of your bardic performance.\n\n{b}Pathfinder:{/b} Adjusted ranks down to 9 and adding wording for Bardic Performance instead of bardic music. Also changed uses per day to uses per round." compset="Feat" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the bonus
+      field[abValue].value += 4
+      ~ Set the Summary Text
+      field[abSumm].text = "You can give a +" & field[abValue].value & " bonus to Str and Con to Animal or Plant creatures within 30ft of you."]]></eval>
+    <exprreq message="Bardic Performance class feature required."><![CDATA[#hasability[cBrdPerfor] <> 0]]></exprreq>
+    <prereq message="9+ ranks in any Perform skill required.">
+      <validate><![CDATA[@valid = 0
+        var total as number
+        ~ Go through all skills and count the number that have 9+ ranks
+        foreach pick in hero from BaseSkill where "Helper.SkCatPerf"
+           If (eachpick.field[skRanks].value >= 9) Then
+              total += 1
+           Endif
+        nexteach
+        ~ if we have at least 1 perform skill at 9 ranks we are valid
+        validif (total >= 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fS2MusicMa" name="Music of Making" description="Echoing the music of creation, your own performance enhances any process of creation.\n\n{b}Prerequisites:{/b} Bardic Performance class feature, Any Perform skill at 6+ ranks.\n\n{b}Benefit:{/b} If you sing or otherwise perform as part of the casting of a conjuration (creation) spell, the duration of the spell is doubled (as if the Extend Spell feat had been applied to it, but without increasing the spell&apos;s effective level). Spells with an instantaneous duration are not affected. If you perform while using any Craft skill, you gain a +4 sacred bonus on your Craft check.\n\n{b}Special:{/b} {b}Special:{/b} Using this ability uses up one round of your bardic performance.\n\n{b}Pathfinder:{/b} Adjusted ranks down to 6 and adding wording for Bardic Performance instead of bardic music. Also changed uses per day to uses per round." compset="Feat" summary="You can Extend Spells you case and gain a bonus on Craft skill checks." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the bonus
+      field[abValue].value += 4
+      ~ Set the Summary Text
+      field[abSumm].text = "You can Extend Spells you cast and gain a +" & field[abValue].value & " bonus on Craft skill checks."]]></eval>
+    <exprreq message="Bardic Performance class feature required."><![CDATA[#hasability[cBrdPerfor] <> 0]]></exprreq>
+    <prereq message="6+ ranks in any Perform skill required.">
+      <validate><![CDATA[@valid = 0
+        var total as number
+        ~ Go through all skills and count the number that have 6+ ranks
+        foreach pick in hero from BaseSkill where "Helper.SkCatPerf"
+           If (eachpick.field[skRanks].value >= 6) Then
+              total += 1
+           Endif
+        nexteach
+        ~ if we have at least 1 perform skill at 6 ranks we are valid
+        validif (total >= 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fS2PreSwin" name="Precise Swing" description="You can ignore most obstacles when making a melee attack against an opponent.{br}{br}{b}Prerequisite:{/b} Base attack bonus +5.{br}{br}{b}Benefit:{/b} You ignore all effects of cover (but not total cover) when making a melee attack, including a melee attack with a reach weapon." compset="Feat" summary="You ignore all effects of cover (but not total cover) when making a melee attack, including a melee attack with a reach weapon." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      var sDice as string
+      ~ Set the value of our size here so we can be adjusted
+      ~ by outside things
+      field[abValue].value += herofield[tSize].value
+
+      ~ Set the correct damage dice size
+      If (field[abValue].value = 0) Then
+          sDice = "+1d8"
+      ElseIf (field[abValue].value = 1) Then
+          sDice = "+2d6"
+      ElseIf (field[abValue].value = 2) Then
+          sDice = "+3d6"
+      ElseIf (field[abValue].value = 3) Then
+          sDice = "+4d6"
+      ElseIf (field[abValue].value = 4) Then
+          sDice = "+6d6"
+      Endif
+      ~ Append dice damage size
+      field[abSumm].text = "You deal extra damage on a charge of " & sDice & "."
+
+      ~ If we are not charging get out now
+      doneif (hero.child[pstChargin].field[pIsOn].value <> 1)
+
+      ~ Display the extra damage on weapons as we are charging
+      foreach pick in hero from BaseWep
+         #extradamage[eachpick,sDice,field[name].text]
+      nexteach]]></eval>
+    <exprreq message="Base attack bonus +5 required."><![CDATA[child[Attack].field[tAtkBase].value >= 5]]></exprreq>
+    </thing>
+  <thing id="fS2Pursue" name="Pursue" description="You have the ability to follow in an opponent&apos;s wake.\n\n{b}Prerequisite:{/b} Combat Reflexes feat.\n\n{b}Benefit:{/b} In combat, when an opponent in an adjacent square takes a single 5-foot step to a square that you do not threaten, you can spend 1 action point to move into the square the opponent just left. This movement occurs after the 5-foot step but before any other actions, and it does not provoke attacks of opportunity." compset="Feat" summary="Spend an action point to follow an opponent that took a 5-foot step." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Combat Reflexes feat required."><![CDATA[#hasfeat[fComRef] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2RecoImp" name="Recognize Impostor" description="You are extremely skilled at spotting impostors.\n\n{b}Prerequisites:{/b} Sense Motive 1 ranks, Perception 1 ranks.\n\n{b}Benefit:{/b} You receive a +4 bonus on Perception checks to oppose Disguise checks and on Sense Motive checks to oppose Bluff checks." compset="Feat" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #situational[hero.child[skPercep],"+4 to oppose Disguise checks",field[name].text]
+      #situational[hero.child[skSenseMot],"+4 to oppose Bluff checks",field[name].text]]]></eval>
+    <exprreq message="Perception 1+ ranks required."><![CDATA[#skillranks[skPercep] >= 1]]></exprreq>
+    <exprreq message="Sense Motive 1+ ranks required."><![CDATA[#skillranks[skSenseMot] >= 1]]></exprreq>
+    </thing>
+  <thing id="fS2Researc" name="Research" description="You can use your Knowledge skills to extract information from books, scrolls, and other repositories of facts and figures.\n\n{b}Benefit:{/b} This feat expands the way you can use the Knowledge skills. It allows you to use a Knowledge skill to navigate a library, an offi ce fi ling system, a chronicler&apos;s repository, or a church&apos;s records storage cell in order to discover information. You must be able to read the language the texts are written in to research them.\n\n{i}Research a Topic:{/i} Given enough time (usually 1d4 hours, though the DM can increase the time based on the amount of material you&apos;re examining) and a successful DC 10 skill check, you gain a general understanding of the topic you&apos;re researching. This assumes the information you are seeking exists within the collection of materials you are researching.\n\nThe higher the check result, the better and more detailed the information (to the extent available within the source material).\n\nWhen you want to fi nd out specifi c information on a specifi c topic, you must fi rst fi nd a library with tomes relating to that topic. The quality of the library or collection can provide a circumstance bonus on your Knowledge check when performing research.\n\nGeneral-purpose libraries (such as those found in some wealthy households, small churches, or towns) contain basic information on a variety of topics and provide a +1 circumstance bonus.\n\nA library devoted to a specific topic (usually owned by churches or organizations devoted to specific pursuits) provides a +2 circumstance bonus on Knowledge checks related to its topic.\n\nComprehensive collections are harder to fi nd, but they provide a +4 circumstance bonus. Such collections reside with large churches, in some larger cities, in some organizations and institutions, at Morgrave University, and in major chronicle offices.\n\nEven rarer and harder to gain access to are master collections, which provide a +6 circumstance bonus.\n\nMaster collections are found in a few dragonmarked house enclaves, one or two royal libraries, and in the library at Korranberg.\n\n{i}Examine Records:{/i} Examining books or records to get a general sense of what&apos;s in them takes time, skill, and some luck. Find a stack of ledgers in the alchemist&apos;s lab? Discover records in the crime lord&apos;s hideout? Locate the fi les pertaining to taxes collected in the city? To get a general sense of the information contained therein and whether or not you can use it, you must make a research check using the most appropriate Knowledge skill. The DC depends on the complexity of the code or fi ling system used. On any successful check, the higher the result, the better and more complete the information you glean. If you start out seeking a specific fact, date, map, or similar bit of information, the DM might increase the DC by as little as +5 or as much as +15.\n\nYou can retry a Knowledge check made to perform research, though if the material you are examining doesn&apos;t contain the data you seek, you can&apos;t fi nd it. You can take 10 or take 20 when making a Knowledge check to research a topic or examine records. This use of the Knowledge skill takes a minimum of 1d4 hours." compset="Feat" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="rcS2A1Make" name="Make Whole" description="You gain the use of {i}make whole{/i} 1/day and a +2 bonus on Craft checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spMakeWho2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Makin"/>
+    <bootstrap thing="spMakeWho2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[AllCraft] += 2</eval>
+    </thing>
+  <thing id="rcS2A3Make" name="Repair Light Damage" description="You gain the use of {i}repair light damage{/i} 1/day and a +2 bonus on Craft checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spS2RLD1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Makin"/>
+    <bootstrap thing="spS2RLD1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[AllCraft] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Make" name="Mending" description="You gain the use of {i}mending{/i} 2/day and a +2 bonus on Craft checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spMending0"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Makin"/>
+    <bootstrap thing="spMending0">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[AllCraft] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Make" name="Minor Creation" description="You gain the use of {i}minor creation{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Makin"/>
+    <tag group="SpInfo" tag="spMinoCre4"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spMinoCre4">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Make" name="Repair Serious Damage" description="You gain the use of {i}repair serious damage{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Makin"/>
+    <tag group="SpInfo" tag="spS2RSD3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spS2RSD3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Make" name="Fabricate" description="You gain the use of {i}fabricate{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Makin"/>
+    <tag group="SpInfo" tag="spFabrica5"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spFabrica5">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C2Make" name="Major Creation" description="You gain the use of {i}major creation{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Makin"/>
+    <tag group="SpInfo" tag="spFabrica5"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spMajoCre5">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="fS2RitOfCo" name="Right of Counsel" description="You have the legal and sacral right to seek advice from one of your ancestors, a deathless elf in Aerenal&apos;s City of the Dead.\n\n{b}Prerequisite:{/b} Elf.\n\n{b}Benefit:{/b} By virtue of your hereditary place in your family, you are allowed to enter the City of the Dead and seek advice from a deathless ancestor who resides there. Generally, your ancestor is an undying councilor (see page 301). If you physically present yourself before your ancestor, you can gain one of the following benefi ts.\n\n* The ancestor uses one of its spelllike abilities, such as {i}dispel evil, dispel magic,{/i} or {i}heal,{/i} on your behalf.\n\n* The ancestor an swers your questions about matters within its experience and learning, up to the limits of its own knowledge.\n\n* The ancestor seeks supernatural knowledge on your behalf, providing answers to questions equivalent to a {i}commune{/i} spell with your level as the caster level and no XP cost.\n\nThe deathless ancestors in the City of the Dead grow impatient with frequent interruption, and thus they refuse to assist you more than once per month.\n\n{b}Normal:{/b} The elves guard the City of the Dead with religious devotion, preventing anyone from entering who is not entitled to visit the ancestors." compset="Feat" summary="You have the legal and sacral right to seek advice from one of your ancestors, a deathless elf in Aerenal&apos;s City of the Dead." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Elf race required."><![CDATA[#hasrace[rElf] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2SerStri" name="Serpent Strike" description="Through monastic weapon training, you have mastered a fighting style that makes use of an unusual monk weapon: the longspear.\n\n{b}Prerequisites:{/b} Simple Weapon Proficiency (longspear), Weapon Focus (longspear), flurry of blows class feature.\n\n{b}Benefit:{/b} You can treat a longspear as a special monk weapon, allowing you to perform a flurry of blows with it." compset="Feat" summary="You can use the longspear as a monk weapon." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ make all longspears monk weapon
+      foreach pick in hero from BaseWep where "thingid.wLongspear"
+         perform eachpick.assign[wFtrGroup.Monk]
+         perform eachpick.assign[wSpecial.Monk]
+      nexteach]]></eval>
+    <exprreq message="Weapon Proficiency (longspear) feat required."><![CDATA[hero.tagis[WepProf.wLongspear] + #hasfeat[fSimple] <> 0]]></exprreq>
+    <exprreq message="Flurry of Blows class ability required."><![CDATA[#hasability[cMnkFlurr] <> 0]]></exprreq>
+    <exprreq message="Weapon Focus (longspear) feat required."><![CDATA[hero.tagcount[WepFocus.wLongspear] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2SilSmit" name="Silver Smite" description="You wield the power of the Silver Flame to smite evil.\n\n{b}Prerequisites:{/b} Follower of the Silver Flame, smite evil ability.\n\n{b}Benefit:{/b} When you use your smite evil ability, you deal an extra 1d6 points of sacred damage to the opponent you smite. The fire is silvery in appearance but does not burn." compset="Feat" summary="Deal +1d6 sacred damage when you smite evil." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Smite Evil class ability required."><![CDATA[#hasability[cPalSmite] <> 0]]></exprreq>
+    <exprreq message="Follower of the Silver Flame required."><![CDATA[#hasdeity[deiSilvFla] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2SongHea" name="Song of the Heart" description="Your Bardic Performance reaches the depths of its listeners&apos; hearts.\n\n{b}Prerequisites:{/b} Bardic Performance class feature, inspire competence ability, Perform 3 ranks.\n\n{b}Benefit:{/b} When you use inspire courage, inspire competence, inspire greatness, or inspire heroics, any bonus granted by your music increases by +1. Thus, a 15th-level bard with this feat grants his allies a +4 bonus on attack rolls, damage rolls, and saving throws against fear when he uses inspire courage, rather than the +3 he would normally grant. If he uses inspire greatness, the same bard grants up to three allies 3 bonus Hit Dice, a +3 bonus on attack rolls, and a +2 bonus on Fortitude saves.\n\nAlso, when you use {i}fascinate, suggestion,{/i} or {i}mass suggestion,{/i} the saving throw DC increases by 1.\n\nIf you have the Haunting Melody feat, the saving throw DC for that effect also increases by 1. If you have the Music of Growth feat, the bonus bestowed by that feat increases to +6. If you have the Music of Making feat, the bonus on Craft checks bestowed by that feat increases to +6. If you have the Soothe the Beast feat, you gain a +2 circumstance bonus on your Perform check to improve the attitude of an animal or magical beast.\n\n{b}Pathfinder:{/b} Adjusted ranks down to 3 and adding wording for Bardic Performance instead of bardic music." compset="Feat" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Give Fascinate a DC bonus of 1
+      If (hero.childlives[cBrdPFas] <> 0) Then
+         hero.child[cBrdPFas].field[abDC].value += 1
+      Endif 
+      ~ Give Suggestion a DC bonus of 1
+      If (hero.childlives[cBrdPSugg] <> 0) Then
+         hero.child[cBrdPSugg].field[abDC].value += 1
+      Endif 
+      ~ Give Mass Suggestion a DC bonus of 1
+      If (hero.childlives[cBrdPSugg] <> 0) Then
+         hero.child[cBrdPSugg].field[abDC].value += 1
+      Endif
+      ~ Give Haunting Melody feat a DC bonus of 1
+      If (hero.childlives[fS2HauMelo] <> 0) Then
+         hero.child[fS2HauMelo].field[abDC].value += 1
+         #appenddesc[fS2HauMelo,"{b}" & field[thingname].text & ":{/b} Increases DC by 1."]
+      Endif
+      ~ Give Music of Growth feat a bonus of 2
+      If (hero.childlives[fS2MusicGr] <> 0) Then
+         hero.child[fS2MusicGr].field[abValue].value += 2
+         #appenddesc[fS2MusicGr,"{b}" & field[thingname].text & ":{/b} Increasing the bonus to +6."]
+      Endif
+      ~ Give Music of Making feat a bonus of 2
+      If (hero.childlives[fS2MusicMa] <> 0) Then
+         hero.child[fS2MusicMa].field[abValue].value += 2
+         #appenddesc[fS2MusicMa,"{b}" & field[thingname].text & ":{/b} Increasing the bonus to +6."]
+      Endif]]></eval>
+    <exprreq message="Bardic Performance class feature required."><![CDATA[#hasability[cBrdPerfor] <> 0]]></exprreq>
+    <exprreq message="Inspire Competence class feature required."><![CDATA[#hasability[cBrdPInsM] <> 0]]></exprreq>
+    <prereq message="3+ ranks in any Perform skill required.">
+      <validate><![CDATA[@valid = 0
+        var total as number
+        ~ Go through all skills and count the number that have 3+ ranks
+        foreach pick in hero from BaseSkill where "Helper.SkCatPerf"
+           If (eachpick.field[skRanks].value >= 3) Then
+              total += 1
+           Endif
+        nexteach
+        ~ if we have at least 1 perform skill at 3 ranks we are valid
+        validif (total >= 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fS2SooBeas" name="Soothe the Beast" description="Echoing the music of creation, your music has power to calm animals.\n\n{b}Prerequisites:{/b} Bardic Performance class feature, Perform 3 ranks.\n\n{b}Benefit:{/b} You gain an ability similar to the wild empathy ability of a druid or ranger. Your music can improve the attitude of an animal. You make a Perform check instead of a Diplomacy check and use the result to determine the animal&apos;s new attitude. The typical domesticated animal has a starting attitude of indifferent, while wild animals are usually unfriendly.\n\nTo use this ability, you must be within 30 feet of the animal. The check takes 1 minute, but it might take longer to actually infl uence the animal.\n\nYou can also use this ability to infl uence a magical beast with an Intelligence score of 1 or 2, but you take a -4 penalty on the check.\n\n{b}Special:{/b} Using this ability uses up one round of your bardic performance.\n\n{b}Pathfinder:{/b} Adjusted ranks down to 3 and adding wording for Bardic Performance instead of bardic music. Also changed uses per day to uses per round." compset="Feat" summary="Your music can improve the attitude of an animal." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Give Fascinate a DC bonus of 1
+      If (hero.childlives[cBrdPFas] <> 0) Then
+         hero.child[cBrdPFas].field[abDC].value += 1
+      Endif 
+      ~ Give Suggestion a DC bonus of 1
+      If (hero.childlives[cBrdPSugg] <> 0) Then
+         hero.child[cBrdPSugg].field[abDC].value += 1
+      Endif 
+      ~ Give Mass Suggestion a DC bonus of 1
+      If (hero.childlives[cBrdPSugg] <> 0) Then
+         hero.child[cBrdPSugg].field[abDC].value += 1
+      Endif
+      ~ Give Haunting Melody feat a DC bonus of 1
+      If (hero.childlives[fS2HauMelo] <> 0) Then
+         hero.child[fS2HauMelo].field[abDC].value += 1
+         #appenddesc[fS2HauMelo,"{b}" & field[thingname].text & ":{/b} Increases DC by 1."]
+      Endif
+      ~ Give Music of Growth feat a bonus of 2
+      If (hero.childlives[fS2MusicGr] <> 0) Then
+         hero.child[fS2MusicGr].field[abValue].value += 2
+         #appenddesc[fS2MusicGr,"{b}" & field[thingname].text & ":{/b} Increasing the bonus to +6."]
+      Endif
+      ~ Give Music of Making feat a bonus of 2
+      If (hero.childlives[fS2MusicMa] <> 0) Then
+         hero.child[fS2MusicMa].field[abValue].value += 2
+         #appenddesc[fS2MusicMa,"{b}" & field[thingname].text & ":{/b} Increasing the bonus to +6."]
+      Endif]]></eval>
+    <exprreq message="Bardic Performance class feature required."><![CDATA[#hasability[cBrdPerfor] <> 0]]></exprreq>
+    <exprreq message="Inspire Competence class feature required."><![CDATA[#hasability[cBrdPInsM] <> 0]]></exprreq>
+    <prereq message="3+ ranks in any Perform skill required.">
+      <validate><![CDATA[@valid = 0
+        var total as number
+        ~ Go through all skills and count the number that have 3+ ranks
+        foreach pick in hero from BaseSkill where "Helper.SkCatPerf"
+           If (eachpick.field[skRanks].value >= 3) Then
+              total += 1
+           Endif
+        nexteach
+        ~ if we have at least 1 perform skill at 3 ranks we are valid
+        validif (total >= 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fS2SponCas" name="Spontaneous Casting" description="You can swap a prepared spell on the fly.\n\n{b}Prerequisite:{/b} Caster level 5th.\n\n{b}Benefit:{/b} You can exchange a spell you have prepared for another spell on your spell list (or for wizards, out of your spellbook) of the same level.\n\n{b}Special:{/b} Using this ability costs 2 action points." compset="Feat" summary="By spending 2 action points you can exchange a spell you have prepared for another spell." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Caster level 5th required."><![CDATA[herofield[tMastCraft].value >= 5]]></exprreq>
+    </thing>
+  <thing id="fS2StroMin" name="Strong Mind" description="You are unusually hard to affect with psionic powers and mind attacks.\n\n{b}Prerequisite:{/b} Wisdom 11.\n\n{b}Benefit:{/b} You gain a +3 bonus on saving throws against psionic abilities and mind attacks. Psionic abilities include many spell-like abilities of monsters such as aboleths, mind flayers, and yuan-ti (and any other creatures whose special attacks are described as psionic).\n\nMind attacks include the mind flayer&apos;s {i}mind blast{/i} ability, as well as any similar supernatural ability that uses sheer mental force to stun or disable an opponent (at the DM&apos;s discretion).\n\n{b}Special:{/b} The benefit of this feat does not extend to spells, spell-like abilities, or magic items that duplicate psionic abilities. This is an exception to the general rule that magic and psionics are equivalent." compset="Feat" uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the bonus
+      field[abValue].value += 3
+      ~ Set the Summary Text
+      field[abSumm].text = "You gain a +" & field[abValue].value & " bonus vs psionic abilities."
+
+      #situational[hero.child[svAll],"+" & field[abValue].value & " vs. psionics",field[name].text]]]></eval>
+    <exprreq message="Wisdom of 11+ required."><![CDATA[#attrvalue[aWIS] >= 11]]></exprreq>
+    </thing>
+  <thing id="fS2UndEmpt" name="Undead Empathy" description="You are adept at communicating with and infl uencing the undead.\n\n{b}Prerequisite:{/b} Charisma 13.\n\n{b}Benefit:{/b} You gain a +4 bonus on Diplomacy checks made to influence the reactions of intelligent undead.\n\nYou can also use Diplomacy to influence the actions of mindless undead, though in this case you do not gain the +4 bonus on your check. Generally, mindless undead begin an encounter with a hostile attitude; a Diplomacy check suffi cient to make them indifferent is usually enough to stave off attack. If the undead have been specifically commanded to guard something, a Diplomacy check suffi cient to make them friendly is required to make them back off from combat, and a check suffi cient to make them helpful is needed to make them abandon what they are guarding.\n\nTo influence the behavior of a mindless undead, the character and the undead must be within 30 feet of one another. Generally, infl uencing an undead in this way takes 1 minute, but as with influencing the living, it might take more or less time." compset="Feat" summary="You gain a +4 bonus on Diplomacy checks made to influence the reactions of intelligent undead." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the bonus
+      field[abValue].value += 4
+      ~ Set the Summary Text
+      field[abSumm].text = "You gain a +" & field[abValue].value & " bonus on Diplomacy checks made to influence the reactions of intelligent undead."
+
+      #situational[hero.child[skDiplo],"+" & field[abValue].value & " vs intelligent undead",field[name].text]]]></eval>
+    <exprreq message="Charisma 13+ required."><![CDATA[#attrvalue[aCHA] >= 13]]></exprreq>
+    </thing>
+  <thing id="fS2UrbTrac" name="Urban Tracking" description="You can track the location of missing persons or wanted individuals within communities.\n\n{b}Benefit:{/b} To find the trail of an individual or to follow it for 1 hour requires a Diplomacy check. You must make another Diplomacy check every hour of the search, as well as each time the trail becomes difficult to follow, such as when it moves to a different area of town.\n\nThe DC of the check, and the number of checks required to track down your quarry, depends on the community size and the conditions.\n\nIf you fail a Diplomacy check, you can retry it after 1 hour of questioning. The DM should secretly roll the number of checks required, so that the player doesn&apos;t know exactly how long the task will take.\n\n{b}Normal:{/b} A character without this feat can use Diplomacy to find out information about a particular individual, but each check takes 1d4+1 hours and doesn&apos;t allow effective trailing.\n\n{b}Special:{/b} You can cut the time per Diplomacy check in half (to 30 minutes per check rather than 1 hour), but you take a -5 penalty to the check.\n\n{b}Pathfinder:{/b} Converted Diplomacy to Diplomacy.  Removed the 5 ranks synergy bonus." compset="Feat" summary="You can track the location of missing persons or wanted individuals within communities." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="fS2VerShap" name="Vermin Shape" description="You can use your wild shape ability to assume vermin forms instead of animal forms.\n\n{b}Prerequisites:{/b} Wild Shape class ability, nongood alignment, Child of Winter.\n\n{b}Benefit:{/b} You can turn yourself into a Small or Medium vermin as per the {i}Vermin Shape I{/i} spell (Ultimate Magic). You gain the ability to take the shape of a Large or Tiny vermin when your druid level reaches 8th as per the {i}Vermin Shape II{/i} spell (Ultimate Magic).\n\n{b}Special:{/b} You can&apos;t use wild shape to turn yourself into an animal if you have this feat.\n\n{b}Pathfinder:{/b} Changed to Wild Shape class feature instead of druid level 4. Changed levels to match level 6,8 of druids abilities to the spells Vermin Shape I and II." compset="Feat" uniqueness="useronce">
+    <eval phase="Render" priority="1500"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ If wild shape animal is live then change it
+      If (hero.childlives[cDrdWildAn] <> 0) Then
+         if (hero.child[cDrdWildAn].field[xAllLev].value < 6) then
+            hero.child[cDrdWildAn].field[livename].text = "Wild Shape (Vermin Shape I: Small - Medium vermin)"
+         else
+            hero.child[cDrdWildAn].field[livename].text = "Wild Shape (Vermin Shape II: Tiny - Large vermin)"
+         endif
+         #appenddesc[cDrdWildAn,"{b}" & field[thingname].text & ":{/b} You can turn into a vermin as per the {i}Vermin Shape{/i} spells from Ulitmate Magic. You can no longer turn into a animal."]
+         hero.child[cDrdWildAn].field[abSumm].text = "You may use your Wild Shape ability to become a vermin."
+      Endif]]></eval>
+    <exprreq message="Non-good alignment required."><![CDATA[hero.tagis[Alignment.Good] <> 1]]></exprreq>
+    <exprreq message="Child of Winter feat required."><![CDATA[#hasfeat[fS2ChildWi] <> 0]]></exprreq>
+    <exprreq message="Wild Shape class ability required."><![CDATA[#hasability[cDrdWild] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2WanMast" name="Wand Mastery" description="Wands are far more potent in your hands.{br}{br}{b}Prerequisites:{/b} Craft Wand, caster level 9th.{br}{br}{b}Benefit:{/b} When you use a wand, the DC of saving throws against the wand&apos;s effect is increased by 2 and the wand&apos;s effective caster level is increased by 2." compset="Feat" summary="When you use a wand the DC and CL of the want is increased by 2." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Caster level 9th required."><![CDATA[herofield[tMastCraft].value >= 9]]></exprreq>
+    <exprreq message="Craft Wand feat required."><![CDATA[#hasfeat[fCraftWand] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2WardIni" name="Warden Initiate" description="You have been trained in the ancient druidic tradition of the Wardens of the Wood, a sect dedicated to protecting the eastern plain and the great woods of the Eldeen Reaches.\n\n{b}Prerequisite:{/b} Ability to spontaneously cast {i}summon nature&apos;s ally{/i}.\n\n{b}Benefit:{/b} You gain a +2 deflection bonus to Armor Class when fighting within a forest. Add Acrobatics to your list of druid class skills.\n\nIn addition, you can cast the following spells as if they were on the druid spell list at the indicated level.\n\n1st level: {i}protection from evil{/i} \n2nd level: {i}detect thoughts{/i} \n3rd level: {i}displacement{/i} \n4th level: {i}locate creature{/i} \n5th level: {i}hold monster{/i} \n6th level: {i}repulsion{/i} \n7th level: {i}banishment{/i} \n8th level: {i}screen{/i} \n9th level: {i}hold monster, mass{/i}\n* New spell, see Chapter 5: Magic.\n\n{b}Pathfinder:{/b} Changed jump to Acrobatics and removed climb wording as Druids in Pathfinder already get Climb as a class skill." compset="Feat" uniqueness="useronce">
+    <fieldval field="actName" value="Fighting in a forest"/>
+    <usesource source="S2Eberron"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="DruidSect" tag="WardensWoo"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ set default AC bonus of 2
+      field[abValue].value += 2
+      ~ Push all Druid Sects to the hero
+      perform forward[DruidSect.?]
+
+      ~ Make Acrobatics class skill
+      #makeclassskill[skAcrobat]
+
+      ~ If no druid class don't try assign tag to class
+      If (hero.childlives[cHelpDrd] <> 0) Then
+         ~ assign the Warden feat spells to the class
+         perform hero.child[cHelpDrd].assign[sClass.fS2WardIni]
+      Endif
+
+      ~ If we are activated give +2 Deflection bonus to AC
+      If (field[abilActive].value <> 0) Then
+         #applybonus[tACDeflect,hero.child[ArmorClass],field[abValue].value]
+      Endif]]></eval>
+    <exprreq message="Ability to spontaneously cast {i}summon nature&apos;s ally{/i} required."><![CDATA[#hasability[cDrdSpont] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2WhStStr" name="Whirling Steel Strike" description="Through monastic weapon training, you have mastered a fighting style that makes use of an unusual monk weapon: the longsword.\n\n{b}Prerequisites:{/b} Martial Weapon Proficiency (longsword), Weapon Focus (longsword), flurry of blows class feature.\n\n{b}Benefit:{/b} You can treat a longsword as a special monk weapon, allowing you to perform a flurry of blows with it." compset="Feat" summary="You can use the longsword as a monk weapon." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ make all Longsword monk weapon
+      foreach pick in hero from BaseWep where "thingid.wLongsword"
+         perform eachpick.assign[wFtrGroup.Monk]
+         perform eachpick.assign[wSpecial.Monk]
+      nexteach]]></eval>
+    <exprreq message="Weapon Proficiency (longsword) feat required."><![CDATA[hero.tagis[WepProf.wLongsword] + #hasfeat[fWepMart] <> 0]]></exprreq>
+    <exprreq message="Flurry of Blows class ability required."><![CDATA[#hasability[cMnkFlurr] <> 0]]></exprreq>
+    <exprreq message="Weapon Focus (longsword) feat required."><![CDATA[hero.tagcount[WepFocus.wLongsword] <> 0]]></exprreq>
+    </thing>
+  <thing id="rcS2A1Pass" name="Expeditious Retreat" description="You gain the use of {i}expeditious retreat{/i} 1/day and a +2 bonus on Survival checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spExpeRet1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Passa"/>
+    <bootstrap thing="spExpeRet1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skSurvival] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Pass" name="Mount" description="You gain the use of {i}mount{/i} 1/day and a +2 bonus on Survival checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spMount1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Passa"/>
+    <bootstrap thing="spMount1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skSurvival] += 2</eval>
+    </thing>
+  <thing id="rcS2A3Pass" name="Dimension Leap" description="You gain the use of {i}dimension leap{/i} 1/day and a +2 bonus on Survival checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spS2DimLea"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Passa"/>
+    <bootstrap thing="spS2DimLea">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      <assignval field="sCL" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skSurvival] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Pass" name="Dimension Door" description="You gain the use of {i}dimension door{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Passa"/>
+    <tag group="SpInfo" tag="spDimeDoo4"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spDimeDoo4">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Pass" name="Phantom Steed" description="You gain the use of {i}phantom steed{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Passa"/>
+    <tag group="SpInfo" tag="spPhanSte3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spPhanSte3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Pass" name="Overland Flight" description="You gain the use of {i}overland flight{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Passa"/>
+    <tag group="SpInfo" tag="spOverFli5"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spOverFli5">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C2Pass" name="Teleport" description="You gain the use of {i}teleport{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Passa"/>
+    <tag group="SpInfo" tag="spOverFli5"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spTelepor5">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2A1Scri" name="Arcane Mark" description="You gain the use of {i}arcane mark{/i} 2/day and a +2 bonus on Linguistics checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spArcaMar0"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Scrib"/>
+    <bootstrap thing="spArcaMar0">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skLinguist] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Scri" name="Comprehend Languages" description="You gain the use of {i}comprehend languages{/i} 1/day and a +2 bonus on Linguistics checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spCompLan1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Scrib"/>
+    <bootstrap thing="spCompLan1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skLinguist] += 2</eval>
+    </thing>
+  <thing id="rcS2A3Scri" name="Whispering Wind" description="You gain the use of {i}whispering wind{/i} 1/day and a +2 bonus on Linguistics checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spWhisWin1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Scrib"/>
+    <bootstrap thing="spWhisWin1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skLinguist] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Scri" name="Illusory Script" description="You gain the use of {i}illusory script{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Scrib"/>
+    <tag group="SpInfo" tag="spIlluScr3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spIlluScr3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Scri" name="Secret Page" description="You gain the use of {i}secret page{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Scrib"/>
+    <tag group="SpInfo" tag="spSecrPag3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spSecrPag3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B3Scri" name="Tongues" description="You gain the use of {i}tongues{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Scrib"/>
+    <tag group="SpInfo" tag="spTongues3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spTongues3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Scri" name="Sending" description="You gain the use of {i}sending{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Scrib"/>
+    <tag group="SpInfo" tag="spSending5"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spSending5">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2A1Sent" name="Mage Armor" description="You gain the use of {i}mage armor{/i} 1/day and a +2 bonus on Sense Motive checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spMageArm1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Senti"/>
+    <bootstrap thing="spMageArm1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skSenseMot] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Sent" name="Protection From Arrows" description="You gain the use of {i}protection from arrows{/i} 1/day and a +2 bonus on Sense Motive checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spProtfro2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Senti"/>
+    <bootstrap thing="spProtfro2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skSenseMot] += 2</eval>
+    </thing>
+  <thing id="rcS2A3Sent" name="Shield of Faith" description="You gain the use of {i}shield of faith{/i} 1/day and a +2 bonus on Sense Motive checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spShieFai1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Senti"/>
+    <bootstrap thing="spShieFai1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skSenseMot] += 2</eval>
+    </thing>
+  <thing id="rcS2A4Sent" name="Shield Other" description="You gain the use of {i}shield other{/i} 1/day and a +2 bonus on Sense Motive checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spShieOth2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Senti"/>
+    <bootstrap thing="spShieOth2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skSenseMot] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Sent" name="Protection From Energy" description="You gain the use of {i}protection from energy{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Senti"/>
+    <tag group="SpInfo" tag="spProtEne2"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spProtEne2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Sent" name="Lesser Globe of Invulnerability" description="You gain the use of {i}lesser globe of invulnerability{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Senti"/>
+    <tag group="SpInfo" tag="spGlobInv4"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spGlobInv4">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Sent" name="Globe of Invulnerability" description="You gain the use of {i}globe of invulnerability{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Senti"/>
+    <tag group="SpInfo" tag="spGlobInv6"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spGlobInv6">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2A1Shad" name="Darkness" description="You gain the use of {i}darkness{/i} 1/day and a +2 bonus on Diplomacy checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spDarknes2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Shado"/>
+    <bootstrap thing="spDarknes2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skDiplo] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Shad" name="Disguise Self" description="You gain the use of {i}disguise self{/i} 1/day and a +2 bonus on Diplomacy checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spDisgSel1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Shado"/>
+    <bootstrap thing="spDisgSel1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skDiplo] += 2</eval>
+    </thing>
+  <thing id="rcS2A3Shad" name="Minor Image" description="You gain the use of {i}minor image{/i} 1/day and a +2 bonus on Diplomacy checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spMinoIma2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Shado"/>
+    <bootstrap thing="spMinoIma2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skDiplo] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Shad" name="Clairaudience/Clairvoyance" description="You gain the use of {i}clairaudience/clairvoyance{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Shado"/>
+    <tag group="SpInfo" tag="spClairau3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spClairau3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Shad" name="Shadow Conjuration" description="You gain the use of {i}shadow conjuration{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Shado"/>
+    <tag group="SpInfo" tag="spShadCon4"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spShadCon4">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B3Shad" name="Scrying" description="You gain the use of {i}scrying{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Shado"/>
+    <tag group="SpInfo" tag="spScrying4"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spScrying4">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Shad" name="Mislead" description="You gain the use of {i}mislead{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Shado"/>
+    <tag group="SpInfo" tag="spMislead6"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spMislead6">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C2Shad" name="Prying Eyes" description="You gain the use of {i}prying eyes{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Shado"/>
+    <tag group="SpInfo" tag="spPryiEye5"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spPryiEye5">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C3Shad" name="Shadow Walk" description="You gain the use of {i}shadow walk{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Shado"/>
+    <tag group="SpInfo" tag="spShadWal6"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spShadWal6">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2A1Stor" name="Endure Elements" description="You gain the use of {i}endure elements{/i} 1/day and a +2 bonus on Acrobatics checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spEnduEle1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Storm"/>
+    <bootstrap thing="spEnduEle1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skAcrobat] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Stor" name="Fog Cloud" description="You gain the use of {i}fog cloud{/i} 1/day and a +2 bonus on Acrobatics checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spFogClo2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Storm"/>
+    <bootstrap thing="spFogClo2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skAcrobat] += 2</eval>
+    </thing>
+  <thing id="rcS2A3Stor" name="Gust of Wind" description="You gain the use of {i}gust of wind{/i} 1/day and a +2 bonus on Acrobatics checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spGustWin2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Storm"/>
+    <bootstrap thing="spGustWin2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+      #skillbonus[skAcrobat] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Stor" name="Sleet Storm" description="You gain the use of {i}sleet storm{/i} 1/day.  With {i}sleet storm{/i}, a character can create either warm rain or freezing sleet." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Storm"/>
+    <tag group="SpInfo" tag="spSleeSto3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <bootstrap thing="spSleeSto3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Stor" name="Wind&apos;s Favor" description="You gain the use of {i}wind&apos;s favor{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Storm"/>
+    <tag group="SpInfo" tag="spS2WinFa1"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spS2WinFa1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B3Stor" name="Wind Wall" description="You gain the use of {i}wind wall{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Storm"/>
+    <tag group="SpInfo" tag="spWindWal3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spWindWal3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Stor" name="Control Winds" description="You gain the use of {i}control winds{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Storm"/>
+    <tag group="SpInfo" tag="spContWin5"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spContWin5">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C2Stor" name="Control Weather" description="You gain the use of {i}control weather{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Storm"/>
+    <tag group="SpInfo" tag="spContWea7"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spContWea7">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2A1Ward" name="Alarm" description="You gain the use of {i}alarm{/i} 1/day and a +2 bonus on Perception checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spAlarm1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Wardi"/>
+    <bootstrap thing="spAlarm1">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skPercep] += 2</eval>
+    </thing>
+  <thing id="rcS2A2Ward" name="Arcane Lock" description="You gain the use of {i}arcane lock{/i} 1/day and a +2 bonus on Perception checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spArcaLoc2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Wardi"/>
+    <bootstrap thing="spArcaLoc2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skPercep] += 2</eval>
+    </thing>
+  <thing id="rcS2A3Ward" name="Firetrap" description="You gain the use of {i}firetrap{/i} 1/day and a +2 bonus on Perception checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spFireTra4"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Wardi"/>
+    <bootstrap thing="spFireTra4">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skPercep] += 2</eval>
+    </thing>
+  <thing id="rcS2A4Ward" name="Misdirection" description="You gain the use of {i}misdirection{/i} 1/day and a +2 bonus on Perception checks." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="SpInfo" tag="spMisdire2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgS2Wardi"/>
+    <bootstrap thing="spMisdire2">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Least"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000">~ Give a skill bonus
+#skillbonus[skPercep] += 2</eval>
+    </thing>
+  <thing id="rcS2B1Ward" name="Explosive Runes" description="You gain the use of {i}explosive runes{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Wardi"/>
+    <tag group="SpInfo" tag="spCreaFoo3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spExplRun3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B2Ward" name="Glyph of Warding" description="You gain the use of {i}glyph of warding{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Wardi"/>
+    <tag group="SpInfo" tag="spGlypWar3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spGlypWar3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2B3Ward" name="Nondetection" description="You gain the use of {i}nondetection{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Wardi"/>
+    <tag group="SpInfo" tag="spNondete3"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spNondete3">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Lesser"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C1Ward" name="Mage&apos;s Faithful Hound" description="You gain the use of {i}mage&apos;s faithful hound{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Wardi"/>
+    <tag group="SpInfo" tag="spMageFai5"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spMageFai5">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C2Ward" name="Greater Glyph of Warding" description="You gain the use of {i}greater glyph of warding{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Wardi"/>
+    <tag group="SpInfo" tag="spGlypWar6"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spGlypWar6">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcS2C3Ward" name="Guards and Wards" description="You gain the use of {i}guards and wards{/i} 1/day." compset="RaceCustom" uniqueness="unique">
+    <usesource source="S2Eberron"/>
+    <tag group="AllowRCust" tag="cfgS2Wardi"/>
+    <tag group="SpInfo" tag="spGuarWar6"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spGuarWar6">
+      <autotag group="Usage" tag="Day"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Dragonmark" tag="Greater"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="fS2Negotia" name="Negotiator" description="You are good at gauging and swaying attitudes.\n\n{b}Benefit{/b}: You get a +2 bonus on all Diplomacy checks and Sense Motive checks. If you have 10 or more ranks in one of these skills, the bonus increases to +4 for that skill." compset="Feat" summary="You get a +2 bonus on all Diplomacy checks and Sense Motive checks." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <eval phase="PostLevel" priority="15000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #skillbonus[skDiplo] += 2
+      if (#skillranks[skDiplo] >= 10) then
+         #skillbonus[skDiplo] += 2
+      endif
+
+      #skillbonus[skSenseMot] += 2
+      if (#skillranks[skSenseMot] >= 10) then
+         #skillbonus[skSenseMot] += 2
+      endif]]>
+      <after name="Suppress Innate Skills"/>
+      </eval>
+    </thing>
+  <thing id="fS2Diligen" name="Diligent" description="Your meticulousness allows you to analyze minute details that others miss.\n\n{b}Benefit{/b}: You get a +2 bonus on all Appraise checks and Linguistics checks.  If you have 10 or more ranks in one of these skills, the bonus increases to +4 for that skill." compset="Feat" summary="You get a +2 bonus on all Appraise checks and Linguistics checks." uniqueness="useronce">
+    <usesource source="S2Eberron"/>
+    <eval phase="PostLevel" priority="15000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #skillbonus[skAppraise] += 2
+      if (#skillranks[skAppraise] >= 10) then
+         #skillbonus[skAppraise] += 2
+      endif
+
+      #skillbonus[skLinguist] += 2
+      if (#skillranks[skLinguist] >= 10) then
+         #skillbonus[skLinguist] += 2
+      endif]]>
+      <after name="Suppress Innate Skills"/>
+      </eval>
+    </thing>
+  </document>

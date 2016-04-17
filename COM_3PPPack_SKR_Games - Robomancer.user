@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_SKR_Games - Robomancer"/>
+  <fileinfo>
+    <info_author>Tim Shadow</info_author>
+    <info_history><![CDATA[July 25, 2014 - Tim Shadow
+      -Created New.
+      -XML and HL Scripts copyrighted Tim Shadow 2014.
+      ]]></info_history>
+    </fileinfo>
+  <thing id="cS2Mechril" name="Mechrilon" description="A robomancer begins play with the ability to summon to her side a powerful outsider called a mechrilon, a mixture of living flesh and living machine.\n\nThe mechrilon&apos;s physical appearance is up to the robomancer, but it always appears as some sort of fantastical creature or animal, although with much of its living tissue replaced by metal (for example, nobody would mistake a crocodilian or leonine mechrilon lion for a normal crocodile or lion). This control is not fine enough to make the mechrilon appear like a specific creature.\n\nThe robomancer may use spells and effects that only affect constructs on her mechrilon.\n\nThe mechrilon&apos;s natural attacks count as natural and manufactured weapons for the purpose of spells and effects, whichever is more beneficial for the mechrilon. The mechrilon takes half damage from rust effects (such as from a rust monster or the {i}rusting grasp{/i} spell). The mechrilon otherwise counts as a living creature and an eidolon for all spells and effects.\n\nThis otherwise functions like and replaces eidolon." compset="ClSpecial" summary="Summon an outsider called a mechrilon, a mixture of living flesh and living machine."></thing>
+  <thing id="cS2RobSpel" name="Robomancer Spells" description="At 1st level, a robomancer adds {i}unerring weapon{/i} ({i}Ultimate Combat{/i}) as a 1st-level summoner spell known.\nAt 3rd level, she adds {i}chill metal{/i} or {i}heat metal{/i} as a 2nd-level summoner spell known.\nAt 5th level, she adds {i}make whole{/i} as a 2nd-level summoner spell known.\nAt 7th level, she adds {i}malfunction{/i} ({i}Ultimate Magic{/i}) as a 3rd-level summoner spell known.\nAt 9th level, she adds {i}rapid repair{/i} ({i}Ultimate Magic{/i}) as a 3rd-level summoner spell known.\nAt 11th level, she adds {i}unbreakable construct{/i} ({i}Ultimate Magic{/i}) as a 4th-level summoner spell known.\nAt 13th level, she adds {i}control construct{/i} ({i}Ultimate Magic{/i}) as a 5th-level summoner spell known.\nAt 15th level, she adds {i}call construct{/i} ({i}Ultimate Magic{/i}) as a 5th-level summoner spell known.\nAt 17th level, she adds {i}iron body{/i} as a 6th-level summoner spell known.\n\nThis replaces the {i}summon monster{/i} class ability." compset="ClSpecial">
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <bootstrap thing="spUnerWea1">
+      <autotag group="Robomancer" tag="BonusSpell"/>
+      <autotag group="BonusSplAt" tag="1"/>
+      <autotag group="SpellType" tag="cHelpSum"/>
+      </bootstrap>
+    <bootstrap thing="spChilMet2">
+      <containerreq phase="First" priority="500">Robomancer.spChilMet2</containerreq>
+      <autotag group="Robomancer" tag="BonusSpell"/>
+      <autotag group="SpellType" tag="cHelpSum"/>
+      <autotag group="BonusSplAt" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="spHeatMet2">
+      <containerreq phase="First" priority="500">Robomancer.spHeatMet2</containerreq>
+      <autotag group="Robomancer" tag="BonusSpell"/>
+      <autotag group="SpellType" tag="cHelpSum"/>
+      <autotag group="BonusSplAt" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="spMakeWho2">
+      <autotag group="Robomancer" tag="BonusSpell"/>
+      <autotag group="BonusSplAt" tag="5"/>
+      <autotag group="SpellType" tag="cHelpSum"/>
+      </bootstrap>
+    <bootstrap thing="spMalfunc4">
+      <autotag group="Robomancer" tag="BonusSpell"/>
+      <autotag group="BonusSplAt" tag="7"/>
+      <autotag group="SpellType" tag="cHelpSum"/>
+      </bootstrap>
+    <bootstrap thing="spRapiRep5">
+      <autotag group="Robomancer" tag="BonusSpell"/>
+      <autotag group="BonusSplAt" tag="9"/>
+      <autotag group="SpellType" tag="cHelpSum"/>
+      </bootstrap>
+    <bootstrap thing="spUnbrCon5">
+      <autotag group="Robomancer" tag="BonusSpell"/>
+      <autotag group="BonusSplAt" tag="11"/>
+      <autotag group="SpellType" tag="cHelpSum"/>
+      </bootstrap>
+    <bootstrap thing="spContCon7">
+      <autotag group="Robomancer" tag="BonusSpell"/>
+      <autotag group="BonusSplAt" tag="13"/>
+      <autotag group="SpellType" tag="cHelpSum"/>
+      </bootstrap>
+    <bootstrap thing="spCallCon8">
+      <autotag group="Robomancer" tag="BonusSpell"/>
+      <autotag group="BonusSplAt" tag="15"/>
+      <autotag group="SpellType" tag="cHelpSum"/>
+      </bootstrap>
+    <bootstrap thing="spIronBod8">
+      <autotag group="Robomancer" tag="BonusSpell"/>
+      <autotag group="BonusSplAt" tag="17"/>
+      <autotag group="SpellType" tag="cHelpSum"/>
+      </bootstrap>
+    <eval phase="First" priority="400"><![CDATA[
+      ~we're earlier than the normal test for whether we've reached the correct level, so we'll recreate that test here
+      doneif (root.linkage[varies].field[cTotalLev].value + field[xExtraLev].value + field[xEffectLev].value < tagvalue[ClSpecWhen.?])
+
+      ~ If we are level 3+ we have to decide on Heat or Chill metal?
+      If (root.linkage[varies].field[cTotalLev].value + field[xExtraLev].value + field[xEffectLev].value >= 3) Then
+        field[usrCandid1].text = "component.BaseSpell & (thingid.spChilMet2|thingid.spHeatMet2)"
+        ~ Lets see what was chosen
+        If (field[usrChosen1].ischosen <> 0) Then
+          ~ Chill Metal?
+          If (field[usrChosen1].chosen.tagis[thingid.spChilMet2] <> 0) Then
+            perform hero.assign[Robomancer.spChilMet2]
+          ~ Heat Metal?
+          ElseIf (field[usrChosen1].chosen.tagis[thingid.spHeatMet2] <> 0) Then
+            perform hero.assign[Robomancer.spHeatMet2]
+          Endif
+        Endif
+      Endif]]></eval>
+    <eval phase="First" priority="600" index="2"><![CDATA[
+      ~we're earlier than the normal test for whether we've reached the correct level, so we'll recreate that test here
+      doneif (root.linkage[varies].field[cTotalLev].value + field[xExtraLev].value + field[xEffectLev].value < tagvalue[ClSpecWhen.?])
+
+      ~ Make Malfunction level 3
+      perform hero.findchild[BaseSpell,"thingid.spMalfunc4 & Robomancer.BonusSpell"].tagreplace[sLevel.?,sLevel.3] 
+      ~ Make Rapid Repair level 3
+      perform hero.findchild[BaseSpell,"thingid.spRapiRep5 & Robomancer.BonusSpell"].tagreplace[sLevel.?,sLevel.3] 
+      ~ Make unbreakable construct level 4
+      perform hero.findchild[BaseSpell,"thingid.spUnbrCon5 & Robomancer.BonusSpell"].tagreplace[sLevel.?,sLevel.4] 
+      ~ Make control construct level 5
+      perform hero.findchild[BaseSpell,"thingid.spContCon7 & Robomancer.BonusSpell"].tagreplace[sLevel.?,sLevel.5] 
+      ~ Make call construct level 5
+      perform hero.findchild[BaseSpell,"thingid.spCallCon8 & Robomancer.BonusSpell"].tagreplace[sLevel.?,sLevel.5] 
+      ~ Make iron body level 6
+      perform hero.findchild[BaseSpell,"thingid.spIronBod8 & Robomancer.BonusSpell"].tagreplace[sLevel.?,sLevel.6]]]></eval>
+    </thing>
+  <thing id="rcEiS2Tur1" name="Turbo +10ft" description="A mechrilon is exceptionally fast and increases its base speed by 10 feet. At 5th level, mechrilon&apos;s base speed can be increased again by spending additional evolution points, gaining a 5-foot increase to base speed for each additional point spent." compset="RaceCustom" summary="Base speed by +10 feet." uniqueness="useronce">
+    <usesource source="srcRobmanc"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="AllowRCust" tag="Eidolon"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="CustomCost" tag="1"/>
+    <eval phase="PreLevel"><![CDATA[
+      ~if we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      hero.child[Speed].field[tSpeed].value += 10]]></eval>
+    </thing>
+  <thing id="rcEiS2Tur2" name="Turbo +5ft" description="A mechrilon is exceptionally fast and increases its base speed by 10 feet. At 5th level, mechrilon&apos;s base speed can be increased again by spending additional evolution points, gaining a 5-foot increase to base speed for each additional point spent." compset="RaceCustom" summary="Base speed by +5 feet.">
+    <usesource source="srcRobmanc"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="AllowRCust" tag="Eidolon"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="CustomCost" tag="1"/>
+    <eval phase="PreLevel"><![CDATA[
+      ~if we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      hero.child[Speed].field[tSpeed].value += 5]]></eval>
+    <exprreq message="Turbo +10ft ability required."><![CDATA[#hasability[rcEiS2Tur1] <> 0]]></exprreq>
+    <prereq message="Summoner 5th level required.">
+      <validate><![CDATA[
+      if (ishero = 0) then
+        validif (parent.field[xAllLev].value >= 5)
+      elseif (isminion <> 0) then
+        validif (herofield[tCompLevel].value >= 5)
+        endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcEiS2Fort" name="Fortification" description="A mechrilon&apos;s vital areas are more effectively protected, or it gains redundant machine parts that can take over if the vital areas are damaged. When a critical hit or sneak attack is scored against the mechrilon, there is a 25% chance that the critical hit or sneak attack is negated and damage is instead rolled normally. The robomancer must be at least 7th level before selecting this evolution. At 9th level, this protection can be increased to 50% by spending 2 additional evolution points; at 11th level, it can be increased from 50% to 75% by spending 2 additional evolution points." compset="RaceCustom" summary="Fortification of +25%" maxlimit="3">
+    <usesource source="srcRobmanc"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="AllowRCust" tag="Eidolon"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="CustomCost" tag="2"/>
+    <bootstrap thing="xFortifica"></bootstrap>
+    <eval phase="PreLevel"><![CDATA[
+      ~if we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #value[xFortifica] += 25]]></eval>
+    <prereq message="Summoner 5th level required.">
+      <validate><![CDATA[
+        var allowed as number
+        if (ishero = 0) then
+          If (parent.field[xAllLev].value >= 7) Then
+            allowed += 1
+          Endif
+          If (parent.field[xAllLev].value >= 9) Then
+            allowed += 1
+          Endif
+          If (parent.field[xAllLev].value >= 11) Then
+            allowed += 1
+          Endif
+        elseif (isminion <> 0) then
+          If (herofield[tCompLevel].value >= 7) Then
+            allowed += 1
+          Endif
+          If (herofield[tCompLevel].value >= 9) Then
+            allowed += 1
+          Endif
+          If (herofield[tCompLevel].value >= 11) Then
+            allowed += 1
+          Endif
+        endif
+
+        ~ if we're a pick, then there must be complevel/5 or fewer copies of
+        ~ this ability
+        if (@ispick <> 0) then
+          validif (tagcount[HasAbility.rcEiS2Fort] <= allowed)
+
+        ~ otherwise, look for fewer, since we're adding this
+        else
+          validif (tagcount[HasAbility.rcEiS2Fort] < allowed)
+          endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability."]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcEiS2AdaA" name="Adamantine Armor" description="A mechrilon&apos;s metal parts become adamantine, granting it damage reduction. The mechrilon&apos;s gains DR 5/adamantine. At 12th level, this protection can be increased to DR 10/adamantine by spending 2 additional evolution points. The robomancer must be at least 9th level before selecting this evolution." compset="RaceCustom" summary="Gain DR 5/adamantine." uniqueness="useronce">
+    <usesource source="srcRobmanc"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="AllowRCust" tag="Eidolon"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="CustomCost" tag="3"/>
+    <eval phase="PreLevel"><![CDATA[
+      ~if we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #applydr[xDamRdAdam,5]]]></eval>
+    <prereq message="Summoner 9th level required.">
+      <validate><![CDATA[
+      if (ishero = 0) then
+        validif (parent.field[xAllLev].value >= 9)
+      elseif (isminion <> 0) then
+        validif (herofield[tCompLevel].value >= 9)
+        endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcEiS2Ada2" name="Adamantine Armor, Improved" description="A mechrilon&apos;s metal parts become adamantine, granting it damage reduction. The mechrilon&apos;s gains DR 5/adamantine. At 12th level, this protection can be increased to DR 10/adamantine by spending 2 additional evolution points. The robomancer must be at least 9th level before selecting this evolution." compset="RaceCustom" summary="Gain DR 10/adamantine." uniqueness="useronce">
+    <usesource source="srcRobmanc"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="AllowRCust" tag="Eidolon"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="CustomCost" tag="2"/>
+    <eval phase="PreLevel"><![CDATA[
+      ~if we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #applydr[xDamRdAdam,10]]]></eval>
+    <exprreq message="Adamantine Armor ability required."><![CDATA[#hasability[rcEiS2AdaA] <> 0]]></exprreq>
+    <prereq message="Summoner 12th level required.">
+      <validate><![CDATA[
+      if (ishero = 0) then
+        validif (parent.field[xAllLev].value >= 12)
+      elseif (isminion <> 0) then
+        validif (herofield[tCompLevel].value >= 12)
+        endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcEiS2ConB" name="Construct Body" description="A mechrilon&apos;s body no longer has any living physical components. Its Constitution score changes to - . Any eidolon abilities or other statistics that rely on a Constitution score are treated as if it had a Constitution of 10. It gains immunity to bleed, disease, death effects, necromancy effects, paralysis, poison, sleep effects, stunning, ability damage, ability drain, fatigue, exhaustion, energy drain, nonlethal damage, effects that require a Fortitude save (unless the effect also works on objects, or is harmless), and death from massive damage. It gains bonus hit points appropriate to its size as described in the construct type entry ({i}Bestiary{/i}). It counts as a construct for effects that only affect constructs or affect constructs differently than other creatures. It takes full damage (not half) from rust attacks. The robomancer must be at least 11th level before selecting this evolution." compset="RaceCustom" summary="Become a Construct." uniqueness="useronce">
+    <usesource source="srcRobmanc"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="AllowRCust" tag="Eidolon"/>
+    <tag group="CustomCost" tag="4"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="xImmBleed"></bootstrap>
+    <bootstrap thing="xImmDis"></bootstrap>
+    <bootstrap thing="xImmDeNec"></bootstrap>
+    <bootstrap thing="xImmPois"></bootstrap>
+    <bootstrap thing="xImmSleep"></bootstrap>
+    <bootstrap thing="xImmParaly"></bootstrap>
+    <bootstrap thing="xImmStun"></bootstrap>
+    <bootstrap thing="xImmAbilDm"></bootstrap>
+    <bootstrap thing="xImmAbilDr"></bootstrap>
+    <bootstrap thing="xImmFatigu"></bootstrap>
+    <bootstrap thing="xImmExhaus"></bootstrap>
+    <bootstrap thing="xImmEnerDr"></bootstrap>
+    <bootstrap thing="raImmNonLe"></bootstrap>
+    <bootstrap thing="xConstruct"></bootstrap>
+    <prereq message="Summoner 11th level required.">
+      <validate><![CDATA[
+      if (ishero = 0) then
+        validif (parent.field[xAllLev].value >= 11)
+      elseif (isminion <> 0) then
+        validif (herofield[tCompLevel].value >= 11)
+        endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcEiS2ConM" name="Construct Mind" description="A mechrilon’s mind no longer acts or thinks like a living creature. It gains immunity to all mind-affecting effects (charms, compulsions, morale effects, patterns, and phantasms). It counts as a construct for effects that only affect constructs or affect constructs differently than other creatures. The robomancer must be at least 9th level before selecting this evolution." compset="RaceCustom" summary="Immunity to all mind-affecting effects." uniqueness="useronce">
+    <usesource source="srcRobmanc"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="AllowRCust" tag="Eidolon"/>
+    <tag group="CustomCost" tag="4"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="xImmMind"></bootstrap>
+    <prereq message="Summoner 9th level required.">
+      <validate><![CDATA[
+      if (ishero = 0) then
+        validif (parent.field[xAllLev].value >= 9)
+      elseif (isminion <> 0) then
+        validif (herofield[tCompLevel].value >= 9)
+        endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcEiS2IrGB" name="Iron Golem Breath" description="A mechrilon gains a breath weapon that is a 10-foot cube of poisonous gas. The gas lasts for 1 round and poisons any creature within or entering it. The mechrilon can use this ability once per day. The mechrilon can use this ability 1 additional time per day by spending an additional 1 evolution point (maximum 3/day). The robomancer must be at least 9th level before selecting this evolution. Poison Gas - inhaled; {i}save{/i} Fort 10 + 1/2 mechrilon&apos;s HD + Con modifier; {i}frequency{/i} 1/round for 4 rounds; {i}effect{/i} 1d4 Constitution damage; {i}cure{/i} 2 saves." compset="RaceCustom" summary="Breath weapon that is a 10-foot cube of poisonous gas." uniqueness="useronce">
+    <usesource source="srcRobmanc"/>
+    <tag group="AllowRCust" tag="Eidolon"/>
+    <tag group="CustomCost" tag="4"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AbilType" tag="Super"/>
+    <bootstrap thing="raS2BWiron"></bootstrap>
+    <prereq message="Summoner 9th level required.">
+      <validate><![CDATA[
+      if (ishero = 0) then
+        validif (parent.field[xAllLev].value >= 9)
+      elseif (isminion <> 0) then
+        validif (herofield[tCompLevel].value >= 9)
+        endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="raS2BWiron" name="Breath Weapon" description="A mechrilon gains a breath weapon that is a 10-foot cube of poisonous gas. The gas lasts for 1 round and poisons any creature within or entering it.  Poison Gas - inhaled; {i}save{/i} Fort 10 + 1/2 mechrilon&apos;s HD + Con modifier; {i}frequency{/i} 1/round for 4 rounds; {i}effect{/i} 1d4 Constitution damage; {i}cure{/i} 2 saves." compset="RaceSpec" summary="Poison Gas - inhaled; {i}save{/i} Fort 10 + 1/2 mechrilon&apos;s HD + Con modifier; {i}frequency{/i} 1/round for 4 rounds; {i}effect{/i} 1d4 Constitution damage; {i}cure{/i} 2 saves.">
+    <fieldval field="abRange" value="10"/>
+    <fieldval field="abDuration" value="1"/>
+    <fieldval field="trkMax" value="1"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="abDuration" tag="Round"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="abSave" tag="FortNeg"/>
+    <tag group="User" tag="Tracker"/>
+    </thing>
+  <thing id="rcEiS2IrG2" name="Iron Golem Breath, Additional Use" description="A mechrilon gains a breath weapon that is a 10-foot cube of poisonous gas. The gas lasts for 1 round and poisons any creature within or entering it. The mechrilon can use this ability once per day. The mechrilon can use this ability 1 additional time per day by spending an additional 1 evolution point (maximum 3/day). The robomancer must be at least 9th level before selecting this evolution. Poison Gas - inhaled; {i}save{/i} Fort 10 + 1/2 mechrilon&apos;s HD + Con modifier; {i}frequency{/i} 1/round for 4 rounds; {i}effect{/i} 1d4 Constitution damage; {i}cure{/i} 2 saves." compset="RaceCustom" summary="Additional use of Iron Golem Breath." maxlimit="2">
+    <usesource source="srcRobmanc"/>
+    <tag group="AllowRCust" tag="Eidolon"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="PreLevel"><![CDATA[
+      ~if we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #trkmax[raS2BWiron] += 1]]></eval>
+    <exprreq message="Iron Golem Breath ability required."><![CDATA[#hasability[rcEiS2IrGB] <> 0]]></exprreq>
+    <prereq message="Summoner 9th level required.">
+      <validate><![CDATA[
+      if (ishero = 0) then
+        validif (parent.field[xAllLev].value >= 9)
+      elseif (isminion <> 0) then
+        validif (herofield[tCompLevel].value >= 9)
+        endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="arS2Roboma" name="Robomancer" description="A robomancer creates a bond with an eidolon from a strange plane where flesh, metal, magic, and technology are equally common. This eidolon - called a &quot;mechrilon&quot; - has mechanical body parts, artificial limbs, and other enhancements that blur the line between living creature and machine. A robomancer learns how to adjust and modify her mechrilon&apos;s body, creating a powerful war machine with a living heart, or even removing living components altogether, creating a pure construct." compset="ClassVary" uniqueness="unique">
+    <usesource source="srcRobmanc"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AbModify" tag="cSumEidol"/>
+    <tag group="AbReplace" tag="cSumSuMons"/>
+    <bootstrap thing="cS2Mechril">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cS2RobSpel">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpSum"/>
+    </thing>
+  </document>

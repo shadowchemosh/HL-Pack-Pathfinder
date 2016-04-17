@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_LegGames - Procedures"/>
+
+  <fileinfo>
+    <info_author><![CDATA[
+      Tim Shadow
+      Email: ShadowChemosh@yahoo.com
+    ]]>
+    </info_author>
+    <info_history><![CDATA[
+      July 18, 2015
+      -Created new to hold procedures specific to Legendary Games products.
+      ]]>
+    </info_history>
+  </fileinfo>
+
+  <!-- =================================================================== -->
+  <!-- Give activited bonuses for Armry Commander Boons                    -->
+  <!-- =================================================================== -->
+  <procedure id="3PComBoons" context="pick"><![CDATA[
+    ~ Timing: First/1000
+    ~ abValue  = OM
+    ~ abValue2 = DV
+    ~ abValue3 = Morale
+    ~ abValue4 = Damage Bonus
+
+    ~ if activation 1 checked
+    if (field[abilActive].value = 1) then
+      ~ OM
+      field[tacOffMod].value += field[abValue].value
+      ~ DV
+      field[tacDefMod].value += field[abValue2].value
+      ~ Morale
+      field[tacMrlMod].value += field[abValue3].value
+      ~ Damage bonus
+      field[tacDamMod].value += field[abValue4].value
+    endif
+    ]]>
+  </procedure>
+
+  <!-- =================================================================== -->
+  <!-- Look for a specific racial ability and if not found hide ourself    -->
+  <!-- =================================================================== -->
+  <procedure id="3PArAbHide" context="pick"><![CDATA[
+    ~ Timing: Final/999999999
+    ~ S2_ability - Used to pass in the Thing ID of the racial special to look for.
+    var S2_ability as string
+
+    ~ If Amorphous racial ability found then get out now!
+    doneif (hero.tagcountstr["HasAbility." & S2_ability] <> 0)
+
+    ~ No specific racial ability found so hide ourself
+    perform assign[Hide.ArmyAbil]
+    ~ Remove the "HasAbility.?" tag from hero as we really don't
+    ~ have this ability.
+    perform hero.deletestr[tagids[HasAbility.?]]    
+    ]]>
+  </procedure>
+
+
+</document>

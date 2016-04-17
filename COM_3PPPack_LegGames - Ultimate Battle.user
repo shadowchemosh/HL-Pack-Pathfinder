@@ -1,0 +1,857 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_LegGames - Ultimate Battle"/>
+  <thing id="as3PCauAdv" name="Cautious Advance (LG)" description="This strategy gives -2 to Offense Modifier (OM), +2 to Defense Value (DV) but  and -1 Casualties." compset="ArmyStrat" summary="-2 OM, -2 DV, -1 Casualties." uniqueness="unique">
+    <fieldval field="tacOffMod" value="-2"/>
+    <fieldval field="tacDefMod" value="+2"/>
+    <fieldval field="abValue5" value="-1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="explicit" tag="15"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="as3PHoldFi" name="Hold Firm (LG)" description="This strategy gives -4 to Offense Modifier (OM), +4 to Defense Value (DV) but  and -2 Casualties." compset="ArmyStrat" summary="-4 OM, -4 DV, -2 Casualties." uniqueness="unique">
+    <fieldval field="tacOffMod" value="-4"/>
+    <fieldval field="tacDefMod" value="+4"/>
+    <fieldval field="abValue5" value="-2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="explicit" tag="10"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="as3PStanda" name="Standard (LG)" description="This strategy gives +0 to Offense Modifier (OM), +0 to Defense Value (DV) but  and +0 Casualties." compset="ArmyStrat" summary="+0 OM, +0 DV, +0 Casualties." uniqueness="unique">
+    <usesource source="srcLGUltBa"/>
+    <tag group="explicit" tag="20"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="as3PAggAtt" name="Aggressive Attack (LG)" description="This strategy gives +2 to Offense Modifier (OM), -2 to Defense Value (DV) but  and +1 Casualties." compset="ArmyStrat" summary="+2 OM, -2 DV, +1 Casualties." uniqueness="unique">
+    <fieldval field="tacOffMod" value="2"/>
+    <fieldval field="tacDefMod" value="-2"/>
+    <fieldval field="abValue5" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="explicit" tag="25"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="as3PAllOAs" name="All-Out Assault (LG)" description="This strategy gives +4 to Offense Modifier (OM), -4 to Defense Value (DV) but  and +2 Casualties." compset="ArmyStrat" summary="+4 OM, -4 DV, +2 Casualties." uniqueness="unique">
+    <fieldval field="tacOffMod" value="4"/>
+    <fieldval field="tacDefMod" value="-4"/>
+    <fieldval field="abValue5" value="2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="explicit" tag="30"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="aa3PCasual" name=" Casualties" description="The Casualties modifier applies to damage dealt by you and damage dealt by your enemies, including damage from failed attacks and friendly fire. This number was reduced to eliminate the doubling effect in the published rules caused by adding an additional modifier to damage when the existing modifiers to OM and DV already directly adjust damage (since damage equals 1d20 + OM - DV, plus other modifiers that apply)." compset="ArmyAbil" uniqueness="unique">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Bootstrap"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ Get the currently selected Army Strategy
+      perform hero.findchild[ArmyStrat].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ Get casualties value
+      field[abValue].value += focus.field[abValue5].value
+
+      ~ Set the livename with (abValue)
+      field[livename].text = field[name].text & " (" & signed(field[abValue].value) & ")"]]></eval>
+    </thing>
+  <thing id="p3PBloodie" name="Bloodied Army" description="An army that is reduced below half its hit points during any battle, whether its side is ultimately victorious or not, becomes bloodied. A bloodied army has lost a substantial number of its soldiers to death or permanent injury, and no amount of rest, recovery, or even magical healing can bring the unit up to its full fighting strength. A bloodied army is treated as though its ACR is 1 less than normal for all purposes. This reduction applies each time it has been bloodied, and the effects stack for the purpose of determining the unit&apos;s OM, DV, maximum hit points, and all other game effects except the army&apos;s Consumption. The bloodied condition can be removed only by reforming the army (as described in the Optional Mass Combat Rules in {b}{i}Pathfinder Roleplaying Game Ultimate Campaign{/b}{/i}) or by replenishing the army with new recruits (see Recruiting an Army).\n\n{B}Note:{/b} Use the counter to set the value of the number of times your army has been bloodied." compset="InPlay" uniqueness="useronce">
+    <fieldval field="pMinimum" value="0"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="AdjArmy"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Add to our chosen statistic
+      hero.childfound[ArmyHelper].field[armCR].value += -1 * field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pcn3PBlood" name="Bloodied" description="An army that is reduced below half its hit points during any battle, whether its side is ultimately victorious or not, becomes bloodied. A bloodied army has lost a substantial number of its soldiers to death or permanent injury, and no amount of rest, recovery, or even magical healing can bring the unit up to its full fighting strength. A bloodied army is treated as though its ACR is 1 less than normal for all purposes. This reduction applies each time it has been bloodied, and the effects stack for the purpose of determining the unit&apos;s OM, DV, maximum hit points, and all other game effects except the army&apos;s Consumption. The bloodied condition can be removed only by reforming the army (as described in the Optional Mass Combat Rules in {b}{i}Pathfinder Roleplaying Game Ultimate Campaign{/b}{/i}) or by replenishing the army with new recruits (see Recruiting an Army)." compset="Condition">
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="BattleCond"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="p3PBloodie">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      </bootstrap>
+    </thing>
+  <thing id="pcn3PDefea" name="Defeated" description="An army reduced to 0 hit points is defeated and can take no further actions in the battle, but it can be taken prisoner or massacred by its enemies following the battle, attacked in spite of their surrender in the midst of battle, or recovered, reformed, and restored to fighting strength by its allies after the battle ends (see Victory and Aftermath). A defeated unit typically has 10% of its number dead, and 1d4 x 10% of its number wounded and unable to fight, the rest simply too physically exhausted or emotionally shaken to continue fighting." compset="Condition">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="BattleCond"/>
+    </thing>
+  <thing id="pcn3PDestr" name="Destroyed" description="If a defeated army is attacked before the battle ends, it takes a -2 penalty to its DV. If successfully attacked by an enemy army of at least half its size, the defeated army is instead destroyed and ceases to exist as a fighting force. In a destroyed unit, the dead number 1d6 x 10% of the army&apos;s soldiers, with 1d4 x 10% wounded, and the remainder simply surrendered or deserted.{br}{br}When an army is destroyed, the country for which it fought loses 1 point of Fame. In addition, there is a 25% chance that the city where the army was recruited (with an Improvement or Recruitment Edict) has a Building Demand event during the next kingdom turn, demanding a Monument to be erected as a memorial to the fallen.{br}{br}This is in addition to any other kingdom events that may occur." compset="Condition">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="BattleCond"/>
+    </thing>
+  <thing id="pcn3PDisba" name="Disbanded" description="When an army is reduced to 0 Morale and fails a Loyalty check, it not only routs from the battlefield but actually ceases to exist as a fighting force, disintegrating in a combination of flight and surrender. When an army disbands, 50% of its number is permanently deducted from the kingdom&apos;s population, as those soldiers desert their country and flee for safer lands where their shame will not follow them. The other 50% of the soldiers filter back into the population of their kingdom.\n\nWhen an army disbands, all allied armies take a -1 penalty to Morale checks for the remainder of the battle; this stacks if more than one army disbands. When an army disbands, the kingdom for which it fights takes a permanent -1 penalty to Fame, Loyalty, and Stability and the city where the army was recruited (with an Improvement or Recruitment Edict) takes a permanent -2 penalty to Law.\n\nIf a unit disbands while you are at war (rather than, for example, disbanding because of lack of pay or training during peacetime), your enemy gains a one-time reduction in its consumption for any one unit within one hex of the disbanded unit equal to 1/2 the disbanded unit&apos;s ACR; if this amount exceeds your unit&apos;s Consumption, any excess is lost. However, if you use an Improvement Edict or Recruitment Edict to create a new army in a Fort or settlement within 3 hexes of the site of the enemy army&apos;s desertion, you gain a one-time bonus to your next Loyalty check to recruit that army as you take advantage of disaffected deserters from your enemy who have turned to your side." compset="Condition">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="BattleCond"/>
+    </thing>
+  <thing id="pcn3PFatig" name="Fatigue" description="An army that becomes fatigued takes a -1 penalty to OM and DV and cannot use the Furious Charge or Overwhelming Onslaught tactics. If an army engages in an activity that causes it to become fatigued when it is already fatigued, it becomes exhausted instead. Its penalties to OM and DV increase to -3 and its movement is halved, and it cannot use the Cavalry Sweep, False Retreat, Pincer Maneuver, Pursuit, Skirmishers, or Strafing Skirmishers maneuvers. If an army performs an action that would cause it to become fatigued when it is already exhausted, the army takes 1d4 damage.{br}{br}To remove fatigue, an army must retreat or withdraw from the battlefield and remain away from the battle for at least 2 Battle phases; each Battle phase after the first that it spends resting, it may attempt a Morale check to recover from its fatigue. If a battle ceases for at least 8 consecutive hours, armies on both sides can attempt a Morale check to recover from fatigue. If a unit is exhausted, making one Morale check to recover improves its condition to fatigued. The army can attempt an additional Morale check for each Battle phase it continues to rest away from the battlefield (or each 8 hours when no battle occurs) to remove the fatigued condition." compset="Condition">
+    <fieldval field="abValue" value="-1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="BattleCond"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Give Penalty to OM and DV
+      hero.childfound[aHelpOM].field[asArmAdj].value += field[abValue].value
+      hero.childfound[aHelpDV].field[asArmAdj].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="pcn3PExhau" name="Exhausted" description="When exhausted its penalties to OM and DV increase to -3 and its movement is halved, and it cannot use the Cavalry Sweep, False Retreat, Pincer Maneuver, Pursuit, Skirmishers, or Strafing Skirmishers maneuvers. If an army performs an action that would cause it to become fatigued when it is already exhausted, the army takes 1d4 damage." compset="Condition">
+    <fieldval field="abValue" value="-3"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="BattleCond"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Give Penalty to OM and DV
+      hero.childfound[aHelpOM].field[asArmAdj].value += field[abValue].value
+      hero.childfound[aHelpDV].field[asArmAdj].value += field[abValue].value]]></eval>
+    <eval phase="Final" priority="50050" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Adjust our speed by half
+      hero.childfound[aHelpSpd].field[Penalty].value += -1 * (round(hero.childfound[aHelpSpd].field[asValue].value/2,0,-1))
+      hero.childfound[aHelpSpd].field[asValue].value += hero.childfound[aHelpSpd].field[Penalty].value]]></eval>
+    </thing>
+  <thing id="at3PCavSwe" name="Cavalry Sweep" description="Your unit is trained in making swift rideby attacks against infantry, dashing across the battlefield and harrying the enemy. Your unit can attack two non-mounted armies in a single Battle phase. Your unit gains -4 OM and -2 DV for the remainder of the Battle phase and your attacks deal only half damage, but you are not considered engaged after attacking a non-mounted unit. \n\n{b}{i}Requirement:{/b}{/i} mounts." compset="ArmyTactic" summary="-4 OM and -2 DV for the Battle phase and your attacks deal only half damage." uniqueness="unique">
+    <fieldval field="tacOffMod" value="-4"/>
+    <fieldval field="tacDefMod" value="-2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Mounts required."><![CDATA[hero.tagcount[HasAbility.rsMt?] >= 1]]></exprreq>
+    </thing>
+  <thing id="at3PCovFir" name="Covering Fire" description="Your unit keeps some of its soldiers back from the front lines in order to provide covering fire for you and allies and to strafe targets of opportunity trying to move around you. Once per Battle phase, when your unit or an allied unit disengages from an enemy unit, including the Retreat or Withdraw Tactic, or a unit that routs or is destroyed, you can make a ranged attack against the enemy unit from which it is trying to disengage. If your attack hits, you inflict 1d4-1 Casualties and your allied unit gains a +1 bonus to DV and to opposed Morale checks made to disengage. \n\n{b}{i}Requirement:{/b}{/i} ranged weapons." compset="ArmyTactic" summary="1/Battle phase make a ranged attack. If attack hits inflict 1d4-1 Casualties." uniqueness="unique">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Ranged weapons required."><![CDATA[#hasability[rsWeapRng] <> 0]]></exprreq>
+    </thing>
+  <thing id="at3PFurCha" name="Furious Charge" description="Your unit makes a furious rush to attack a defending unit. You gain +2 OM and -2 DV for the remainder of the Battle phase. An engaged unit cannot use this tactic. If you successfully attack an enemy unit, it takes a -1 penalty to Morale checks made to try disengaging with you until the end of Battle phase." compset="ArmyTactic" summary="+2 OM and -2 DV. Succesful attack enemy takes -1 penalty to Morale checks." uniqueness="unique">
+    <fieldval field="tacOffMod" value="2"/>
+    <fieldval field="tacDefMod" value="-2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="at3PFeint" name="Feint" description="Your unit feigns an attack to draw enemies out of position and distract them from greater threats elsewhere on the battlefield. On a successful attack, you deal half damage but do not become engaged. In addition, your unit and the unit you attack must make opposed Morale checks with a bonus equal to the unit&apos;s ACR. If you win this opposed check, the defending unit is drawn out of position and takes a -2 penalty to DV for the rest of the Battle phase. If your attack fails, your attack does no damage and your unit becomes engaged with the defender." compset="ArmyTactic" summary="Feign an attack &amp; deal half dmg. Make opposed Morale checks." uniqueness="unique">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="at3POvrOns" name="Overwhelming Onslaught" description="Your unit makes a wild and reckless attack meant to overwhelm and overrun the defending unit. Your unit gains +4 OM and -4 DV, and after resolving your attack you take you take 1d6-3 Casualties if the attack succeeds, 1d6 if the attack fails (these Casualties are modified by your Strategy, as per Table 1). If your attack succeeds against a target using Full Defense, Pike Square, or Screening Defense tactics, the defending unit must succeed on a Morale check (DC 10 + Attacker’s ACR) or those tactics are negated for the remainder of the Battle phase. If the Morale check fails by 5 or more, that unit cannot use any of those tactics again for the remainder of the battle. If you successfully attack an enemy unit, it takes a -2 penalty to Morale checks made to try disengaging with you until the end of Battle phase." compset="ArmyTactic" summary="Att succeeds take 1d6-3 Casualties, 1d6 if fails (Casualties modified by Strategy).">
+    <fieldval field="tacOffMod" value="4"/>
+    <fieldval field="tacDefMod" value="-4"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="StandardDC" tag="ACR"/>
+    </thing>
+  <thing id="at3PPikeSq" name="Pike Square" description="Your unit grounds its polearms and sets them to fend off enemies, especially mounted foes, while setting a shield wall to protect against infantry. Your unit gains -2 OM but gains +2 DV against mounted armies and deals +2 damage on a successful attack against a mounted unit. In addition, your unit deals +1 damage against any unit using the Aggressive Attack strategy, +2 against armies using All-Out Attack strategy. \n\n{b}{i}Requirement:{/b}{/i} reach weapons, no mounts." compset="ArmyTactic" summary="-2 OM, +2 DV, +2 damage vs mounted units.">
+    <fieldval field="tacOffMod" value="-2"/>
+    <fieldval field="tacDefMod" value="2"/>
+    <fieldval field="tacDamMod" value="2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Reach weapons required"><![CDATA[#hasability[rs3PWepRea] <> 0]]></exprreq>
+    <exprreq message="No mounts required.">hero.tagcount[HasAbility.rsMt?] = 0</exprreq>
+    </thing>
+  <thing id="at3PPinMan" name="Pincer Maneuver" description="Your unit is trained to envelop a unit that is already engaged by your allies. You gain +2 OM against a unit that is already engaged by an allied army; however, because you are spread out you take a -2 penalty to your DV for the rest of the Battle phase against attacks from armies that are not already engaged with you. When you use this tactic, a unit engaged with you takes a -2 penalty to Morale checks made to disengage, flee, retreat, or withdraw for the remainder of the Battle phase." compset="ArmyTactic" summary="+2 OM, -2 DV, unit engaged takes -2 morale vs disegage, flee, retreat, or withdraw.">
+    <fieldval field="tacOffMod" value="2"/>
+    <fieldval field="tacDefMod" value="-2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="at3PPursui" name="Pursuit" description="When an enemy unit retreats, routs, or withdraws from the battlefield, your unit can try to chase them down, even if they are in the Camp zone. Make an opposed Morale check against the target unit, with each unit adding their forced march Movement to this check (you gain an additional +1 bonus if the target unit routed in the previous Battle phase). If your Morale check succeeds, you force the target unit back into the Ranged or Melee zone (your choice) and can make a Standard melee attack or Volley ranged attack against that unit. You cannot use this tactic if your unit is engaged." compset="ArmyTactic" summary="Chase enemy units with opposed Morale. Success allows an attack.">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="at3PRetrea" name="Retreat" description="Your unit can exit the battlefield completely with this tactic. Your unit cannot attack during the Battle phase in which it uses this maneuver and takes a -1 penalty to DV and Morale. The unit must attempt opposed Morale checks against all enemy armies engaged with it; each unit adds its Forced March speed to this special Morale check. If an enemy unit&apos;s Morale check exceeds yours, it can make a free melee attack against you, even if it has already acted this round. Enemy armies that fail to beat your Morale check do not gain this free attack. If your army survives these attacks (even if your unit takes all of its Casualties, but not if it is destroyed), it disengages from all enemy armies and leaves the battlefield." compset="ArmyTactic" summary="-1 DV, -1 Morale and no attacks.">
+    <fieldval field="tacDefMod" value="-1"/>
+    <fieldval field="tacMrlMod" value="-1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="at3PScrDef" name="Screening Defense" description="Your army may choose another army to protect on the battlefield. Melee attacks made against the army you are protecting affect your army instead. While using this tactic, your army cannot attack any army unless it first attacks you in melee. The unit you are protecting cannot be engaged by an enemy unit unless your unit is routed or destroyed. If the unit you are protecting is already engaged, it remains engaged; using this maneuver does not force the opposing unit to disengage. The unit you protect can be targeted with ranged attacks, though it gains a +2 bonus to DV against them. You take 1d6-3 points of damage if the unit you guard is hit with a ranged attack; and the unit you guard takes the same damage if your army is hit with a ranged attack." compset="ArmyTactic" summary="Your army may choose another army (+2 DV vs Range) to protect on the battlefield.">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="at3PStrSki" name="Strafing Skirmishers" description="Your unit keeps on the move while riddling its targets with quick volleys. Your unit takes a -2 OM penalty and deals half damage on a successful attack during the ranged combat phase, but it gains a +1 DV and once per round when attacked during the melee phase your unit can attempt a Morale check to avoid becoming engaged. \n\n{b}Requirement:{/b} ranged weapons, no medium or heavy armor." compset="ArmyTactic" summary="-2 OM deal 1/2dmg attempt Morale to avoid becoming engaged.">
+    <fieldval field="tacOffMod" value="-2"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Ranged weapons required."><![CDATA[#hasability[rsWeapRng] <> 0]]></exprreq>
+    <exprreq message="No medium or heavy armor required.">#hasability[rs3PArmHvy] + #hasability[rs3PArmMed] = 0</exprreq>
+    </thing>
+  <thing id="at3PVolley" name="Volley" description="Your unit remains stationary and makes a ranged attack against any enemy unit on the field.\n\n{b}Requirement:{/b} ranged weapons." compset="ArmyTactic" summary="Remain stationary and makes a ranged attack against any enemy unit on the field.">
+    <fieldval field="tacOffMod" value="-2"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Ranged weapons required."><![CDATA[#hasability[rsWeapRng] <> 0]]></exprreq>
+    </thing>
+  <thing id="aa3PArSize" name=" Army Size" description="The following revised army sizes can serve as an alternative to those described in the published mass combat rules. For reasons of flavor, each army size has been given a specific unit designation rather than being assigned a creature size category, though every race and culture will have its own nomenclature for armies of different sizes.\n\n*{b}Soldiers:{/b} The number of creatures present within the unit. For creatures whose CR is less than 1, multiply this number by the amount required to bring that CR to 1 (e.g., a unit of 1stlevel human warriors (CR 1/3 individually) would have 3 times the normal number of soldiers, such as 30 soldiers in a squad or 150 in a company).\n\n*{b}Equipment:{/b} When purchasing equipment or other Resources for an army of this size, multiply the BP cost by this amount. This modifier replaces {b}Table 4-16: Resource Scaling{/b} in the published rules.\n\n*{b}Camouflage:{/b} Larger armies have a harder time keeping themselves concealed from the eyes of enemies than do smaller armies, so this modifier applies whenever the army might be discovered by scouting (see Scouting and Camouflage).\n\n*{b}Army Challenge Rating (ACR):{/b} This functions as described in Chapter 4 of {b}{i}Pathfinder Roleplaying Game Ultimate Campaign.{/b}{/i}" compset="ArmyAbil" uniqueness="unique">
+    <comment>abValue = Army Size; abValue2 = Bonus to ACR</comment>
+    <fieldval field="abValue2" value="4"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="Bootstrap"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ Set Army size value
+      field[abValue].value += hero.child[ArmyHelper].field[armSize].value
+
+      var sName as string      
+      var sSumm as string
+      
+      ~ set army size name
+      if (field[abValue].value = 0) then
+        sName = "Hero"
+        sSumm = "Soldiers: 1 Equipment: N/A ACR: -4"
+      elseif (field[abValue].value = 1) then
+        sName = "Patrol"
+        sSumm = "Soldiers: 5 Equipment: x.1 ACR: -2"
+      elseif (field[abValue].value = 2) then
+        sName = "Squad"
+        sSumm = "Soldiers: 10 Equipment: x.25 ACR: +0"
+      elseif (field[abValue].value = 3) then
+        sName = "Platoon"
+        sSumm = "Soldiers: 20 Equipment: x.5 ACR: +2"
+      elseif (field[abValue].value = 4) then
+        sName = "Company"
+        sSumm = "Soldiers: 50 Equipment: x.75 ACR: +4"
+      elseif (field[abValue].value = 5) then
+        sName = "Battalion"
+        sSumm = "Soldiers: 100 Equipment: x1 ACR: +6"
+      elseif (field[abValue].value = 6) then
+        sName = "Regiment"
+        sSumm = "Soldiers: 200 Equipment: x2 ACR: +8"
+      elseif (field[abValue].value = 7) then
+        sName = "Brigade"
+        sSumm = "Soldiers: 500 Equipment: x5 ACR: +10"
+      elseif (field[abValue].value = 8) then
+        sName = "Legion"
+        sSumm = "Soldiers: 1000 Equipment: x10 ACR: +12"
+      endif
+
+      field[livename].text = field[name].text & ": " & sName
+      field[abSumm].text = sSumm]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2">~ Increase Army CR by 4
+      hero.childfound[ArmyHelper].field[armCRAdj].value += field[abValue2].value</eval>
+    </thing>
+  <thing id="aa3PCamouf" name=" Camouflage" description="Larger armies have a harder time keeping themselves concealed from the eyes of enemies than do smaller armies, so this modifier applies whenever the army might be discovered by scouting (see Scouting and Camouflage)." compset="ArmyAbil" uniqueness="unique">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Bootstrap"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+      ~ Set Army size value
+      field[abValue].value += hero.child[ArmyHelper].field[armSize].value
+
+      ~ set army size camouflage adjustment value
+      if (field[abValue].value = 0) then
+        field[abValue2].value += 10
+      elseif (field[abValue].value = 1) then
+        field[abValue2].value += 8
+      elseif (field[abValue].value = 2) then
+        field[abValue2].value += 6
+      elseif (field[abValue].value = 3) then
+        field[abValue2].value += 4
+      elseif (field[abValue].value = 4) then
+        field[abValue2].value += 2
+      elseif (field[abValue].value = 5) then
+        field[abValue2].value += 0
+      elseif (field[abValue].value = 6) then
+        field[abValue2].value += -2
+      elseif (field[abValue].value = 7) then
+        field[abValue2].value += -5
+      elseif (field[abValue].value = 8) then
+        field[abValue2].value += -10
+      endif
+
+      field[livename].text = field[name].text & " (" & signed(field[abValue2].value) & ")"]]></eval>
+    </thing>
+  <thing id="bn3PAdvTac" name="Advanced Tactics" description="An army with this boon gains a +2 bonus to its OM; however, this bonus is halved if the target army also has Advanced Tactics or Defensive Tactics. \n\n{b}{i}Requirement:{/b}{/i} The character granting this boon must have at least 11 ranks in 5 different skills, one of which must be Profession (soldier)." compset="ArmyBoon" summary="+2 OM vs armies without Advanced Tactics or Defensive Tactics." uniqueness="useronce">
+    <fieldval field="actName" value="+1 OM"/>
+    <fieldval field="actName2" value="+2 OM"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="First" priority="10000">~ if activation 1 checked
+      if (field[abilActive].value = 1) then
+        perform assign[Helper.ChgDisab2]
+        field[tacOffMod].value += field[abValue].value
+
+      ~ if activation 2 checked
+      elseif (field[abilAct2].value = 1) then
+        perform assign[Helper.ChgDisab1]
+        field[tacOffMod].value += field[abValue2].value
+      endif</eval>
+    </thing>
+  <thing id="bn3PCAvExp" name="Cavalry Experts" description="Your army&apos;s OM increases by 2 against armies that aren&apos;t mounted. The army must have the mount resource to use this tactic." compset="ArmyBoon" summary="+2 OM against armies that aren&apos;t mounted." uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      #situational[hero.child[aHelpOM],signed(field[abValue].value) & " vs. non-mounted foes, while mounted.",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="bn3PComTac" name="Combined Tactics" description="An army with this boon deploys screening infantry to defend its ranged attackers. The army cannot attack in the Melee Phase but gains a +1 bonus to its DV until the beginning of the next Battle Phase and can make ranged attacks even if engaged. \n\n{b}{i}Requirement:{/b}{/i} The character granting this boon and the creatures comprising the army must have ranged weapons and a Dexterity of 13 or higher." compset="ArmyBoon" summary="+1 DV no melee atks" uniqueness="useronce">
+    <fieldval field="actName" value="+1 DV no melee atks"/>
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="First" priority="10000">~ if activation 1 checked
+      if (field[abilActive].value = 1) then
+        perform assign[Helper.ChgDisab2]
+        field[tacDefMod].value += field[abValue].value
+      endif</eval>
+    <exprreq message="Army ranged weapons required."><![CDATA[#hasability[rsWeapRng] <> 0]]></exprreq>
+    <exprreq message="Army creatures Dex 13+ required."><![CDATA[#attrvalue[aDEX] >= 13]]></exprreq>
+    </thing>
+  <thing id="bn3PDarMan" name="Daring Maneuvers" description="An army with this boon can overextend itself to press home an advantage, though this leaves its flanks exposed. The army gains a +4 OM (or AV) bonus but takes a -2 penalty to DV until it acts in the next Battle Phase." compset="ArmyBoon" summary="+4 OM -2 DV until next Battle Phase" uniqueness="useronce">
+    <fieldval field="actName" value="+4 OM -2 DV until next Battle Phase"/>
+    <fieldval field="abValue" value="4"/>
+    <fieldval field="abValue2" value="-2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000">~ Correctly set Army Commander Boon bonuses when we are
+       ~ activated.
+       Call 3PComBoons</eval>
+    </thing>
+  <thing id="bn3PDeBeDi" name="Death Before Dishonor" description="An army with this boon reduces Morale penalties or reductions, regardless of their source. All effects that would cause a -1 penalty to Morale have no effect, while larger Morale penalties or reductions are reduced by 1.\n\n{b}{i}Requirement:{/b}{/i} The character granting this boon and the soldiers in the army must all have the aura of courage, bravery, rage, or resolve class feature or the Iron Will feat." compset="ArmyBoon" summary="Morale penalties or reductions are reduced by 1." uniqueness="useronce">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Soldiers in the army must all have the aura of courage, bravery, rage, or resolve class feature or the Iron Will feat."><![CDATA[#hasability[aaAuraCour] + #hasability[aaBravery] + #hasability[aaRage] + #hasability[cSamResolv] + #hasfeat[fIronWill] <> 0]]></exprreq>
+    </thing>
+  <thing id="bn3PExpFla" name="Expert Flankers" description="Your army is skilled at surrounding the foe and distracting them, at the cost of spreading out too much and being more vulnerable. Increase its OM by 2, and decrease its DV by 2." compset="ArmyBoon" summary="+2 OM -2 DV" uniqueness="useronce">
+    <fieldval field="actName" value="+2 OM -2 DV"/>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="-2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="First" priority="10000">~ Correctly set Army Commander Boon bonuses when we are
+       ~ activated.
+       Call 3PComBoons</eval>
+    </thing>
+  <thing id="bn3PImpAdv" name="Implacable Advance" description="Each Melee phase, this boon grants one army a +1 bonus to OM, damage, and Morale until the end of the current Melee Phase. Any army it attacks takes a -1 penalty to Morale until the beginning of the next Battle Phase. \n\n{b}{i}Requirement:{/b}{/i} The character granting this boon must have a base attack bonus of +11 or greater." compset="ArmyBoon" summary="+1 OM +1 dmg +1 Morale in Melee Phase" uniqueness="useronce">
+    <fieldval field="actName" value="+1 OM +1 dmg +1 Morale in Melee Phase"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue3" value="1"/>
+    <fieldval field="abValue4" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000">~ Correctly set Army Commander Boon bonuses when we are
+       ~ activated.
+       Call 3PComBoons</eval>
+    </thing>
+  <thing id="bn3PLasSta" name="Last Stand" description="A unit with this boon can stave off elimination when on the brink of destruction. If the army is reduced to 0 hit points or below, it is not defeated or destroyed if it receives a Magical Healing boon or uses Healing Potions before the end of the current Battle Phase sufficient to restore it to at least 1 hit point. Even if it does not receive this healing, it remains engaged with any enemy armies until the end of the next Melee phase, and it can make an attack in that phase against an army engaged with it, though it cannot move, retreat, disengage, or attack armies not engaged with it. \n\n{b}{i}Requirement:{/b}{/i} The character granting this boon and the creatures comprising the army must have the rage or resolve class feature, ferocity or orc ferocity special quality, or Diehard feat." compset="ArmyBoon" summary="At 0HP not defeated or desroyed." uniqueness="useronce">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="bn3PMagAdv" name="Magical Advantage" description="All allied armies gain a +1 bonus on damage rolls and gain a +1 bonus to Morale checks if the army they attack does not also have Magical Advantage or Magical Protection. \n\n{b}{i}Requirement:{/b}{/i} The character providing this boon must be able to cast at least one spell of 6th level or higher." compset="ArmyBoon" summary="+1 dmg +1 Morale vs Non-Magical Armies" uniqueness="useronce">
+    <fieldval field="actName" value="+1 dmg +1 Morale vs Non-Magical Armies"/>
+    <fieldval field="abValue3" value="1"/>
+    <fieldval field="abValue4" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="First" priority="10000">~ Correctly set Army Commander Boon bonuses when we are
+       ~ activated.
+       Call 3PComBoons</eval>
+    </thing>
+  <thing id="bn3PMagBar" name="Magical Barrage" description="An army with this boon can attack during the Ranged Phase with a bonus to OM (for ranged attacks only) equal to 1/2 the level of the highest-level spell that the character granting the boon is able to cast.\n\n{b}{i}Requirement:{/b}{/i} The character granting the boon must have the channel negative energy ability or be capable of casting at least one area-effect offensive spell of 3rd level or higher." compset="ArmyBoon" summary="+1/2 highest lvl spell for ranged OM" uniqueness="useronce">
+    <fieldval field="actName" value="+1/2 highest lvl spell for ranged OM"/>
+    <fieldval field="actUserMin" value="1"/>
+    <fieldval field="actUserMax" value="4"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <eval phase="First" priority="10000">~ Set the activation amount into the OM bonus
+       field[abValue].value += field[actUser].value
+
+       ~ Correctly set Army Commander Boon bonuses when we are
+       ~ activated.
+       Call 3PComBoons</eval>
+    </thing>
+  <thing id="bn3PMagHea" name="Magical Healing" description="Immediately before the end of each Battle phase, this unit can remove 2d4 hp of damage from any one allied army. If the target army is fatigued, that condition is removed but the damage healed is halved. If the target army is exhausted, that condition is reduced to fatigued and the damage healed is halved. \n\n{b}{i}Requirement:{/b}{/i} The character granting this boon must have the channel positive energy ability or be able to cast at least one {b}{i}mass cure wounds{/b} {/i}spell." compset="ArmyBoon" summary="Heal 2d4 end of each Battle phase." uniqueness="useronce">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="bn3PMagPro" name="Magical Protection" description="An army with this boon gains a +1 bonus to its DV and reduces damage from all attacks by 1 point. In addition, modifiers from enemies using Magical Advantage, Magical Barrage, and Magical Trickery are negated for an army with this boon. \n\n{b}{i}Requirement:{/b}{/i} The character granting this boon must be capable of casting abjuration spells of 4th level or higher." compset="ArmyBoon" summary="All dmg reduced by 1." uniqueness="useronce">
+    <fieldval field="tacDefMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="bn3PMagTri" name="Magical Trickery" description="At the beginning of each Battle Phase, this army may select one enemy army to confound with illusions, mind-affecting effects, and magical barriers to sight and movement. The target army takes a penalty equal to 1/2 the highest-level spell that the character providing this boon is able to cast, and that character may choose to affect the target army&apos;s OM, DV, Morale, Movement, or Scouting, or as a bonus to an allied army&apos;s Camouflage. If the target army&apos;s speed is reduced to 0, it cannot disengage or use any tactic, boon, or special ability requiring movement. Each round, you may target a different enemy army, or you may continue targeting the same army with a different penalty or repeating the same penalty. The effects of Magical Trickery end at the beginning of the next Battle Phase unless you renew them.\n\n{b}{i}Requirement:{/b}{/i} The character granting this boon must be able to cast at least one area-effect illusion or mind-affecting spell or spell that impedes movement (e.g., {b}{i}solid fog, wall of thorns{/b}{/i}) of 3rd level or higher." compset="ArmyBoon" summary="Penalty to OM, DV, Morale, Movement, or Scouting, or as a bonus to an allied army&apos;s Camouflage." uniqueness="useronce">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="bn3PMasRec" name="Master Recruiter" description="The maximum number of armies the kingdom may support is increased by 2. If this boon is lost, the army with the lowest Morale immediately disbands and flees the battlefield. If multiple armies have identical Morale scores, determine randomly).\n\n{b}{i}Requirement:{/b}{/i} The character granting this boon must have the Leadership feat. \n\n{b}{i}Special:{/b} {/i}This boon can be selected more than once, and its effects stack.s" compset="ArmyBoon" summary="Max # of armies the kingdom may support is increased by 2.">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="bn3PQuiRep" name="Quick Repairs" description="An army inside a fortification can conduct emergency repairs while a battle still rages, repairing 1d6 points of damage to a fortification at the end of each Rout Phase (assuming the army has not been routed itself). An army on board one or more ships, or a naval squadron with this command boon, can likewise use this ability to repair ships that have not been sunk.\n\n{b}{i}Requirement:{/b}{/i} The character granting this boon must be able to cast at least one 4th-level or higher conjuration (creation) spell." compset="ArmyBoon" summary="Repair 1d6 at end of Rout Phase." uniqueness="useronce">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="bn3PReForB" name="Ready for Battle" description="An army with this boon gains a +4 bonus to skill checks made to determine tactical initiative during the Tactics Phase. \n\n{b}{i}Requirement:{/b}{/i} None." compset="ArmyBoon" summary="+4  tactical initiative during the Tactics Phase.">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="bn3PScrVen" name="Screaming for Vengeance" description="The first time during a battle that any army is defeated, destroyed, or routed (but not if it is disbanded), all allied armies gain a +1 bonus to OM and Morale checks for the remainder of that Battle phase (doubled to +2 if attacking or engaged with the army that defeated, destroyed, or routed their allied army).\n\n{b}{i}Requirement:{/b}{/i} None." compset="ArmyBoon" summary="Bonus when defeated, destroyed, or routed." uniqueness="useronce">
+    <fieldval field="actName" value="Bonus when defeated, destroyed, or routed."/>
+    <fieldval field="actUserMin" value="1"/>
+    <fieldval field="actUserMax" value="2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <eval phase="First" priority="10000">~ Set the activation amount into the OM and Morale
+       field[abValue].value += field[actUser].value
+       field[abValue3].value += field[actUser].value
+
+       ~ Correctly set Army Commander Boon bonuses when we are
+       ~ activated.
+       Call 3PComBoons</eval>
+    </thing>
+  <thing id="bn3PSwiRid" name="Swift Riders" description="An army with this boon gains a +2 bonus to Morale checks to disengage (doubled to +4 against enemy armies that are not mounted).\n\n{b}{i}Requirement:{/b}{/i} Mounts. Cannot use medium or heavy armor. Significant character and soldiers must have Mounted Combat or Skill Focus (Ride) feat." compset="ArmyBoon" summary="Bonus when defeated, destroyed, or routed." uniqueness="useronce">
+    <fieldval field="actName" value="Bonus when defeated, destroyed, or routed."/>
+    <fieldval field="actUserMin" value="2"/>
+    <fieldval field="actUserMax" value="4"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <eval phase="First" priority="10000">~ Set the activation amount into the OM and Morale
+       field[abValue].value += field[actUser].value
+       field[abValue3].value += field[actUser].value
+
+       ~ Correctly set Army Commander Boon bonuses when we are
+       ~ activated.
+       Call 3PComBoons</eval>
+    <exprreq message="Mounts required."><![CDATA[hero.tagcount[HasAbility.rsMt?] >= 1]]></exprreq>
+    <exprreq message="No medium or heavy armor required.">#hasability[rs3PArmHvy] + #hasability[rs3PArmMed] = 0</exprreq>
+    <exprreq message="Mounted Combat or Skill Focus (Ride) feat required."><![CDATA[#hasfeat[fMountCom] + hero.child[skRide].tagis[Helper.SkillFocus] <> 0]]></exprreq>
+    </thing>
+  <thing id="bn3PWolFol" name="Wolves in the Fold" description="An army with this boon uses disguise and deception to infiltrate enemy lines and throw them into chaos. On the first Melee Phase of a battle, this army gains a +1d6 bonus to its OM (or AV), and on a successful attack the target army takes a -1 penalty to its own OM (or AV), DV, and Morale until the beginning of the next Battle Phase.\n\n{b}{i}Requirement:{/b}{/i} The character granting the boon and the soldiers must have the sneak attack special attack, shapechanger subtype, change shape or {b}{i}disguise self{/b} {/i}ability, or a Disguise or Stealth bonus of +10 or greater." compset="ArmyBoon" summary="+1d6 bonus OM." uniqueness="useronce">
+    <fieldval field="actName" value="+1d6 bonus OM."/>
+    <fieldval field="actUserMin" value="1"/>
+    <fieldval field="actUserMax" value="6"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <eval phase="First" priority="10000">~ Set the activation amount into the OM
+       field[abValue].value += field[actUser].value
+
+       ~ Correctly set Army Commander Boon bonuses when we are
+       ~ activated.
+       Call 3PComBoons</eval>
+    </thing>
+  <thing id="rs3PChaHvy" name="Chariots, Heavy" description="{b}Melee OM:{/b} +2\n{b}Ranged OM:{/b} +0\n{b}DV:{/b} +1\n{b}Movement:{/b} as mount -1\n{b}Requires:{/b} Smith, Stable\n\nThese combat vehicles are stout and sturdy, drawn by a team of two heavy or four light mounts. Heavy chariots are usually armor-plated to give cover to a pair of armed passengers. The chariots themselves are typically spiked and bladed for scything through enemy formations." compset="ArmyRes" summary="+2 OM Melee +1 DV" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="15"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <fieldval field="actIncrNam" value="Movement"/>
+    <fieldval field="actUserMin" value="0"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ Bonus only to melee
+      #situational[hero.childfound[aHelpOM],"+2 Melee",field[name].text]]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2">~ Set movement speed
+      hero.childfound[aHelpSpd].field[asArmAdj].value += field[actUser].value</eval>
+    </thing>
+  <thing id="rs3PChaLig" name="Chariots, Light" description="{b}Melee OM:{/b} +1\n{b}Ranged OM:{/b} +0\n{b}DV:{/b} +1\n{b}Movement:{/b} as mount\n{b}Requires:{/b} Smith, Stable\n\nThese combat vehicles are lightweight and fast, each drawn by a single heavy mount or a pair of light mounts, usually with a single driver and a bow-armed rider. Bladed hubs cut a bloody path though creatures approaching a moving chariot&apos;s flanks." compset="ArmyRes" summary="+1 OM Melee +1 DV" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="9"/>
+    <fieldval field="actUserMin" value="0"/>
+    <fieldval field="actIncrNam" value="Movement"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ Bonus only to melee
+      #situational[hero.childfound[aHelpOM],"+1 Melee",field[name].text]]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2">~ Set movement speed
+      hero.childfound[aHelpSpd].field[asArmAdj].value += field[actUser].value</eval>
+    </thing>
+  <thing id="rs3PFirear" name="Firearms" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} +1\n{b}Movement:{/b} -\n{b}Requires:{/b} Exotic Artisan, Smith\n\nThese combat vehicles are lightweight and fast, each drawn by a single heavy mount or a pair of light mounts, usually with a single driver and a bow-armed rider. Bladed hubs cut a bloody path though creatures approaching a moving chariot&apos;s flanks. An army with Firearms has its Consumption increased by 1d4 during any week in which it participates in a battle." compset="ArmyRes" summary="+1 DV" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="9"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rs3PHowHvy" name="Howdahs, Heavy" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} +1\n{b}DV:{/b} +2\n{b}Movement:{/b} as mount -1\n{b}Requires:{/b} Exotic Artisan, Stable\n\nGrand howdahs are mounted on creatures three size categories larger than the howdah&apos;s riders. A grand howdah carries 10 soldiers, so its OM is determined as an army three size categories larger than the mount army." compset="ArmyRes" summary="+1 OM Ranged +2 DV" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="20"/>
+    <fieldval field="tacDefMod" value="2"/>
+    <fieldval field="actIncrNam" value="Movement"/>
+    <fieldval field="actUserMin" value="0"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ Bonus only to range
+      #situational[hero.childfound[aHelpOM],"+1 Ranged",field[name].text]]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2">~ Set movement speed
+      hero.childfound[aHelpSpd].field[asArmAdj].value += field[actUser].value</eval>
+    </thing>
+  <thing id="rs3PHowLig" name="Howdahs, Light" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} +0\n{b}DV:{/b} +1\n{b}Movement:{/b} as mount\n{b}Requires:{/b} Exotic Artisan, Stable\n\nLight howdahs are mounted on creatures two size categories larger than the howdah&apos;s riders (such as humans and elephants). A light howdah carries 4-5 soldiers, so the ranged OM of the howdah army is determined as an army two size categories larger than the mount army." compset="ArmyRes" summary="+1 DV" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="12"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <fieldval field="actIncrNam" value="Movement"/>
+    <fieldval field="actUserMin" value="0"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ Bonus only to range
+      #situational[hero.childfound[aHelpOM],"+1 Ranged",field[name].text]]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2">~ Set movement speed
+      hero.childfound[aHelpSpd].field[asArmAdj].value += field[actUser].value</eval>
+    </thing>
+  <thing id="rs3PPotHea" name="Potions, Healing" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} Alchemist or Temple\n\nEach unit is equipped with several healing potions. At any point during a battle (but no more than twice per battle), the commander can order her units to drink their potions. The army doesn&apos;t attempt an Offense check that phase, but heals a number of hit points equal to twice its ACR. Each time an army uses its healing potions, increase its Consumption that week by 3." compset="ArmyRes" summary="Heal 2xACR">
+    <fieldval field="tcrBPCost" value="4"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rs3PPotM01" name="Potions, Magic (Resistance 10)" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} Alchemist, Caster&apos;s Tower, Sacred Grove, or Temple\n\nArmies with magic potions can choose any one of the following effects that they can use as a singleuse special ability that lasts for the duration of one Battle phase: elemental resistance 10 (choose one type of energy), magic weapons, aligned weapons (overcome superior damage reduction), climb (Speed 1), defense (+2 DV), flight (Speed 5), invisibility (+4 Morale check to disengage, +2 Camouflage)." compset="ArmyRes" summary="Resistance 10">
+    <fieldval field="tcrBPCost" value="8"/>
+    <fieldval field="abValue" value="10"/>
+    <fieldval field="actName" value="Drink"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fShowWhat" tag="EnergyBase"/>
+    <eval phase="PostLevel" priority="10000">~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Acid
+      If (field[usrChosen1].chosen.tagis[BloodEner.Acid] = 1) then
+         #applybonus[abValue,hero.child[xDamRsFire],field[abValue].value]
+      ~ Cold
+      Elseif (field[usrChosen1].chosen.tagis[BloodEner.Cold] = 1) then
+         #applybonus[abValue,hero.child[xDamRsCold],field[abValue].value]
+      ~ Electricity
+      Elseif (field[usrChosen1].chosen.tagis[BloodEner.Elec] = 1) then
+         #applybonus[abValue,hero.child[xDamRsElec],field[abValue].value]
+      ~ Fire
+      Elseif (field[usrChosen1].chosen.tagis[BloodEner.Fire] = 1) then
+         #applybonus[abValue,hero.child[xDamRsFire],field[abValue].value]
+      Endif</eval>
+    </thing>
+  <thing id="rs3PPotM02" name="Potions, Magic (Magic Weapons)" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} Alchemist, Caster&apos;s Tower, Sacred Grove, or Temple\n\nArmies with magic potions can choose any one of the following effects that they can use as a singleuse special ability that lasts for the duration of one Battle phase: elemental resistance 10 (choose one type of energy), magic weapons, aligned weapons (overcome superior damage reduction), climb (Speed 1), defense (+2 DV), flight (Speed 5), invisibility (+4 Morale check to disengage, +2 Camouflage)." compset="ArmyRes" summary="Magic Weapon">
+    <fieldval field="tcrBPCost" value="8"/>
+    <fieldval field="abValue" value="10"/>
+    <fieldval field="actName" value="Drink"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rs3PPotM03" name="Potions, Magic (Aligned Weapons)" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} Alchemist, Caster&apos;s Tower, Sacred Grove, or Temple\n\nArmies with magic potions can choose any one of the following effects that they can use as a singleuse special ability that lasts for the duration of one Battle phase: elemental resistance 10 (choose one type of energy), magic weapons, aligned weapons (overcome superior damage reduction), climb (Speed 1), defense (+2 DV), flight (Speed 5), invisibility (+4 Morale check to disengage, +2 Camouflage)." compset="ArmyRes" summary="Aligned Weapons">
+    <fieldval field="tcrBPCost" value="8"/>
+    <fieldval field="abValue" value="10"/>
+    <fieldval field="actName" value="Drink"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rs3PPotM04" name="Potions, Magic (Climb)" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} Alchemist, Caster&apos;s Tower, Sacred Grove, or Temple\n\nArmies with magic potions can choose any one of the following effects that they can use as a singleuse special ability that lasts for the duration of one Battle phase: elemental resistance 10 (choose one type of energy), magic weapons, aligned weapons (overcome superior damage reduction), climb (Speed 1), defense (+2 DV), flight (Speed 5), invisibility (+4 Morale check to disengage, +2 Camouflage)." compset="ArmyRes" summary="Climb Speed 1">
+    <fieldval field="tcrBPCost" value="8"/>
+    <fieldval field="abValue" value="10"/>
+    <fieldval field="actName" value="Drink"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rs3PPotM05" name="Potions, Magic (Defense)" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} Alchemist, Caster&apos;s Tower, Sacred Grove, or Temple\n\nArmies with magic potions can choose any one of the following effects that they can use as a singleuse special ability that lasts for the duration of one Battle phase: elemental resistance 10 (choose one type of energy), magic weapons, aligned weapons (overcome superior damage reduction), climb (Speed 1), defense (+2 DV), flight (Speed 5), invisibility (+4 Morale check to disengage, +2 Camouflage)." compset="ArmyRes" summary="+2 DV">
+    <fieldval field="tcrBPCost" value="8"/>
+    <fieldval field="abValue" value="10"/>
+    <fieldval field="actName" value="Drink"/>
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="First" priority="10000">~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      field[tacDefMod].value += field[abValue].value</eval>
+    </thing>
+  <thing id="rs3PPotM06" name="Potions, Magic (Flight)" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} Alchemist, Caster&apos;s Tower, Sacred Grove, or Temple\n\nArmies with magic potions can choose any one of the following effects that they can use as a singleuse special ability that lasts for the duration of one Battle phase: elemental resistance 10 (choose one type of energy), magic weapons, aligned weapons (overcome superior damage reduction), climb (Speed 1), defense (+2 DV), flight (Speed 5), invisibility (+4 Morale check to disengage, +2 Camouflage)." compset="ArmyRes" summary="Fly speed 5.">
+    <fieldval field="tcrBPCost" value="8"/>
+    <fieldval field="abValue" value="10"/>
+    <fieldval field="actName" value="Drink"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rs3PPotM07" name="Potions, Magic (Invisibility)" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} Alchemist, Caster&apos;s Tower, Sacred Grove, or Temple\n\nArmies with magic potions can choose any one of the following effects that they can use as a singleuse special ability that lasts for the duration of one Battle phase: elemental resistance 10 (choose one type of energy), magic weapons, aligned weapons (overcome superior damage reduction), climb (Speed 1), defense (+2 DV), flight (Speed 5), invisibility (+4 Morale check to disengage, +2 Camouflage)." compset="ArmyRes" summary="+4 Morale check to disengage, +2 Camouflage">
+    <fieldval field="tcrBPCost" value="8"/>
+    <fieldval field="abValue" value="4"/>
+    <fieldval field="actName" value="Drink"/>
+    <fieldval field="abValue2" value="2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      ~ Bonus only to melee
+      #situational[hero.childfound[aHelpMrl],signed(field[abValue].value) & " Morale check to disengage",field[name].text]
+
+      hero.childfound[aa3PCamouf].field[abValue].value += 2]]></eval>
+    </thing>
+  <thing id="rs3PSiWLig" name="Siege Weapons, Light" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} +1\n{b}DV:{/b} -\n{b}Movement:{/b} -1\n{b}Requires:{/b} Exotic Artisan\n\nThese light weapons, including smaller ballistae, catapults, springals, cannons, and mortars, must attack from the Ranged zone." compset="ArmyRes" summary="+1 OM Range -1 Movement" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="5"/>
+    <fieldval field="actIncrNam" value="Movement"/>
+    <fieldval field="actUserMin" value="0"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ Bonus only to range
+      #situational[hero.childfound[aHelpOM],"+1 Range",field[name].text]]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2">~ Set movement speed
+      hero.childfound[aHelpSpd].field[asArmAdj].value += field[actUser].value</eval>
+    </thing>
+  <thing id="rs3PSiWHvy" name="Siege Weapons, Heavy" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} +2\n{b}DV:{/b} -\n{b}Movement:{/b} -2\n{b}Requires:{/b} Exotic Artisan\n\nThese light weapons, including smaller ballistae, catapults, springals, cannons, and mortars, must attack from the Ranged zone. An army with Heavy Siege Weapons has its Consumption increased by 1d4 during any week in which it participates in a battle." compset="ArmyRes" summary="+2 OM Range -2 Movement" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="15"/>
+    <fieldval field="actIncrNam" value="Movement"/>
+    <fieldval field="actUserMin" value="0"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ Bonus only to range
+      #situational[hero.childfound[aHelpOM],"+1 Range",field[name].text]]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2">~ Set movement speed
+      hero.childfound[aHelpSpd].field[asArmAdj].value += field[actUser].value</eval>
+    </thing>
+  <thing id="rs3PSiWClo" name="Siege Weapons, Close" description="{b}Melee OM:{/b} +1\n{b}Ranged OM:{/b} -\n{b}DV:{/b} +1\n{b}Movement:{/b} -2\n{b}Requires:{/b} Exotic Artisan\n\nThese light weapons, including smaller ballistae, catapults, springals, cannons, and mortars, must attack from the Ranged zone." compset="ArmyRes" summary="+1 OM Melee -2 Movement" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="15"/>
+    <fieldval field="actIncrNam" value="Movement"/>
+    <fieldval field="actUserMin" value="0"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <eval phase="PreLevel" priority="10000" index="2">~ Set movement speed
+      hero.childfound[aHelpSpd].field[asArmAdj].value += field[actUser].value</eval>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ Bonus only to melee
+      #situational[hero.childfound[aHelpOM],"+1 Melee",field[name].text]]]></eval>
+    </thing>
+  <thing id="rs3PWepRea" name="Weapons, Reach" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} +1\n{b}Movement:{/b} -\n{b}Requires:{/b} -\n\nThis DV bonus applies only against armies with mounts or armies that are not already engaged with you. An army cannot use Reach Weapons during any Battle Phase in which it uses Ranged Weapons or Shields." compset="ArmyRes" summary="DV bonus applies vs against mounts or armies that are not already engaged." uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="1"/>
+    <fieldval field="actName" value="+1 DV"/>
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000">~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+      
+      ~ Give Bonus to DV
+      hero.childfound[aHelpDV].field[asArmAdj].value += field[abValue].value</eval>
+    </thing>
+  <thing id="rs3PWepMag" name="Weapons, Magic" description="{b}Melee OM:{/b} +2\n{b}Ranged OM:{/b} +2\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} Smith, Magic Shop\n\nThis equipment benefit applies to both melee and ranged weapons. It overlaps and does not stack with superior weapons (and can be upgraded from superior weapons)." compset="ArmyRes" summary="+2 OM" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="24"/>
+    <fieldval field="tacOffMod" value="2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Army can not have Magic Weapons and Superior Weapons.">#hasability[rs3PWepSup] = 0</exprreq>
+    </thing>
+  <thing id="rs3PWepRan" name="Weapons, Ranged" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} +0\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} -\n\nAn army with Ranged Weapons increases its Consumption by 1 (by 1d4 if using Firearms or Heavy Siege Weapons) during any week in which it participates in a battle." compset="ArmyRes" summary="+0 Ranged OM" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rs3PWepSup" name="Weapons, Superior" description="{b}Melee OM:{/b} +1\n{b}Ranged OM:{/b} +1\n{b}DV:{/b} -\n{b}Movement:{/b} -\n{b}Requires:{/b} Smith\n\nSuperior weapons doe snot stack with the bonus Magic Weapons." compset="ArmyRes" summary="+1 OM" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="24"/>
+    <fieldval field="tacOffMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Can not have Superior Weapons and Magic Weapons on the same army.">#hasability[rs3PWepMag] = 0</exprreq>
+    </thing>
+  <thing id="rs3PArmHvy" name="Armor, Heavy" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} +2\n{b}Movement:{/b} -1\n{b}Requires:{/b} Smith, Tannery" compset="ArmyRes" summary="+2 DV, -1 Movement" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="8"/>
+    <fieldval field="abValue" value="-1"/>
+    <fieldval field="tacDefMod" value="2"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000">~ Movement penalty
+      hero.childfound[aHelpSpd].field[asArmAdj].value += field[abValue].value</eval>
+    </thing>
+  <thing id="rs3PArmMag" name="Armor, Magic" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} +1\n{b}Movement:{/b} -\n{b}Requires:{/b} Smith, Magic Shop\n\nThe DV bonus for magic armor can be applied to ordinary armor but also stacks with Medium and Heavy Armor." compset="ArmyRes" summary="+1 DV" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="16"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rs3PArmMed" name="Armor, Medium" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} +1\n{b}Movement:{/b} -1\n{b}Requires:{/b} Smith, Tannery" compset="ArmyRes" summary="+1 DV, -1 Movement" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="2"/>
+    <fieldval field="abValue" value="-1"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000">~ Movement penalty
+      hero.childfound[aHelpSpd].field[asArmAdj].value += field[abValue].value</eval>
+    </thing>
+  <thing id="rs3PShield" name="Shields" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} +1\n{b}Movement:{/b} -\n{b}Requires:{/b} Smith or Tannery" compset="ArmyRes" summary="+1 DV" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="1"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rs3PShldMa" name="Shields, Magic" description="{b}Melee OM:{/b} -\n{b}Ranged OM:{/b} -\n{b}DV:{/b} +1\n{b}Movement:{/b} -\n{b}Requires:{/b} Smith, Magic Shop\n\nThe bonus for Magic Shields also stacks but requires Shields." compset="ArmyRes" summary="+1 DV" uniqueness="useronce">
+    <fieldval field="tcrBPCost" value="16"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="tacDefMod" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Requires Shields army resource."><![CDATA[#hasability[rs3PShield] <> 0]]></exprreq>
+    </thing>
+  <thing id="aa3PStr" name="Strength" description="When an army is comprised of a humanoid race with a modifier to its physical ability scores, it affects the combat statistics of the armies they comprise. The army gains a +1 bonus to OM if its soldiers gain a bonus to Strength, -1 if they have a penalty." compset="ArmyAbil" uniqueness="unique">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="Bootstrap"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ If not a humanoid race then hide
+      If (hero.tagis[Type.tpHumanoid] = 0) then
+        perform assign[Hide.ArmyAbil]
+        done
+      ~..If no Str modifier then hide
+      ElseIf (hero.child[aSTR].field[aStartMod].value = 0) then
+        perform assign[Hide.ArmyAbil]
+        done      
+      Endif 
+      
+      ~ Test to see if we should be active
+      if (hero.child[aSTR].field[aStartMod].value > 0) then
+        field[tacMrlMod].value += 1
+      elseif (hero.child[aSTR].field[aStartMod].value < 0) then
+        field[tacMrlMod].value += -1
+      endif
+      
+      ~ Set the summary text
+      field[abSumm].text = signed(field[tacOffMod].value) & " bonus to OM."]]></eval>
+    </thing>
+  <thing id="aa3PDex" name="Dexterity" description="When an army is comprised of a humanoid race with a modifier to its physical ability scores, it affects the combat statistics of the armies they comprise. The army gains a +1 bonus to OM if its soldiers gain a bonus to Dexterity, -1 if they have a penalty." compset="ArmyAbil" uniqueness="unique">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="Bootstrap"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ If not a humanoid race then hide
+      If (hero.tagis[Type.tpHumanoid] = 0) then
+        perform assign[Hide.ArmyAbil]
+        done
+      ~..If no Dex modifier then hide
+      ElseIf (hero.child[aDEX].field[aStartMod].value = 0) then
+        perform assign[Hide.ArmyAbil]
+        done      
+      Endif 
+      
+      ~ Test to see if we should be active
+      if (hero.child[aDEX].field[aStartMod].value > 0) then
+        field[tacMrlMod].value += 1
+      elseif (hero.child[aDEX].field[aStartMod].value < 0) then
+        field[tacMrlMod].value += -1
+      endif
+     
+      ~ Set the summary text
+      field[abSumm].text = signed(field[tacOffMod].value) & " bonus to OM."]]></eval>
+    </thing>
+  <thing id="aa3PCon" name="Constitution" description="When an army is comprised of a humanoid race with a modifier to its physical ability scores, it affects the combat statistics of the armies they comprise. The army gains 1 additional hit point and a +1 bonus to Morale checks to avoid fatigue if its soldiers have a bonus to Constitution, -1 if they have a penalty." compset="ArmyAbil" uniqueness="unique">
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="Bootstrap"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ If not a humanoid race then hide
+      If (hero.tagis[Type.tpHumanoid] = 0) then
+        perform assign[Hide.ArmyAbil]
+        done
+      ~..If no Con modifier then hide
+      ElseIf (hero.child[aCON].field[aStartMod].value = 0) then
+        perform assign[Hide.ArmyAbil]
+        done      
+      Endif 
+      
+      ~ Test to see if we should be active
+      if (hero.child[aCON].field[aStartMod].value > 0) then
+        field[tacMrlMod].value += 1
+      elseif (hero.child[aCON].field[aStartMod].value < 0) then
+        field[tacMrlMod].value += -1
+      endif
+
+      ~ Set the summary text
+      field[abSumm].text = signed(field[tacMrlMod].value) & " bonus to Morale checks."]]></eval>
+    </thing>
+  <thing id="p3PAbDmg" name="Ability Damage or Drain (alternate)" description="When you successfully attack in melee, the defending unit takes a -1d4 penalty to OM and DV for the remainder of the battle.\n\n{B}Note:{/b} Use the counter to set the value of the number of times your army has been bloodied." compset="InPlay">
+    <fieldval field="pMinimum" value="-1"/>
+    <fieldval field="pMaximum" value="-4"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjArmy"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Give Penalty to OM and DV
+      hero.childfound[aHelpOM].field[asArmAdj].value += field[pAdjust].value
+      hero.childfound[aHelpDV].field[asArmAdj].value += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="aa3PAmorph" name="Amorphous" description="This unit is immune to critical hits in mass combat; when an attacking unit rolls a natural 20 on its attack, they deal normal damage." compset="ArmyAbil" uniqueness="unique">
+    <usesource source="srcLGUltBa"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="Bootstrap"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      var S2_ability as string
+      S2_ability = "raGibAmorp"
+      Call 3PArAbHide]]></eval>
+    </thing>
+  <thing id="aa3PInqBan" name="Bane (Inquisitor 5)" description="Once per day, an army with this ability can gain a +1 bonus to OM, and if the attack succeeds the attack deals an extra 1d3 points of damage. This ability affects only a single attack, even if this army would be eligible to make an extra attack later in the Battle phase, such as against a retreating army." compset="ArmyAbil" uniqueness="unique">
+    <fieldval field="actName" value="+1 OM"/>
+    <fieldval field="trkMax" value="1"/>
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcLGUltBa"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="Bootstrap"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000" index="1"><![CDATA[
+      ~ If ability not activated get out now!
+      doneif (field[abilActive].value = 0)
+      
+      ~ Give OM bonus  
+      field[tacOffMod].value += field[abValue].value
+      ]]></eval>
+    <eval phase="Final" priority="999999999" index="2"><![CDATA[
+      var S2_ability as string
+      S2_ability = "cInqBane"
+      Call 3PArAbHide]]></eval>
+    </thing>
+  </document>

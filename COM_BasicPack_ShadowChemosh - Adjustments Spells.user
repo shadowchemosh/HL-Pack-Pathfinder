@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_ShadowChemosh - Adjustments Spells"/>
+  <fileinfo>
+    <info_author><![CDATA[
+      Author:  Tim Shadow
+      Email: shadowchemosh@yahoo.com
+      ]]></info_author>
+    <info_history><![CDATA[
+    ]]></info_history>
+    </fileinfo>
+  <thing id="pS2CustSpe" name="- Custom Spell Text -" description="Add this adjustment to be able to track an active spell that is not currently availble to be added. Once added type into the (Source) section with the name of the spell and the name will change to match.\n\nThis is most useful when you want to track an active spell or affect that is NOT available in Hero Lab (ie a 3PP spell or effect that is unqiue to a Campaign/Adventure)." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="AdjSpell"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Render" priority="99999999"><![CDATA[
+      ~ If the default "Source" id is changed then attempt to use it.
+      If (compare(field[pSource].text,"(source)") <> 0) Then
+        ~ Make sure that we are not blank either.
+        If (compare(field[pSource].text,"") <> 0) Then
+           field[livename].text = field[pSource].text
+        Endif
+      Endif]]></eval>
+    </thing>
+  <thing id="pS2CustSp2" name="- Custom Spell Selection -" description="Add this adjustment to be able to track an active spell that is not currently availble to be added. Once added select the spell from the drop down list and this adjustment&apos;s name of name will change to match. Plus the spell information will be added to the adjustment.\n\nThis is most useful when you want to track an active spell that is available in Hero Lab." compset="InPlay" summary="Add Spell Text to Spell Adjustments section">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Helper" tag="AdjInfo"/>
+    <tag group="Helper" tag="AdjSpell" name="Spell Adjustment" abbrev="Spell Adjustment"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="11000"><![CDATA[
+      ~ Things on Hero
+      field[pUsePicks].value = 0
+      ~ Set search to daze or prone
+      field[pCandExpr].text = "component.BaseSpell"]]></eval>
+    <eval phase="PreLevel" priority="5000" index="2"><![CDATA[     
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      ~Pull the tags and assign to the adjustment
+      perform field[pChosen].chosen.pulltags[SpInfo.?]
+      ~ Set our live name to the name of the spell
+      field[livename].text = field[pChosen].chosen.field[name].text
+      ~ Set our text to the name of the desc on the spell
+      field[abText].text = field[pChosen].chosen.field[CustDesc].text]]></eval>
+    </thing>
+  <thing id="pS2SpelWep" name="- Custom Spell Weapon -" description="This adjustment allows you to add a customizable Spell Weapon to your character. This allows you to set the spell name and spell dice to roll so that if you are using the iPad you can have it roll the damage for you.\n\n{B}Note:{/b} Add this spell adjustment and then select the &quot;Spell Weapon&quot; from the drop down box that you want to change the values for. The second drop down lets you set the type of spell as a Area of Effect (AoE), Ranged Touch Attack, or Touch Attack.  Finally set the spells damage dice, defualts to 1d4+1, and then change &quot;Spell Weapon&quot; to be the name of the spell (ie Fireball or Scorching Ray)." compset="InPlay">
+    <fieldval field="pSource" value="1d4+1"/>
+    <fieldval field="pDuration" value="Spell Weapon"/>
+    <fieldval field="pUsePicks" value="1"/>
+    <fieldval field="pCandExpr" value="component.BaseWep &amp; AdjShadow.SpWeapon"/>
+    <fieldval field="pCandExpr2" value="component.BaseWep &amp; PackHelper.Touch"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="Helper" tag="AdjSpell"/>
+    <tag group="Helper" tag="AdjPerm"/>
+    <tag group="Helper" tag="AdjInfo"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Adjust2nd" tag="S2Custom"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="wS2SpelWep">
+      <containerreq phase="First" priority="457"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      </bootstrap>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen2].ischosen <> 1)
+      ~ If AoE weapon selected get out now!
+      doneif (field[pChosen2].chosen.tagis[thingid.wS2AoE] = 1)
+      
+      ~ Pull all weapon tags
+      perform field[pChosen2].chosen.pulltags[wClass.?]
+      perform field[pChosen2].chosen.pulltags[wCritMin.?]
+      perform field[pChosen2].chosen.pulltags[wCritMult.?]
+      perform field[pChosen2].chosen.pulltags[wMain.?]
+      perform field[pChosen2].chosen.pulltags[wProfReq.?]
+      perform field[pChosen2].chosen.pulltags[wCategory.?]
+      perform field[pChosen2].chosen.pulltags[IsWeapon.?]
+
+
+      ~ Push all weapon tags
+      perform field[pChosen].chosen.pushtags[wClass.?]
+      perform field[pChosen].chosen.pushtags[wCritMin.?]
+      perform field[pChosen].chosen.pushtags[wCritMult.?]
+      perform field[pChosen].chosen.pushtags[wMain.?]
+      perform field[pChosen].chosen.pushtags[wProfReq.?]
+      perform field[pChosen].chosen.pushtags[wCategory.?]
+      perform field[pChosen].chosen.pushtags[IsWeapon.?]]]></eval>
+    <eval phase="Final" priority="5000" index="2"><![CDATA[     
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      ~ Set the custom damage dice to both melee and ranged
+      field[pChosen].chosen.field[wFixDamage].text = field[pSource].text
+      field[pChosen].chosen.field[wFixRanDam].text = field[pSource].text
+      
+      ~ Set the custom Spell name
+      field[pChosen].chosen.field[livename].text = field[pDuration].text]]></eval>
+    </thing>
+
+
+
+
+</document>

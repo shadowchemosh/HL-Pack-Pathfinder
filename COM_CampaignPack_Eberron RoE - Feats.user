@@ -1,0 +1,1129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_CampaignPack_Eberron RoE - Feats"/>
+  <thing id="fS2AereBea" name="Aerenal Beastmaster" description="As an elf of Aerenal, you consider baboons sacred animals and they serve you obediently.\n\n{b}Prerequisites:{/b} Elf, ability to acquire new animal companion, region of origin Aerenal.\n\n{b}Benefit:{/b} You add the baboon to your list of animal companions, and can use the {i}summon nature&apos;s ally I{/i} spell to summon a baboon instead of a monkey. A druid with a baboon animal companion has his druid level treated as three higher for the purpose of determining the baboon&apos;s modified statistics, bonus tricks, and special abilities. A ranger with a baboon animal companion has an effective druid level equal to one-half his ranger level +3, instead of one-half his ranger level.\n\n{b}Pathfinder:{/b} Rangers are already level -3 so they instead have a effective druid level equal to their ranger level.\n\n{b}Note:{/b} To have access to the Baboon animal companion you need the Bestiary 2 HL package." compset="Feat" summary="Add the baboon to your list of {i}summon nature&apos;s ally I{/i}." uniqueness="useronce">
+    <fieldval field="abValue" value="3"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="First" priority="497"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If animal companion helper pick not live then get out now!
+      doneif (hero.childlives[cAnimComp] = 0)
+      ~ Set a pointer to the animal companion
+      perform hero.childfound[cAnimComp].minion.findchild[BaseRace].setfocus
+      doneif (state.isfocus = 0)
+      ~ If we are not a baboon get out now!
+      doneif (focus.tagcountstr["IsRace.anBaboon"] = 0)      
+
+      ~ Increase effective level of animal companion by 3
+      hero.childfound[cAnimComp].field[CompBNoCap].value += field[abValue].value]]></eval>
+    <exprreq message="Region of origin Aerenal required."><![CDATA[hero.tagis[EberronEth.Aerenal] <> 0]]></exprreq>
+    <exprreq message="Elf race required."><![CDATA[#hasrace[rElf] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2AncGuid" name="Ancestral Guidance" description="The spirit of your patron ancestor guides your hands and thoughts in times of trouble.\n\n{b}Prerequisites:{/b} Elf, region of origin Valenar.\n\n{b}Benefit:{/b} Any time you use an action point to modify a d20 roll, you can also choose to reroll a single action die. You must accept the result of the second roll, even if it is worse than the initial roll.\n\n{b}Special:{/b} This benefit represents the favor of your ancestral spirit. If the DM determines that you have dishonored or angered your patron spirit, you lose the benefit of this feat until you have atoned for your actions." compset="Feat" summary="You can reroll a single action die." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Valenar ethnicity required."><![CDATA[hero.tagis[EberronEth.Valenar] <> 0]]></exprreq>
+    <exprreq message="Elf race required."><![CDATA[#hasrace[rElf] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2BladVal" name="Bladebearer of The Valenar" description="Your extensive training makes you especially adept with the curved blades of the Valenar.\n\n{b}Prerequisites:{/b} Elf, proficiency with scimitar or falchion, region of origin Valenar.\n\n{b}Benefit:{/b} You treat the Valenar double scimitar (see page 119 of the {i}Eberron Campaign Setting{/I}) as a martial weapon, and you gain a +1 bonus on damage rolls when making a melee attack with a scimitar, falchion, or Valenar double scimitar while mounted. If you have any of the following feats for the scimitar, falchion, or Valenar double scimitar, you can apply the feats’ effects to all three weapons: Improved Critical, Weapon Focus, Weapon Specialization, Greater Weapon Focus, or Greater Weapon Specialization.\n\nAdditionally, when you spend an action point to influence an attack roll made with either a scimitar, falchion, or Valenar double scimitar, you also add the result of the action point roll to your damage for that attack." compset="Feat" summary="Add your APs to the dmg of your scimitar, falchion, or Valenar double scimitar." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="IsWeapon" tag="wS2ScimDbl"/>
+    <tag group="IsWeapon" tag="wFalchion"/>
+    <tag group="IsWeapon" tag="wScimitar"/>
+    <eval phase="First" priority="20000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Set our ability to active if we are mounted
+      if (hero.tagis[Condition.pstMounted] = 1) then
+        perform assign[Helper.Activated]
+      endif
+
+      ~ Setup racial weapons:
+      ~ Scimitars, Falchions and Valenar Double Scimitars
+      call ECSRaceFtW]]></eval>
+    <exprreq message="Elf race required."><![CDATA[#hasrace[rElf] <> 0]]></exprreq>
+    <exprreq message="Valenar region of origin required."><![CDATA[hero.tagis[EberronEth.Valenar] <> 0]]></exprreq>
+    <exprreq message="Proficiency with scimitar or falchion required."><![CDATA[hero.tagis[WepProf.wFalchion] + hero.tagis[WepProf.wScimitar] + #hasfeat[fWepMart] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2BooDaze" name="Boomerang Daze" description="You can daze the targets of your boomerang attacks.\n\n{b}Prerequisites:{/b} Proficiency with Talenta boomerang or Xen&apos;drik boomerang, base attack bonus +4.\n\n{b}Benefit:{/b} When you attack with a Talenta boomerang or Xen&apos;drik boomerang (see page 119 of the {i}Eberron Campaign Setting{/i}), any target creature that takes damage must succeed on a Fortitude save (DC 10 + damage dealt) or be dazed for 1 round (until just before your next action). If you have the Boomerang Ricochet feat (see below), you can daze both targets.\n\n{b}Special:{/b} A halfling fighter from the Talenta Plains or a drow fighter from Xen&apos;drik can select Boomerang Daze as one of his fighter bonus feats.\n\n{b}Pathfinder:{/b} I changed the feat to a Combat feat to allow many classes not just fighters to select this feat." compset="Feat" summary="Boomerang targets must make a Fort (DC10+Dmg) or be dazed for 1r." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Base Attack Bonus of +4 required."><![CDATA[#BAB[] >= 4]]></exprreq>
+    <exprreq message="Proficiency with Talenta boomerang or Xen&apos;drik boomerang required."><![CDATA[hero.tagis[WepProf.wS2BoomXen] + hero.tagis[WepProf.wS2BoomTal] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2BooRico" name="Boomerang Ricochet" description="You can strike up to two foes with a single boomerang throw.\n\n{b}Prerequisites:{/b} Dex 13, proficiency with Talenta boomerang or Xen&apos;drik boomerang, base attack bonus +4.\n\n{b}Benefit:{/b} You can hurl a Talenta boomerang or Xen&apos;drik boomerang (see page 119 of the {i}Eberron Campaign Setting{/i}) in such a way that it ricochets off one target to strike a second target of your choice. If your initial attack hits, you immediately make a second attack roll at a -2 penalty against any target adjacent to the original target.\n\nIf the first target is hit by a sneak attack with a boomerang under the effect of this feat, the second target is not also vulnerable to a sneak attack on the ricochet.\n\n{b}Special:{/b} A halfling fighter from the Talenta Plains or a drow fighter from Xen&apos;drik can select Boomerang Ricochet as one of his fighter bonus feats.\n\n{b}Pathfinder:{/b} I changed the feat to a Combat feat to allow many classes not just fighters to select this feat." compset="Feat" summary="Your boomerang strikes a 2nd target of your choice at a -2 penalty to hit." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Base Attack Bonus of +4 required."><![CDATA[#BAB[] >= 4]]></exprreq>
+    <exprreq message="Dexterity 13+ required."><![CDATA[#attrvalue[aDEX] >= 13]]></exprreq>
+    <exprreq message="Proficiency with Talenta boomerang or Xen&apos;drik boomerang required."><![CDATA[hero.tagis[WepProf.wS2BoomXen] + hero.tagis[WepProf.wS2BoomTal] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2CallUnd" name="Call of the Undying" description="You call upon the power of the Undying Court to instantly recall a previously cast spell.\n\n{b}Prerequisites:{/b} Elf, access to the Deathless domain, region of origin Aerenal.\n\n{b}Benefit:{/b} In place of the granted power of the Deathless domain (see page 105 of the {i}Eberron Campaign Setting{/i}), the Undying Court grants you the ability to recall one previously prepared and cast spell as a swift action once per day. The recalled spell must be at least one level lower than the highest spell level you can cast." compset="Feat" summary="Recall one cast spell (1 lvl lower than highest spell level) as a swift action." uniqueness="useronce">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="abAction" tag="Swift"/>
+    <tag group="abDuration" tag="Instant"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Only procead if the Deathless domain power is live
+      doneif (hero.childlives[dS2ComDeat] = 0)
+
+      ~ Disable the Domain Ability
+      perform hero.childfound[dS2ComDeat].assign[Helper.SpcDisable]]]></eval>
+    <exprreq message="Elf Race Required."><![CDATA[#hasrace[rElf] <> 0]]></exprreq>
+    <exprreq message="Region of origin Aerenal required."><![CDATA[hero.tagis[EberronEth.Aerenal] <> 0]]></exprreq>
+    <exprreq message="Deathless domain required."><![CDATA[#hasability[cdDeathles] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2DarMaul" name="Darguun Mauler" description="The memory of your people&apos;s lost glory drives your brutal mastery of the weapons of Darguun.\n\n{b}Prerequisites:{/b} Humanoid (goblinoid), proficiency with flail or heavy flail, region of origin Darguun.\n\n{b}Benefit:{/b} You treat the dire flail and the spiked chain as martial weapons. As well, you gain a +1 bonus on damage rolls when making an attack with a flail, heavy flail, dire flail, or spiked chain as long as you do not move during the round in which you make the attack. If you have any of the following feats for the flail, heavy flail, dire flail, or spiked chain, you can apply the feats&apos; effects to all three weapons: Improved Critical, Weapon Focus, Weapon Specialization, Greater Weapon Focus, Greater Weapon Specialization.\n\nAdditionally, when you spend an action point to influence an attack roll made with a flail, heavy flail, dire flail, or spiked chain, you also add the result of the action point roll to your damage for that attack." compset="Feat" summary="Add your action points to the dmg of your flail, heavy flail, dire flail, or spiked chain." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="actName" value="No Move 1r"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="IsWeapon" tag="wChainSpk"/>
+    <tag group="IsWeapon" tag="wFlailDire"/>
+    <tag group="IsWeapon" tag="wFlail"/>
+    <tag group="IsWeapon" tag="wFlailHvy"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Setup racial weapons:
+      ~ flail, heavy flail, dire flail, or spiked chains
+      call ECSRaceFtW]]></eval>
+    <exprreq message="Region of origin Darguun required."><![CDATA[hero.tagis[EberronEth.Darguun] <> 0]]></exprreq>
+    <exprreq message="Proficiency with flail or heavy flail required."><![CDATA[hero.tagis[WepProf.wFlail] + hero.tagis[WepProf.wFlailHvy] + #hasfeat[fWepMart] <> 0]]></exprreq>
+    <exprreq message="Humanoid (goblinoid) required.">#hastype[tpHumanoid] + #hassubtype[stGoblin] = 2</exprreq>
+    </thing>
+  <thing id="fS2DayAdap" name="Daylight Adaptation" description="You have grown accustomed to living in the surface world, such that bright light no longer blinds or dazzles you.\n\n{b}Prerequisite:{/b} Light blindness or light sensitivity.\n\n{b}Benefit:{/b} Unlike other members of your kind, you are not blinded or dazzled by exposure to bright light or sunlight. However, light spells or effects that affect all creatures, such as a {i}sunbeam{/i} or {i}sunburst{/i}, still affect you normally." compset="Feat" summary="You are not blinded or dazzled by exposure to bright light or sunlight." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ If we have Light Sensitivity disable it
+      if (hero.childlives[raLightSen] = 1) then
+        perform hero.childfound[raLightSen].assign[Helper.SpcDisable]
+      endif
+
+      ~ If we have Light Blindness disable it
+      if (hero.childlives[raLightBl] = 1) then
+        perform hero.childfound[raLightBl].assign[Helper.SpcDisable]
+      endif]]></eval>
+    <exprreq message="Light blindness or light sensitivity required."><![CDATA[#hasability[raLightSen] + #hasability[raLightBl] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2DinoHun" name="Dinosaur Hunter" description="Your extraordinary knowledge of dinosaurs grants you special aptitude for tracking and hunting them.\n\n{b}Prerequisites:{/b} Halfling, Knowledge (nature) 1 rank, Survival 1 rank, region of origin Talenta Plains.\n\n{b}Benefit:{/b} You gain a +2 bonus on Perception, and Survival checks when using these skills against dinosaurs, and a +2 bonus on Knowledge (nature) checks involving dinosaurs. In addition, you gain a +2 bonus on weapon damage rolls against these creatures." compset="Feat" summary="+2 bonus on Perception, Survival, Knowledge (nature), and damage vs dinosaurs." uniqueness="useronce">
+    <fieldval field="actName" value="vs Dinosaur"/>
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      var sText as string
+      sText = signed(field[abValue].value) & " bonus against dinosaurs."
+
+      #situational[hero.child[skPercep],sText,field[name].text]
+      #situational[hero.child[skSurvival],sText,field[name].text]
+      #situational[hero.childfound[skKnowNat],sText,field[name].text]]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If not activated then get out now!
+      doneif (field[abilActive].value = 0) 
+
+      hero.child[Damage].field[Bonus].value += field[abValue].value]]></eval>
+    <exprreq message="Knowledge (nature) 1+ rank required."><![CDATA[#skillranks[skKnowNat] >= 1]]></exprreq>
+    <exprreq message="Survival 1+ ranks required."><![CDATA[#skillranks[skSurvival] >= 1]]></exprreq>
+    <exprreq message="The Talenta Plains region of origin required."><![CDATA[hero.tagis[EberronEth.Talenta] <> 0]]></exprreq>
+    <exprreq message="Halfling race required."><![CDATA[#hasrace[rHalfling] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2DinoWra" name="Dinosaur Wrangler" description="You are attuned to dinosaurs and possess a special bond with them.\n\n{b}Prerequisites:{/b} Halfling, Handle Animal 1 rank, region of origin Talenta Plains.\n\n{b}Benefit:{/b} You gain a +4 bonus on Handle Animal and wild empathy checks when dealing with dinosaurs, and a +4 bonus on Ride checks when riding a dinosaur." compset="Feat" summary="+4 bonus on Handle Animal, wild empathy, or ride vs dinosaurs." uniqueness="useronce">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      var sText as string
+      sText = signed(field[abValue].value) & " bonus against dinosaurs."
+
+      #situational[hero.child[skHandleAn],sText,field[name].text]
+      #situational[hero.child[skRide],sText,field[name].text]
+      #situational[hero.childfound[cWildEmp],sText,field[name].text]]]></eval>
+    <exprreq message="Halfling race required."><![CDATA[#hasrace[rHalfling] <> 0]]></exprreq>
+    <exprreq message="The Talenta Plains region of origin required."><![CDATA[hero.tagis[EberronEth.Talenta] <> 0]]></exprreq>
+    <exprreq message="Handle Animal 1+ rank required."><![CDATA[#skillranks[skHandleAn] >= 1]]></exprreq>
+    </thing>
+  <thing id="fS2DrowSki" name="Drow Skirmisher" description="Your experience with the guerrilla-style combat of the deep jungle grants you mastery of the weapons of the drow.\n\n{b}Prerequisites:{/b} Drow, region of origin Xen&apos;drik\n\n{b}Benefit:{/b}You treat the Xen&apos;drik boomerang, the drow scorpion chain*, and the drow long knife* as martial weapons. As well, you gain a +1 bonus on damage rolls when making an attack with a drow long knife or a drow scorpion chain as long as you have moved more than 5 feet under your own power during the round in which you make the attack. For example, being bull rushed 10 feet isn&apos;t sufficient to grant you the extra damage from this feat. \n\nIf you have any of the following feats for the dagger or short sword, you can apply the feats&apos; effects to the drow long knife: Improved Critical, Weapon Focus, Weapon Specialization, Greater Weapon Focus, or Greater Weapon Specialization. If you have any of the same feats for the spiked chain, you can apply the feats&apos; effects to the drow scorpion chain.\n\nAdditionally, when you spend an action point to influence an attack roll made with either a Xen&apos;drik boomerang, drow scorpion chain, or drow long knife, you also add the result of the action point roll to your damage for that attack.\n\n{B}Pathfinder:{/b} Recomendation to GMs is that this feat allow the Drow Scorpian Chain to be able to be a reach weapon that can also attack adjacent targets." compset="Feat" summary="Add your APs to the dmg of your Xen&apos;drik boomerang, drow scorpion chain, or drow long knife." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="actName" value="Moved more than 5ft"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="EasyWeapon" tag="wS2BoomXen"/>
+    <tag group="EasyWeapon" tag="wS2DroScCh"/>
+    <tag group="EasyWeapon" tag="wS2DroLoKi"/>
+    <tag group="IsWeapon" tag="wS2DroLoKi"/>
+    <tag group="IsWeapon" tag="wS2DroScCh"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Find all Drow Long Knife and Drow Scorpian chains
+      foreach pick in hero from BaseWep where tagids[IsWeapon.?,"|"]
+
+        ~ Only make the drow long knife like a shortsword
+        if (eachpick.tagis[IsWeapon.wS2DroLoKi] = 1) then
+          perform eachpick.assign[IsWeapon.wShortswd]
+        endif
+
+        ~ if moved more than 5ft during the round then give +1 Dmg
+        if (field[abilActive].value = 1) then
+          eachpick.field[dmmBonus].value += field[abValue].value
+        endif
+      nexteach
+
+      ~ Make drow weapon martial weapons
+      perform hero.pushtags[EasyWeapon.?]]]></eval>
+    <exprreq message="Region of origin Xen&apos;drik required."><![CDATA[hero.tagis[EberronEth.Xendrik] <> 0]]></exprreq>
+    <exprreq message="Drow race required."><![CDATA[#hasrace[rDrow] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2HeroMet" name="Heroic Metamagic" description="In times of great need, you can call upon a heroic reserve of power to strengthen your spells.\n\n{b}Prerequisites:{/b} Any metamagic feat, ability to cast 2nd-level spells.\n\n{b}Benefit:{/b} You can spend action points to spontaneously apply the effect of any metamagic feat you know to a spell as you are casting it, with no change to the spell&apos;s level or casting time. The cost in action points to use this feat is equal to the spell slot adjustment normally required to use the metamagic feat in question.\n\nFor example, applying the effect of Empower Spell (spell slot two levels higher than normal) to one of your spells using this feat costs 2 action points.\n\nIf you have another ability that affects the spell slot adjustment of a metamagic feat, use that value instead of the normal spell slot adjustment when using this feat, to a minimum of 1 action point." compset="Feat" summary="Spend APs to apply metamagic feats to a spell as you are casting it." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Any metamagic feat required."><![CDATA[hero.tagis[fCategory.Metamagic] <> 0]]></exprreq>
+    <exprreq message="Ability to cast 2nd level spells required"><![CDATA[tagcount[Hero.Arcane] + tagcount[Hero.Divine] >= 2 + 1]]></exprreq>
+    </thing>
+  <thing id="fS2MastLin" name="Master Linguist" description="You have a broad knowledge of language.\n\n{b}Prerequisite:{/b} Ability to speak four or more languages.\n\n{b}Benefit:{/b} Each time you gain a level, including the level at which you select this feat, you learn a new language (as if you had spent 1 skill point on the Linguistics skill).\n\n{b}Pathfinder:{/b} It is not possible in HL to know which level a feat was taken at. So this feat is changed to give a number of additional languages equal to the characters level regardless of which level the abitliy as taken at. If this is not what your group wants then my advice is on the &quot;Personal&quot; tab to put in the adjustment &quot;Skill Languages Known&quot; to off-set the additional languages." compset="Feat" summary="You speak additional languages equal to your level." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PostLevel" priority="5000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0) 
+      
+      ~ add to our languages known equal to our level
+      herofield[tLangsSpk].value += #totallevelcount[]]]></eval>
+    <exprreq message="Ability to speak four or more languages required."><![CDATA[hero.tagcount[SpeakLang.?] >= 4]]></exprreq>
+    </thing>
+  <thing id="fS2MrorSta" name="Mror Stalwart" description="You have been trained to make devastating strikes with the weapons of the dwarves of the Mror Holds.\n\n{b}Prerequisites:{/b} Dwarf, proficiency with battleaxe, warhammer, dwarven waraxe, or dwarven urgrosh, region of origin Mror Holds (Ironroot Mountains).\n\n{b}Benefit:{/b} You gain a +1 bonus on damage rolls when making an attack with a battleaxe, warhammer, dwarven waraxe, or dwarven urgrosh as long as you do not move during the round in which you make the attack. If you have any of the following feats for the battleaxe, warhammer, dwarven waraxe, or dwarven urgrosh, you can apply the feats&apos; effects to all four weapons: Improved Critical, Weapon Focus, Weapon Specialization, Greater Weapon Focus, or Greater Weapon Specialization.\n\nAdditionally, when you spend an action point to influence an attack roll made with either a battleaxe, warhammer, dwarven waraxe, or dwarven urgrosh, you also add the result of the action point roll to your damage for that attack." compset="Feat" summary="Add your APs to the dmg of your battleaxe, warhammer, dwarven waraxe, or dwarven urgrosh." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="actName" value="no move"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="IsWeapon" tag="wWaraxeDw"/>
+    <tag group="IsWeapon" tag="wUrgroshDw"/>
+    <tag group="IsWeapon" tag="wBattleaxe"/>
+    <tag group="IsWeapon" tag="wWarhammer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Setup racial weapons for battleaxe, warhammer, 
+      ~ dwarven waraxe, and dwarven urgrosh.
+      call ECSRaceFtW]]></eval>
+    <exprreq message="Region of origin Mror Holds (Ironroot Mountains)."><![CDATA[hero.tagis[EberronEth.MrorHolds] <> 0]]></exprreq>
+    <exprreq message="Proficiency with battleaxe, warhammer, dwarven waraxe, or dwarven urgrosh."><![CDATA[hero.tagis[WepProf.wWaraxeDw] + hero.tagis[WepProf.wUrgroshDw] + #hasfeat[fWepMart] <> 0]]></exprreq>
+    <exprreq message="Dwarf race required."><![CDATA[#hasrace[rDwarf] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2MutBody" name="Mutable Body" description="Your enhanced control over your shapechanging ability grants you extra power from transmutation spells.\n\n{b}Prerequisite:{/b} Shapechanger subtype.\n\n{b}Benefit:{/b} At your option, transmutation spells cast on you are at +1 caster level. You must decide at the time the spell is cast if you wish to apply the effect of this feat.\n\n{b}Special:{/b} By spending 2 action points, you can have any transmutation spell cast on you effectively empowered or extended (as if under the effect of Empower Spell or Extend Spell, respectively), but without any adjustment to the spell&apos;s effective level or casting time." compset="Feat" summary="Transmutation spells cast on you are at +1CL. Spend 2AP to extend/empower spells." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Shapechanger subtype required."><![CDATA[#hassubtype[stShapecha] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2PathOfS" name="Path of Shadows" description="You can use dancelike maneuvers to aid your defense.\n\n{b}Prerequisites:{/b} Kalashtar, Perform (dance) 5 ranks.\n\n{b}Benefit:{/b} You gain a +2 bonus on Acrobatics checks, and you can make a Perform (dance) check in place of a Concentration check to cast a spell or manifest a psionic power defensively.\n\n{b}Pathfinder:{/b} Changed the bonus from Tumble to Acrobatics which makes this feat a little more powerful than than the 3.5 version." compset="Feat" summary="+2 to acrobatics and use Perform (dance) instead of concentration." uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Give bonus to acrobatics
+      #skillbonus[skAcrobat] += field[abValue].value
+
+      #situational[hero.childfound[skPerfDanc],"You can make a Perform (dance) check in place of a Concentration check to cast a spell or manifest a psionic power defensively." ,field[name].text]]]></eval>
+    <exprreq message="Perform (dance) 5+ skill ranks required."><![CDATA[#skillranks[skPerfDanc] >= 5]]></exprreq>
+    <exprreq message="Kalashtar race required."><![CDATA[#hasrace[rS2Kalasht] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2PersImm" name="Persona Immersion" description="Your assumption of another&apos;s physical identity grants you defenses against mental intrusion.\n\n{/b}Prerequisite:{b} Changeling.\n\n{/b}Benefit:{b} While under the effect of your minor change shape ability, if you make a successful save against a divination spell or telepathic psionic power of 3rd level or lower, you can generate a misleading result. Though you don&apos;t learn the precise spell or power being used against you, you know what type of information is sought and can respond accordingly.\n\nFor example, a character with this feat who successfully saves against {i}detect thoughts{/i} knows that his surface thoughts are being probed, and can thus supply any specifi c thoughts that he wishes to be detected by the caster." compset="Feat" summary="When using change shape ability you can generate a misleading result vs spells." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Changeling race required."><![CDATA[#hasrace[rS2Changel] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2QuiChan" name="Quick Change" description="You can quickly alter your features and physiology.\n\n{/b}Prerequisite:{/b} Changeling.\n\n{/b}Benefit:{/b} You can use your minor change shape ability as a move action.\n\n{/b}Normal:{/b} Using the minor change shape ability is a fullround action." compset="Feat" summary="You can use your minor change shape ability as a move action." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Changeling race required."><![CDATA[#hasrace[rS2Changel] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2RacEmul" name="Racial Emulation" description="You can emulate a humanoid more closely with your minor change shape ability.\n\n{/b}Prerequisite:{b} Changeling.\n\n{/b}Benefit:{b} When you use your minor change shape ability to assume the form of a humanoid creature, you can also emulate any of that humanoid&apos;s subtypes. Though you do not gain any of the humanoid&apos;s traits, you are considered to be a member of that race for all other purposes (allowing you to use magic items or spells keyed to race, for example). You can also ignore the normal penalty on Disguise checks when disguising yourself as a different race.\n\nYou can only emulate one race at a time, and you always retain the shapechanger subtype." compset="Feat" summary="When you assume a humanoid creature also emulate that humanoid&apos;s subtypes." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Changeling race required."><![CDATA[#hasrace[rS2Changel] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ReliHun" name="Relic Hunter" description="You possess great knowledge of the relics and crafts of the ancient cultures of Eberron.\n\n{b}Prerequisites:{/b} Appraise 1 rank, Knowledge (history) 1 rank.\n\n{b}Benefit:{/b} You gain a +5 bonus on Appraise checks, Knowledge checks, and bardic knowledge checks involving items from the Dhakaani Empire or from ancient Xen&apos;drik." compset="Feat" summary="+5 on Appraise, Knowledge, &amp; bardic knowledge on Dhakaani Empire or Xen&apos;drik." uniqueness="useronce">
+    <fieldval field="abValue" value="5"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Build situational note text
+      var sText as string
+      sText = signed(field[abValue].value) & " bonus on checks involving items from the Dhakaani Empire or from ancient Xen'drik."
+
+      ~ Give information to the Bardic class ability
+      #appenddesc[cBrdKnow, "{b}" & field[name].text & "{/b} " & sText]
+
+      ~ Loop through all knowledge and Appraise skills
+      foreach pick in hero from BaseSkill where "Helper.SkCatKnow|Target.skAppraise"
+        #situational[eachpick, sText ,field[name].text]
+      nexteach]]></eval>
+    <exprreq message="Appraise 1+ skill ranks required."><![CDATA[#skillranks[skAppraise] >= 1]]></exprreq>
+    <exprreq message="Knowledge (history) 1+ skill ranks required."><![CDATA[#skillranks[skKnowHist] >= 1]]></exprreq>
+    </thing>
+  <thing id="fS2ShMaWar" name="Shadow Marches Warmonger" description="The ancient martial pride of your people grants you mastery of their style of battle.\n\n{b}Prerequisites:{/b} Orc or half-orc, region of origin Shadow Marches.\n\n{b}Benefit:{/b} You treat the orc double axe as a martial weapon, and you gain a +1 bonus on damage rolls when making an attack with a battleaxe, greataxe, or orc double axe as part of a charge. If you have any of the following feats for the battleaxe, greataxe, or orc double axe, you can apply the feats&apos; effects to all three weapons: Improved Critical, Weapon Focus, Weapon Specialization, Greater Weapon Focus, or Greater Weapon Specialization.\n\nAdditionally, when you spend an action point to influence an attack roll made with either a battleaxe, greataxe, or orc double axe, you also add the result of the action point roll to your damage for that attack." compset="Feat" summary="Add APs to the dmg of your battleaxe, greataxe, or orc double axe." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="IsWeapon" tag="wBattleaxe"/>
+    <tag group="IsWeapon" tag="wGreataxe"/>
+    <tag group="IsWeapon" tag="wAxeOrcDbl"/>
+    <eval phase="First" priority="20000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Set our ability to active if we are charging
+      if (hero.tagis[Condition.pstChargin] = 1) then
+        perform assign[Helper.Activated]
+      endif
+
+      ~ Setup racial weapons:
+      ~ battleaxe, greataxe, or orc double axe
+      call ECSRaceFtW]]></eval>
+    <exprreq message="Orc or Half-Orc race required."><![CDATA[#hasrace[rOrc] + #hasrace[rHalfOrc] <> 0]]></exprreq>
+    <exprreq message="Shadow Marches region of origin required."><![CDATA[hero.tagis[EberronEth.Shadow] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ShaSpla" name="Shaped Splash" description="Your expertise with thrown weapons enables you to use splash weapons more effectively.\n\n{b}Prerequisites:{/b} Halfling, Dex 13, base attack bonus +1.\n\n{b}Benefit:{/b} If you throw a splash weapon and it hits the creature you target, you can immediately make a second attack against any creature adjacent to the first. If the second attack succeeds, the secondary target also takes direct hit damage from the thrown splash weapon. In addition, you can choose not to deal splash damage to specified creatures that occupy spaces adjacent to one or both targets.\n\nIf your initial attack fails, determine location and damage for the splash attack as normal." compset="Feat" summary="If splash weapon hits make 2nd attack at adjacent target to do full dmg to 2nd target." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Base attack bonus +1 required."><![CDATA[#BAB[] >= 1]]></exprreq>
+    <exprreq message="Dex 13+ required."><![CDATA[#attrvalue[aDEX] >= 13]]></exprreq>
+    <exprreq message="Halfling race required."><![CDATA[#hasrace[rHalfling] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ShipSav" name="Ship Savvy" description="Your heritage among the sailors and shipwrights of Zilargo gives you an edge in shipboard combat.\n\n{b}Prerequisites:{/b} Gnome, Acrobatics 2 ranks, Profession (sailor or shipwright) 1 ranks, region of origin Zilargo.\n\n{b}Benefit:{/b} While aboard any vessel (including seafaring galleons and airships), you gain a +1 bonus to AC and a +1 bonus on attack rolls." compset="Feat" summary="While aboard a ship gain +1 AC and +1 on attack rolls." uniqueness="useronce">
+    <fieldval field="actName" value="On Ship"/>
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      hero.child[Attack].field[Bonus].value += field[abValue].value
+      hero.child[ArmorClass].field[Bonus].value += field[abValue].value]]></eval>
+    <exprreq message="Gnome race required."><![CDATA[#hasrace[rGnome] <> 0]]></exprreq>
+    <exprreq message="Acrobatics 2+ ranks required."><![CDATA[#skillranks[skAcrobat] >= 2]]></exprreq>
+    <exprreq message="Region of origin Zilargo required."><![CDATA[hero.tagis[EberronEth.Zilargo] <> 0]]></exprreq>
+    <prereq message="Profession (sailor or shipwright) 1 ranks required.">
+      <validate><![CDATA[
+        validif (#skillranks[skProfSail] >= 3)
+        validif (#skillranks[skS2ProfSW] >= 3)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fS2SoulWar" name="Soulblade Warrior" description="The spirit of a quori warrior grants you deadly speed and combat prowess with your mind blade.\n\n{b}Prerequisites:{/b} Kalashtar, ability to generate a mind blade.\n\n{b}Benefit:{/b} You can manifest your mind blade as a swift action, and your effective soulknife level is increased by two for the purpose of the mind blade enhancement class feature if you have it (though this bonus doesn&apos;t grant you the ability to enhance your mind blade before 3rd level).\n\nWhen you spend an action point to influence an attack roll made with your mind blade, you also add the result of the action point roll to your damage for that attack.\n\n{b}Normal:{/b} Manifesting a mind blade is a move action.\n\n{b}Pathfinder:{/b} This feat is designed to work with the Soulknife class from Ulimate Psionics for Pathfinder. To get this class you need to load the community &quot;3PP Pack&quot;." compset="Feat" uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Set focus to "Ehanced Mind Blade" class feature
+      perform hero.findchild[BaseClSpec,"thingid.cSknEnhMB & ClSpecWhen.3"].setfocus
+      doneif (state.isfocus = 0)
+
+      ~we're earlier than the normal test for whether we've reached the correct level, so we'll recreate that test here
+      doneif (focus.root.field[cTotalLev].value + focus.field[xExtraLev].value + focus.field[xEffectLev].value < focus.tagvalue[ClSpecWhen.?])
+
+      ~ Increase Ehanced Mind Blade by 2
+      hero.findchild[BaseClSpec,"thingid.cSknEnhMB & ClSpecWhen.3"].field[xExtraLev].value += field[abValue].value]]></eval>
+    <exprreq message="Kalashtar race required."><![CDATA[#hasrace[rS2Kalasht] <> 0]]></exprreq>
+    <exprreq message="Form Mind Blade class feature required."><![CDATA[hero.tagcountstr["HasAbility.cSknMindBl"] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2StaFoot" name="Stable Footing" description="Because of your training and wariness, you are skilled at keeping your feet in combat and able to move over difficult terrain with ease.\n\n{b}Prerequisite:{/b} Warforged or dwarf.\n\n{b}Benefit:{/b} You gain a +4 bonus on combat manuever defense vs being bull rushed or tripped when standing on the ground (but not when climbing, flying, riding, or otherwise not standing firmly on the ground). In addition, you take no movement penalties for moving over difficult terrain.\n\n{b}Pathfinder:{/b} Changed bonus on ability checks to bonus on CMD." compset="Feat" summary="You take no movement penalties for moving over difficult terrain." uniqueness="useronce">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #situational[hero.childfound[Maneuver], signed(field[abValue].value) & " bonus on CMD vs bull rush and trip combat maneuvers.", field[name].text]]]></eval>
+    <exprreq message="Warforged or dwarf race required."><![CDATA[#hasrace[rDwarf] + #hasrace[rS2Warforg] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2TaleWar" name="Talenta Warrior" description="You have trained with the ancestral weapons of the Talenta halflings and are particularly adept at striking from the back of a dinosaur mount.\n\n{b}Prerequisites:{/b} Halfling, region of origin Talenta Plains.\n\n{b}Benefit:{/b} You treat the Talenta sharrash, the Talenta tangat, and the Talenta boomerang (see page 119 of the Eberron Campaign Setting) as martial weapons; you gain a +1 bonus on damage rolls with any of those weapons while mounted. If you have any of the following feats for the Talenta sharrash, Talenta tangat, or Talenta boomerang, you can apply the feats’ effects to all three weapons: Improved Critical, Weapon Focus, Weapon Specialization, Greater Weapon Focus, or Greater Weapon Specialization.\n\nAdditionally, when you spend an action point to influence an attack roll made with either a Talenta sharrash, Talenta tangat, or Talenta boomerang, you also add the result of the action point roll to your damage for that attack." compset="Feat" summary="Add your APs to the dmg of your Talenta sharrash, the Talenta tangat, and the Talenta boomerang." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="IsWeapon" tag="wS2BoomTal"/>
+    <tag group="IsWeapon" tag="wS2ShaTale"/>
+    <tag group="IsWeapon" tag="wS2TanTale"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="EasyWeapon" tag="wS2BoomTal"/>
+    <tag group="EasyWeapon" tag="wS2ShaTale"/>
+    <tag group="EasyWeapon" tag="wS2TanTale"/>
+    <eval phase="First" priority="20000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Set our ability to active if we are mounted
+      if (hero.tagis[Condition.pstMounted] = 1) then
+        perform assign[Helper.Activated]
+      endif
+
+      ~ Setup racial weapons for Talenta sharrash, 
+      ~ the Talenta tangat, and the Talenta boomerang.
+      call ECSRaceFtW]]></eval>
+    <exprreq message="Region of origin Talenta Plains."><![CDATA[hero.tagis[EberronEth.Talenta] <> 0]]></exprreq>
+    <exprreq message="Halfling race required."><![CDATA[#hasrace[rHalfling] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2WhScSt" name="White Scorpion Strike" description="Your fists and feet sting like the dread white scorpion and are particularly effective against undead.\n\n{b}Prerequisites:{/b} Drow, ability to use ki strike (magic).\n\n{b}Benefit:{/b} Your unarmed strike has the ghost touch ability (allowing you to ignore the 50% miss chance when attacking incorporeal creatures), and deals an extra 1d6 points of damage to undead." compset="Feat" summary="Your unarmed strike has the ghost touch ability." uniqueness="useronce">
+    <fieldval field="actName" value="vs Undead"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If not activated get out now!
+      doneif (field[abilActive].value = 0)
+
+      #extradamage[hero.child[wUnarmed],"+1d6 vs undead",field[name].text]]]></eval>
+    <exprreq message="Unarmed strike (magic) class ability required."><![CDATA[#hasability[cMnkKiMag] <> 0]]></exprreq>
+    <exprreq message="Drow race required."><![CDATA[#hasrace[rDrow] + #hasrace[rDrowNoble] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2GestAnc" name="Gestalt Anchor" description="Your strong bond to your quori spirit allows you and your kalashtar allies to move and act as a fluid unit.\n\n{b}Prerequisites:{/b} Kalashtar, base Will save +3.\n\n{b}Benefit:{/b} While you are psionically focused and within 60 feet of a kalashtar ally, you and all kalashtar allies within 60 feet gain a +2 insight bonus on initiative checks and Reflex saves.\n\n{b}Pathfinder:{/b} This feat is designed to work with Ulimate Psionics for Pathfinder. To get this you need to load the community &quot;3PP Pack&quot;." compset="Feat" summary="When Psi-Focused and 60ft of kalashtar ally gain bonus to Ref and initiative." uniqueness="useronce">
+    <fieldval field="actName" value="Within 60ft"/>
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Psionic"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If we're not enabled get out now!
+      doneif (field[abilActive].value = 0)
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ If Not psionically focused get out now
+      doneif (v_focus <> 1)
+
+      #applybonus[BonInsight, hero.child[Initiative], field[abValue].value]
+      #applybonus[BonInsight, hero.child[svRef], field[abValue].value]]]></eval>
+    <exprreq message="Base Will save +3 required."><![CDATA[hero.child[svWill].field[svBase].value >= 3]]></exprreq>
+    <exprreq message="Kalashtar race required."><![CDATA[#hasrace[rS2Kalasht] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ShOfTh" name="Shield of Thought" description="You wield your spirit as both weapon and shield.\n\n{b}Prerequisites:{/b} Kalashtar, ability to generate a mind blade.\n\n{b}Benefit:{/b} As a move action, you can create a semisolid shield composed of psychic energy distilled from your quori soul. Functionally, the effect is identical to a light shield sized to your current form (+1 shield bonus to AC, –1 armor check penalty), and has a hardness of 10 and 10 hit points. Like a mind blade, a shield of thought dissipates the instant it leaves your hand. You can wield a mind blade and a shield of thought at the same time, but you must manifest each one as a separate action.\n\nIf you have the mind blade enhancement class feature, you can choose to apply any or all of the bonus points from this ability to your shield of thought instead of your mind blade. Each point that you apply in this manner provides a +1 enhancement bonus to the shield bonus and reduces the shield’s armor check penalty to 0, but you cannot equip the shield with armor special abilities in this way.\n\nYou are always considered to be proficient with your own shield of thought.\n\n{b}Pathfinder:{/b} This feat is designed to work with the Soulknife class from Ulimate Psionics for Pathfinder. To get this class you need to load the community &quot;3PP Pack&quot;." compset="Feat" summary="As a move-action for a psi-shield that acts like a light shield." uniqueness="useronce">
+    <fieldval field="actName" value="Form Shield"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <bootstrap thing="iS2ShOfTh">
+      <containerreq phase="First" priority="99"><![CDATA[fieldval:abilActive <> 0]]></containerreq>
+      <autotag group="Helper" tag="Shadow"/>
+      </bootstrap>
+    <exprreq message="Form Mind Blade class ability required."><![CDATA[hero.tagcountstr["HasAbility.cSknMindBl"] <> 0]]></exprreq>
+    <exprreq message="Kalashtar race required."><![CDATA[#hasrace[rS2Kalasht] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2SpirFor" name="Spiritual Force" description="Your forceful inner spirit allows you to deal more damage with your mind blade.\n\n{b}Prerequisites:{/b} Kalashtar, ability to generate a mind blade.\n\n{b}Benefit:{/b} You can expend your psionic focus to gain a bonus equal to your Charisma modifier on damage rolls with your mind blade. This effect lasts for 1 round.\n\n{b}Pathfinder:{/b} This feat is designed to work with the Soulknife class from Ulimate Psionics for Pathfinder. To get this class you need to load the community &quot;3PP Pack&quot;." compset="Feat" summary="Expend psi-focus to give Cha dmg to mind blade for 1 round." uniqueness="useronce">
+    <fieldval field="actName" value="Cha to Dmg"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      
+      ~ Give bonus to all Mind Blade weapons
+      foreach pick in hero from BaseWep where "IsWeapon.wMindBlade"
+        eachpick.field[wDamBonus].value += #attrmod[aCHA]
+      nexteach]]></eval>
+    <exprreq message="Kalashtar race required."><![CDATA[#hasrace[rS2Kalasht] <> 0]]></exprreq>
+    <exprreq message="Form Mind Blade class ability required."><![CDATA[hero.tagcountstr["HasAbility.cSknMindBl"] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2StrOf2" name="Strength of Two" description="Your quori spirit gives you unmatched willpower.\n\n{b}Prerequisite:{/b} Kalashtar or Inspired.\n\n{b}Benefit:{/b} As long as you are psionically focused and possess at least 1 power point, you receive a +1 insight bonus on Will saves. In addition, as an immediate action (see page 181), you can expend your psionic focus and spend 1 power point to improve this insight bonus to +5 for 1 round.\n\n{b}Pathfinder:{/b} This feat is designed to work with the Soulknife class from Ulimate Psionics for Pathfinder. To get this class you need to load the community &quot;3PP Pack&quot;." compset="Feat" summary="Gain a insight bonus to Will saves." uniqueness="useronce">
+    <fieldval field="actName" value="+5 on Will"/>
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      var v_focus as number
+      call PUPsiFocus
+      v_focus += field[abilActive].value
+      ~ If Not psionically focused get out now
+      doneif (v_focus = 0)
+
+      ~ If we are activated we increase to +5 bonus
+      field[abValue].value += (field[abilActive].value * 4)
+
+      #applybonus[BonInsight,hero.child[svWill],field[abValue].value]]]></eval>
+    <exprreq message="Kalashtar or Inspired race required."><![CDATA[#hasrace[rS2Kalasht] <> 0]]></exprreq>
+    </thing>
+  <thing id="fShftCwEli" name="Cliffwalk Elite" description="Your shifter trait improves.\n\n{b}Prerequisite:{/b} Shifter with the cliffwalk trait.\n\n{b}Benefit:{/b} While shifting, your climb speed improves by 10 feet. This improvement stacks with the increase for the cliffwalk trait, for a total increase of 30 feet." compset="Feat" summary="While shifting, your climb speed improves by 10 feet. This improvement stacks with the increase for the cliffwalk trait, for a total increase of 30 feet." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If Shifter type not live get out now
+      doneif (hero.childlives[raSTcliffw] <> 1)
+      ~ Adjust Cliffwalk climb speed by 10
+      #value2[raSTcliffw] += 10]]></eval>
+    <exprreq message="Cliffwalk shifter required."><![CDATA[hero.tagis[Shifter.Cliffwalk] <> 0]]></exprreq>
+    </thing>
+  <thing id="fShftExShT" name="Extra Shifter Trait" description="You manifest a second shifter trait while shifting.\n\n{b}Prerequisite:{/b} Shifter, two other shifter feats.\n\n{b}Benefit:{/b} Select a second shifter trait from those described in the shifter race description (see page 18). You manifest all the benefits of the second trait except for the temporary bonus to an ability score." compset="Feat" summary="Select a second shifter trait from those described in the shifter race description (see page 18). You manifest all the benefi ts of the second trait except for the temporary bonus to an ability score." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="thingid.raSTbeasth|thingid.raSTcliffw|thingid.raSTdreams | thingid.raSTgorebu | thingid.raSTlongst | thingid.raSTlongto | thingid.raSTrazorc | thingid.raSTswiftw | thingid.raSTruedi | thingid.raSTwildhu"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raSTrazorc">
+      <containerreq phase="First" priority="400">Custom.ShifterRC</containerreq>
+      </bootstrap>
+    <eval phase="First" priority="10000" index="2">doneif (field[usrChosen1].ischosen = 0)
+      perform field[usrChosen1].chosen.pulltags[Custom.?]</eval>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]]]></eval>
+    <exprreq message="Shifter race required." iserror="no"><![CDATA[#hasrace[rShifters] <> 0]]></exprreq>
+    <exprreq message="At least two other shifter feats required." iserror="no"><![CDATA[tagcount[fCategory.Shifter] >=2]]></exprreq>
+    </thing>
+  <thing id="fShftLonEl" name="Longstride Elite" description="Your shifter trait improves.\n\n{b}Prerequisite:{/b} Shifter with the longstride trait.\n\n{b}Benefit:{/b} While shifting, your base land speed improves by 10 feet. This improvement stacks with the increase for the longstride trait, for a total increase of 20 feet." compset="Feat" summary="While shifting, your base land speed improves by 10 feet. This improvement stacks with the increase for the longstride trait, for a total increase of 20 feet." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If Beasthide not live get out now
+      doneif (hero.childlives[raSTlongst] <> 1)
+      ~ Adjust Longstride movement bonus by 10
+      #value2[raSTlongst] += 10]]></eval>
+    <exprreq message="Shifter with longstride trait required."><![CDATA[hero.tagis[Shifter.Longstride] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2DreElit" name="Dreamsight Elite" description="Your dreamsight shifter trait improves.\n\n{b}Prerequisite:{/b} Shifter with the dreamsight trait.\n\n{b}Benefit:{/b} While shifting, you can use a full-round action to gain extraordinary visual power. For the duration of your shifting, you gain a +5 bonus on Perception checks and can see invisible creatures and objects as if under the effect of a {i}see invisibility{/i} spell.\n\n{b}Pathfinder:{/b} Changed Spot checks to perception checks." compset="Feat" summary="When shifting use Full-Round action to gain +5 Perception &amp; {i}see invisibility{/i}." uniqueness="useronce">
+    <fieldval field="abValue" value="5"/>
+    <fieldval field="actName" value="Activate"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpInfo" tag="spSeeInv2"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <bootstrap thing="spSeeInv2">
+      <containerreq phase="First" priority="500"><![CDATA[Shifter.Dreamsight & Shifter.Shifting & fieldval:abilActive = 1]]></containerreq>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If shifting then give +5 bonus to Perecption
+      doneif (hero.tagis[Shifter.Shifting] + field[abilActive].value <> 2)
+
+      #skillbonus[skPercep] += field[abValue].value]]></eval>
+    <exprreq message="Dreamsight shifter trait required."><![CDATA[hero.tagis[Shifter.Dreamsight] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2GorElit" name="Gorebrute Elite" description="Your mighty charge attack can knock down foes.\n\n{b}Prerequisite:{/b} Shifter with the gorebrute trait.\n\n{b}Benefit:{/b} During a charge your horns gain the Trip special abilty. A creature that can’t be tripped also can’t be knocked down with this feat.\n\n{b}Pathfinder:{/b} Changed to use CMB instead of opposed Strength checks." compset="Feat" summary="When charging your horns gain the Trip ability." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="DescInfo" tag="raTrip"/>
+    <bootstrap thing="raTrip">
+      <containerreq phase="First" priority="500"><![CDATA[Shifter.Shifting & Shifter.Gorebrute]]></containerreq>
+      <autotag group="Target" tag="wGore"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]]]></eval>
+    <exprreq message="Gorebrute shifter trait required."><![CDATA[hero.tagis[Shifter.Gorebrute] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2LongEli" name="Longtooth Elite" description="Your longtooth shifter trait improves.\n\n{b}Prerequisite:{/b} Shifter with the longtooth trait.\n\n{b}Benefit:{/b} Wounds dealt by your bite attacks bleed copiously. Each time a living creature takes damage from your bite attack, it also takes 1 point of Constitution damage." compset="Feat" summary="When shifting your bite attack causes 1 Con damage." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ Put extra Con dmg note on Longtooth bite
+      perform hero.findchild[BaseWep,"thingid.wBite & Shifter.Longtooth"].setfocus
+      doneif (state.isfocus = 0)
+      #extradamage[focus," plus 1 Con",field[name].text]]]></eval>
+    <exprreq message="Longtooth shifter trait required."><![CDATA[hero.tagis[Shifter.Longtooth] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2RazorEl" name="Razorclaw Elite" description="Your razorclaw shifter trait improves.\n\n{b}Prerequisite:{/b} Shifter with the razorclaw trait.\n\n{b}Benefit:{/b} When you make a charge attack, you can make two claw attacks at the end of the charge. Both attacks are at your highest attack bonus, and both receive the +2 bonus for charging. Normal: Without this feat, a character can only make a single attack as part of a charge." compset="Feat" summary="When charging you can attack with both claws." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]]]></eval>
+    <exprreq message="Razorclaw shifter trait required."><![CDATA[hero.tagis[Shifter.Razorclaw] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ReacShi" name="Reactive Shifting" description="You can shift with a mere thought.\n\n{b}Prerequisites:{/b} Shifter, Improved Initiative.\n\n{b}Benefit:{/b} You can activate your racial shifting ability as an immediate action (see page 181), allowing you to begin shifting even when flat-footed or when it’s not your turn." compset="Feat" summary="Activate your shifting ability as an immediate action." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="abAction" tag="Immediate"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]]]></eval>
+    <exprreq message="Shifter race required."><![CDATA[#hasrace[rShifters] <> 0]]></exprreq>
+    <exprreq message="Improved Initiative feat required."><![CDATA[#hasfeat[fImpInit] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ShifAgi" name="Shifter Agility" description="Your heritage of speed and ferocity has honed your reflexes, allowing you to avoid attacks.\n\n{b}Prerequisite:{/b} Shifter with the cliffwalk, longstride, or swiftwing trait.\n\n{b}Benefit:{/b} You gain a +1 dodge bonus to Armor Class and a +1 bonus to Reflex saves while shifting." compset="Feat" summary="When shifting gain +1 dodge bonus to AC and Reflex saves." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If not shifting get out now!
+      doneif (hero.tagis[Shifter.Shifting] = 0)
+
+      hero.child[ArmorClass].field[tACDodge].value += field[abValue].value
+      hero.child[svRef].field[Bonus].value += field[abValue].value]]></eval>
+    <exprreq message="Cliffwalk, longstride, or swiftwing shifter trait required."><![CDATA[hero.tagis[Shifter.Cliffwalk] + hero.tagis[Shifter.Longstride] + hero.tagis[Shifter.Swiftwing] <> 0]]></exprreq>
+    <exprreq message="Shifter race required."><![CDATA[#hasrace[rShifters] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ShifFer" name="Shifter Ferocity" description="You are a tenacious combatant, continuing to fight when others would succumb to pain and injury.\n\n{b}Prerequisites:{/b} Shifter, Wisdom 13.\n\n{b}Benefit:{/b} While shifting, you continue to fight without penalty if you are disabled or dying. This benefit has the following specific game effects. When reduced to 0 hit points, you can act as if you weren’t disabled (that is, you ignore the normal restriction of only a single move action or standard action per round). You do not lose 1 hit point for performing a standard or otherwise strenuous action while at 0 hit points.\n\nWhen reduced to –1 to negative Constitution, you do not fall unconscious. You do not automatically lose 1 hit point each round when at –1 to negative Constitution.\n\nWhen your current hit points drop to negative Constitution or lower, you immediately die.\n\n{b}Pathfinder:{/b} Change the wording to be to negative Constitution instead of -9." compset="Feat" summary="While shifting, you continue to fight without penalty if you are disabled or dying." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]]]></eval>
+    <exprreq message="Wisdom 13 required."><![CDATA[#attrvalue[aWIS] >= 13]]></exprreq>
+    <exprreq message="Shifter race required."><![CDATA[#hasrace[rShifters] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ShifIns" name="Shifter Instincts" description="Your heritage has given you sharp senses and quick reflexes, and you have learned to trust your equally sharp instincts.\n\n{b}Prerequisite:{/b} Shifter.\n\n{b}Benefit:{/b} You gain a +1 bonus on Perception, Sense Motive, and a +2 bonus on initiative checks.\n\n{b}Pathfinder:{/b} Change Listen and Spot Checks to Perception." compset="Feat" summary="While shifting, you continue to fight without penalty if you are disabled or dying." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="2"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ Bonus to Perception & Sense Motive
+      #skillbonus[skPercep] += field[abValue].value
+      #skillbonus[skSenseMot] += field[abValue].value
+
+      ~ Bonus to initiative
+      hero.child[Initiative].field[Bonus].value += field[abValue2].value]]></eval>
+    <exprreq message="Shifter race required."><![CDATA[#hasrace[rShifters] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ShifSav" name="Shifter Savagery" description="The bestial fury of your lycanthrope ancestors allows you to deal devastating strikes with your natural weapons.\n\n{b}Prerequisites:{/b} Shifter with the gorebrute, longtooth, or razorclaw trait, base attack bonus +6, ability to rage.\n\n{b}Benefit:{/b} While shifting and raging simultaneously, the threat range of your natural weapons doubles (to 19–20) and the base damage dealt by your natural weapons improves by two steps, as if your size had increased by two categories.\n\n{b}Special:{/b} The threat range improvement granted by this feat doesn’t stack with any other effect that expands the threat range of a weapon (such as Improved Critical). The damage improvement granted by this feat does not stack with other effects that increase the base damage of your natural weapons (such as Improved Natural Attack), except for effects that grant an actual size increase (such as an enlarge person spell).\n\n{b}Pathfinder:{/b} Removed the size damage progression listed as Pathfinder uses a standard set of values. As Pathfinder has no frenzy ability I removed it." compset="Feat" summary="When shifting your natural attacks increase by two size categories." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <eval phase="PreLevel" priority="11000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If not raging and shifting get out now!
+      doneif (hero.tagis[Shifter.Shifting] + hero.tagis[Hero.Raging] <> 2)
+      ~ Loop through all shifter natural attacks
+      foreach pick in hero from BaseNatWep where "Shifter.?"
+        ~ Increase threat range
+        perform eachpick.assign[Broadcast.ImpCrit]
+        ~ If we already have improved natural attack only increase by 1 
+        if (eachpick.tagis[HasFeat.fImpNatAtt] = 1) then
+          perform eachpick.assign[Helper.DamageUp]
+        ~..increase by 2 sizes
+        else
+          perform eachpick.assign[Helper.DamageUp]
+          perform eachpick.assign[Helper.DamageUp]          
+        endif
+      nexteach]]></eval>
+    <exprreq message="Gorebrute, longtooth, or razorclaw trait shifter trait required."><![CDATA[hero.tagis[Shifter.Gorebrute] + hero.tagis[Shifter.Longtooth] + hero.tagis[Shifter.Razorclaw] <> 0]]></exprreq>
+    <exprreq message="Rage class abilty required."><![CDATA[#hasability[cBbnRage] <> 0]]></exprreq>
+    <exprreq message="Base attack bonus +6 required."><![CDATA[#BAB[] >= 6]]></exprreq>
+    </thing>
+  <thing id="fS2ShifSta" name="Shifter Stamina" description="Yours is a heritage of endurance and tenacity, and you can shrug off bruises and fatigue.\n\n{B}Prerequisites:{/B} Shifter with the beasthide, truedive, or wildhunt trait, Endurance.\n\n{B}Benefit:{/B} While shifting, you are immune to nonlethal damage, and the effects of fatigue and exhaustion are suppressed. When your shifting ends, any fatigue or exhaustion effects that would have taken effect during your shifting (or that were in effect when you began shifting) take effect normally." compset="Feat" summary="While shifting, immune to nonlethal dmg, and fatigue &amp; exhaustion are suppressed." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <bootstrap thing="raImmNonLe">
+      <containerreq phase="First" priority="500">Shifter.Shifting</containerreq>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If not shifting get out now!
+      doneif (hero.tagis[Shifter.Shifting] = 0)
+
+      ~ If fatigue suppress its penalties
+      if (hero.child[pcnFatigue].field[pIsOn].value = 1) then
+        hero.child[aSTR].field[Penalty].value += 2
+        hero.child[aDEX].field[Penalty].value += 2 
+      endif]]></eval>
+    <eval phase="PreAttr" index="2"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If not shifting get out now!
+      doneif (hero.tagis[Shifter.Shifting] = 0)
+
+      ~ If fatigued suppress its penalties
+      if (hero.child[pcnFatigue].field[pIsOn].value + hero.tagis[Condition.pcnFatigue] <> 0) then
+        hero.child[aSTR].field[Penalty].value += 2
+        hero.child[aDEX].field[Penalty].value += 2 
+      endif
+
+      ~ If Exhausted suppress its penalties
+      if (hero.child[pcnExhaust].field[pIsOn].value + hero.tagis[Condition.pcnExhaust] <> 0) then
+        hero.child[aSTR].field[Penalty].value += 6
+        hero.child[aDEX].field[Penalty].value += 6
+        perform hero.assign[Hero.NoExhSpd] 
+      endif]]></eval>
+    <exprreq message="Shifter with the beasthide, truedive, or wildhunt trait required."><![CDATA[hero.tagis[Shifter.Beasthide] + hero.tagis[Shifter.Truedive] + hero.tagis[Shifter.Wildhunt] <> 0]]></exprreq>
+    <exprreq message="Endurance Feat required."><![CDATA[#hasfeat[fEndure] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2SwifEli" name="Swiftwing Elite" description="Your swiftwing shifter trait improves.\n\n{B}Prerequisite:{/B} Shifter with the swiftwing trait.\n\n{B}Benefit:{/B} While shifting, your base fly speed improves by 10 feet and your maneuverability improves to good." compset="Feat" summary="While shifting, fly speed improves by 10ft &amp; maneuverability improves to good." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If not shifting get out now!
+      doneif (hero.tagis[Shifter.Shifting] = 0)
+
+      #value[xFly] += 10
+      perform hero.childfound[xFly].assign[Maneuver.Good]]]></eval>
+    <exprreq message="Shifter with the swiftwing trait required."><![CDATA[hero.tagis[Shifter.Swiftwing] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2TrueEli" name="Truedive Elite" description="Your truedive shifter trait improves.\n\n{B}Prerequisite:{/B} Shifter with the truedive trait.\n\n{B}Benefit:{/B} While shifting, your swim speed improves by 10 feet. In addition, you take none of the regular penalties on melee attack rolls normally applicable to underwater combat.\n\n{B}Special:{/B} Without this feat, a character with a swim speed takes a –2 penalty on melee attack rolls made with bludgeoning or slashing weapons while underwater.\n\n{B}Note:{/b} This feat will suppress the -2 penalty if you use the &quot;Swimming/Underwater Combat condition that can be found by turning on &quot;ShadowChemosh Adjustments&quot;." compset="Feat" summary="While Shifting gain +10ft swim speed and no penalty w/melee weapons underwater." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If not shifting get out now!
+      doneif (hero.tagis[Shifter.Shifting] = 0)
+
+      #value[xSwim] += 10
+      ~ Suppress the -2 penalty on the Swimming Condition
+      #value[pS2UnderWa] = 0]]></eval>
+    <exprreq message="Shifter with the truedive trait required."><![CDATA[hero.tagis[Shifter.Truedive] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2WildEli" name="Wildhunt Elite" description="Your shifter-enhanced instincts and senses allow you to detect concealed and invisible creatures.\n\n{b}Prerequisite:{/b} Shifter with the wildhunt trait.\n\n{b}Benefit:{/b} While shifting, your nonvisual senses improve to such a degree that you gain the blindsense ability out to 30 feet." compset="Feat" summary="While Shifting gain blindsense 30ft." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <bootstrap thing="rBlindsen">
+      <containerreq phase="First" priority="500">Shifter.Shifting</containerreq>
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]]]></eval>
+    <exprreq message="Shifter with the wildhunt trait required."><![CDATA[hero.tagis[Shifter.Wildhunt] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2BattTra" name="Battleshifter Training" description="Your shifter fighting instincts grant you a sophisticated blend of defensive techniques and controlled attacks.\n\n{b}Prerequisites:{/b} Shifter, base attack bonus +6.\n\n{b}Benefit:{/b} Battleshifter Training enables the use of three tactical maneuvers when you fight while shifting.\n\n{i}Tiring Defense:{/i} To use this maneuver, you must use the Combat Expertise feat (taking a penalty of at least –2 on your attack rolls) or fight defensively for 2 consecutive rounds. Any creature that attempts a melee attack against you in both rounds but fails to hit you becomes fatigued, provided that you successfully strike the creature with a melee attack at least once during those 2 rounds. This effect continues for as long as you use Combat Expertise (taking a penalty of at least –2 on your attack rolls) or fight defensively. Creatures that were already fatigued before they attacked you must make melee attacks against you and miss for 4 consecutive rounds before becoming exhausted (just as if they had not been fatigued).\n\n{i}Exploit Weakness:{/i} To use this maneuver, you must make a melee attack against a creature suffering from one of the following conditions: fatigued, exhausted, dazed, or dazzled. If you hit with your melee attack, you deal an extra 1d6 points of damage. You cannot use this maneuver during a round in which you also use Combat Expertise or fight defensively. \n\n{i}Riposte:{/i} To use this maneuver, you must use Combat Expertise (taking a penalty of at least –2 on your attack rolls) or fight defensively. When a foe uses a full attack action against you but fails to hit you, you can spend 1 action point to make an extra melee attack against that foe as an immediate action (see page 181).\n\n{b}Special:{/b} Battleshifter Training and Ragewild Fighting (see page 118) are inimical to each other; no character can have both tactical feats. If a character chooses to take one of these feats while already having the other, he gains the benefits of the new feat but forever loses access to the first (and does not gain a new feat to replace it)." compset="Feat" summary="Gain the use of 3 special manuevers: Tiring Defense, Exploit Weakness &amp; Riposte." uniqueness="useronce">
+    <fieldval field="actName" value="Exploit Weakness"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="6"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Shifter"/>
+    <tag group="fCategory" tag="S2Tactical" name="Tactical"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If we're not enabled get out now!
+      doneif (field[abilActive].value = 0)
+      
+      ~ Loop through all weapons
+      foreach pick in hero from BaseWep
+        #extradamage[eachpick,signed(field[abValue].value) & "d" & field[abValue2].value,field[name].text]
+      nexteach]]></eval>
+    <exprreq message="Base attack bonus +6 required."><![CDATA[#BAB[] >= 6]]></exprreq>
+    <exprreq message="Shifter race required."><![CDATA[#hasrace[rShifters] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2BrutFig" name="Brute Fighting" description="Your extensive training with two-handed weapons is revealed through brutally effective tactics.\n\n{b}Prerequisites:{/b} Warforged, Str 13, Power Attack, base attack bonus +3.\n\n{b}Benefit:{/b} Brute Fighting enables the use of three tactical maneuvers.\n\n{i}Combat Momentum:{/i} If you deal damage to a foe with a charge attack made with a two-handed weapon and that opponent then fails to hit you before your next turn, you gain a +1 bonus on attack rolls against that opponent on your next turn.\n\n{i}Dispatch the Fallen:{/i} If you successfully bull rush or overrun a foe, any melee attack you make against that foe with a two-handed weapon on your next turn gains a +4 bonus on damage rolls.\n\n{i}Frenzied Attack:{/i} If you hit a foe with a two-handed weapon at least once on two consecutive turns during which you use the Power Attack feat (taking at least a –2 penalty on attack rolls), you gain a +2 bonus on all attack rolls you make with that weapon against the same foe for the rest of the round." compset="Feat" summary="3 special manuevers: Combat Momentum, Dispatch the Fallen &amp; Frenzied Attack." uniqueness="useronce">
+    <fieldval field="actName" value="Combat Momentum"/>
+    <fieldval field="actName2" value="Dispatch the Fallen"/>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="4"/>
+    <fieldval field="reqStr" value="13"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="S2Tactical" name="Tactical"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="aS2BrutFig"></bootstrap>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ Set the Shifter Feat Tag on the hero
+      perform hero.assign[Shifter.Feat]
+
+      ~ If Combat Momentum is enabled
+      if (field[abilActive].value = 1) then
+        hero.child[Attack].field[Bonus].value += field[abValue].value
+      endif
+      
+      ~ If Dispatch the Fallen is enabled
+      if (field[abilAct2].value = 1) then
+        hero.child[Damage].field[Bonus].value += field[abValue2].value
+      endif]]></eval>
+    <exprreq message="Base attack bonus +3 required."><![CDATA[#BAB[] >= 3]]></exprreq>
+    <exprreq message="Warforged race required."><![CDATA[#hasrace[rS2Warforg] <> 0]]></exprreq>
+    <exprreq message="Power Attack feat required."><![CDATA[#hasfeat[fPowerAtt] <> 0]]></exprreq>
+    </thing>
+  <thing id="aS2BrutFig" name="Brute Fighting" description="Your extensive training with two-handed weapons is revealed through brutally effective tactics.\n\n{b}Prerequisites:{/b} Warforged, Str 13, Power Attack, base attack bonus +3.\n\n{b}Benefit:{/b} Brute Fighting enables the use of three tactical maneuvers.\n\n{i}Combat Momentum:{/i} If you deal damage to a foe with a charge attack made with a two-handed weapon and that opponent then fails to hit you before your next turn, you gain a +1 bonus on attack rolls against that opponent on your next turn.\n\n{i}Dispatch the Fallen:{/i} If you successfully bull rush or overrun a foe, any melee attack you make against that foe with a two-handed weapon on your next turn gains a +4 bonus on damage rolls.\n\n{i}Frenzied Attack:{/i} If you hit a foe with a two-handed weapon at least once on two consecutive turns during which you use the Power Attack feat (taking at least a –2 penalty on attack rolls), you gain a +2 bonus on all attack rolls you make with that weapon against the same foe for the rest of the round." compset="Ability" summary="3 special manuevers: Combat Momentum, Dispatch the Fallen &amp; Frenzied Attack." uniqueness="useronce">
+    <fieldval field="actName" value="Frenzied Attack"/>
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ If Frenzied Attack is enabled
+      if (field[abilActive].value = 1) then
+        hero.child[Attack].field[Bonus].value += field[abValue].value
+      endif]]></eval>
+    </thing>
+  <thing id="fS2DanShad" name="Dancing with Shadows" description="You have studied {i}sheshan talarash dasyannah,{/i} the martial dance of the kalashtar.\n\n{b}Prerequisites:{/b} Kalashtar, Perform (dance) 5 ranks, Path of Shadows, base attack bonus +4.\n\n{b}Benefit:{/b} Dancing with Shadows enables the use of three tactical maneuvers. You can only benefit from one of these maneuvers in any given round.\n\n{i}Flowing Motion, Still Mind:{/i} To use this maneuver, you must use the Combat Expertise feat or fight defensively for 1 round. Starting on your next turn, you gain a +2 bonus on Will saves that lasts as long as you continue to use Combat Expertise or fight defensively, plus 1 round thereafter.\n\n{i}Graceful Lunge:{/i} To use this maneuver, you must use Combat Expertise or fight defensively for 1 round. In the next round, you gain a bonus on your first melee attack roll equal to the dodge bonus to AC granted by Combat Expertise or fighting defensively in the previous round.\n\n{i}Lingering Defense:{/i} To use this maneuver , you must use the Combat Expertise feat or fight defensively for 2 consecutive rounds. In the next round, you continue to receive the same dodge bonus to AC gained from Combat Expertise or fighting defensively, but you take no penalty on attack rolls.\n\n{b}Note:{/b} Because these are very situational bonuses and values its best if you use adjustments on the {b}Adjust{/b} tab to represent these bonuses and when they apply." compset="Feat" summary="Use one of the listed maneuvers." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="fCategory" tag="S2Tactical"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Perform (dance) 5 ranks required."><![CDATA[#skillranks[skPerfDanc] >= 5]]></exprreq>
+    <exprreq message="Path of Shadows feat required."><![CDATA[#hasfeat[fS2PathOfS] <> 0]]></exprreq>
+    <exprreq message="Base attack bonus +4 required."><![CDATA[#BAB[] >= 4]]></exprreq>
+    <exprreq message="Kalashtar race required."><![CDATA[#hasrace[rS2Kalasht] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2DistVis" name="Disturbing Visage" description="You can change your features to chilling effect.\n\n{b}Prerequisites:{/b} Changeling, Bluff 3 ranks, Quick Change.\n\n{b}Benefit:{/b} The Disturbing Visage feat enables the use of three tactical maneuvers. Creatures immune to mind-affecting spells and abilities cannot be affected by this feat; regardless of the outcome of the opposed check, a creature can be affected only once by each of these maneuvers in a 24-hour period.\n\n{i}Cringe:{/i} You change your features to appear weak and unworthy of an opponent&apos;s best efforts. To use this maneuver, you must use your minor change shape ability and take the total defense action in the same turn. You then make a Bluff check as a free action. From the end of your turn until the beginning of your next turn, any opponent that attempts to make a melee attack against you must make a Sense Motive check opposed by your Bluff check result. Failure means that the opponent takes a -5 penalty on weapon damage rolls (minimum 1 point) against you for 1 minute.\n\n{i}Taunt:{/i} You change your features to mock an opponent. To use this maneuver, you must use your minor change shape ability to mimic the features of a selected target creature, who must be no more than 10 feet from you, must have missed you with a melee or ranged attack in the previous round, and is a humanoid, monstrous humanoid, or giant. You then make a Bluff check as a free action, opposed by the selected creature&apos;s Sense Motive check. If your check is successful, your foe takes a -2 penalty on attack rolls for 1 minute.\n\n{i}Unnerve:{/i} You change your features to become a more terrifying foe. To use this maneuver, you must hit the target creature with a melee attack and use your minor change shape ability in the same round. You then make a Bluff check as a free action, opposed by a Sense Motive check from the foe you hit. If your check is successful, your foe takes a -2 penalty to AC for 1 minute.\n\n{b}Note:{/b} Because these are very situational bonuses and values its best if you use adjustments on the {b}Adjust{/b} tab to represent these bonuses and when they apply." compset="Feat" summary="Use one of the listed maneuvers." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="fCategory" tag="S2Tactical"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Bluff 3+ ranks required."><![CDATA[#skillranks[skBluff] >= 3]]></exprreq>
+    <exprreq message="Quick Change feat required."><![CDATA[#hasfeat[fS2QuiChan] <> 0]]></exprreq>
+    <exprreq message="Changeling race required."><![CDATA[#hasrace[rS2Changel] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2KalaTho" name="Kalashtar Thoughtshifter" description="You have learned to control your mind blade for maximum impact in battle.\n\n{b}Prerequisites:{/b} Kalashtar, base attack bonus +4, ability to generate a mind blade.\n\n{b}Benefit:{/b} The Kalashtar Thoughtshifter feat enables the use of three tactical maneuvers.\n\n{i}Burrowing Blade:{/i} To use this maneuver, you must make a full attack with your mind blade against an opponent using a shield. In the following round, you can spend 1 power point as a swift action to allow your next mind blade attack against that opponent to ignore the shield&apos;s bonus to AC.\n\n{i}Nemesis:{/i} To use this maneuver, you must make at least one melee attack with your mind blade each round against the same opponent for 2 consecutive rounds. In the following round, you can spend 1 power point as a move action to adapt your weapon to the target, receiving a +1 insight bonus on melee attack rolls and weapon damage rolls made against that opponent with your mind blade. However, you take a - 1 penalty on attack rolls and weapon damage rolls made with your mind blade against any other creature. This effect lasts until you restore the balance of your blade (a move action).\n\n{i}Shifting Blade:{/i} To use this maneuver, you must make a melee attack with your mind blade against a specific foe. On a melee attack against the same foe in the next round, you can spend 1 power point as a swift action to change the shape of your mind blade in mid-blow, altering the damage type of the weapon (piercing, bludgeoning, or slashing) until the start of your next turn.\n\n{b}Note:{/b} Because these are very situational bonuses and values its best if you use adjustments on the {b}Adjust{/b} tab to represent these bonuses and when they apply.\n\n{b}Note 2:{/b} This feat is setup to work with Ultimate Psionics book located in the community Pathfinder 3PP Pack." compset="Feat" summary="Use one of the listed maneuvers." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="fCategory" tag="S2Tactical"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="Base attack bonus +4 required."><![CDATA[#BAB[] >= 4]]></exprreq>
+    <exprreq message="Kalashtar race required."><![CDATA[#hasrace[rS2Kalasht] <> 0]]></exprreq>
+    <exprreq message="Form Mind Blade class feature required."><![CDATA[hero.tagcountstr["HasAbility.cSknMindBl"] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2RageFig" name="Ragewild Fighting" description="You have mastered a merciless form of combat that emphasizes using brute strength to shatter your foes.\n\n{b}Prerequisites:{/b} Shifter, Power Attack, base attack bonus +6.\n\n{b}Benefit:{/b} Ragewild Fighting enables the use of three tactical maneuvers (whether you are shifting or not).\n\n{i}Instinctive Strike:{/i} Ragewild warriors know that the magic wielded by many of Eberron&apos;s powerful creatures can confuse the mind and cloud a warrior&apos;s judgment, and so they learn to react to magic forcefully. Whenever you fail a Will save against a spell (excluding spells with &amp;quot;harmless&amp;quot; in their saving throw entry), you can make a single melee attack as an immediate action before the spell takes effect.\n\n{i}Rattle the Weakling:{/i} To use this maneuver, you must hit the target creature with a melee attack in the first round, then make a melee attack using Power Attack (taking a penalty of at least - 5 on your attack rolls) in the second round. Any creature of your size category or smaller hit by this attack must make a Fortitude save (DC 10 + 1/2 your character level + your Str modifier) or be dazed for 1 round.\n\n{i}Brutal Charge:{/i} To use this maneuver, you must charge a foe and successfully hit with a melee attack. If this charge attack hits, you can spend an action point to deal extra damage equal to your Strength bonus (1-1/2 times your Strength bonus if you use a two-handed weapon).\n\n{b}Special:{/b} Battleshifter Training and Ragewild Fighting are inimical to each other, and no character can have both tactical feats. If a character chooses to take one of these feats while already having the other, he gains the benefits of the new feat but forever loses access to the first (and does not gain a new feat to replace it).\n\n{b}Note:{/b} Because these are very situational bonuses and values its best if you use adjustments on the {b}Adjust{/b} tab to represent these bonuses and when they apply." compset="Feat" summary="Use one of the listed maneuvers." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="fCategory" tag="S2Racial"/>
+    <tag group="fCategory" tag="S2Tactical"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="abSave" tag="FortNeg"/>
+    <tag group="StandardDC" tag="aSTR"/>
+    <exprreq message="Power Attack feat required."><![CDATA[#hasfeat[fPowerAtt] <> 0]]></exprreq>
+    <exprreq message="Base attack bonus +6 required."><![CDATA[#BAB[] >= 6]]></exprreq>
+    <exprreq message="Shifter race required."><![CDATA[#hasrace[rShifters] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ColIrTr" name="Cold Iron Tracery" description="Cold-forged iron that runs through your body allows you to overcome the supernatural defenses of certain creatures and protecting against some magical attacks.{br}{br}{b}Prerequisites:{/b} Warforged.{br}{br}{b}Benefit:{/b} Your natural weapons and grapple checks made to deal damage are treated as cold iron weapons for the purpose of overcoming damage reduction. You also gain a +1 bonus on Will saves against spells and spell-like abilities." compset="Feat" summary="Your natural attacks and grapple damage is treated as Cold Iron." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="Warforged"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #situational[hero.child[svWill],signed(field[abValue].value) & " bonus vs Spells and & spell-like abilities.",field[name].text]]]></eval>
+    <exprreq message="Warforged Race Required."><![CDATA[#hasrace[rS2Warforg] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2ConLock" name="Construct Lock" description="Your knowledge of construct nature allows you to deal extra damage to or even immobilize such foes.\n\n{b}Prerequisites:{/b} Warforged, base attack bonus +2.\n\n{b}Benefit:{/b} You gain a +2 bonus on damage rolls against creatures with the construct type (including living constructs).\n\nIf you roll a critical threat against a construct, you can forego the confirmation roll to make another attack roll using the same modifier. If this second attack also hits and deals at least 1 point of damage, the construct must succeed on a Fortitude save (DC 10 + 1/2 your character level + your Con modifier) or be rendered immobile and helpless for 1 round (as if it had been paralyzed).\n\n{b}Special:{/b} If you spend an action point to improve an attack roll against a construct and hit with the attack, the attack roll is automatically considered to be a critical threat regardless of the number rolled on the die." compset="Feat" summary="Don&apos;t crit to make 2nd attack. If successfull make a Fort save or be Paralyzed." uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="actName" value="vs Construct"/>
+    <fieldval field="abDuration" value="1"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="Warforged"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="abSave" tag="FortNeg"/>
+    <tag group="abDuration" tag="Round"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abRange" tag="Attack"/>
+    <tag group="abAction" tag="Attack"/>
+    <eval phase="PreAttr" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If we're not activated get out now!
+      doneif (field[abilActive].value = 0)
+
+      hero.child[Damage].field[Bonus].value += field[abValue].value]]></eval>
+    <exprreq message="Warforged Race Required."><![CDATA[#hasrace[rS2Warforg] <> 0]]></exprreq>
+    <exprreq message="Base attack bonus +2 required."><![CDATA[#BAB[] >= 2]]></exprreq>
+    </thing>
+  <thing id="fS2ImpResi" name="Improved Resiliency" description="You gain a construct&apos;s resistance to nonlethal damage.{br}{br}{b}Prerequisite:{/b} Warforged.{br}{br}{b}Benefit:{/b} You are immune to nonlethal damage but lose the ability to benefit from regeneration or fast healing, even if you would gain those qualities through magic or the application of a template." compset="Feat" summary="You can no benefit from regeneration or fast healing." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="Warforged"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <bootstrap thing="raImmNonLe"></bootstrap>
+    <exprreq message="Warforged Race Required."><![CDATA[#hasrace[rS2Warforg] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2JawsDea" name="Jaws of Death" description="Gnashing teeth and a powerful set of jaws allow you to bite foes.\n\n{b}Prerequisite:{/b} Warforged.\n\nBenefit: You have a bite attack that deals 1d6 points of damage (for a Medium warforged).\n\n{b}Pathfinder:{/b} This bite attack now follows all the normal Pathfinder rules for a natural attack." compset="Feat" summary="You gain a 1d6 bite attack." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="Warforged"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6"/>
+      </bootstrap>
+    <exprreq message="Warforged Race Required."><![CDATA[#hasrace[rS2Warforg] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2SecSlam" name="Second Slam" description="You have learned to use your form to the utmost and can make two slam attacks.{br}{br}{b}Prerequisites:{/b} Warforged, base attack bonus +6.{br}{br}{b}Benefit:{/b} You can deliver a second slam in any round in which you make a full attack that includes a slam attack. The second slam uses your highest attack bonus with a - 5 penalty, and deals your normal slam attack damage." compset="Feat" summary="Don&apos;t crit to make 2nd attack. If successfull make a Fort save or be Paralyzed." uniqueness="useronce">
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="Warforged"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <eval phase="PreLevel" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Give 2nd attack at -5
+      perform hero.childfound[wSlam].assign[Helper.AnimCExtra]]]></eval>
+    <exprreq message="Base attack bonus +6 required."><![CDATA[#BAB[] >= 6]]></exprreq>
+    <exprreq message="Warforged Race Required."><![CDATA[#hasrace[rS2Warforg] <> 0]]></exprreq>
+    </thing>
+  <thing id="fS2SilveTr" name="Silver Tracery" description="Alchemical silver tracery covers your body, allowing you to overcome the supernatural defenses of certain creatures and protecting against some magical attacks.\n\n{b}Prerequisite:{/b} Warforged.\n\n{b}Benefit:{/b} Your natural weapons and your grapple checks made to deal damage are treated as silvered weapons for the purpose of overcoming damage reduction. As well, you gain a +1 bonus on Fortitude saves against spells and spell-like abilities." compset="Feat" summary="Your natural attacks and grapple damage is treated as Sliver." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcRaOfEb"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="fCategory" tag="Warforged"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #situational[hero.child[svFort],signed(field[abValue].value) & " bonus vs Spells and & spell-like abilities.",field[name].text]]]></eval>
+    <exprreq message="Warforged Race Required."><![CDATA[#hasrace[rS2Warforg] <> 0]]></exprreq>
+    </thing>
+  </document>

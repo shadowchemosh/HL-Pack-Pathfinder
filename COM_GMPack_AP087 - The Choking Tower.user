@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_AP087 - The Choking Tower"/>
+  <thing id="rcAP87SmkA" name="Smoke Armor" description="The coils of smoke that surround Furkas Xoud are partially solid. They grant him a +4 natural armor bonus and 40 bonus hit points." compset="RaceCustom" summary="Coils of smoke crant +4 natural armor and 40 bonus hp.">
+    <usesource source="PathIronGo"/>
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="AbilType" tag="Super"/>
+    <tag group="AllowRCust" tag="cfgGhost"/>
+    <eval phase="PostAttr" priority="500"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      hero.child[ArmorClass].field[tACNatural].value += 4
+      herofield[tBonusHP].value += 40]]></eval>
+    </thing>
+  <thing id="rcAP87SpcM" name="Spectral Miasma" description="As a free action once per hour, Furkas can summon a life-sapping mist that functions as {i}obscuring mist{/i}, except that Furkas can see through this fog normally. Living creatures that enter or start their turns within the spectral miasma take 2d6 points of negative energy damage; Furkas heals for the same amount of damage. Once created, a spectral miasma persists for 1 minute or until dispersed by wind or fire, whichever happens first." compset="RaceCustom" summary="Mist deals 2d6 negative energy damage and heals ghost for the same amount.">
+    <fieldval field="abDuration" value="1"/>
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="PathIronGo"/>
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="AllowRCust" tag="cfgGhost"/>
+    <tag group="abDuration" tag="Minute"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="abAction" tag="Free"/>
+    <tag group="Usage" tag="Hour"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SpInfo" tag="spObscMis1"/>
+    </thing>
+  <thing id="rAP87BioCl" name="Bionanite Cloud" compset="Race">
+    <fieldval field="rSTR" value="-9"/>
+    <fieldval field="rDEX" value="6"/>
+    <fieldval field="rINT" value="-4"/>
+    <fieldval field="rWIS" value="8"/>
+    <fieldval field="rSpeed" value="0"/>
+    <fieldval field="rFeat" value="-6"/>
+    <fieldval field="rHitDice" value="11"/>
+    <fieldval field="rHPStart" value="60"/>
+    <fieldval field="rCR" value="7"/>
+    <fieldval field="rSpace" value="10"/>
+    <fieldval field="rReach" value="0"/>
+    <fieldval field="rDescript" value="A faint buzz fills the air as a dark cloud of smoke or dust gathers out of nowhere, swirling amorphously, then suddenly darts forward with purpose."/>
+    <usesource source="PathIronGo"/>
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="Alignment" tag="NeutralLC" name="Neutral" abbrev="N"/>
+    <tag group="HasType" tag="tpConst" name="Construct" abbrev="Construct"/>
+    <tag group="Hero" tag="NoDefComm" name="NoDefComm" abbrev="NoDefComm"/>
+    <tag group="RaceSize" tag="Fine14" name="Fine" abbrev="Fine"/>
+    <tag group="RaceType" tag="NPC" name="NPC Race" abbrev="NPC Race"/>
+    <tag group="Alignment" tag="NeutralGE" name="Neutral" abbrev="N"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Perfect"/>
+      <autotag group="Value" tag="40"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsFire">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xImmWepDam"></bootstrap>
+    <bootstrap thing="rBlindsen">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="fLightRef"></bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="lAndroffen"></bootstrap>
+    <bootstrap thing="stSwarm"></bootstrap>
+    <bootstrap thing="fAbilFoc"></bootstrap>
+    <bootstrap thing="raAP87Fasc"></bootstrap>
+    <bootstrap thing="raAP87RecH"></bootstrap>
+    <bootstrap thing="raAP87Weak"></bootstrap>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+      #skillinnate[skFly] += 1
+      #skillinnate[skPercep] += 10
+
+      hero.child[raSwarmAtk].field[wDamExtra].text = " plus distraction and weakness"]]>
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    <eval phase="Final" priority="5000" index="2">
+      perform hero.child[xVulArea].assign[Helper.SpcDisable]
+      perform hero.child[xVulArea].assign[Hide.Special]</eval>
+    </thing>
+  <thing id="raAP87Fasc" name="Fascination" description="As a standard action, a bionanite cloud can create a series of hypnotic waves of color to fascinate creatures within 30 feet. The distraction of a nearby combat or other dangers prevents this ability from working, but otherwise, all affected creatures must succeed at a DC 19 Will save or become fascinated. The bionanite cloud can maintain this effect each round after initial activation as a move action. This is a visual mind-affecting effect. The save DC is Dexterity-based." compset="RaceSpec">
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="StandardDC" tag="aDEX"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raAP87RecH" name="Reconstructive Healing" description="As a swift action, a bionanite cloud can heal a single living target it shares a space with, healing 1d6 points of damage. The cloud often triggers this ability when it reduces a creature to negative hit points, so as to stabilize the target. The cloud can administer this healing in an instant before resolving any actual damage dealt to prevent a creature’s death from its swarm attack." compset="RaceSpec" summary="Heal living target 1d6 damage.">
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abAction" tag="Swift"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="raAP87Weak" name="Weakness" description="When a bionanite cloud damages a living creature, it disrupts the transmission of nerve impulses to the creature’s muscles, causing 1d4 points of Strength damage. A successful DC 15 Fortitude save negates this Strength damage, but a creature that is nauseated takes a –4 penalty on this saving throw. The save DC is Constitution-based." compset="RaceSpec" summary="Deal 1d4 Str damage (Fort negates)">
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="abAction" tag="Attack"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="abSave" tag="ForNeg"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="rAP87RiotS" name="Riot Suppressor" compset="Race">
+    <fieldval field="rHitDice" value="8"/>
+    <fieldval field="rHPStart" value="44"/>
+    <fieldval field="rSTR" value="18"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rCHA" value="-9"/>
+    <fieldval field="rFeat" value="-4"/>
+    <fieldval field="rAC" value="6"/>
+    <fieldval field="rCR" value="6"/>
+    <fieldval field="srcPageNum" value="32"/>
+    <usesource source="PathIronGo"/>
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="HasType" tag="tpConst"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="lAndroffen"></bootstrap>
+    <bootstrap thing="fShieldFoc"></bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="fAlertness"></bootstrap>
+    <bootstrap thing="stRobot"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="raAP87MerW"></bootstrap>
+    <bootstrap thing="raHardness">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="raAP87InSG"></bootstrap>
+    <bootstrap thing="fWepMart"></bootstrap>
+    <bootstrap thing="fArmShield"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <eval phase="PreLevel" priority="4000">
+      #skillinnate[skPercep] += 8
+      #skillinnate[skSenseMot] += 8
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="raAP87MerW" name="Merciful Weapon" description="Any metal melee weapon wielded by a riot suppressor becomes charged with energy that deals an additional 1d6 points of nonlethal damage on a hit. A riot suppressor takes no penalty on attack rolls when it uses a melee weapon to deal nonlethal damage." compset="RaceSpec" summary="Metal weapons deal an additional 1d6 nonlethal damage" uniqueness="useronce">
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      foreach pick in hero from BaseWep where "wCategory.Melee & EquipType.Metal"
+        #extradamage[eachpick," plus 1d6 nonlethal",field[name].text]
+      nexteach]]></eval>
+    </thing>
+  <thing id="raAP87InSG" name="Integrated Stun Gun" description="A riot suppressor has a stun gun integrated into its left eye. It treats attacks with this weapon as natural attacks, and cannot make iterative attacks with it. An integrated stun gun can still be targeted by effects that target manufactured weapons, but cannot be harvested for use outside of the robot’s body. An integrated stun gun does not provoke an attack of opportunity when it is fired. It deals 1d8 nonlethal damage on a hit, and can be fired as a semi-automatic weapon. On a successful critical hit, the robot can attempt a free trip combat maneuver check against the target; this attempt doesn’t provoke attacks of opportunity." compset="RaceSpec" summary="On crit, attempt free trip CMB=BAB + 10" uniqueness="useronce">
+    <fieldval field="abRange" value="20"/>
+    <fieldval field="wDamExtra" value=" nonlethal"/>
+    <fieldval field="trkMax" value="10"/>
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="abRange" tag="Feet"/>
+    <tag group="SpecType" tag="AttackSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="WeaponSpec"/>
+    <tag group="Helper" tag="SingleAtt"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wMain" tag="1d8_6"/>
+    <tag group="Helper" tag="NoAttrDam"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCritMult" tag="2"/>
+    <tag group="abAction" tag="Attack"/>
+    <tag group="wCategory" tag="Firearm"/>
+    <tag group="wSpecial" tag="SemiAuto"/>
+    <tag group="wSpecial" tag="Touch"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wRangeInc" tag="20"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Charges"/>
+    <tag group="Helper" tag="NoNightRes"/>
+    </thing>
+  <thing id="rcAP87Glau" name="Glaucite" description="Construct is made of glacite and gains +4 natural armor and hardness 15." compset="RaceCustom">
+    <usesource source="PathIronGo"/>
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="AllowRCust" tag="rAnimObjec"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      hero.child[ArmorClass].field[tACNatural].value += 4
+
+      hero.child[raHardness].field[abValue].value = maximum(15,hero.child[raHardness].field[abValue].value)]]></eval>
+    </thing>
+  <thing id="rcAP87Immo" name="Immobile" description="Construct cannot move." compset="RaceCustom">
+    <usesource source="PathIronGo"/>
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="AllowRCust" tag="rAnimObjec"/>
+    <tag group="CustomNeg" tag="1"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      hero.child[Speed].field[tSpeed].value = 0
+
+      foreach pick in hero from Ability where "SpecType.Movement"
+        eachpick.field[abValue].value = 0
+      nexteach]]></eval>
+    </thing>
+  <thing id="rAP87ClkAp" name="Robot, Appentice" compset="Race">
+    <fieldval field="rHitDice" value="15"/>
+    <fieldval field="rHPStart" value="82"/>
+    <fieldval field="rSTR" value="6"/>
+    <fieldval field="rDEX" value="11"/>
+    <fieldval field="rWIS" value="4"/>
+    <fieldval field="rCHA" value="-9"/>
+    <fieldval field="rFeat" value="-8"/>
+    <fieldval field="rCR" value="9"/>
+    <fieldval field="rAC" value="8"/>
+    <usesource source="PathIronGo"/>
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="NoScore" tag="aCON"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="HasType" tag="tpConst"/>
+    <bootstrap thing="fLightRef"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="fToughness"></bootstrap>
+    <bootstrap thing="fComCast"></bootstrap>
+    <bootstrap thing="lAndroffen"></bootstrap>
+    <bootstrap thing="stRobot"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d4_4"/>
+      <autotag group="Value" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="raHardness">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="raCBWandMa"></bootstrap>
+    <bootstrap thing="fGreatFort"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="fImpNatAtt">
+      <autotag group="Target" tag="wSlam"/>
+      </bootstrap>
+    <bootstrap thing="skKnowArca"></bootstrap>
+    <bootstrap thing="skKnowGeog"></bootstrap>
+    <bootstrap thing="skKnowEng"></bootstrap>
+    <bootstrap thing="raAP87EleC"></bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <eval phase="PreLevel" priority="4000">
+      #skillinnate[skKnowArca] += 2
+      #skillinnate[skKnowEng] += 2
+      #skillinnate[skKnowGeog] += 2
+      #skillinnate[skPercep] += 12
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="raAP87EleC" name="Electromagnetic Casting" description="A robotic apprentice infuses its spells with electromagnetic energy. A creature targeted by a robotic apprentice’s spell or within the area of a robotic apprentice’s spell when it is cast takes 1d6 points of electricity damage and 1d6 points of force damage in addition to experiencing the effects of the spell, regardless of whether the creature succeeds or fails its saving throw (or whether a saving throw is allowed)." compset="RaceSpec" summary="Spells deal an additional 1d6 electricity and 1d6 force damage." uniqueness="useronce">
+    <usesource source="PathIronGo"/>
+    <tag group="ProductId" tag="HLCommunit"/>    
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  </document>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack - Procedures Validate"/>
+  <fileinfo>
+    <info_author><![CDATA[
+      Tim Shadow
+      Email: ShadowChemosh@yahoo.com
+    ]]>
+    </info_author>
+    <info_history><![CDATA[
+      July 12, 2012
+      -HaveSpell and CntMartWea are meant to be used in a "Pre-Req" script only.
+      -Added the new procedure "HaveSpell" to test if a character has access to a specific spell ID.
+      -Added the new procedure "CntMartWea" to count the number of martial weapon proficiencies a character has. 
+      ]]>
+    </info_history>
+  </fileinfo>
+
+
+  <procedure id="HaveSpell" scripttype="validate"><![CDATA[
+    ~ This procedure tests if a character has a specific spell and sets the valid field
+    ~ ===How to use this Procedure===
+    ~ var SpellID as String
+    ~ var HaveSpell as number
+    ~ SpellID = "spCureLig1"
+    ~ Call HaveSpell
+    ~ @valid = HaveSpell
+
+    var HaveSpell as number
+    var SpellID as string
+    var s2search as string
+    var s2classes as string
+    var X as number
+    ~ Init fields here
+    X = 0
+    HaveSpell = 0
+
+    ~ Add thingid to the spell id passed us
+    SpellID = "thingid." & SpellID
+    ~ replace the | with |thingid. tag groups
+    SpellID  = replace(SpellID,"|","|thingid.",0)
+
+    ~ Get the classes that are valid for the spell ID(s) passed to us
+    foreach thing in BaseSpell where SpellID
+       ~ only do anything if we a spell with classes
+       if (eachthing.tagis[sClass.?] <> 0) then
+          ~ if loop counter not zero then add a seperator between strings
+          if ( X <> 0) then
+             ~ add a seperator between each loop
+             s2classes &= "|"
+          endif    
+          ~ Build a search sting of all class tags
+          s2classes = eachthing.tagids[sClass.?,"|"]
+          ~ increment loop counter
+          X += 1
+       endif
+    nexteach
+
+    ~ Get the classes that are valid for the spell ID(s) passed to us
+    foreach pick in hero where SpellID
+       ~ only do anything if we a spell with classes
+       if (eachpick.tagis[sClass.?] <> 0) then
+          ~ if loop counter not zero then add a seperator between strings
+          if ( X <> 0) then
+             ~ add a seperator between each loop
+             s2classes &= "|"
+          endif    
+          ~ Build a search sting of all class tags
+          s2classes = eachpick.tagids[sClass.?,"|"]
+          ~ increment loop counter
+          X += 1
+       endif
+    nexteach
+
+    ~ replace the sClass tags with thingid tag groups
+    s2search = replace(s2classes,"sClass","thingid",0)
+
+    ~ Loop through classes and see if we have one of the classes
+    ~ valid for casting CLW spells
+    foreach pick in hero where s2search
+       HaveSpell = 1
+    nexteach
+    ]]>
+  </procedure>
+
+
+  <procedure id="CntMartWea" scripttype="validate"><![CDATA[
+    ~ This procedure counts the number of martial weapons a hero has
+    ~ ===How to use this Procedure===
+    ~ var CntMartWea as number
+    ~ Call CntMartWea
+    ~ if (CntMartWea >= 3) then
+    ~    @valid = 1
+    ~ else
+    ~    @valid = 0
+    ~ endif
+
+    var s2search as string
+    var X as number
+    var CntMartWea as number
+    CntMartWea = 0
+    X = 0
+
+    ~ Loop through all racial Weapon Familiarity things 
+    ~ that are not replaced/disabled
+    foreach pick in hero where "Helper.WeaponFam & !Helper.SpcReplace"
+       ~ only do anything if we have actually Weapon Proficiencies
+       if (each.tagis[WepProf.?] <> 0) then
+          ~ if loop counter not zero then add a seperator between strings
+          if ( X <> 0) then
+             ~ add a seperator between each loop
+             s2search &= "|"
+          endif    
+          ~ Build a search sting of all weapon tags
+          s2search &= eachpick.tagids[WepProf.?,"|"]
+          ~ increment loop counter
+          X += 1
+       endif
+    nexteach
+
+    X = 0
+    ~ Find the dieity selected to pull its WepProf tags
+    foreach pick in hero where "component.Deity"
+       ~ only do anything if we have actually Weapon Proficiencies
+       if (each.tagis[WepProf.?] <> 0) then
+          ~ if loop counter not zero then add a seperator between strings
+          if ( X <> 0) then
+             ~ add a seperator between each loop
+             s2search &= "|"
+          endif
+          ~ If not empty search then we had found weapons so add a seperator between
+          ~ weapons and diety search string
+          if ( empty(s2search) = 0) then
+             ~ add a seperator between each loop
+             s2search &= "|"
+          endif
+          ~ Build a search sting of all weapon tags
+          s2search &= eachpick.tagids[WepProf.?,"|"]
+          ~ increment loop counter
+          X += 1
+       endif
+    nexteach
+
+    ~ Count number of martial weapons we are proficient with
+    foreach thing in BaseWep where s2search
+       if (eachthing.tagis[wProfReq.Martial] <> 0) then
+         CntMartWea += 1
+       endif
+    nexteach
+    ]]>
+  </procedure>
+
+  <procedure id="X1HaveMate" scripttype="validate"><![CDATA[
+    ~ This procedure tests if suite of armor already has a specific type of material
+    var X1HaveMate as number
+    X1HaveMate = 0
+    
+    ~ If not a pick then we are valid
+    if (@ispick <> 1) then
+      X1HaveMate = 1
+    endif
+    
+    ~ If we are a not a custom armor we are valid
+    if (tagis[portal.mMagChoose] <> 1) then
+      X1HaveMate = 1
+    endif
+    ~ We can't have any other special material
+    if (tagcount[Ability.e?] - tagcount[Ability.eNormal] = 1) then
+      X1HaveMate = 1
+    endif
+    ]]>
+  </procedure>
+
+</document>

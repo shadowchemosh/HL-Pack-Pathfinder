@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_BasicPack_ShadowChemosh - Classes"/>
+  <fileinfo>
+    <info_author>Tim Shadow (aka ShadowChemosh)</info_author>
+    <info_history>December 10, 2014 - Tim Shadow
+      -Created new with the Bolt Ace archetype.</info_history>
+    </fileinfo>
+  <thing id="cGunS2ShSh" name="Deed: Sharp Shoot" description="At 1st level, a bolt ace can resolve an attack against touch AC instead of normal AC when firing a crossbow at a target within its first range increment, but this type of attack is not considered a touch attack for the purposes of feats and abilities such as Deadly Aim. Performing this deed costs 1 grit point. This deed replaces deadeye." compset="ClSpecial" summary="Spend 1 grit to make crossbow attack vs. touch AC in first range increment.">
+    <tag group="abCategory" tag="GunDeed"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cGunS2ViLo" name="Deed: Vigilant Loading" description="At 1st level, as long as a bolt ace has at least 1 grit point, she does not provoke attacks of opportunity when loading a crossbow. This deed replaces quick clear." compset="ClSpecial" summary="As long as you have grit, no AoO from reloading a crossbow.">
+    <tag group="abCategory" tag="GunDeed"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cGunS2ShRe" name="Deed: Shooter&apos;s Resolve" description="At 3rd level, a bolt ace can spend 1 grit point when making a crossbow attack as a standard action and ignore the effects of concealment (though not total concealment) and cover (other than total cover) against that shot. This deed replaces utility shot." compset="ClSpecial" summary="Spend 1 grit as standard action and ignore cover &amp; concealment (not total).">
+    <tag group="abCategory" tag="GunDeed"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cGunS2XbEx" name="Crossbow Expert" description="You gain proficiency with all crossbows including exotic crossbows. In addition you gain the feat Rapid Reload for free at first level. This ability replaces Gunsmith." compset="ClSpecial">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fRapidRel">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <eval phase="First" priority="20000"><![CDATA[
+      ~we're earlier than the normal test for whether we've reached the correct level, so we'll recreate that test here
+      doneif (root.linkage[varies].field[cTotalLev].value + field[xExtraLev].value + field[xEffectLev].value < tagvalue[ClSpecWhen.?])
+
+      ~ Pull all crossbow profiency tags
+      foreach thing in BaseWep where "wFtrGroup.Crossbows"
+        perform eachthing.pulltags[WepProf.?]
+      nexteach
+
+      ~ Push all the tags to the hero so that we are proficient
+      perform hero.pushtags[WepProf.?]]]></eval>
+    </thing>
+  <thing id="cGunS2XbTr" name="Crossbow Training" description="Starting at 5th level, a bolt ace can select one specific type of crossbow, such as hand crossbow or heavy crossbow. She gains a bonus on damage rolls equal to her Dexterity modifier with that crossbow.\n\nFurthermore, when she scores a critical hit with that type of crossbow, her critical modifier increases by 1 (a x2 becomes x3, for example).\n\nEvery 4 levels thereafter, she can pick a different type of crossbow, gaining the bonus damage and increased critical multiplier with that type of crossbow as well. This ability replaces gun training." compset="ClSpecial" summary="Add dexterity bonus to damage rolls and +1 crit mult. with chosen crossbow.">
+    <fieldval field="usrCandid1" value="component.BaseWep &amp; wFtrGroup.Crossbows"/>
+    <tag group="Helper" tag="MultiCopy"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="SbNamePar" tag="AppValue"/>
+    <tag group="SbNamePar" tag="IncSelNm1"/>
+    <tag group="SbNamePar" tag="SignAppVal"/>
+    <eval phase="PostAttr" priority="15000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      field[abValue].value += #attrbonus[aDEX]
+
+      field[livename].text = field[thingname].text & " +" & field[abValue].value
+
+      ~ If nothing's been selected, there's nothing we can do
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~retrieve the IsWeapon identity tag from our choice
+      perform field[usrChosen1].chosen.pulltags[IsWeapon.?]
+
+      ~find all the weapons that match that tag and apply the effects
+      foreach pick in hero from BaseWep where tagids[IsWeapon.?,"|"]
+        ~ If there is already a tag present on our target, something else has
+        ~ applied the effects, so do nothing except apply the tag for error
+        ~ purposes. If not then add to damage and apply the tag. We do this so
+        ~ Gun training does not stack with similiar abilities like Pistolero's
+        ~ Pistol Training, which run earlier.
+
+        if (eachpick.tagis[Helper.GunTrain] <> 0) then
+          perform eachpick.assign[Helper.GunTrain]
+        else
+          perform eachpick.assign[Helper.GunTrain]
+          perform eachpick.assign[Broadcast.CritMult]
+          eachpick.field[wDamBonus].value += field[abValue].value
+          endif
+        nexteach]]></eval>
+    <evalrule phase="PostAttr" priority="20000" message="Crossbow Training chosen twice for the same type of weapon" summary="Crossbow Training chosen twice for the same type of weapon"><![CDATA[
+      ~ If we're not shown, just get out now
+      validif (tagis[Helper.ShowSpec] = 0)
+
+      ~ If nothing's been selected, there's nothing we can do
+      validif (field[usrChosen1].ischosen = 0)
+
+      ~at this point, we've valid, unless we find a doubled tag on one of our weapons
+      @valid = 1
+
+      ~find all the weapons that match our tag
+      foreach pick in hero from BaseWep where tagids[IsWeapon.?,"|"]
+        ~ If there is more than 1 tag on our choice we are not valid
+        if (eachpick.tagcount[Helper.GunTrain] > 1) then
+          @valid = 0
+          endif
+        nexteach]]></evalrule>
+    </thing>
+  <thing id="cGunS2DiSh" name="Deed: Distracting Shot" description="At 7th level, a bolt ace can spend 1 grit point and choose to miss a target that she could normally attack within her range with a crossbow attack. When she does, the target loses its Dexterity bonus to AC (if any) for 1 round. This deed replaces startling shot." compset="ClSpecial" summary="Spend 1 grit to miss target and remove its Dex bonus to AC for 1 round.">
+    <tag group="abCategory" tag="GunDeed"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cGunS2ViSh" name="Deed: Vigilant Shooter" description="At 11th level, as long as a bolt ace spends 1 grit point when she does so, she does not provoke attacks of opportunity when firing a crossbow. This deed replaces expert loading." compset="ClSpecial" summary="Spend 1 grit not to provoke AoOs when firing a crossbow.">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="abCategory" tag="GunDeed"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cGunS2InRe" name="Deed: Inexplicable Reload" description="At 11th level, loading a crossbow becomes unthinking and automatic for a bolt ace. As long as she has at least 1 grit point, she always starts each round of combat (even a surprise round) with her crossbow loaded. Also the amount of time needed to reload a crossbow decreases by one step: a standard action becomes a move action, a move action becomes a swift action, a swift action becomes a free action, and a free action becomes not an action. This deed replaces lightning reload." compset="ClSpecial" summary="While have grit, always start round with loaded crossbow. Reduce load time 1 step.">
+    <tag group="abCategory" tag="GunDeed"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cGunS2PiSh" name="Deed: Pinning Shot" description="At 15th level, the bolt ace can spend 1 grit point while shooting a crossbow and attempt to pin down its target with the bolt. If the crossbow attack hits, it pins the target to a nearby object, to a wall, or to the ground, entangling and staggering the target. While pinned by the bolt, the target cannot move out of its space until it takes a standard action to free itself from the pinning bolt, except by means of teleportation. This deed replaces menacing shot." compset="ClSpecial" summary="Spend 1 grit to pin target in place, entangling and staggering it and preventing it from moving.">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="abCategory" tag="GunDeed"/>
+    </thing>
+  <thing id="arS2BoltAc" name="Bolt Ace" description="While gunslingers are full of sound and fury, there is a class of gunslingers that never soil their hands with powder or feel the sting of gun smoke. They commit their deeds in a more hushed manner, but with just as much flair.\n\n{B}ShadowChemosh:{/b} This version of the Bolt Ace loses all access to guns and gains access to all crossbows.  In addition the bolt ace loses Gunsmithing and gains Rapid Reload at first level.\n\n{b}Note:{/b} This modifies a base class in a non-standard way and should ONLY be used with permission from your GM." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="94"/>
+    <usesource source="srcS2Arche"/>
+    <usesource source="ACG"/>
+    <tag group="AbReplace" tag="cGunExpLoa"/>
+    <tag group="AbReplace" tag="cGunGTrain"/>
+    <tag group="AbReplace" tag="cGunLigRel"/>
+    <tag group="AbReplace" tag="cGunMenaci"/>
+    <tag group="AbReplace" tag="cGunQuClea"/>
+    <tag group="AbReplace" tag="cGunStarSh"/>
+    <tag group="AbReplace" tag="cGunUtilSh"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="AbModify" tag="cGunGrit"/>
+    <tag group="AbReplace" tag="cGunDeadey"/>
+    <tag group="fDisable" tag="fExoticGun"/>
+    <tag group="AbReplace" tag="cGunFirear"/>
+    <bootstrap thing="cGunS2ShSh">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2ViLo">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2ShRe">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2XbEx">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2XbTr">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2XbTr">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2XbTr">
+      <autotag group="ClSpecWhen" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2XbTr">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2DiSh">
+      <autotag group="ClSpecWhen" tag="7"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2ViSh">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2InRe">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <bootstrap thing="cGunS2PiSh">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpGun"/>
+    <eval phase="First">~ Remove ALL gun proficines
+      perform linkage[varies].delete[WepProf.?]</eval>
+    <eval phase="Final" priority="50000" index="2"><![CDATA[
+      ~ The following appends extra text onto the gunslingers Grit class special and Gun Deeds.
+      ~ I am forced to use a foreach loop and tagcountstr[]. Both of which should NOT
+      ~ be used because of the CPU cost. But to keep this pakcage workable with a CORE
+      ~ only license it is needed. I do NOT recommend doing this normally!
+      ~ Tim Shadow December 12, 2014
+      var sText as string
+      
+      ~ Find Grit or Gun Deeds
+      foreach thing in BaseClSpec where "thingid.cGunGrit|thingid.cGunDeeds"
+        ~ Grit
+        If (eachthing.tagcountstr["thingid.cGunGrit"] <> 0) Then
+          sText = eachthing.field[descript].text & "{br}{br}" & "{b}Modification from Bolt Ace:{/b} A bolt ace regains grit when she scores a critical hit or deals a killing blow with any kind of crossbow."
+        ~..Gun Deeds
+        ElseIf (eachthing.tagcountstr["thingid.cGunDeeds"] <> 0) Then
+          sText = eachthing.field[descript].text & "{br}{br}" & "{b}Modification from Bolt Ace:{/b} A bolt ace can perform the following deeds with a crossbow instead of a firearm: gunslinger initiative, pistolwhip, dead shot, targeting, bleeding wound, death's shot, and stunning shot."
+        Endif
+        ~ Set message
+        perform eachthing.amendthing[description,sText]
+      nexteach]]></eval>
+    </thing>
+  <thing id="cS2BbnSupe" name="Superstition" description="The barbarian gains a +2 morale bonus on saving throws made to resist spells, supernatural abilities, and spell-like abilities. This bonus increases by +1 for every 4 levels the barbarian has attained. While raging, the barbarian cannot be a willing target of any spell and must make saving throws to resist all spells, even those cast by allies.\n\n{B}ShadowChemosh:{/b} This version of Superstition can be activated on the In-Play tab allowing for an easier tracking of stacking and non-stacking morale bonsues." compset="CustomSpec" summary="While raging, gain bonus to save vs magic, but must resist all spells, even allies&apos;." uniqueness="unique">
+    <comment><![CDATA[Added "activated Logic"]]></comment>
+    <usesource source="srcS2Arche"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="thingid" tag="cBbnSupers"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="abDuration" tag="ConstRage"/>
+    <tag group="abCategory" tag="BbnRagePow"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpBbn"/>
+    <bootstrap thing="cBbnSupers">
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If in a rage then get out now
+      doneif (hero.tagis[Hero.Raging] <> 0)
+
+      ~ We can't ativate unless we are raging
+      perform assign[Helper.ChgDisab1]]]></eval>
+    <eval phase="PreAttr" priority="10000" index="3"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Adjust our total bonus
+      field[abValue].value += round(field[xTotalLev].value / 4, 0, -1) + #value[cBbnSupers]
+      ~ If not activated, just get out now
+      doneif (field[abilActive].value <> 1)
+      ~ If disabled then just get out now
+      doneif (tagis[Helper.ChgDisab1] <> 0)
+
+      ~ Add Luck Morale to our saving throws
+      #applybonus[BonMorale,hero.child[svAll],field[abValue].value]]]></eval>
+    <eval phase="Final" priority="10000" index="4"><![CDATA[
+      ~ Set live name
+      field[livename].text = field[name].text & " " & signed(field[abValue].value)
+
+      ~ We need to mimic the base Superstition rage power
+      perform hero.assign[HasAbility.cBbnSupers]
+
+      ~ If activated, just get out now
+      doneif (field[abilActive].value - tagis[Helper.ChgDisab1] = 1)
+      
+      ~ Set summary fields and situational text
+      field[abSumm].text = signed(field[abValue].value) & " save vs. magic while raging, but resist all spells, even allies'."
+      #situational[hero.child[svAll],signed(field[abValue].value) & " save vs. magic while raging.",field[name].text]]]></eval>
+    <eval phase="First" priority="10">~ We need to mimic the base Superstition rage power
+      perform hero.assign[Ability.cBbnSupers]</eval>
+    </thing>
+  <thing id="rS2Shadow" name="Shadow" description="Shadowdancers companion." compset="Race">
+    <fieldval field="rHitDice" value="3"/>
+    <fieldval field="rDEX" value="4"/>
+    <fieldval field="rINT" value="-4"/>
+    <fieldval field="rWIS" value="2"/>
+    <fieldval field="rCHA" value="5"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rCR" value="3"/>
+    <fieldval field="rHPStart" value="13"/>
+    <fieldval field="rSpeed" value="0"/>
+    <usesource source="srcS2Arche"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="HasType" tag="tpUndead"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceRole" tag="Any"/>
+    <tag group="Race" tag="rShadow"/>
+    <bootstrap thing="stIncorpor"></bootstrap>
+    <bootstrap thing="fDodge">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="thing" tag="skipprereq"/>
+      <autotag group="Target" tag="skPercep"/>
+      </bootstrap>
+    <bootstrap thing="wOtherMel">
+      <autotag group="IsWeapon" tag="wTouch"/>
+      <assignval field="wFixDamage" value="1d6 Strength damage"/>
+      <assignval field="livename" value="Incorporeal Touch"/>
+      <assignval field="sbName" value="Incorporeal Touch"/>
+      </bootstrap>
+    <bootstrap thing="raShaStreD"></bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Good"/>
+      <autotag group="Value" tag="40"/>
+      </bootstrap>
+    <eval phase="First" priority="1000">~ Set our alignment to be the same as the master
+      if (master.tagis[Alignment.Good] = 1) Then
+        perform assign[Alignment.Good]
+      endif
+      if (master.tagis[Alignment.Evil] = 1) Then
+        perform assign[Alignment.Evil]
+      endif
+      if (master.tagis[Alignment.Lawful] = 1) Then
+        perform assign[Alignment.Lawful]
+      endif
+      if (master.tagis[Alignment.Chaotic] = 1) Then
+        perform assign[Alignment.Chaotic]
+      endif
+      if (master.tagis[Alignment.NeutralGE] = 1) Then
+        perform assign[Alignment.NeutralGE]
+      endif
+      if (master.tagis[Alignment.NeutralLC] = 1) Then
+        perform assign[Alignment.NeutralLC]
+      endif</eval>
+    <eval phase="PreLevel" priority="4000" index="2"><![CDATA[
+      #skillinnate[skFly] += 2
+      #skillinnate[skPercep] += 1
+      #skillinnate[skStealth] += 3
+
+      #racialsituational[hero.child[skStealth],"+4 in dim light",field[name].text]
+      #racialsituational[hero.child[skStealth],"-4 in bright light",field[name].text]
+      #situational[hero.child[svWill],"+4 bonus to halve damage from positive channeled energy",field[name].text]]]></eval>
+    <eval phase="Level" priority="21000" index="3">~ Adjust the base saving throws and base attack bonus to 
+      ~ be the same as the master.
+      hero.child[svFort].field[svBase].value = master.child[svFort].field[svBase].value
+      hero.child[svRef].field[svBase].value = master.child[svRef].field[svBase].value
+      hero.child[svWill].field[svBase].value = master.child[svWill].field[svBase].value
+      hero.child[Attack].field[tAtkBase].value = master.child[Attack].field[tAtkBase].value</eval>
+    <eval phase="Final" priority="8500" index="4">~ Adjust Hit Points to be half of the master
+      herofield[tHP].value = round(master.child[Totals].field[tHP].value/2,0,-1)
+      herofield[tBonusHP].value = 0</eval>
+    <exprreq message="This is a companion to the Shadowdancer PrC class and must be added on the &quot;Other&quot; tab.">@ispick = 1</exprreq>
+    </thing>
+  <thing id="minS2Shado" name="Shadow" description="At 3rd level, a shadowdancer can summon a shadow, an undead shade. Unlike a normal shadow, this shadow&apos;s alignment matches that of the shadowdancer, and the creature cannot create spawn. The summoned shadow receives a +4 bonus on Will saves made to halve the damage from positive channeled energy and the shadow cannot be turned or commanded. This shadow serves as a companion to the shadowdancer and can communicate intelligibly with the shadowdancer. This shadow has a number of hit points equal to half the shadowdancer&apos;s total. The shadow uses the shadowdancer&apos;s base attack bonus and base save bonuses." compset="Minion" stacking="never" uniqueness="useronce">
+    <usesource source="srcS2Arche"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="gType" tag="Pets"/>
+    <exprreq message="Shadowdancer Level 3 required."><![CDATA[#levelcount[Shadowdanc] >= 3]]></exprreq>
+    <minion id="Mount">
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="rS2Shadow">
+        <autotag group="Helper" tag="CoreCampOK"/>
+        </bootstrap>
+      </minion>
+    </thing>
+  <thing id="cS2AbilSco" name="Ability Score" description="This is a helper ability that will not display or print anywhere. But it allows for selecting a new attribute score this class will use for its abilities and spells." compset="ClSpecial" summary="Select the new attribute this class will use for abilities and spells.">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fShowWhat" tag="Attributes"/>
+    <tag group="Hide" tag="Statblock"/>
+    <tag group="Hide" tag="ClSpecList"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="First" priority="1000"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      perform field[usrChosen1].chosen.pulltags[SplAttr.?]
+      perform field[usrChosen1].chosen.pulltags[StandardDC.?]
+      perform field[usrChosen1].chosen.pulltags[ChargeAttr.?]
+      perform field[usrChosen1].chosen.pulltags[UseAttr.?]
+      perform root.linkage[varies].pulltags[SpecSource.?]
+
+      perform root.linkage[varies].pushtags[SplAttr.?]]]></eval>
+    <eval phase="PostLevel" priority="25000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      var searchexpr as string
+      searchexpr = tagids[SpecSource.?] & " & (StandardDC.?|ChargeAttr.?) & !thingid.cS2AbilSco"
+      foreach pick in hero from Ability where searchexpr
+        perform eachpick.delete[StandardDC.?]
+        perform eachpick.pushtags[StandardDC.?]
+        perform eachpick.delete[ChargeAttr.?]
+        perform eachpick.pushtags[ChargeAttr.?]
+      nexteach]]></eval>
+    </thing>
+  <thing id="arS2ClrAtt" name="Ability Score" description="This archetype modifies the ability score of the Cleric class from Wisdom to any other attribute score of your choice. After adding this archetype look on your the Cleric class tab for a class ability that lets you choose your new attribute.\n\n{b}Note:{/b} This modifies a base class in a non-standard way and should ONLY be used with permission from your GM." compset="ClassVary" uniqueness="unique">
+    <usesource source="srcS2Arche"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="cS2AbilSco">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpClr"/>
+    </thing>
+  <thing id="arS2MnkAtt" name="Ability Score" description="This archetype modifies the ability score of the Monk class from Wisdom to any other attribute score of your choice.  After adding this archetype look on your the Monk class tab for a class ability that lets you choose your new attribute.\n\n{b}Note:{/b} This modifies a base class in a non-standard way and should ONLY be used with permission from your GM." compset="ClassVary" uniqueness="unique">
+    <usesource source="srcS2Arche"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="cS2AbilSco">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpMnk"/>
+    <eval phase="PostAttr" priority="8000"><![CDATA[~ If no attribute chosen then get out now!
+      doneif (hero.childfound[cS2AbilSco].tagcount[ChargeAttr.?] = 0)
+
+      var searchexpr as string
+      var sName as string
+
+      ~ Remove wisdom bonus from "AC Bonus" class ability
+      #value[cMnkAC] -= #attrbonus[aWIS]
+
+      ~ Setup a search expression using the Charge Attribute tag
+      searchexpr = hero.childfound[cS2AbilSco].tagids[ChargeAttr.?]
+
+      ~ Set focus to our selected attribute score
+      perform hero.findchild[BaseAttr,searchexpr].setfocus
+      doneif (state.isfocus = 0)
+     
+      ~ Add in the attribute value that was selected
+      #value[cMnkAC] += focus.field[aModBonus].value]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2">~ If no attribute chosen then get out now!
+      doneif (hero.childfound[cS2AbilSco].tagcount[ChargeAttr.?] = 0)
+
+      ~ Set Monk Ki Pool to use a the new selected attribute
+      perform hero.childfound[cS2AbilSco].pulltags[UseAttr.?]
+      perform hero.childfound[cMnkKiPool].pushtags[UseAttr.?]</eval>
+    </thing>
+  <thing id="arS2PalTyr" name="Tyranny" description="This is an alternate version of the Antipaladin that allows the class to be any &apos;Evil&apos; alignment (ie CE, LE, NE).  This can be useful for games like Way of the Wicked or the new Paizo adventure path &quot;Hell&apos;s Vengence&quot;.\n\n{b}Note:{/b} This modifies a base class in a non-standard way and should ONLY be used with permission from your GM." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcBookInf" value="HL Community"/>
+    <fieldval field="srcPageNum" value="1"/>
+    <usesource source="srcS2Arche"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <link linkage="varies" thing="cHelpAPa"/>
+    </thing>
+  <thing id="arS2PalFre" name="Freedom" description="This is an alternate version of the Paladin that allows the class to be any &apos;Good&apos; alignment (ie LG, CG, NG).\n\n{b}Note:{/b} This modifies a base class in a non-standard way and should ONLY be used with permission from your GM." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcBookInf" value="HL Community"/>
+    <fieldval field="srcPageNum" value="1"/>
+    <usesource source="srcS2Arche"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AlgnReq" tag="Good"/>
+    <link linkage="varies" thing="cHelpPal"/>
+    </thing>
+  </document>

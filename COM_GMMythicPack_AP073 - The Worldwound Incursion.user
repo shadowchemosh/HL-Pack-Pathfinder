@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMMythicPack_AP073 - The Worldwound Incursion"/>
+  <thing id="pAP73BrkLg" name="Broken Leg" description="Your leg was broken, and as a result you move at half speed and cannot run. You also take a –4 penalty on all skill checks requiring movement (Acrobatics, Climb, many Stealth checks, and Swim) and a –2 penalty to AC. If the damage that caused the broken leg is healed, the penalty on skill checks is reduced to –2 and the penalty to AC is removed, but completely healing the leg requires a {i}regenerate{/i} spell.\n\n{b}Note{/b}: Use incrementer to select penalty." compset="InPlay" uniqueness="useronce">
+    <fieldval field="pMinimum" value="0"/>
+    <fieldval field="pMaximum" value="4"/>
+    <usesource source="PathWraRig"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjInfo"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="OthAdjCat" tag="Campaign"/>
+    <eval phase="PostAttr" priority="1000"><![CDATA[
+      doneif (field[pIsOn].value = 0)
+
+      var pen as number
+      pen = field[pAdjust].value 
+
+      hero.child[skAcrobat].field[Penalty].value -= pen
+      hero.child[skClimb].field[Penalty].value -= pen
+
+      hero.child[skSwim].field[Penalty].value -= pen
+      hero.child[ArmorClass].field[Penalty].value -= round(pen/2,0,-1)
+
+      #situational[hero.child[skStealth], "-" & pen & " when moving",field[name].text]
+      hero.child[Speed].field[tSpeed].value = round(hero.child[Speed].field[tSpeed].value/2,0,-1)
+      hero.child[xClimb].field[abValue].value = round(hero.child[xClimb].field[abValue].value/2,0,-1)
+      hero.child[xBurrow].field[abValue].value = round(hero.child[xBurrow].field[abValue].value/2,0,-1)
+      hero.child[xSwim].field[abValue].value = round(hero.child[xSwim].field[abValue].value/2,0,-1)]]></eval>
+    </thing>
+  </document>

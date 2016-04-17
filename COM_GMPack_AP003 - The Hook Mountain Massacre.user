@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_AP003 - The Hook Mountain Massacre"/>
+  <fileinfo>
+    <info_history>Sep 9, 2013 - James Risner
+      Removed PFS Legal tag from things not legal in PFS: Donkey Rat</info_history>
+    </fileinfo>
+  <thing id="ruDonkeyRt" name="Rat, Donkey" description="Donkey rats are brown or snowy white rodents the size of small dogs, with long legs and short, furry tails. These statistics can also be used for capybaras." compset="Race">
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="18"/>
+    <fieldval field="rSTR" value="8"/>
+    <fieldval field="rDEX" value="9"/>
+    <fieldval field="rCON" value="10"/>
+    <fieldval field="rINT" value="-8"/>
+    <fieldval field="rWIS" value="7"/>
+    <fieldval field="rCHA" value="-2"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rCR" value="3"/>
+    <usesource source="PathRise"/>
+    <tag group="HasType" tag="tpAnimal"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Helper" tag="Quadruped"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Hero" tag="CantSpeak"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6_5"/>
+      </bootstrap>
+    <bootstrap thing="xClimb">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="fDodge"></bootstrap>
+    <bootstrap thing="fImpNatAtt">
+      <autotag group="Target" tag="wBite"/>
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="xScent"></bootstrap>
+    <eval phase="PreLevel" priority="400">      
+      #skillinnate[skClimb] += 1
+      #skillinnate[skPercep] += 1
+      #skillinnate[skStealth] += 1
+      #skillinnate[skSwim] += 1</eval>
+    </thing>
+
+  <thing id="rcOgrExUgl" name="Extra Ugly" description="The ogrekin is particularly ugly and foolish looking, taking a &#150;4 penalty on all Charisma-based skill checks." compset="RaceCustom">
+    <usesource source="PathRise"/>
+    <usesource source="Bestiary2"/>
+    <tag group="AllowRCust" tag="cfgOgrekin"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <eval phase="PostLevel" priority="5000"><![CDATA[
+      ~if we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~-4 to all CHA-based skills except Intimidate
+      foreach pick in hero from BaseSkill
+        if (eachpick.tagis[SkillOver.aCHA] <> 0) then
+          eachpick.field[Penalty].value -= 4
+        elseif (eachpick.islinkage[skillattr] <> 0) then
+          if (compare(eachpick.linkage[skillattr].idstring,"aCHA") = 0) then
+            eachpick.field[Penalty].value -= 4
+          endif
+        endif
+     nexteach]]></eval>
+    </thing>
+  <thing id="rcOgrFreak" name="Freakish Birth" description="The ogrekin was born lucky and has no disadvantageous deformity." compset="RaceCustom">
+    <usesource source="PathRise"/>
+    <usesource source="Bestiary2"/>
+    <tag group="AllowRCust" tag="cfgOgrekin"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rcOgrTriJn" name="Triple-Jointed" description="The ogrekin's body bends and moves in unsettling ways. It gains a +4 racial bonus on Escape Artist checks and can move through areas half its space in size without squeezing." compset="RaceCustom">
+    <usesource source="PathRise"/>
+    <usesource source="Bestiary2"/>
+    <tag group="AllowRCust" tag="cfgOgrekin"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <eval phase="PreLevel" priority="10000">
+      ~ +4 racial bonus on Escape Artist checks
+      #skillbonus[skEscape] += 4</eval>
+    </thing>
+  <thing id="rcOgrEnhSn" name="Enhanced Senses" description="The ogrekin has unusual or extra sensory organs-like a giant eye, lolling tongue, extra ears, or a powerful sense of smell-granting it a +2 bonus on Perception checks." compset="RaceCustom">
+    <usesource source="PathRise"/>
+    <usesource source="Bestiary2"/>
+    <tag group="AllowRCust" tag="cfgOgrekin"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <eval phase="PreLevel" priority="10000">
+      ~ +2 racial bonus on Perception checks
+      #skillbonus[skPercep] += 2</eval>
+    </thing>
+  <thing id="rcOgrWebbd" name="Webbed Digits" description="The ogrekin has thick, flexible webbing between its fingers and toes, gaining a swim speed equal to half its base land speed." compset="RaceCustom">
+    <usesource source="PathRise"/>
+    <usesource source="Bestiary2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AllowRCust" tag="cfgOgrekin"/>
+     <tag group="ProductId" tag="HLCommunit"/> <bootstrap thing="xSwim"></bootstrap>
+    <eval phase="Final" priority="11000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~Get the speed value and divide by half
+      field[abValue].value += hero.child[Speed].field[tSpeedMod].value / 2
+
+      ~Add that value to the Swim skill
+      #value[xSwim] = maximum(field[abValue].value, #value[xSwim])]]></eval>
+    </thing>
+  <thing id="rmDonRat" name="Rat, Donkey" compset="Race">
+    <fieldval field="rDEX" value="6"/>
+    <fieldval field="rCON" value="4"/>
+    <fieldval field="rINT" value="-9"/>
+    <fieldval field="rWIS" value="2"/>
+    <fieldval field="rCHA" value="-6"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-3"/>
+    <fieldval field="rHitDice" value="6"/>
+    <fieldval field="rCR" value="1"/>
+    <fieldval field="rEnviron" value="Any urban"/>
+    <fieldval field="rOrgan" value="Solitary or pack (1-10)"/>
+    <fieldval field="rTreasure" value="None"/>
+    <fieldval field="rDescript" value="This filthy rat is the size of a large dog. It has a coat of coarse fur, a long and scabby tail, and two glittering eyes."/>
+    <fieldval field="rSTR" value="4"/>
+    <usesource source="PathRise"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="HasType" tag="tpAnimal"/>
+    <tag group="Helper" tag="Quadruped"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Alignment" tag="NeutralGE"/>    
+    <tag group="Helper" tag="NoPathSoc"/> 
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <bootstrap thing="raLowLight"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Helper" tag="NatPrimary"/>
+      </bootstrap>
+    <bootstrap thing="fImpNatAtt"></bootstrap>
+    <bootstrap thing="fComRef"></bootstrap>
+    <bootstrap thing="fWepFin"></bootstrap>
+    <bootstrap thing="xScent"></bootstrap>
+    <bootstrap thing="xClimb">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000">
+      #skillinnate[skStealth] += 1
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="rcOgrPinhd" name="Pinhead" description="The ogrekin's head is comically small. It takes an additional &#150;2 penalty to its Intelligence score." compset="RaceCustom">
+    <usesource source="PathRise"/>
+    <usesource source="Bestiary2"/>
+    <tag group="AllowRCust" tag="cfgOgrekin"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <eval phase="First" priority="9000">
+      ~ -2 INT
+      hero.child[aINT].field[aStartMod].value -= 2</eval>
+    </thing>
+  <thing id="rcOgrSpech" name="Speech Impediment" description="The ogrekin's mouth and throat are deformed, causing it to slur and stutter. It has difficulty speaking, takes a &#150;2 penalty on all skill checks that rely upon speech, and has a +20% spell failure chance when casting any spell with a verbal component." compset="RaceCustom" summary="Mouth &amp; throat deformity causes -2 on skill checks and 20% Spell Failure for Verbal Component spells">
+    <usesource source="PathRise"/>
+    <usesource source="Bestiary2"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AllowRCust" tag="cfgOgrekin"/>
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <eval phase="First" priority="9000">
+      ~ -2 on all skills that rely on speech or a working mouth
+      #skillbonus[skBluff] -= 2
+      #skillbonus[skDiplo] -= 2
+      #skillbonus[skHandleAn] -= 2
+      #skillbonus[skIntim] -= 2
+      #skillbonus[skLinguist] -= 2
+      #skillbonus[skPerfOrat] -= 2
+      #skillbonus[skPerfWind] -= 2
+      #skillbonus[skPerfSing] -= 2</eval>
+    </thing>
+  <thing id="rSpidFWeb" name="Spider, Huge Funnel-Web" compset="Race">
+    <fieldval field="rHitDice" value="8"/>
+    <fieldval field="rSTR" value="9"/>
+    <fieldval field="rDEX" value="7"/>
+    <fieldval field="rCON" value="4"/>
+    <fieldval field="rCHA" value="-8"/>
+    <fieldval field="rCR" value="6"/>
+    <fieldval field="rHPStart" value="32"/>
+    <usesource source="PathRise"/>
+    <tag group="HasType" tag="tpVermin"/>
+    <tag group="Helper" tag="ManyLegs"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="RaceSize" tag="Huge2"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <bootstrap thing="xClimb">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="2d6_104"/>
+      </bootstrap>
+    <bootstrap thing="raSpFunWeb"></bootstrap>
+    <bootstrap thing="raStealth">
+      <assignval field="livename" value="+8 Stealth in Webs"/>
+      </bootstrap>
+    <bootstrap thing="xTremorsen">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="raWeb"></bootstrap>
+    <bootstrap thing="xImmMind"></bootstrap>
+    <eval phase="PreLevel" priority="4000">
+      #skillbonus[skClimb] += 8
+      #skillbonus[skPercep] += 4
+      #skillbonus[skStealth] += 4</eval>
+    </thing>
+  <thing id="raSpFunWeb" name="Poison" description="Bite - injury; {i}save{/i} Fort DC 17; {i}frequency{/i} 1/ round for 6 rounds; {i}effect{/i} 1d3 STR and staggered; {i}cure{/i} 2 saves. Save DC is Con-based with a +2 racial bonus." compset="RaceSpec">
+    <fieldval field="abDC" value="2"/>
+    <usesource source="PathRise"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rMotherObv" name="Mother of Oblivion" description="A monstrous, undulating tangle of barbed tentacles explodes from the water. Its form spurns definable anatomy, a horror of prehistory atop a writhing mass of rubbery tentacles-some crowned with glaring infernal eyes. Its only recognizable feature is the black reptilian head rising above the morass of tentacles, a maw of flesh-sheering teeth gaping wide before two piercing eyes, smoldering with alien intelligence." compset="Race">
+    <fieldval field="rHitDice" value="15"/>
+    <fieldval field="rHPStart" value="75"/>
+    <fieldval field="rSTR" value="27"/>
+    <fieldval field="rCON" value="21"/>
+    <fieldval field="rINT" value="15"/>
+    <fieldval field="rWIS" value="8"/>
+    <fieldval field="rCHA" value="10"/>
+    <fieldval field="rSpeed" value="20"/>
+    <fieldval field="rFeat" value="-8"/>
+    <fieldval field="rCR" value="15"/>
+    <fieldval field="rSpCastLev" value="18"/>
+    <fieldval field="rReach" value="20"/>
+    <fieldval field="rTreasure" value="Mothers of Oblivion have no need of treasure, but the belongings of their victims often litter the watery depths of their lairs."/>
+    <fieldval field="rLangBonus" value="-7"/>
+    <fieldval field="rAC" value="26"/>
+    <fieldval field="rDescript" value="A monstrous, undulating tangle of barbed tentacles explodes from the water. Its form spurns definable anatomy, a horror of prehistory atop a writhing mass of rubbery tentacles-some crowned with glaring infernal eyes. Its only recognizable feature is the black reptilian head rising above the morass of tentacles, a maw of flesh-sheering teeth gaping wide before two piercing eyes, smoldering with alien intelligence."/>
+    <fieldval field="rEnviron" value="Mothers of Oblivion slink in the darkest, deepest reaches of the world, shunning daylight and the gaze of insect-like mortals who would gawk and abandon their pathetic minds at the merest glimpse. The deepest reaches of oceans and the oldest lakes serve as redoubts for these forsaken queens of madness."/>
+    <fieldval field="rOrgan" value="None"/>
+    <usesource source="PathRise"/>
+    <tag group="AlgnReq" tag="ChaotEvil"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ClassSkill" tag="skClimb"/>
+    <tag group="ClassSkill" tag="skEscape"/>
+    <tag group="ClassSkill" tag="skIntim"/>
+    <tag group="ClassSkill" tag="skKnowArca"/>
+    <tag group="ClassSkill" tag="skKnowHist"/>
+    <tag group="ClassSkill" tag="skKnowRel"/>
+    <tag group="ClassSkill" tag="skKnowPlan"/>
+    <tag group="ClassSkill" tag="skPercep"/>
+    <tag group="ClassSkill" tag="skSenseMot"/>
+    <tag group="ClassSkill" tag="skStealth"/>
+    <tag group="ClassSkill" tag="skSwim"/>
+    <tag group="WepProf" tag="wBite"/>
+    <tag group="WepProf" tag="wTentacle"/>
+    <tag group="AlgnForbid" tag="Good"/>
+    <tag group="AlgnForbid" tag="Lawful"/>
+    <tag group="AlgnForbid" tag="NeutralGE"/>
+    <tag group="AlgnForbid" tag="NeutralLC"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Gargant3"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="HasType" tag="tpOutsider"/>
+    <tag group="Helper" tag="ManyLegs"/>
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <bootstrap thing="lCelestial"></bootstrap>
+    <bootstrap thing="lDraconic"></bootstrap>
+    <bootstrap thing="lInfernal"></bootstrap>
+    <bootstrap thing="raMoBAllAr"></bootstrap>
+    <bootstrap thing="fImpBull"></bootstrap>
+    <bootstrap thing="spCommune5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spDream5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spUnhallo5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spCommGre5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spDemand8">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spDimeAnc3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spDivinat4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="spDomiPer4">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="3"/>
+      </bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="Value" tag="1"/>
+      <autotag group="wMain" tag="2d8_305"/>
+      </bootstrap>
+    <bootstrap thing="wTentacle">
+      <autotag group="Value" tag="4"/>
+      <autotag group="wMain" tag="2d6_104"/>
+      </bootstrap>
+    <bootstrap thing="raMoBBrMad"></bootstrap>
+    <bootstrap thing="raMoBConst"></bootstrap>
+    <bootstrap thing="spDeatKne1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spInviPur3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spPrayer3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="xxDamRdClM">
+      <autotag group="Value" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="fMultiAtt"></bootstrap>
+    <bootstrap thing="fPowerAtt"></bootstrap>
+    <bootstrap thing="xImmDeath"></bootstrap>
+    <bootstrap thing="xImmMind"></bootstrap>
+    <bootstrap thing="xImmPetri"></bootstrap>
+    <bootstrap thing="xImmPoly"></bootstrap>
+    <bootstrap thing="xSplRs">
+      <autotag group="Value" tag="26"/>
+      </bootstrap>
+    <bootstrap thing="raMoBTranT"></bootstrap>
+    <bootstrap thing="raMoBWarpD"></bootstrap>
+    <bootstrap thing="raMoBImpGr"></bootstrap>
+    <bootstrap thing="raMoBEngDr"></bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="120"/>
+      </bootstrap>
+    <bootstrap thing="xSwim">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="fComCast"></bootstrap>
+    <bootstrap thing="fAwesomeBl"></bootstrap>
+    <bootstrap thing="fGreatFort"></bootstrap>
+    <bootstrap thing="raMoBStUnd"></bootstrap>
+    <bootstrap thing="stAquatic"></bootstrap>
+    <bootstrap thing="stNative"></bootstrap>
+    <bootstrap thing="lAbyssal"></bootstrap>
+    <bootstrap thing="fCleave"></bootstrap>
+    <bootstrap thing="xDamRsAcid">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="xDamRsCold">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    </thing>
+  <thing id="raMoBAllAr" name="All-Around Vision" description="The eyes at the tips of several of a Mother of Oblivion's tentacles grant her a +8 racial bonus on Perception checks. The creature sees in all directions at once. It cannot be flanked." compset="RaceSpec" summary="You can see in all directions and cannot be flanked.">
+    <usesource source="PathRise"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Sense"/> 
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <eval phase="PreLevel" priority="10000">
+      ~ +8 to Perception
+      #skillbonus[skPercep] += 8</eval>
+    </thing>
+  <thing id="raMoBEngDr" name="Energy Drain" description="A Mother of Oblivion feeds on soul energy, draining life from her victims. Living creatures hit by a Mother of Oblivion's bite attack gain two negative levels. The DC is 22 for the Fortitude save to remove a negative level. The save DC is Charisma-based. For each such negative level bestowed, the Mother of Oblivion gains 5 temporary hit points." compset="RaceSpec" summary="Target hit with Bite attack takes 2 neg. lvls. Save to remove one.">
+    <usesource source="PathRise"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="raMoBBrMad" name="Breath of Madness" description="A Mother of Oblivion can exhale a cloud of foul-smelling, narcotic breath: 60-foot cone, once per minute, 1d6 points of Wisdom damage and confusion for 1d6 rounds, Reflex DC 27 half Wisdom damage and no confusion. This breath is a mind-affecting poison effect. The save DC is Constitution-based." compset="RaceSpec" summary="Exhale 60-ft Cone, 1d6 WIS damage &amp; Confusion. Save for half / no confusion">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="PathRise"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="Usage" tag="Minute"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpInfo" tag="spConfusi3"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="raMoBConst" name="Constrict" description="A Mother of Oblivion deals 2d6+6 points of damage with a successful grapple check." compset="RaceSpec" summary="On a successful grapple check, you deal 2d6+6 points of damage.">
+    <usesource source="PathRise"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Extra"/> 
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="raMoBImpGr" name="Improved Grab" description="To use this ability, a Mother of Oblivion must hit a creature at least one size category smaller than herself with a tentacle attack. She can then attempt to start a grapple as a free action without provoking an attack of opportunity. If she wins the grapple check, she establishes a hold and can constrict." compset="RaceSpec" summary="Start a grapple if you hit with an tentacle attack.">
+    <usesource source="PathRise"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="Helper" tag="ShowSpec"/> 
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="raMoBTranT" name="Transdimensional Tentacles" description="A Mother of Oblivion's tentacles allow her to see into and infiltrate multiple planes at once. At all times, a Mother of Oblivion is cognisant of the plane she inhabits bodily and all coterminous planes-such as the Ethereal Plane and Plane of Shadow from the Material Plane. Not only is she aware of these planes and the creatures there, she can reach her tentacles through to attack. By worming her tentacles through the dimensions, a Mother of Oblivion can effectively reach through solid barriers into any area not protected by a dimensional lock or similar effect. While a Mother of Oblivion can attack and even grapple creatures on other planes, she cannot move creatures from one plane to another." compset="RaceSpec" summary="Tentacles can see &amp; interact with all coterminous planes">
+    <usesource source="PathRise"/>
+    <tag group="AbilType" tag="Super"/>    
+    <tag group="Helper" tag="ShowSpec"/> 
+    <tag group="ProductId" tag="HLCommunit"/>
+  </thing>
+  <thing id="raMoBWarpD" name="Warp Dimensions" description="A Mother of Oblivion's presence distorts the dimensions. Any creature that attempts to utilize a teleport effect within 300 feet of a Mother of Oblivion must make a DC 21 caster level check or the teleport effect fails to activate and the creature must make a DC 27 Fortitude save or be nauseated for 1d6 rounds. The save DC is Constitution-based." compset="RaceSpec" summary="Any teleport effect nearby fails and causes nausea in target">
+    <usesource source="PathRise"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aCON"/>    
+    <tag group="Helper" tag="ShowSpec"/> 
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="raMoBStUnd" name="+20 to Steath Underwater" description="+20 racial bonus to Stealth checks underwater." compset="RaceSpec">
+    <fieldval field="actName" value="Currently Underwater"/>
+    <usesource source="PathRise"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="SpecType" tag="Skill"/> 
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~ When Underwater, apply +20 to Stealth
+      if (field[abilActive].value <> 0) then
+      #skillbonus[skStealth] += 20
+      endif]]></eval>
+    </thing>
+  <thing id="rcOgrFierc" name="Fierce Visage" description="The ogrekin is particularly ferocious and monstrously deformed. It gains a +4 racial bonus on Intimidate checks." compset="RaceCustom">
+    <usesource source="Bestiary2"/>
+    <usesource source="PathRise"/>
+    <tag group="AllowRCust" tag="cfgOgrekin"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/> 
+    <eval phase="PreLevel" priority="10000">
+      ~ +4 racial bonus on Intimidate checks for being Mean Looking.
+      #skillbonus[skIntim] += 4</eval>
+    </thing>
+  </document>

@@ -1,0 +1,2365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <fileinfo>
+    <info_history><![CDATA[
+August 11, 2013 - Tim Shadow
+-Source Marked "Unholy Warrior" Class Level thing.
+-Added Product ID to everything.
+-Renamed to PFRPG_Book_of_Fiends_frumple.user to match the CB naming convention.]]></info_history>
+    </fileinfo>
+  <thing id="rauGlmDron" name="Drone" description="The beating of the glomerays&apos; wings creates an irritating distraction that confuses lesser opponents and serves as a mere distraction for their more powerful enemies. All foes within 50-feet of a glomeray must succeed a DC 16 Will save or be confused for as long as they remain in the area of effect. Those who succeed their saves take a -1 penalty to all attack rolls, skill checks and saving throws while in the area. Blocking one&apos;s ears allows the target to attempt an additional saving throw against the effect at a +2 circumstance bonus. The save DC is Dexterity-based." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="StandardDC" tag="aDEX"/>
+    <tag group="SpecType" tag="Aura"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rauGlmDzCl" name="Dazzling Colors" description="The glomeray&apos;s exoskeleton reflects light in a dazzling display, making it hard to watch for long. Opponents suffer a 10% miss chance to all attacks made against it and take a -1 penalty on attack rolls while looking at this daemon." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cuAuraEvil" name="Aura of Evil" description="The power of an unholy warrior&apos;s aura of evil (see {i}detect evil{/i}) is equal to his unholy warrior level, just like the aura of a cleric of an evil deity." compset="ClSpecial" summary="The Unholy Warrior has an aura corresponding to his deity&apos;s alignment.">
+    <usesource source="srcBookFnd"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    </thing>
+  <thing id="cuUWChanN" name="Channel Negative Energy" description="At 4th level, an unoly warrior gains the ability to channel negative energy as a cleric of three levels lower." compset="ClSpecial" summary="A good cleric can channel positive energy; an evil cleric can channel negative energy.">
+    <usesource source="srcBookFnd"/>
+    <tag group="Helper" tag="ClExLose" name="ClExLose" abbrev="ClExLose"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChargeCalc" tag="AttrUses3"/>
+    <tag group="ChargeAttr" tag="aCHA"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="xChannel">
+      <autotag group="Helper" tag="ChannelNeg"/>
+      <autotag group="Hero" tag="ChanDepend"/>
+      <autotag group="SpecialTab" tag="SQClsAbil"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="20000" index="2"><![CDATA[      var tagexpr as string
+      tagexpr = "SpecSource.cHelpUhW"
+      call ChanEnFind
+      doneif (state.isfocus = 0)
+
+      ~we can turn undead 3 + CHA mod / day
+      focus.field[trkMax].value += 3 + #attrmod[aCHA]]]></eval>
+    <eval phase="PostLevel" priority="1000"><![CDATA[      var tagexpr as string
+      tagexpr = "SpecSource.cHelpUhW"
+      call ChanEnFind
+      doneif (state.isfocus = 0)
+
+      ~ Add our unholy warrior level - 3 to our turning level.
+      focus.field[abValue].value += #levelcount[UnholyWar] - 3]]></eval>
+    </thing>
+  <thing id="cuUWDkWea" name="Dark Weapon" description="Upon reaching 5th level, an unholy warrior receives a boon from his dark patrons. This boon can take one of two forms. Once the form is chosen, it cannot be changed.\n\nThe first type of bond allows the unholy warrior to enhance his weapon as a standard action by calling upon the aid of a fiendish spirit for 1 minute per unholy warrior level. When called, the spirit causes the weapon to shed unholy light as a torch. At 5th level, this spirit grants the weapon a +1 enhancement bonus. For every three levels beyond 5th, the weapon gains another +1 enhancement bonus, to a maximum of +6 at 20th level. These bonuses can be added to the weapon, stacking with existing weapon bonuses to a maximum of +5, or they can be used to add any of the following weapon properties: anarchic, flaming, flaming burst, keen, speed, unholy, vicious, vorpal, and wounding. Adding these properties consumes an amount of bonus equal to the property&apos;s cost (see Table 15–9 in the Core Rulebook). These bonuses are added to any properties the weapon already has, but duplicate abilities do not stack. If the weapon is not magical, at least a +1 enhancement bonus must be added before any other properties can be added. The bonus and properties granted by the spirit are determined when the spirit is called and cannot be changed until the spirit is called again. The fiendish spirit imparts no bonuses if the weapon is held by anyone other than the unholy warrior but resumes giving bonuses if returned to the unholy warrior. These bonuses apply to only one end of a double weapon. An unholy warrior can use this ability once per day at 5th level, and one additional time per day for every four levels beyond 5th, to a total of four times per day at 17th level.\n\nIf a weapon bonded with a fiendish spirit is destroyed, the unholy warrior loses the use of this ability for 30 days, or until he gains a level, whichever comes first. During this 30-day period, the unholy warrior takes a –1 penalty on attack and weapon damage rolls." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <eval phase="PostLevel" priority="1000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+var bonus as number
+bonus = linkage[table].field[cTotalLev].value - 2
+field[abValue].value += round(bonus/3,0,-1)
+
+      if (linkage[table].field[cTotalLev].value >= 17) then
+        field[trkMax].value += 4
+      elseif (linkage[table].field[cTotalLev].value >= 13) then
+        field[trkMax].value += 3
+      elseif (linkage[table].field[cTotalLev].value >= 9) then
+        field[trkMax].value += 2
+      else
+        field[trkMax].value += 1
+        endif
+      
+      field[abDuration].value += linkage[table].field[cTotalLev].value
+      
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value) & " (" & field[abDuration].value & " minutes)"]]></eval>
+    </thing>
+  <thing id="cuUWDkAlly" name="Dark Ally" description="Upon reaching 5th level, an unholy warrior receives a boon from his dark patrons. This boon can take one of two forms. Once the form is chosen, it cannot be changed.\n\nThe second type of bond allows an unholy warrior to gain the service of a fiendish servant. This functions as summon monster III, except the duration is permanent and the unholy warrior can only gain the service of a single creature and that creature must either have the chaotic and evil subtypes or it must be a fiendish animal. Once selected, the choice is set, but it may be changed whenever the unholy warrior gains a level. Upon reaching 7th level, and every two levels thereafter, the level of the summon monster spell increases by one, to a maximum of summon monster IX at 17th level.\n\nOnce per day, as a full-round action, an unholy warrior may magically call his servant to his side. This ability is the equivalent of a spell of a level equal to one-third the unholy warrior&apos;s level. The servant immediately appears adjacent to the unholy warrior. An unholy warrior can use this ability once per day at 5th level, and one additional time per day for every four levels thereafter, for a total of four times per day at 17th level.\n\nAt 11th level, the servant gains the advanced template (see the Pathfinder RPG Bestiary). At 15th level, an unholy warrior&apos;s servant gains spell resistance equal to the unholy warrior&apos;s level + 11. Should the unholy warrior&apos;s fiendish servant die or be banished, the unholy warrior may not summon another servant for 30 days or until he gains an unholy warrior level, whichever comes first. During this 30-day period, the unholy warrior takes a –1 penalty on attack and weapon damage rolls." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <eval phase="PostLevel" priority="1000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+var bonus as number
+bonus = linkage[table].field[cTotalLev].value - 1
+field[trkMax].value += round(bonus/4,0,-1)
+
+field[livename].text = field[thingname].text
+
+field[abValue2].value += linkage[table].field[cTotalLev].value + 11
+
+if (linkage[table].field[cTotalLev].value >= 17) then
+  field[livename].text &= " IX, Advanced, SR " & field[abValue2].value 
+elseif (linkage[table].field[cTotalLev].value >= 15) then
+  field[livename].text &= " VIII, Advanced, SR " & field[abValue2].value
+elseif (linkage[table].field[cTotalLev].value >= 13) then
+  field[livename].text &= " VII, Advanced"
+elseif (linkage[table].field[cTotalLev].value >= 11) then
+  field[livename].text &= " VI, Advanced"
+elseif (linkage[table].field[cTotalLev].value >= 9) then
+  field[livename].text &= " V"
+elseif (linkage[table].field[cTotalLev].value >= 7) then
+  field[livename].text &= " IV"
+else
+  field[livename].text &= " III"
+  endif]]></eval>
+    </thing>
+  <thing id="cuUWAir" name="Air Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Air Domain:{/b} A light breeze scenting of death surrounds unholy warriors with the Air domain." compset="CustomSpec" summary="A light breeze scenting of death surrounds unholy warriors with the Air domain." uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spGaseFor3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWAir2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cuUWAir3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cuUWAir1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWAir1" name="Command Air" description="Command creatures with the air subtype as an evil cleric with the Command Undead feat commands undead. Use this ability a number of times per day equal to 1 + your Charisma modifier at 1st level. Every five levels thereafter, you gain an additional use of this ability (two at 5th, three at 10th, and so on)." compset="ClSpecial" summary="Command air subtype creatures.">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + Cha mod + 1/5 levels
+ 
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1) + hero.child[aCHA].field[aModBonus].value,1)]]></eval>
+    </thing>
+  <thing id="cHelpUhW" name="Unholy Warrior" description="The unholy warrior works in the service of dark masters of depthless evil, ready to plunge his dagger into the heart of the innocent virgin, raze the homes of the poor, and cast his loved ones into the burning pyre of a collapsing church once dedicated to good. No sin is too far, no immoral act too distasteful. Each outrage is perpetrated with blasphemous zeal. The unholy warrior has no regard for mercy or weakness. He revels in sin, evil to the core and dedicated to its cause." compset="Class" uniqueness="unique">
+    <fieldval field="cHDSides" value="10"/>
+    <fieldval field="cAbbr" value="UhW"/>
+    <fieldval field="cSkills" value="2"/>
+    <fieldval field="cSplMinLvl" value="1"/>
+    <fieldval field="cSplMaxLvl" value="4"/>
+    <fieldval field="cSpecSing" value="Unholy Warrior Domain"/>
+    <fieldval field="cSpecName" value="Unholy Warrior Domains"/>
+    <fieldval field="cSpec2ndSi" value="Dark Boon"/>
+    <fieldval field="cSpec2ndNm" value="Dark Boons"/>
+    <arrayval field="cCastTot" index="3" column="1" value="0.1"/>
+    <arrayval field="cCastTot" index="4" column="1" value="1"/>
+    <arrayval field="cCastTot" index="5" column="1" value="1"/>
+    <arrayval field="cCastTot" index="6" column="1" value="1"/>
+    <arrayval field="cCastTot" index="6" column="2" value="0.1"/>
+    <arrayval field="cCastTot" index="7" column="1" value="1"/>
+    <arrayval field="cCastTot" index="7" column="2" value="1"/>
+    <arrayval field="cCastTot" index="8" column="1" value="2"/>
+    <arrayval field="cCastTot" index="8" column="2" value="1"/>
+    <arrayval field="cCastTot" index="9" column="1" value="2"/>
+    <arrayval field="cCastTot" index="9" column="2" value="1"/>
+    <arrayval field="cCastTot" index="9" column="3" value="0.1"/>
+    <arrayval field="cCastTot" index="10" column="1" value="2"/>
+    <arrayval field="cCastTot" index="10" column="2" value="1"/>
+    <arrayval field="cCastTot" index="10" column="3" value="1"/>
+    <arrayval field="cCastTot" index="11" column="1" value="2"/>
+    <arrayval field="cCastTot" index="11" column="2" value="2"/>
+    <arrayval field="cCastTot" index="11" column="3" value="1"/>
+    <arrayval field="cCastTot" index="12" column="1" value="3"/>
+    <arrayval field="cCastTot" index="12" column="2" value="2"/>
+    <arrayval field="cCastTot" index="12" column="3" value="1"/>
+    <arrayval field="cCastTot" index="12" column="4" value="0.1"/>
+    <arrayval field="cCastTot" index="13" column="1" value="3"/>
+    <arrayval field="cCastTot" index="13" column="2" value="2"/>
+    <arrayval field="cCastTot" index="13" column="3" value="1"/>
+    <arrayval field="cCastTot" index="13" column="4" value="1"/>
+    <arrayval field="cCastTot" index="14" column="1" value="3"/>
+    <arrayval field="cCastTot" index="14" column="2" value="2"/>
+    <arrayval field="cCastTot" index="14" column="3" value="2"/>
+    <arrayval field="cCastTot" index="14" column="4" value="1"/>
+    <arrayval field="cCastTot" index="15" column="1" value="3"/>
+    <arrayval field="cCastTot" index="15" column="2" value="3"/>
+    <arrayval field="cCastTot" index="15" column="3" value="2"/>
+    <arrayval field="cCastTot" index="15" column="4" value="1"/>
+    <arrayval field="cCastTot" index="16" column="1" value="4"/>
+    <arrayval field="cCastTot" index="16" column="2" value="3"/>
+    <arrayval field="cCastTot" index="16" column="3" value="2"/>
+    <arrayval field="cCastTot" index="16" column="4" value="1"/>
+    <arrayval field="cCastTot" index="17" column="1" value="4"/>
+    <arrayval field="cCastTot" index="17" column="2" value="3"/>
+    <arrayval field="cCastTot" index="17" column="3" value="2"/>
+    <arrayval field="cCastTot" index="17" column="4" value="2"/>
+    <arrayval field="cCastTot" index="18" column="1" value="4"/>
+    <arrayval field="cCastTot" index="18" column="2" value="3"/>
+    <arrayval field="cCastTot" index="18" column="3" value="3"/>
+    <arrayval field="cCastTot" index="18" column="4" value="3"/>
+    <arrayval field="cCastTot" index="19" column="1" value="4"/>
+    <arrayval field="cCastTot" index="19" column="2" value="4"/>
+    <arrayval field="cCastTot" index="19" column="3" value="3"/>
+    <arrayval field="cCastTot" index="19" column="4" value="3"/>
+    <arrayval field="cCustTot" index="0" value="2"/>
+    <arrayval field="cCustScTot" index="4" value="1"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="cRef" tag="Poor"/>
+    <tag group="cWill" tag="Poor"/>
+    <tag group="Helper" tag="NoExSpells"/>
+    <tag group="ClassPanel" tag="ExNeeded"/>
+    <tag group="ClassSkill" tag="Craft"/>
+    <tag group="ClassSkill" tag="skBluff"/>
+    <tag group="ClassSkill" tag="skHandleAn"/>
+    <tag group="ClassSkill" tag="skIntim"/>
+    <tag group="ClassSkill" tag="skKnowPlan"/>
+    <tag group="ClassSkill" tag="skKnowRel"/>
+    <tag group="ClassSkill" tag="skRide"/>
+    <tag group="Classes" tag="UnholyWar" name="Unholy Warrior"/>
+    <tag group="cAttack" tag="Good"/>
+    <tag group="AgeColumn" tag="2"/>
+    <tag group="cFort" tag="Good"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="CasterSrc" tag="Divine"/>
+    <tag group="CasterType" tag="MemAll"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <bootstrap thing="cuUWChanN">
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="fWepMart"></bootstrap>
+    <bootstrap thing="fArmShield"></bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="fArmMedium"></bootstrap>
+    <bootstrap thing="fArmHeavy"></bootstrap>
+    <bootstrap thing="fArmLight"></bootstrap>
+    <bootstrap thing="cuAuraEvil">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWGftDrk">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <link linkage="spellattr" thing="aCHA"/>
+    <eval phase="PostLevel" priority="5000" index="4">~ fourth level spells
+
+perform assign[ClsAllowSp.spDimeDoo4]
+perform assign[ClsAllowSp.spDispGoo4]
+perform assign[ClsAllowSp.spEnervat4]
+perform assign[ClsAllowSp.spFear4]
+perform assign[ClsAllowSp.spFreeMov4]
+perform assign[ClsAllowSp.spInflCri4]
+perform assign[ClsAllowSp.spInviGre4]
+perform assign[ClsAllowSp.spPoison4]
+perform assign[ClsAllowSp.spSummMon4]
+perform assign[ClsAllowSp.spUnhoSwo4]</eval>
+    <eval phase="PostLevel" priority="5000" index="3">~ third level spells
+
+perform assign[ClsAllowSp.spBlindne3]
+perform assign[ClsAllowSp.spContagi3]
+perform assign[ClsAllowSp.spDeepDar3]
+perform assign[ClsAllowSp.spDeepSlu3]
+perform assign[ClsAllowSp.spDispMag3]
+perform assign[ClsAllowSp.spInflSer3]
+perform assign[ClsAllowSp.spInvisib3]
+perform assign[ClsAllowSp.spMagiGoo3]
+perform assign[ClsAllowSp.spMagiWea3]
+perform assign[ClsAllowSp.spMisdire3]
+perform assign[ClsAllowSp.spNondete3]</eval>
+    <eval phase="PostLevel" priority="5000">~ first level spells
+perform assign[ClsAllowSp.spBane1]
+perform assign[ClsAllowSp.spCausFea1]
+perform assign[ClsAllowSp.spDisgSel1]
+perform assign[ClsAllowSp.spDetePoi1]
+perform assign[ClsAllowSp.spDeteUnd1]
+perform assign[ClsAllowSp.spDiviFav1]
+perform assign[ClsAllowSp.spDoom1]
+perform assign[ClsAllowSp.spEnduEle1]
+perform assign[ClsAllowSp.spGhosSou1]
+perform assign[ClsAllowSp.spInflLig1]
+perform assign[ClsAllowSp.spMagiWea1]
+perform assign[ClsAllowSp.spObscMis1]
+perform assign[ClsAllowSp.spProtGoo1]
+perform assign[ClsAllowSp.spReadMag1]
+perform assign[ClsAllowSp.spSummMon1]</eval>
+    <eval phase="PostLevel" priority="5000" index="2">~ second level spells
+
+perform assign[ClsAllowSp.spAlteSel2]
+perform assign[ClsAllowSp.spBullStr2]
+perform assign[ClsAllowSp.spDarknes2]
+perform assign[ClsAllowSp.spDeatKne2]
+perform assign[ClsAllowSp.spEaglSpl2]
+perform assign[ClsAllowSp.spGhouTou2]
+perform assign[ClsAllowSp.spInflMod2]
+perform assign[ClsAllowSp.spPasswit2]
+perform assign[ClsAllowSp.spResiEne2]
+perform assign[ClsAllowSp.spSummMon2]
+perform assign[ClsAllowSp.spUndeAli2]</eval>
+    </thing>
+  <thing id="cUnholyWar" name="Unholy Warrior" compset="ClassLevel" maxlimit="20">
+    <usesource source="srcBookFnd"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassType" tag="Normal"/>
+    <bootstrap thing="cHelpUhW"></bootstrap>
+    <link linkage="helper" thing="cHelpUhW"/>
+    </thing>
+  <thing id="cuUWAir2" name="Air Ken" description="You gain Auran as a free language and the Improved Initiative and Dodge feats, regardless of whether you meet the prerequisites." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="fDodge">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fImpInit">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="lAuran"></bootstrap>
+    </thing>
+  <thing id="cuUWAir3" name="Cold Resistance" description="In a 24-hour period, you ignore an amount of cold damage equal to your level times your Charisma modifier. This resistance stacks with other forms of cold resistance." compset="ClSpecial">
+    <fieldval field="actName" value="Cold Resistance"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine amount of cold damage we can ignore per day
+var mxCld as number
+mxCld = #totallevelcount[] * (hero.child[aCHA].field[aModBonus].value)
+
+field[trkMax].value = maximum(mxCld,0)
+
+var curVal as number
+curVal = maximum(mxCld,0)- field[trkUser].value
+
+field[livename].text = "Cold Resistance (" & curVal & ")"
+
+if (curVal <= 0) then
+  perform assign[Hide.Special]
+endif]]></eval>
+    </thing>
+  <thing id="cuUWGftDrk" name="Gift of Darkness" description="Beginning at 6th level, the unholy warrior gains a spell-like ability from his dark masters. For every three unholy warrior levels afterwards on the character gains an extra use per week of his gift of darkness. Gifts of darkness vary depending on selected domains. The unholy warrior may only select one gift of darkness from those offered by the selected domains." compset="ClSpecial">
+    <fieldval field="usrCandid1" value="Custom.dwGift"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="Custom" tag="DarkGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="PostLevel" priority="1000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~get out if gift of darkness is not granted yet
+    doneif (#levelcount[UnholyWar] < 6)
+
+~ If we haven't chosen anything, get out now
+      doneif (field[usrChosen1].ischosen + tagis[Target.?] = 0)
+
+var pickStr as string
+pickStr = field[usrChosen1].chosen.idstring
+
+foreach pick in hero where "Custom.DarkGift & !thingid.cuUWGftDrk"
+  var rootStr as string
+  rootStr = eachpick.root.idstring
+  if (compare(rootStr,pickStr) = 0) then
+     perform eachpick.delete[Hide.Spell]
+
+     var uses as number
+     uses = (#levelcount[UnholyWar]/3) - 1
+     eachpick.field[trkMax].value = round(uses,0,-1)
+
+      if (#levelcount[UnholyWar] = 20) then
+         perform eachpick.tagreplace[Usage.Week,Usage.Day]
+      endif
+
+  endif
+nexteach]]></eval>
+    </thing>
+  <thing id="cuUWCorrup" name="Corruption Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Corruption Domain:{/b} Unholy warriors with this domain have pale and drawn features." compset="CustomSpec" summary="Unholy warriors with this domain have pale and drawn features." uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spDeteGoo1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="Usage" tag="AtWill"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="spContagi3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Hide" tag="Spell"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWCorr2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cuUWCorr3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWDarkne" name="Darkness Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Darkness Domain:{/b} Shadows darken at the approach of unholy warriors with this domain." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="cuUWDrk2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cuUWDrk3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="spDeepDar3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWDrk1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="1000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ get out if we have less than 3 Unholy Warrior levels
+doneif (#levelcount[UnholyWar] < 3)
+
+~ Add to combat feats allowed
+  linkage[table].field[cBonFtMax].value +=1]]></eval>
+    </thing>
+  <thing id="cuUWDiseas" name="Disease Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Disease Domain:{/b} Pestilential boils cover the genitals of an unholy warrior with this domain." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="spContagi3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Usage" tag="Week"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWDIs3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cuUWDis1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWDis2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWEarth" name="Earth Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Earth Domain:{/b} Unholy warriors with this domain smell of the grave." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="spSpikSto4">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWEarth1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWEarth3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cuUWEarth2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWEnvy" name="Envy Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Envy Domain:{/b} Unholy warriors with this domain have an aura of falseness about them." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="cuUWEnvy1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWEnvy3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cuUWEnvy2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="spConfusi4">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar >= 6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Usage" tag="Week"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWFire" name="Fire Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Fire Domain:{/b} Unholy warriors with this domain have hotter than normal body temperatures." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spFirebal3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Usage" tag="Week"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWFire1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWFire2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cuUWFire3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWGlutto" name="Gluttony Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Gluttony Domain:{/b} Unholy warriors with this domain are obese." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="cuUWGlutt1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="spPoison4">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Usage" tag="Week"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWGlutt3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cuUWGlutt2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWGreed" name="Greed Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Greed Domain:{/b} Unholy warriors with this domain have shifty eyes and wiggling fingers." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="cSneakAtt">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cSneakAtt">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cuUWGreed2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cuUWDriven">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="spNondete3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cSneakAtt">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cSneakAtt">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cSneakAtt">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWHate" name="Hate Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Hate Domain:{/b} Unholy warriors with this domain have severe expressions and are prone to unpredictable outbursts of violence." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="cuUWHate3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cuUWHate2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="spHaste3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWHate1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWHorror" name="Horror Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Horror Domain:{/b} A wild and unkempt appearance is common in unholy warriors with this domain." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spPhanKil4">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWHorr1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWHorr2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="raFrightPr">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <eval phase="Render" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ set DC of frightful presence
+doneif (#levelcount[UnholyWar] < 3)
+
+hero.child[raFrightPr].field[abDC].value = 10 + hero.child[aCHA].field[aModBonus].value + round(#levelcount[UnholyWar]/2,0,-1)]]></eval>
+    </thing>
+  <thing id="cuUWLust" name="Lust Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Lust Domain:{/b} Unholy warriors with this domain are comely and seductive." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="cuUWLust1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWLust3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="spCharMon4">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWLust2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWMagic" name="Magic Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Magic Domain:{/b} Unholy warriors with this domain have oddly colored eyes." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="cuUWMagic2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cuUWMagic3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="spDispMag3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWMagic1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWPain" name="Pain Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Pain Domain:{/b} Unholy warriors with this domain have open oozing lacerations all over their bodies." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spVampTou3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWPain1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWPain3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cuUWPain2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWPride" name="Pride Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Pride Domain:{/b} Unholy warriors with this domain are immaculately dressed and very concerned about appearances." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="cuUWPride2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cuUWPride3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="spEnthral2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWPride1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWSloth" name="Sloth Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Sloth Domain:{/b} Slothful unholy warriors move slowly, with shuffling steps and sleep-rimmed eyes." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="cuUWSloth1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWSloth2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="spSlow2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWSloth3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWTreach" name="Treachery Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Treachery Domain:{/b} These unholy warriors are the most dangerous. They appear like everyone else." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="cSneakAtt">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=15]]></containerreq>
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cSneakAtt">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=20]]></containerreq>
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cHidePlain">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="spInvisib2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWTreac2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cSneakAtt">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cSneakAtt">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=5]]></containerreq>
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cSneakAtt">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=10]]></containerreq>
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWUndead" name="Undead Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Treachery Domain:{/b} Unholy warriors with this domain appear sickly and cadaverous." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="cuUWUndea2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="spAnimDea3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWUndea3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cuUWUndea1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWTyrann" name="Tyranny Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Tyranny Domain:{/b} Unholy warriors with this domain are tall for their race, with powerful frames and severe features." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spUnhoBli4">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Usage" tag="Week"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWTyran1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=5]]></containerreq>
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cuUWTyran1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=10]]></containerreq>
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cuUWTyran1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=15]]></containerreq>
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cuUWTyran1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=20]]></containerreq>
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cuUWTyran3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cuUWTyran2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cuUWTyran1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWWater" name="Water Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Water Domain:{/b} Unholy warriors with this domain have pale blue skin and white lips, appearing as if they had drowned." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spContWat4">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Usage" tag="Week"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWWater3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cuUWWater1">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWWater2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWWrath" name="Wrath Domain" description="The strength of an unholy warrior comes from the powers granted by his dark master. Each patron offers a number of unholy warrior domains, from which the unholy warrior may select two. Each domain grants extraordinary, spell-like, or supernatural abilities gained at the 1st, 2nd, and 3rd levels taken in the class. Finally, each domain lists a possible gift of darkness. From his two domains, an unholy warrior may select one or the other gift of darkness, but not both. Gifts of darkness use the character levels in unholy warrior as the caster level, and Charisma for determining the spell&apos;s DC. \n\n{b}Wrath Domain:{/b} Wild and dangerous, unholy warriors with this domain are fearsome to behold." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecSource" tag="cHelpUhW"/>
+    <tag group="Custom" tag="dwGift" name="Gift of Darkness"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="spBullStr2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar >= 6]]></containerreq>
+      <autotag group="ClSpecWhen" tag="6"/>
+      <autotag group="Custom" tag="DarkGift"/>
+      <autotag group="Hide" tag="Spell"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Week"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWWrath2">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar >= 2]]></containerreq>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cuUWWrath1">
+      <containerreq phase="First" priority="400"><![CDATA[count:Classes.UnholyWar >= 1]]></containerreq>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cuUWWrath3">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar >= 3]]></containerreq>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWCorr2" name="Dark Blessing" description="You apply your Charisma modifier (if positive) as a profane bonus on all saving throws. Multiple instances of this ability do not stack." compset="ClSpecial" summary="Gain bonus to all saves equal to your CHA modifier">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+var chaMod as number
+chaMod = maximum(hero.child[aCHA].field[aModBonus].value,0)
+
+#applybonus[BonProfane,hero.child[svFort],chaMod]
+#applybonus[BonProfane,hero.child[svRef],chaMod]
+#applybonus[BonProfane,hero.child[svWill],chaMod]]]></eval>
+    </thing>
+  <thing id="cuUWCorr3" name="Dark Host" description="You gain immunity to all diseases, including supernatural and magical diseases." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Immune"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="xImmDis">
+      <containerreq phase="First" priority="2001"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWDrk1" name="Dismiss Light" description="Once per day, as a standard action, you may dismiss any natural light from torches or lanterns within 60 feet. If the light emanates from a magical source, you must make a level check just as if you had cast {i}dispel magic{/i}. Every five levels thereafter, you gain an additional use of this ability (two at 5th, three at 10th, and so on)." compset="ClSpecial" summary="As standard action dismiss natural light within 60 ft.">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      var uses as number
+      uses = (#levelcount[UnholyWar]/5) + 1
+      field[abValue].value += round(uses,0,-1)
+
+      field[trkMax].value += round(uses,0,-1)]]></eval>
+    </thing>
+  <thing id="cuUWDrk2" name="Shadowhost" description="Your mere presence dims all lighting within your line of sight. The bright radius remains unaffected, but the shadowy ranged is halved. For example, a torch brightly lights a 20-ft. radius area, and casts 40 ft. of area of shadowy light. With this ability, the range of shadowy light drops to 20 ft. In addition, if you have concealment, you gain total concealment." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    </thing>
+  <thing id="cuUWDrk3" name="Champion of the Night" description="You gain the Blind-Fight feat as a bonus feat. If you already have the Blind-Fight feat, you may select another combat feat whose prerequisites you meet." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    </thing>
+  <thing id="cuUWDis1" name="Pestilential Strike" description="Once per day, you may make a pestilential strike with one normal melee attack. Add your Charisma bonus (min. 0) to your attack roll. On a successful hit, you deal an additional 1d4 points of damage that can be healed only by a {i}remove disease{/i} spell. At 5th level, and every five levels thereafter, you may make an additional pestilential strike per day. Creatures immune to critical hits are immune to this ability." compset="ClSpecial" summary="Strike causes disease that can only be cured by remove disease spell.">
+    <usesource source="srcBookFnd"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + Cha mod + 1/5 levels
+
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1) + hero.child[aCHA].field[aModBonus].value,1)]]></eval>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+
+hero.child[Attack].field[tAtk].value += maximum(hero.child[aCHA].field[aModBonus].value,0)]]></eval>
+    </thing>
+  <thing id="cuUWDis2" name="Rotting Touch" description="Once per day, you may make a special full-attack with a weapon you wield, with only one attack regardless of level. If you successfully hit the target, you deal an additional 1d6 points of temporary Constitution damage. Creatures immune to critical hits are immune to this ability" compset="ClSpecial" summary="Strike causes 1d6 Con damage.">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cuUWDIs3" name="Instant Affliction" description="You apply the Quicken Spell metamagic feat to {i}contagion{/i} spells you cast, either through gift of darkness or your normal allotment of spells. The use of this metamagic feat does not increase the effective level of this spell. If you cannot yet cast {i}contagion{/i}, you instead gain the ability to cast {i}contagion{/i} once per week, until you can cast the spell normally, or you gain a gift of darkness that allows casting of {i}contagion{/i}." compset="ClSpecial" summary="Always apply Quicken Spell metamagic feat to contagion spell.">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    </thing>
+  <thing id="cuUWEarth1" name="Command Earth" description="As a standard action, you can enslave creatures with the earth subtype within 30 feet. Creatures receive a Will save to negate the effect. The DC for this Will save is equal to 10 + 1/2 your unholy warrior level + your Charisma modifier. Creatures that fail their saves fall under your control, obeying your commands to the best of their ability, like undead as if under the effects of the control undead spell. Intelligent creatures receive a new saving throw each day to resist your command. You can control any number of creatures of the earth subtype, so long as their total Hit Dice do not exceed your unholy warrior level. If an earth creature is under the control of another creature, you must make an opposed Charisma check whenever your orders conflict. \n\nThe unholy warrior can use this ability a number of times per day equal to 1 + Charisma modifier at 1st level . The unholy warrior gains an additional use of this ability every five levels thereafter (one at 5th, two at 10th, etc.)" compset="ClSpecial" summary="Command earth subtype creatures.">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Usage" tag="Day"/>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + Cha mod + 1/5 levels
+
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1) + hero.child[aCHA].field[aModBonus].value,1)]]></eval>
+    </thing>
+  <thing id="cuUWEarth2" name="Earth Ken" description="You gain Terran as a free language. In addition, once per day, as a free action, for a number of rounds equal to your Charisma bonus (if any), you may improve your natural armor bonus by an amount equal to your levels in unholy warrior." compset="ClSpecial">
+    <fieldval field="actName" value="Earth Ken"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="DayRound"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <bootstrap thing="lTerran"></bootstrap>
+    <eval phase="PreAttr" priority="10000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ add Cha mod as natural armor bonus
+
+if (field[abilActive].value <> 0) then
+ hero.child[ArmorClass].field[tACNatural].value += hero.child[aCHA].field[aModBonus].value
+endif]]></eval>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used Cha Mod rounds/day (min 1)
+
+var bonus as number
+if (hero.child[aCHA].field[aModBonus].value < 0 ) then
+  perform delete[User.Tracker]
+  perform delete[User.Activation]
+else
+  bonus = maximum(hero.child[aCHA].field[aModBonus].value,0)
+  field[trkMax].value = bonus
+endif]]></eval>
+    </thing>
+  <thing id="cuUWEarth3" name="Damage Reduction" description="As a free action, once per day, you gain damage reduction 2/adamantine and good for a number rounds equal to 3 + your total class level." compset="ClSpecial" summary="Gain DR 2/admantine a number of rounds per day.">
+    <fieldval field="actName" value="Damage Reduction"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="DayRound"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <bootstrap thing="xDamRdAdam"></bootstrap>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ add DR 2/adamantine if actived
+
+if (field[abilActive].value <> 0) then
+ #applydr[xDamRdAdam,2]
+endif]]></eval>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used Cha Mod rounds/day (min 1)
+
+
+  field[trkMax].value = #totallevelcount[] + 3]]></eval>
+    </thing>
+  <thing id="cuUWEnvy1" name="Discord&apos;s Touch" description="Once per day, you may make a touch attack with one normal melee attack against a living opponent. Add your Charisma bonus (if any) to your attack roll. On a successful hit, the subject must succeed at a Fortitude save (DC equals 10 + one-half your unholy warrior level + your Charisma modifier) or become overwhelmed with envy, attacking his nearest ally on the following round, for 1 round. At 5th level, and every five levels thereafter, you may make use discord&apos;s touch one additional time per day." compset="ClSpecial" summary="Touch attack causes target to attack ally.">
+    <usesource source="srcBookFnd"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + 1/5 levels
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1),1)]]></eval>
+    </thing>
+  <thing id="cuUWEnvy2" name="Cloak of Envy" description="Gain a +4 profane bonus to all Bluff, Diplomacy, Intimidate, and Sense Motive checks when negotiating an exchange of goods, information, or services. You also gain Skill Focus (Diplomacy) as a bonus feat." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="Target" tag="skDiplo"/>
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <eval phase="PreLevel" priority="4000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+
+#situational[hero.child[skBluff],"+4 profane when negotiating an exchange of goods, information, or services",field[name].text]
+#situational[hero.child[skDiplo],"+4 profane when negotiating an exchange of goods, information, or services",field[name].text]
+#situational[hero.child[skIntim],"+4 profane when negotiating an exchange of goods, information, or services",field[name].text]
+#situational[hero.child[skSenseMot],"+4 profane when negotiating an exchange of goods, information, or services",field[name].text]]]>
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="cuUWEnvy3" name="Burst of Confusion" description="Once per day, you unleash a 20-ft. spread of raw envy, jealousy, and greed. All living creatures within the area of effect must succeed at a Will save or become confused, as the spell, for 1 round per unholy warrior level. The save is Charisma-based." compset="ClSpecial">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    </thing>
+  <thing id="cuUWFire1" name="Command Fire" description="As a standard action, you can enslave creatures with the fire subtype within 30 feet. Creatures receive a Will save to negate the effect. The DC for this Will save is equal to 10 + 1/2 your unholy warrior level + your Charisma modifier. Creatures that fail their saves fall under your control, obeying your commands to the best of their ability, like undead as if under the effects of the control undead spell. Intelligent creatures receive a new saving throw each day to resist your command. You can control any number of creatures of the fire subtype, so long as their total Hit Dice do not exceed your unholy warrior level. If an fire creature is under the control of another creature, you must make an opposed Charisma check whenever your orders conflict. \n\nThe unholy warrior can use this ability a number of times per day equal to 1 + Charisma modifier at 1st level . The unholy warrior gains an additional use of this ability every five levels thereafter (one at 5th, two at 10th, etc.)" compset="ClSpecial" summary="Command fire subtype creatures.">
+    <usesource source="srcBookFnd"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Usage" tag="Day"/>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + Cha mod + 1/5 levels
+
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1) + hero.child[aCHA].field[aModBonus].value,1)]]></eval>
+    </thing>
+  <thing id="cuUWFire2" name="Fire Ken" description="You gain Ignan as a free language. Once per day, as a free action, you may sheathe your weapon with flames for one round. If you successfully hit the target, you deal an additional 1d6 + your Charisma modifier points of fire damage (min 1)." compset="ClSpecial">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <bootstrap thing="lIgnan"></bootstrap>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+var chaMod as number
+chaMod = hero.child[aCHA].field[aModBonus].value
+
+var damStg as string
+if (chaMod = 0) then
+ damStg = ")"
+else
+ damStg = signed(chaMod) & ")"
+endif
+
+field[livename].text &= " (1d6" & damStg]]></eval>
+    </thing>
+  <thing id="cuUWFire3" name="Fire Resistance" description="In a 24-hour period, you ignore an amount of fire damage equal to your level times your Charisma modifier. This resistance stacks with other forms of fire resistance. However, when taking fire damage it is subtracted from this cold resistance before other fire resistances apply." compset="ClSpecial">
+    <fieldval field="actName" value="Fire Resistance"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine amount of cold damage we can ignore per day
+
+var mxCld as number
+mxCld = #totallevelcount[] * (hero.child[aCHA].field[aModBonus].value)
+
+field[trkMax].value = maximum(mxCld,0)
+
+var curVal as number
+curVal = maximum(mxCld,0)- field[trkUser].value
+
+field[livename].text = "Fire Resistance (" & curVal & ")"
+
+if (curVal <= 0) then
+  perform assign[Hide.Special]
+endif]]></eval>
+    </thing>
+  <thing id="cuUWGlutt1" name="Wave of Hunger" description="You may release a 30-ft. burst of foul energy, once per day as a standard action, forcing all living creatures within the area of effect to succeed at a Fortitude save (DC equals 10 + one-half your unholy warrior&apos;s level + your Charisma modifier) or become overwhelmed with an insatiable hunger. Subjects so affected can do nothing else but feed for a number of rounds equal to 1d6 + the unholy warrior&apos;s Charisma modifier. If there is no available food, the victim sets upon the dead, filth, dung, or anything remotely edible (even slimes). Victims will not eat inorganic material such as weaponry, rocks, or anything else similarly harmful. At 5th level, and every five levels thereafter, you may make use wave of hunger one additional time per day." compset="ClSpecial" summary="Burst of energy overwhelms targets with hunger.">
+    <usesource source="srcBookFnd"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Attack"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + 1/5 levels
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1),1)]]></eval>
+    </thing>
+  <thing id="cuUWGlutt2" name="Serpents&apos; Senses" description="You gain the Scent ability. If you already have this ability, your effective range doubles." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="xScent">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWGlutt3" name="Power through Consuption" description="You may devour the flesh of your enemies to obtain stored energy units (SEU) for later use. For every Hit Die of living flesh consumed, you gain 1 SEU, not to exceed your levels in unholy warrior. Any SEU gained in excess are lost. Furthermore, you retain these SEUs for 12 hours before you lose their power through the body&apos;s natural functions. Thereafter, as a free action, you may trade in these energy units for a +1 profane bonus to any d20 roll such as saving throws, skill checks, attack rolls, and so on. There is no restriction on how many SEUs you can spend.\n\nTo gain the benefits of this ability, you must eat your victim alive. To do so, you must make a bite attack, ordinarily considered an unarmed attack provoking an attack of opportunity, unless the unholy warrior has a natural bite attack or Improved Unarmed Strike. A normal bite deals 1d2 points of damage, unless the unholy warrior has a normal bite attack (see the champion of the dark seven for an example in the Unholy Warrior&apos;s Handbook). At any time, you can perform a coup de grace against a helpless opponent by using the normal rules. Once the target is dead, it takes 1d6 – the target&apos;s size bonus to AC + the unholy warrior&apos;s size bonus to AC in minutes to consume the target (if the result is 0 minutes or less, 1 full-round action completes the consumption). For example, a Medium unholy warrior consumes a rat in 1d6–2 minutes (1d6 – 2 [rat&apos;s size bonus] + 0 [unholy warrior&apos;s size bonus]). Note that a rat only has 1/4 d8 Hit Dice, so the unholy warrior must eat four rats to gain a single SEU.\n\nYou may gorge yourself, reducing the consumption time by half to a minimum of 1 round, but this carries the risk of choking. For each full minute you eat at a rapid pace, you must succeed at a Concentration check against a DC equal to 10 plus the number of Hit Dice you are trying to consume. If you fail, you begin to suffocate. Each round, you must succeed at a Fortitude save against the same Concentration DC +1 per round spent choking to clear the obstruction, but the meal is ruined. If you fail, you continue to suffer the effects of suffocation. Someone else may assist you in removing the obstruction, by making a DC 10 Dexterity check and giving you a +2 circumstance bonus to your Fortitude save." compset="ClSpecial" summary="Consume victims to gain profane bonus to any d20 roll.">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="Final"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ max amout is equal to Unholy Warrior level
+
+field[trkMax].value = #levelcount[UnholyWar]]]></eval>
+    </thing>
+  <thing id="cuUWGreed2" name="Cutpurse" description="You gain Deft Hands and Skill Focus (Sleight of Hand) as bonus feats. In addition, Disable Device and Sleight of Hand become class skills." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="fDeftHands">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="thing" tag="skipprereq"/>
+      <autotag group="Target" tag="skSleight"/>
+      </bootstrap>
+    <eval phase="PreLevel"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+perform hero.childfound[skDisable].assign[Helper.ClassSkill]
+perform hero.childfound[skSleight].assign[Helper.ClassSkill]]]></eval>
+    </thing>
+  <thing id="cuUWDriven" name="Driven" description="Once per day, as a free action, you gain a +4 profane bonus to your Dexterity and +5 ft. enhancement bonus to your land speed. These bonuses last for a number of rounds equal to your Charisma modifier (minimum of 1 round)." compset="ClSpecial" summary="Gain +4 profane bonus to Dex and +5 ft. land speed.">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ add bonuses if actived
+
+if (field[abilActive].value <> 0) then
+ #applybonus[BonProfane,hero.child[aDEX],4]
+ #enhancementbonus[hero.child[Speed],5]
+endif]]></eval>
+    </thing>
+  <thing id="cuUWHate1" name="Loathsome Strike" description="Once per day, you may make a normal melee attack against a living opponent. Add your Charisma bonus (if any) to your attack roll. On a successful hit, in lieu of normal damage, you deal 1d8 points of temporary Charisma damage. Unlike smite good, you may use this ability at any time during the attack, before, during, or after the attack roll. At 5th level, and every five levels thereafter, you may make a loathsome strike one additional time per day." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="First" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + 1/5 levels
+
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1),1)]]></eval>
+    <eval phase="PostAttr" priority="10000" index="3"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+ ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+     field[abValue].value += maximum(hero.child[aCHA].field[aModBonus].value,0)
+
+      field[abSumm].text = "+" & field[abValue].value & " to hit for 1d8 Cha damage when used."
+
+      if (field[abilActive].value <> 0) then
+        hero.child[Attack].field[tAtk].value += field[abValue].value
+        
+        endif]]></eval>
+    </thing>
+  <thing id="cuUWHate2" name="Fearsome Resolve" description="Once per day, whenever your hit points fall to 50% or less, you may attempt a Fortitude save (DC equals 10 + the Hit Dice or levels of the last opponent that struck you) to heal an amount of damage equal to 2d8 + your levels in unholy warrior + your Charisma modifier, as you gain a second wind, filled with hatred for your enemies." compset="ClSpecial">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="Final" priority="1000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+var bon as number
+bon = #levelcount[UnholyWar] + #attrbonus[aCHA]
+
+field[livename].text &= " (2d8" & signed(bon) & " healed)"]]></eval>
+    </thing>
+  <thing id="cuUWHate3" name="Roaring Fury" description="Once per day, as a move-equivalent action, you may emit a shriek so fierce it forces all living opponents within 30 ft. to succeed at a Will save or become panicked. This is a mind-affecting fear effect. The save is Charisma-based." compset="ClSpecial">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Attack"/>
+    </thing>
+  <thing id="cuUWHorr1" name="Dread" description="Once per day, you may make a normal melee attack against a living opponent. Add your Charisma bonus (if any) to your attack roll. On a successful hit, in addition to normal damage, the target must succeed at a Will save (DC 10 + one-half your unholy warrior levels + your Charisma modifier) or they are confused as per the {i}confusion{/i} spell for a number of rounds equal to your Charisma modifier (minimum of 1 round). At 5th level, and every five levels thereafter, you may make an additional dread attack per day." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="First" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + 1/5 levels
+
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1),1)]]></eval>
+    <eval phase="PostAttr" priority="1000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+
+hero.child[Attack].field[tAtk].value += maximum(hero.child[aCHA].field[aModBonus].value,0)]]></eval>
+    </thing>
+  <thing id="cuUWHorr2" name="Disturbing Visage" description="You are a paragon of fear and loathing, having witnessed unspeakable acts of cruelty and violence. As a result, you are immune to all forms of fear. In addition, you gain Persuasive and Skill Focus (Intimidate) as bonus feats." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="fPersuas">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fSkillFoc">
+      <autotag group="thing" tag="skipprereq"/>
+      <autotag group="Target" tag="skIntim"/>
+      </bootstrap>
+    <bootstrap thing="xImmFear"></bootstrap>
+    </thing>
+  <thing id="cuUWPride1" name="Hamartia" description="Once per day, if you spend one round studying an opponent and succeed at a Perception check (10 + the opponent&apos;s Hit Dice or levels), you deduce his fatal flaw. Add your Charisma modifier to all of your attack and damage rolls against that opponent for the duration of the combat. At 5th level, and every five levels thereafter, you may make an additional use of this ability per day." compset="ClSpecial">
+    <fieldval field="actName" value="Hamartia"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="First" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + 1/5 levels
+
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1),1)]]></eval>
+    <eval phase="PreLevel" priority="1000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ when activated add Cha bonus to attack and damage rolls vs. a single opponent
+var bon as number
+bon = maximum(0,hero.child[aCHA].field[aModBonus].value)
+
+field[livename].text = "Hamartia (" & signed(bon) & ")"]]></eval>
+    </thing>
+  <thing id="cuUWPride2" name="Self-Satisfied" description="Your belief in your self-worth makes you nearly impervious to mind-affecting spells and effects. You gain a +4 morale bonus to all saves against enchantment spells and effects, and whenever you are the target of such a spell, you may rebound the spell back to its caster. To reflect the spell, you must succeed at a Will save against the spell&apos;s DC, including your +4 morale bonus. If you succeed, you affect the caster as if you had cast the spell yourself. At 10th level, you may rebound the spell to any opponent within 20 ft. of the original caster." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="xBonusSave">
+      <assignval field="livename" value="vs. enchantment spells and effects"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWPride3" name="Confidence" description="Your arrogance and self-love make it dangerous to target you with psionics or other mind-affecting spells and effects. Whenever you are targeted by a psionic attack, power, enchantment or mind-affecting spell or effect, you create a backlash dealing 1d10 + your Charisma modifier points of damage to the original caster. In addition, the original caster must succeed at a Fortitude save or fall asleep as per deep slumber. The save is Charisma-based." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    </thing>
+  <thing id="cuUWLust1" name="Slave to Lust" description="Once per day, you may make a melee touch attack against a living opponent. Add your Charisma bonus (if any) to your attack roll. On a successful hit, the target must succeed at a Will save or they become overwhelmed by an insatiable need to have intimate physical contact with you for one round. Subjects so affected lose their Dexterity bonus to AC and are confused as per {i}lesser confusion{/i}. At 5th level, and every five levels thereafter, you may make an additional slave to lust attack per day. The save is Charisma-based." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + 1/5 levels
+
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1),1)]]></eval>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+
+hero.child[Attack].field[tAtk].value += maximum(hero.child[aCHA].field[aModBonus].value,0)]]></eval>
+    </thing>
+  <thing id="cuUWLust2" name="Object of Desire" description="You master the art of seduction, preying upon other people&apos;s hidden lusts and capitalize on the promise of their manifestation. You gain a +4 profane bonus to improve the attitudes of creatures normally attracted to your gender. In addition, you gain Persuasive and Spell Focus (Enchantment) as bonus feats." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="fPersuas">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="fSpellFoc">
+      <autotag group="Target" tag="ssEnchant"/>
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWLust3" name="Allure" description="Once per day, as a free action, you gain a +4 profane bonus to your Charisma and +1 profane bonus to all attack and damage rolls. These bonuses last for a number of rounds equal to your newly improved Charisma modifier (minimum of 1 round)." compset="ClSpecial">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="User" tag="NeedDomain"/>
+    <eval phase="PreLevel" priority="1000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ add bonuses if actived
+
+if (field[abilActive].value <> 0) then
+ #applybonus[BonProfane,hero.child[aCHA],4]
+ #applybonus[BonProfane,hero.child[Attack],1]
+ #applybonus[BonProfane,hero.child[Damage],1]
+endif]]></eval>
+    </thing>
+  <thing id="cuUWMagic1" name="Read &amp; Detect Magic" description="Once per day, you may cast {i}read magic{/i} and {i}detect magic{/i} simultaneously (as if one of the spells were enhanced by the Quickened Spell metamagic feat). At 5th level, and every five levels thereafter, you may gain an additional use of each of these spells per day." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="Helper" tag="SpellLike"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + Cha mod + 1/5 levels
+
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1) + hero.child[aCHA].field[aModBonus].value,1)]]></eval>
+    </thing>
+  <thing id="cuUWMagic2" name="Spell Resistance" description="You gain spell resistance equal to your levels in unholy warrior +5. This resistance applies to just one school of magic selected when you gain this ability. Once you have chosen the school, you cannot change to another school. This spell resistance stacks with other spell resistance." compset="ClSpecial" summary="Gain SR 5 + unholy warrior level vs. specific school of magic.">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="SR"/>
+    <tag group="fShowWhat" tag="Schools"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="First" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ If we haven't chosen anything, get out now
+      doneif (field[usrChosen1].ischosen + tagis[Target.?] = 0)
+
+var bon as number
+bon = #levelcount[UnholyWar] + 5
+
+field[livename].text = "Spell Resistance " & bon]]></eval>
+    </thing>
+  <thing id="cuUWMagic3" name="Aura of Antimagic" description="Spells cast from good sources or from sacred items have difficulty affecting you. Whenever magic from an explicitly good source (such as sacred items or spells with the good descriptor, but not standard magic items in the hands of a good caster) is used against you, you may add your Charisma modifier to your saving throw. In addition, all allies targeted with these same effects within 10 ft. of you receive a +2 profane bonus to their saves. Magic items in the hands of a good caster are unaffected by this aura." compset="ClSpecial" summary="Gain Cha mod as profane bonus vs. spells and spell-like abilities from good sources">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Aura"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    </thing>
+  <thing id="cuUWGDDisM" name="Dispel Magic" description="You can cast {i}dispel magic{/i} as a spell-like ability." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="SpellLike" name="Spell-lIke Ability" abbrev="(Sp)"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="User" tag="Tracker" name="Tracker" abbrev="Tracker"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="Usage" tag="Week" name="/week" abbrev="/week"/>
+    <tag group="Helper" tag="SpcDisable"/>
+    <tag group="SpInfo" tag="spDispMag3"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="SpellLike" name="Spell-Like Ability" abbrev="Spell-Like Ability"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      var uses as number
+      uses = (#levelcount[UnholyWar]/3) - 1
+      field[abValue].value += round(uses,0,-1)
+
+      field[trkMax].value += round(uses,0,-1)]]></eval>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+if (hero.child[cuUWGftDrk].field[usrChosen1].chosen.tagis[thingid.cuUWMagic] <> 0) then
+  perform assign[Helper.ShowSpec]
+  perform delete[Helper.SpcDisable]
+endif]]></eval>
+    </thing>
+  <thing id="cuUWPain1" name="Attack of Agony" description="Once per day, you may make a normal melee attack against a living opponent. Add your Charisma bonus (if any) to your attack roll. On a successful hit, in addition to normal damage, you force the subject to succeed at a Fortitude save or they take nonlethal damage equal to your unholy warrior levels. At 5th level, and every five levels thereafter, you may make an additional attack of agony per day. Creatures immune to critical hits are immune to your attacks of agony. The save is Charisma-based" compset="ClSpecial" summary="Add your Cha bonus to attack to do pain ful damage.">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+
+hero.child[Attack].field[tAtk].value += maximum(hero.child[aCHA].field[aModBonus].value,0)]]></eval>
+    <eval phase="Final" priority="10000">~ determine the number of times per day we can use this
+~ can be used 1 + 1/5 levels
+var bonus as number
+bonus = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1),1)
+
+field[trkMax].value = bonus</eval>
+    </thing>
+  <thing id="cuUWPain2" name="Sadistic Strike" description="Within one combat per day, whenever you confirm a critical with a melee attack, you experience a surge of pleasure, granting you a +5 ft. profane bonus to your land speed, a +1 profane bonus to your attack rolls, and a –1 penalty to your AC. Multiple instances of confirming a critical in the combat stack. For example, if you confirm a critical three times in one combat, you gain a +15 ft. profane bonus to your land speed, a +3 profane bonus to attack rolls and a –3 penalty to your AC. The bonuses last until the end of the encounter." compset="ClSpecial">
+    <fieldval field="actUserMin" value="0"/>
+    <fieldval field="actUserMax" value="100"/>
+    <fieldval field="actName" value="Sadistic Strike"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="SpecType" tag="Attack"/>
+    <eval phase="PreLevel" priority="1000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ If we're not enabled, get out now
+   doneif (field[abilActive].value = 0)
+
+~ Add to our armor class
+hero.child[ArmorClass].field[Penalty].value -= field[actUser].value
+~ Add to speed
+hero.child[Speed].field[BonProfane].value += field[actUser].value * 5
+ ~ Add attack bonus
+hero.child[Attack].field[BonProfane].value += field[actUser].value]]></eval>
+    </thing>
+  <thing id="cuUWPain3" name="Aura of Suffering" description="You are immune to fear (magical or otherwise). All opponents within 10 ft. take 1 point of nonlethal damage per round they remain in the area of effect, as their flesh ripples painfully all over their bodies. Creatures immune to critical hits are immune to this ability." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Aura"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="xImmFear">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=3]]></containerreq>
+      </bootstrap>
+    <eval phase="Final"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+field[livename].text = "Aura of Suffering (10 ft.)"]]></eval>
+    </thing>
+  <thing id="cuUWSloth1" name="Slowing Stab" description="Once per day, you may make a normal melee attack against a living opponent. Add your Charisma bonus (if any) to your attack roll. On a successful hit, in addition to normal damage, you reduce the subject&apos;s land speed by 1d6 × 5 ft. for the duration of the combat. You cannot reduce an opponent&apos;s speed to less than 5 ft. At 5th level, and every five levels thereafter, you may make an additional slowing stab per day. Creatures immune to critical hits are immune to this attack." compset="ClSpecial" summary="Attack slows opponent.">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+
+field[abValue2].value += maximum(hero.child[aCHA].field[aModBonus].value,0)
+
+hero.child[Attack].field[tAtk].value += field[abValue2].value]]></eval>
+    <eval phase="Final" priority="1000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + 1/5 levels
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1),1)]]></eval>
+    </thing>
+  <thing id="cuUWSloth2" name="Idleness" description="You are so lazy, not even magic can make you do anything you do not want to do. You gain a +4 morale bonus to all saves against enchantment spells and effects, and whenever you are the target of such a spell, you may rebound the spell back to its caster. To reflect the spell, you must succeed at a Will save against the spell&apos;s DC, including your +4 morale bonus. If you succeed, you affect the caster as if you had cast the spell yourself. At 10th level, you may rebound the spell to any opponent within 20 ft. of the original caster." compset="ClSpecial" summary="Gain +4 morale bonus vs. enchantment spells and effects and can rebound effect on caster">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="xBonusSave">
+      <assignval field="livename" value="morale bonus vs. enchantment spells and effects"/>
+      </bootstrap>
+    </thing>
+  <thing id="cuUWSloth3" name="Slow Aura" description="Your speed permanently slows as if you carried a heavy load, such that Medium creatures slow to 20 ft., while Small creatures slow to 15 ft. Heavy armor does not slow you further. In exchange for your reduced speed, all living creatures within 60 ft. take a –10 profane penalty to their land speed." compset="ClSpecial" summary="You are pemanently slowed as are living creatrures within 60 ft.">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Aura"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+var spd as number
+spd = hero.child[Speed].field[tSpeed].value
+
+hero.child[Speed].field[tSpeed].value = 5 * round(spd/7.5,0,1)
+hero.child[Speed].field[tSpeedMod].value = 5 * round(spd/7.5,0,1)]]></eval>
+    </thing>
+  <thing id="cuUWTreac2" name="Poison Use" description="You are skilled in the use of poison and never risk accidentally poisoning yourself when applying poison to a blade. If you already have poison use, you are now immune to poison." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="xImmPois">
+      <containerreq phase="First" priority="2000"><![CDATA[count:Classes.UnholyWar>=2]]></containerreq>
+      <autotag group="Helper" tag="SpcDisable"/>
+      <autotag group="Hide" tag="Special"/>
+      </bootstrap>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+if (hero.childlives[xImmPois] <> 0) then
+  if (hero.childlives[raPoiUse] + hero.childlives[cAsnPoison] <> 0) then
+    perform hero.childfound[xImmPois].delete[Hide.Special]
+    perform hero.childfound[xImmPois].delete[Helper.SpcDisable]
+    perform assign[Hide.Special]
+    perform assign[Helper.SpcDisable]
+  endif
+endif]]></eval>
+    </thing>
+  <thing id="cuUWTyran1" name="Smite Good" description="Once per day, an unholy warrior can call out to the dark powers to crush the forces of good. As a swift action, the unholy warrior chooses one target within sight to smite. If this target is good, the unholy warrior adds his Charisma bonus (if any) on his attack rolls and adds his unholy warrior level on all damage rolls made against the target of his smite. If the target of smite good is an outsider with the good subtype, a good-aligned dragon, or a good creature with levels of cleric or paladin, the bonus to damage on the first successful attack increases to 2 points of damage per level the antipaladin possesses. Regardless of the target, smite good attacks automatically bypass any DR the creature might possess.\n\nIn addition, while smite good is in effect, the unholy warrior gains a deflection bonus equal to his Charisma modifier (if any) to his AC against attacks made by the target of the smite. If the antipaladin targets a creature that is not good, the smite is wasted with no effect.\n\nThe smite good effect remains until the target of the smite is dead or the next time the unholy warrior rests and regains his uses of this ability. At 5th level, and at every five levels thereafter, the unholy warrior may smite good one additional time per day.\n\n{b}Note{/b}: Either activation checkbox on the in-play tab will apply the to-hit and AC modifiers, select &quot;Activated&quot; for x1 damage or &quot;Double Damage&quot; for x2." compset="ClSpecial">
+    <fieldval field="actName" value="Smite Good: Activated"/>
+    <fieldval field="actName2" value="Double Damage"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="PostAttr" priority="1000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[listname].text = "Smite Good (" & field[xIndex].value & "/day)"
+
+      ~only run the rest for the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~ Generate our new name
+      var level as number
+      var total as number
+      var cha as number
+      field[abValue].value += field[xAllLev].value
+      field[trkMax].value += field[xCount].value
+
+      field[abValue2].value += maximum(hero.child[aCHA].field[aModBonus].value,0)
+
+      field[abSumm].text = "+" & field[abValue2].value & " to hit, +" & field[abValue].value & " to damage, +" & field[abValue2].value & " deflection bonus to AC when used."
+
+      if (field[abilActive].value + field[abilAct2].value <> 0) then
+        hero.child[Attack].field[tAtk].value += field[abValue2].value
+        hero.child[ArmorClass].field[tACDeflect].value += field[abValue2].value
+        hero.child[Damage].field[tDamBonus].value += field[abValue].value
+        ~if the target is an evil dragon, evil outsider, or undead, add the damage bonus again
+        if (field[abilAct2].value <> 0) then
+          hero.child[Damage].field[tDamBonus].value += field[abValue].value
+          endif
+        endif]]></eval>
+    </thing>
+  <thing id="cuUWTyran2" name="Ruinous Touch" description="Each day you can inflict an amount of damage equal to your Charisma bonus times your unholy warrior level. You may choose to divide this damage among multiple recipients, and you do not have to use it all at once. Ruinous touch is a melee touch attack. Alternatively, you can use this ability to cure your own damage or to repair undead." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+var mxCld as number
+mxCld = #totallevelcount[] * (hero.child[aCHA].field[aModBonus].value)
+
+field[trkMax].value = maximum(mxCld,0)
+
+var curVal as number
+curVal = maximum(mxCld,0)- field[trkUser].value
+
+field[livename].text = "Ruinous Touch (" & curVal & ")"]]></eval>
+    </thing>
+  <thing id="cuUWTyran3" name="Aura of Despair" description="You radiate a malign aura causing all enemies within 10 feet to take a –2 penalty on all saving throws." compset="ClSpecial" summary="All enemies within 10 feet to take a –2 penalty on all saving throws">
+    <usesource source="srcBookFnd"/>
+    <tag group="SpecType" tag="Aura"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+field[livename].text = "Aura of Despair (10 ft.)"]]></eval>
+    </thing>
+  <thing id="cuUWUndea1" name="Death Touch" description="You may use a death touch once per day. Your death touch produces a death effect. You must succeed on a melee touch attack against a living creature (using the rules for touch spells). When you touch, roll 1d6 per unholy warrior level you possess. If the total at least equals the creature&apos;s current hit points, it dies (no save). Your cleric levels, if any, stack with your unholy warrior levels for the purposes of this ability. Every five levels thereafter, you gain an additional use of this ability (two at 5th, three at 10th, and so on)." compset="ClSpecial" summary="Touch can slay opponent.">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + 1/5 levels
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1),1)
+
+~ determine damage
+var dam as number
+dam = #levelcount[Cleric] + #levelcount[UnholyWar]
+
+field[livename].text = "Death Touch (" & dam & "d6)"]]></eval>
+    </thing>
+  <thing id="cuUWUndea2" name="Soulless" description="You gave your soul to your dark master, and now a malevolent force occupies your body. You cannot take negative energy levels, nor can you be turned into undead spawn if slain by an undead creature with the create spawn ability. Any time you are raised from the dead, regardless of the spell, you lose 1 point of Constitution, but you never lose a level. Undead see you as one of their own and do not attack you unless you first attack them." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    </thing>
+  <thing id="cuUWUndea3" name="Aura of Fear" description="All enemies within 10 ft. of you must succeed at a Will save (DC 10 + one-half your unholy warrior levels + your Charisma modifier) or become shaken. This is a mind-affecting fear effect. If opponents succeed at their saving throws, they cannot again be affected by this power for 24 hours." compset="ClSpecial" summary="Enemies within 10 ft. must save or become shaken.">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecType" tag="Aura"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <eval phase="Final"><![CDATA[
+~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+field[livename].text = "Aura of Fear (10 ft.)"]]></eval>
+    </thing>
+  <thing id="cuUWWater1" name="Command Water" description="As a standard action, you can enslave creatures with the water subtype within 30 feet. Creatures receive a Will save to negate the effect. The DC for this Will save is equal to 10 + 1/2 your unholy warrior level + your Charisma modifier. Creatures that fail their saves fall under your control, obeying your commands to the best of their ability, like undead as if under the effects of the control undead spell. Intelligent creatures receive a new saving throw each day to resist your command. You can control any number of creatures of the water subtype, so long as their total Hit Dice do not exceed your unholy warrior level. If a water creature is under the control of another creature, you must make an opposed Charisma check whenever your orders conflict. \n\nThe unholy warrior can use this ability a number of times per day equal to 1 + Charisma modifier at 1st level . The unholy warrior gains an additional use of this ability every five levels thereafter (one at 5th, two at 10th, etc.)" compset="ClSpecial" summary="Command water subtype creatures.">
+    <usesource source="srcBookFnd"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Usage" tag="Day"/>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine the number of times per day we can use this
+~ can be used 1 + Cha mod + 1/5 levels
+
+
+field[trkMax].value = maximum(1 + round(#levelcount[UnholyWar]/5,0,-1) + hero.child[aCHA].field[aModBonus].value,1)]]></eval>
+    </thing>
+  <thing id="cuUWWater3" name="Acid Resistance" description="In a 24-hour period, you ignore an amount of acid damage equal to your level times your Charisma modifier. This resistance stacks with other forms of acid resistance. However, when taking acid damage it is subtracted from this cold resistance before other cold resistances apply." compset="ClSpecial">
+    <fieldval field="actName" value="Cold Resistance"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+~ determine amount of acid damage we can ignore per day
+var mxCld as number
+mxCld = #totallevelcount[] * (hero.child[aCHA].field[aModBonus].value)
+
+field[trkMax].value = maximum(mxCld,0)
+
+var curVal as number
+curVal = maximum(mxCld,0)- field[trkUser].value
+
+field[livename].text = "Acid Resistance (" & curVal & ")"
+
+if (curVal <= 0) then
+  perform assign[Hide.Special]
+endif]]></eval>
+    </thing>
+  <thing id="cuUWWater2" name="Water Ken" description="You gain Aquan as a free language, Swim becomes a class skill and gain a profane bonus to your Swim skill equal to your Charisma modifier times your unholy warrior level. In addition, you never take an armor check penalty to your Swim checks. You gain a Swim speed equal to you land speed (if you do not already have a swim speed). You may also breathe underwater once per day for a number of minutes equal to 3 + your Constitution modifier (min 3)." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="lAquan"></bootstrap>
+    <bootstrap thing="xSwim"></bootstrap>
+    <eval phase="Final" priority="10000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+perform hero.child[skSwim].assign[Helper.ClassSkill]
+
+var bon as number
+bon = maximum(0,hero.child[aCHA].field[aModBonus].value * #levelcount[UnholyWar])
+
+#applybonus[BonProfane,hero.child[skSwim],bon]
+
+hero.child[xSwim].field[abValue].value = maximum(hero.child[Speed].field[tSpeed].value,hero.child[xSwim].field[abValue].value)]]></eval>
+    </thing>
+  <thing id="cuUWWrath2" name="Fast" description="Your base land speed increases +5 ft. If you have fast move or some other similar class feature, this ability stacks." compset="ClSpecial" summary="Land speed +5 ft.">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <eval phase="PreLevel" priority="1000"><![CDATA[~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+hero.child[Speed].field[tSpeed].value += 5]]></eval>
+    </thing>
+  <thing id="cuUWWrath3" name="Frenzy" description="You are too angry to die, and may continue to fight until your negative hit points exceeds double your Constitution score. Hence, if you have a 13 Constitution, you can fight normally until you go lower than -26 hit points, at which point you die immediately. In addition, you gain the Diehard feat, even if you do not meet the prerequisites. If you already have Diehard select another combat feat but you must meet the prerequisites as normal." compset="ClSpecial">
+    <usesource source="srcBookFnd"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <bootstrap thing="fDiehard">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    </thing>
+  <thing id="spSpidCli1" name="Spider Climb" description="The subject can climb and travel on vertical surfaces or even traverse ceilings as well as a spider does. The affected creature must have its hands free to climb in this manner. The subject gains a climb speed of 20 feet and a +8 racial bonus on Climb skill checks; furthermore, it need not make Climb checks to traverse a vertical or horizontal surface (even upside down). A spider climbing creature retains its Dexterity bonus to Armor Class (if any) while climbing, and opponents get no special bonus to their attacks against it. It cannot, however, use the run action while climbing." compset="Spell" summary="Grants ability to walk on walls and ceilings.">
+    <fieldval field="sCompDesc" value="a live spider"/>
+    <fieldval field="sTarget" value="creature touched"/>
+    <fieldval field="sDuration" value="10 min./level"/>
+    <fieldval field="sSave" value="Will negates (harmless)"/>
+    <fieldval field="sResist" value="Yes (harmless)"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="sLevel" tag="1"/>
+    <tag group="sRange" tag="Touch" name="Touch" abbrev="{ref s_Touch}Tch{ref}"/>
+    <tag group="sResist" tag="Yes" name="Yes" abbrev="Yes"/>
+    <tag group="sSave" tag="WillNeg" name="Will Negates" abbrev="Will Negates"/>
+    <tag group="sSchool" tag="Transmutat" name="Transmutation" abbrev="Trans"/>
+    <tag group="sCastTime" tag="Action1" name="1 action" abbrev="1 action"/>
+    <tag group="sComp" tag="M" name="Material" abbrev="{ref s_M}M{ref}"/>
+    <tag group="sComp" tag="S" name="Somatic" abbrev="{ref s_S}S{ref}"/>
+    <tag group="sComp" tag="V" name="Verbal" abbrev="{ref s_V}V{ref}"/>
+    <tag group="sDuration" tag="Minute" name="1+ Minutes" abbrev="1+ Minutes"/>
+    <tag group="sClass" tag="cHelpUhW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="sDuration" tag="PerLevel" name="Level-based" abbrev="Level-based"/>
+    </thing>
+  <thing id="ruDevAshme" name="Devil, Ashmede" description="These devils vaguely resemble 12-foot-tall human women with large clawed wings, hideous fanged faces, and bodies clad in strips of metal and leather that seem almost to be growing from angry wounds in their flesh, and each wields a grisly metal scythe that seems almost to have grown from its arms." compset="Race">
+    <fieldval field="rHitDice" value="12"/>
+    <fieldval field="rHPStart" value="66"/>
+    <fieldval field="rSTR" value="14"/>
+    <fieldval field="rDEX" value="6"/>
+    <fieldval field="rCON" value="10"/>
+    <fieldval field="rINT" value="4"/>
+    <fieldval field="rWIS" value="6"/>
+    <fieldval field="rCHA" value="7"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-6"/>
+    <fieldval field="rAC" value="16"/>
+    <fieldval field="rCR" value="13"/>
+    <fieldval field="rEnviron" value="any (Hell)"/>
+    <fieldval field="rOrgan" value="solitary, pair, or swarm (3-28)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rSpCastLev" value="16"/>
+    <fieldval field="rLangBonus" value="-2"/>
+    <fieldval field="rSpace" value="10"/>
+    <fieldval field="rReach" value="10"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="HasType" tag="tpOutsider"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="AlgnReq" tag="LawEvil"/>
+    <tag group="Alignment" tag="Lawful"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassSkill" tag="skAcrobat"/>
+    <tag group="ClassSkill" tag="skDiplo"/>
+    <tag group="ClassSkill" tag="skIntim"/>
+    <tag group="ClassSkill" tag="skSurvival"/>
+    <bootstrap thing="stLawful"></bootstrap>
+    <bootstrap thing="fFlybyAt"></bootstrap>
+    <bootstrap thing="fImpCrit">
+      <autotag group="Target" tag="wScythe"/>
+      </bootstrap>
+    <bootstrap thing="spDeteCha1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <bootstrap thing="spDeteEvi1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <bootstrap thing="spDeteGoo1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <bootstrap thing="spDeteLaw1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <bootstrap thing="spDeteMag0">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Constant"/>
+      </bootstrap>
+    <bootstrap thing="spCharPer1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spInviGre3">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spPolymor5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      <assignval field="livename" value="Polymorph (self only)"/>
+      </bootstrap>
+    <bootstrap thing="spPryiEye5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    <bootstrap thing="spTeleGre5">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      <assignval field="livename" value="Greater Teleport (self plus 50 lbs. of objects only)"/>
+      </bootstrap>
+    <bootstrap thing="spChaiLig6">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spDiscLoc8">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spForceca7">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="spHorrWil8">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="1"/>
+      </bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Average"/>
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
+    <bootstrap thing="fIronWill"></bootstrap>
+    <bootstrap thing="fBlindFgt"></bootstrap>
+    <bootstrap thing="fWepFoc">
+      <autotag group="Target" tag="wScythe"/>
+      </bootstrap>
+    <bootstrap thing="stDevil"></bootstrap>
+    <bootstrap thing="stEvil"></bootstrap>
+    <bootstrap thing="fComExpert"></bootstrap>
+    <bootstrap thing="lCelestial"></bootstrap>
+    <bootstrap thing="xFastHeal">
+      <autotag group="Value" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdGood">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="xTelepathy">
+      <autotag group="Value" tag="100"/>
+      </bootstrap>
+    <bootstrap thing="raSeeDark"></bootstrap>
+    <bootstrap thing="raFearAura">
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="xSplRs">
+      <autotag group="Value" tag="24"/>
+      </bootstrap>
+    <bootstrap thing="lDraconic"></bootstrap>
+    <bootstrap thing="lInfernal"></bootstrap>
+    <bootstrap thing="wWing">
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="stExtrapla"></bootstrap>
+    <eval phase="PreLevel" priority="4000"><![CDATA[#skillinnate[skAcrobat] += 12
+#skillinnate[skBluff] += 12
+#skillinnate[skDiplo] += 12
+#skillinnate[skIntim] += 12
+#skillinnate[skKnowPlan] += 12
+#skillinnate[skPercep] += 12
+#skillinnate[skStealth] += 12
+#skillinnate[skSurvival] += 12
+
+#racialsituational[hero.child[skAcrobat],"+4 to jump",field[name].text]]]>
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  <thing id="cuUWWrath1" name="Rage" description="You may enter a barbarian rage 1/day. If you already had the rage ability, you may rage one additional time per day. Every five levels thereafter, you gain an additional use of this ability (two rages at 5th, three at 10th, and so on)." compset="ClSpecial" summary="+4 Str, +4 Con, +2 to Will saves, -2 to AC when enraged.">
+    <fieldval field="actName" value="Raging"/>
+    <fieldval field="actName2" value="Fatigued"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="DayRound"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~we get unholy warrior level rounds of rage/day
+      field[trkMax].value += 1 + (round(#levelcount[UnholyWar]/5,0,-1)) + (hero.tagcount[HasFeat.fExtraRage] * 6)]]></eval>
+    <eval phase="First" priority="450" index="2"><![CDATA[
+      ~if we're curently raging, forward a tag to the hero.
+      ~note the timing is just before First/500, which is when the containerreqs on the rage powers will look for this tag
+      if (field[abilActive].value <> 0) then
+        perform hero.assign[Hero.Raging]
+        endif
+      
+      ~we count as having Rage for the purpose of feats
+      perform hero.assign[HasAbility.cBbnRage]]]></eval>
+    <eval phase="PostLevel" priority="10000" index="3"><![CDATA[~if barbarian rage is present, we're not needed
+if (hero.tagis[Ability.cBbnRage] <> 0) then
+  #trkmax[cBbnRage] += field[xAllLev].value
+  perform assign[Helper.SpcDisable]
+  perform delete[Helper.ShowSpec]
+  done
+  endif
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~ If we're enraged, apply the stat modifiers for that
+      var level as number
+      level = field[xAllLev].value
+      var attrbonus as number
+      var savebonus as number
+
+        attrbonus = 4
+        savebonus = 2
+
+      if (field[abilActive].value <> 0) then
+        hero.child[aSTR].field[Bonus].value += attrbonus
+        hero.child[aCON].field[Bonus].value += attrbonus
+        #applybonus[BonMorale, hero.child[svWill], savebonus]
+        hero.child[ArmorClass].field[Penalty].value -= 2
+        endif
+
+      ~ Set up our text fields
+      field[CustDesc].text = "Fly into a rage, giving you +" & attrbonus & " Str, +" & attrbonus & " Con, +" & savebonus & " to Will saves and -2 to Armor Class. Many skills and abilities cannot be used while the character is enraged.{br}{br}Rage lasts for 3 rounds + Con bonus."
+
+        field[CustDesc].text = field[CustDesc].text & " At the end of the rage, the barbarian becomes fatigued (-2 Str, -2 Dex, can't charge or run) for the rest of the encounter."
+
+      field[abSumm].text = "+" & attrbonus & " Str, +" & attrbonus & " Con, +" & savebonus & " to Will saves, -2 to AC when enraged."]]></eval>
+    <eval phase="PostLevel" priority="10000" index="4"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+        if (field[abilAct2].value <> 0) then
+          hero.child[aSTR].field[Penalty].value -= 2
+          hero.child[aDEX].field[Penalty].value -= 2
+          perform assign[Helper.ChgDisab1]
+          endif]]></eval>
+    </thing>
+  <thing id="ruDaeGlome" name="Daemon, Glomeray" description="Braggarts are common in any society. Many see themselves as the best their culture can create, fully versed in a number of languages, skills, or the best at a particular profession or some other role. Mortals can be gratuitous in their display of wealth and privilege, while others wear scandalous clothing to reveal their perfect bodies. Regardless of how pride manifests, the glomeray love these mortals best.\n\nThe glomeray encourage bad behavior by clustering around the shadows cast in their circle. They urge them to be proud of their accomplishments, to bask in their achievements and to take their rightful place in their societies. Simple pride in one&apos;s work is nothing if no one knows how good you really are. Of course, boasts and bragging tend to isolate these individuals, as other mortals rarely suffer such behavior for long. With their isolation, the glomeray seize more control over these mortals, further alienating them from others, until such time that despair sets in. The glomerays feel they have done their jobs well, when the mortal commits suicide.\n\nGlomeray rarely venture to the Material Plane, for they believe that their beauty would undermine their purpose and overshadow the minor successes of their chosen sinners. So, they content themselves with watching from afar. If summoned to the Material Plane, they are arrogant and petty, epitomizing the corruption of excessive pride.\n\nGlomerays use spell-like abilities and speed to defeat their enemies. They enjoy exulting in their victories, and often torment their opponents by engaging them in long discussions about the history of Gehenna and their pivotal role in it, while pulling their foes apart. They avoid “to-the-death” conflicts by flying away if outnumbered, counting the experience as instructional.\n\nGlomerays are five feet long, including their beautiful tail." compset="Race">
+    <fieldval field="rHitDice" value="4"/>
+    <fieldval field="rHPStart" value="18"/>
+    <fieldval field="rSTR" value="3"/>
+    <fieldval field="rDEX" value="8"/>
+    <fieldval field="rCON" value="5"/>
+    <fieldval field="rINT" value="8"/>
+    <fieldval field="rWIS" value="3"/>
+    <fieldval field="rCHA" value="6"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-2"/>
+    <fieldval field="rAC" value="2"/>
+    <fieldval field="rCR" value="3"/>
+    <fieldval field="rSpCastLev" value="4"/>
+    <fieldval field="rLangBonus" value="-4"/>
+    <fieldval field="rEnviron" value="Abaddon"/>
+    <fieldval field="rOrgan" value="solitary, pair, or flock (3-16)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <usesource source="srcBookFnd"/>
+    <tag group="SaveGood" tag="svRef"/>
+    <tag group="SaveGood" tag="svWill"/>
+    <tag group="HasType" tag="tpOutsider"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="Helper" tag="ManyLegs"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="ClassSkill" tag="skDiplo"/>
+    <tag group="ClassSkill" tag="skEscape"/>
+    <tag group="ClassSkill" tag="skIntim"/>
+    <tag group="ClassSkill" tag="skAppraise"/>
+    <tag group="ClassSkill" tag="Knowledge"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fFlybyAt"></bootstrap>
+    <bootstrap thing="stElf"></bootstrap>
+    <bootstrap thing="stExtrapla"></bootstrap>
+    <bootstrap thing="lAbyssal"></bootstrap>
+    <bootstrap thing="lDaemonic"></bootstrap>
+    <bootstrap thing="lDraconic"></bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d8_6"/>
+      <autotag group="Helper" tag="Keen"/>
+      </bootstrap>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d4_4"/>
+      <autotag group="Value" tag="2"/>
+      <autotag group="Helper" tag="NatOverSec"/>
+      </bootstrap>
+    <bootstrap thing="wSting">
+      <autotag group="wMain" tag="2d4_6"/>
+      <autotag group="Value" tag="1"/>
+      <autotag group="Helper" tag="NatOverSec"/>
+      </bootstrap>
+    <bootstrap thing="lInfernal"></bootstrap>
+    <bootstrap thing="spCharPer1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <bootstrap thing="spColoSpr1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <bootstrap thing="spDancLig0">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <bootstrap thing="spHypnPat2">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <bootstrap thing="rauGlmDzCl"></bootstrap>
+    <bootstrap thing="rauGlmDron">
+      <assignval field="livename" value="Drone (50 ft.)"/>
+      </bootstrap>
+    <bootstrap thing="spHypnoti1">
+      <autotag group="Helper" tag="SpellLike"/>
+      <autotag group="Usage" tag="Day"/>
+      <assignval field="trkMax" value="2"/>
+      </bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Average"/>
+      <autotag group="Value" tag="80"/>
+      </bootstrap>
+    <bootstrap thing="stDemon"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <eval phase="PreLevel" priority="4000">#skillinnate[skAppraise] += 4
+#skillinnate[skDiplo] += 4
+#skillinnate[skEscape] += 4
+#skillinnate[skIntim] += 4
+#skillinnate[skFly] += 4
+#skillinnate[skPercep] += 4
+      <before name="Skill Bonus Feats"/>
+      </eval>
+    </thing>
+  </document>

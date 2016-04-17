@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_GreenRonin - Jade Dragons and Hungry Ghosts"/>
+  <fileinfo>
+    <info_history><![CDATA[
+      August 5th, 2012 - Tim Shadow
+      -Changed sources over to .1st file.
+      -Changed name from "PFRPG_Jade Dragons & Hungry Ghosts.user" to "PFRPG_Jade Dragons and Hungry Ghosts.user" so we don't mess with Macs and unused symbols.
+
+      Feb 25, 2012 - Jeff Hersh
+      Added Shiko me race and Black Lotus Sorcerer "class" which is used to advance a shiko me.]]></info_history>
+    </fileinfo>
+  <thing id="rauBlkLotS" name="Black Lotus Sorcerery" description="Shiko me practice a dark form of magic called Black Lotus sorcery that depends on human blood and bone, black lotus powder, and the secretions of demons and oni for its efficacy. This blood magic allows shiko me to cast illusion and necromancy spells, as well as spells from the Evil cleric domain, as a 6th-level sorcerer (or twice their racial HD). Cleric spells from the Evil domain are considered arcane spells for a Black Lotus sorcerer." compset="RaceSpec">
+    <usesource source="jadeDragon"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cfguElemSt" name="Elemental Stance" description="Each shiko me can assume one of three alternate forms: pure shadow, wind, or fire. No individual shiko me is known to have mastered mor ethan two of the three elemental stances, and most are limited to just one. A shiko me can shift between forms as a swift action." compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Elemental Stances"/>
+    <fieldval field="cfgMax1" value="3"/>
+    <usesource source="jadeDragon"/>
+    <tag group="Helper" tag="Allow1Abil"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rcuElStSha" name="Shadow Stance" description="Gain DR 5/magic and +10 bonus to hide in shadows or darkness." compset="RaceCustom">
+    <fieldval field="actName" value="Shadow Form"/>
+    <usesource source="jadeDragon"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="AllowRCust" tag="cfguElemSt"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="Custom" tag="ShadowForm" name="Shadow Form"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xBonusStea">
+      <containerreq phase="First" priority="500"><![CDATA[hero#Custom.ShadowForm <> 0]]></containerreq>
+      <autotag group="Value" tag="10"/>
+      <assignval field="livename" value="in shadows or darkness"/>
+      </bootstrap>
+    <bootstrap thing="xDamRdMag">
+      <containerreq phase="First" priority="500"><![CDATA[hero#Custom.ShadowForm <> 0]]></containerreq>
+      <autotag group="Value" tag="5"/>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+      if (field[abilActive].value <> 0) then
+        perform hero.assign[Custom.ShadowForm]
+      else
+        perform hero.delete[Custom.ShadowForm]
+      endif]]></eval>
+    </thing>
+  <thing id="rcuElStWin" name="Wind Stance" description="The shiko me becomes effectively invisible while motionless, gains a fly speed of 80 feet (good maneuverability), and can cast glitterdust and gust of wind as spell-like abilities at will (CL 7th)." compset="RaceCustom">
+    <fieldval field="actName" value="Wind Form"/>
+    <usesource source="jadeDragon"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AllowRCust" tag="cfguElemSt"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Custom" tag="WindForm" name="Wind Form"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="spGlitter2">
+      <containerreq phase="First" priority="500"><![CDATA[hero#Custom.WindForm <> 0]]></containerreq>
+      <autotag group="Usage" tag="AtWill"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      </bootstrap>
+    <bootstrap thing="xFly">
+      <containerreq phase="First" priority="500"><![CDATA[hero#Custom.WindForm <> 0]]></containerreq>
+      <autotag group="Value" tag="80"/>
+      <autotag group="Maneuver" tag="Good"/>
+      </bootstrap>
+    <bootstrap thing="spGustWin2">
+      <containerreq phase="First" priority="500"><![CDATA[hero#Custom.WindForm <> 0]]></containerreq>
+      <autotag group="Usage" tag="AtWill"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+      if (field[abilActive].value <> 0) then
+        perform hero.assign[Custom.WindForm]
+      else
+        perform hero.delete[Custom.WindForm]
+      endif]]></eval>
+    </thing>
+  <thing id="rcuElStFir" name="Fire Stance" description="The shiko me gains the burn ability and immunity to fire, and can cast burning hands as a spell-like ability at will (CL 7th)." compset="RaceCustom">
+    <fieldval field="actName" value="Fire Form"/>
+    <usesource source="jadeDragon"/>
+    <tag group="AllowRCust" tag="cfguElemSt"/>
+    <tag group="Custom" tag="FireForm" name="Fire Form"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="spBurnHan1">
+      <containerreq phase="First" priority="500"><![CDATA[hero#Custom.FireForm <> 0]]></containerreq>
+      <autotag group="Usage" tag="AtWill"/>
+      <autotag group="Helper" tag="SpellLike"/>
+      </bootstrap>
+    <bootstrap thing="raBurn">
+      <containerreq phase="First" priority="500"><![CDATA[hero#Custom.FireForm <> 0]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="xImmFire">
+      <containerreq phase="First" priority="500"><![CDATA[hero#Custom.FireForm <> 0]]></containerreq>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+      if (field[abilActive].value <> 0) then
+        perform hero.assign[Custom.FireForm]
+      else
+        perform hero.delete[Custom.FireForm]
+      endif]]></eval>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[
+      doneif (field[abilActive].value = 0)
+
+      if (herofield[tCR].value <= 4) then
+        hero.childfound[raBurn].field[livename].text = "Burn (1d4 fire)"
+        done
+      elseif (herofield[tCR].value <= 8) then
+        hero.childfound[raBurn].field[livename].text = "Burn (1d6 fire)"
+        done
+      elseif (herofield[tCR].value <= 12) then
+        hero.childfound[raBurn].field[livename].text = "Burn (1d8 fire)"
+        done
+      elseif (herofield[tCR].value <= 16) then
+        hero.childfound[raBurn].field[livename].text = "Burn (2d6 fire)"
+        done
+      else
+        hero.child[raBurn].field[livename].text = "Burn (2d8 fire)"
+      endif]]></eval>
+    </thing>
+  <thing id="cHelpBkL" name="Black Lotus Sorcerer" description="Shiko me practice a dark form of magic called Black Lotus sorcery that depends on human blood and bone, black lotus powder, and the secretions of demons and oni for its efficacy. This blood magic allows shiko me to cast illusion and necromancy spells, as well as spells from the Evil cleric domain, as a 6th-level sorcerer (or twice their racial HD). Cleric spells from the Evil domain are considered arcane spells for a Black Lotus sorcerer." compset="Class" uniqueness="unique">
+    <fieldval field="cAbbr" value="BkL"/>
+    <fieldval field="cHDSides" value="10"/>
+    <fieldval field="cSkills" value="6"/>
+    <arrayval field="cCastTot" index="0" value="99"/>
+    <arrayval field="cCastTot" index="0" column="1" value="3"/>
+    <arrayval field="cCastTot" index="1" value="99"/>
+    <arrayval field="cCastTot" index="1" column="1" value="4"/>
+    <arrayval field="cCastTot" index="2" value="99"/>
+    <arrayval field="cCastTot" index="2" column="1" value="5"/>
+    <arrayval field="cCastTot" index="3" value="99"/>
+    <arrayval field="cCastTot" index="3" column="1" value="6"/>
+    <arrayval field="cCastTot" index="3" column="2" value="3"/>
+    <arrayval field="cCastTot" index="4" value="99"/>
+    <arrayval field="cCastTot" index="4" column="1" value="6"/>
+    <arrayval field="cCastTot" index="4" column="2" value="4"/>
+    <arrayval field="cCastTot" index="5" value="99"/>
+    <arrayval field="cCastTot" index="5" column="1" value="6"/>
+    <arrayval field="cCastTot" index="5" column="2" value="5"/>
+    <arrayval field="cCastTot" index="5" column="3" value="3"/>
+    <arrayval field="cCastTot" index="6" value="99"/>
+    <arrayval field="cCastTot" index="6" column="1" value="6"/>
+    <arrayval field="cCastTot" index="6" column="2" value="6"/>
+    <arrayval field="cCastTot" index="6" column="3" value="4"/>
+    <arrayval field="cCastTot" index="7" value="99"/>
+    <arrayval field="cCastTot" index="7" column="1" value="6"/>
+    <arrayval field="cCastTot" index="7" column="2" value="6"/>
+    <arrayval field="cCastTot" index="7" column="3" value="5"/>
+    <arrayval field="cCastTot" index="7" column="4" value="3"/>
+    <arrayval field="cCastTot" index="8" value="99"/>
+    <arrayval field="cCastTot" index="8" column="1" value="6"/>
+    <arrayval field="cCastTot" index="8" column="2" value="6"/>
+    <arrayval field="cCastTot" index="8" column="3" value="6"/>
+    <arrayval field="cCastTot" index="8" column="4" value="4"/>
+    <arrayval field="cCastTot" index="9" value="99"/>
+    <arrayval field="cCastTot" index="9" column="1" value="6"/>
+    <arrayval field="cCastTot" index="9" column="2" value="6"/>
+    <arrayval field="cCastTot" index="9" column="3" value="6"/>
+    <arrayval field="cCastTot" index="9" column="4" value="5"/>
+    <arrayval field="cCastTot" index="9" column="5" value="3"/>
+    <arrayval field="cCastTot" index="10" value="99"/>
+    <arrayval field="cCastTot" index="10" column="1" value="6"/>
+    <arrayval field="cCastTot" index="10" column="2" value="6"/>
+    <arrayval field="cCastTot" index="10" column="3" value="6"/>
+    <arrayval field="cCastTot" index="10" column="4" value="6"/>
+    <arrayval field="cCastTot" index="10" column="5" value="4"/>
+    <arrayval field="cCastTot" index="11" value="99"/>
+    <arrayval field="cCastTot" index="11" column="1" value="6"/>
+    <arrayval field="cCastTot" index="11" column="2" value="6"/>
+    <arrayval field="cCastTot" index="11" column="3" value="6"/>
+    <arrayval field="cCastTot" index="11" column="4" value="6"/>
+    <arrayval field="cCastTot" index="11" column="5" value="5"/>
+    <arrayval field="cCastTot" index="11" column="6" value="3"/>
+    <arrayval field="cCastTot" index="12" value="99"/>
+    <arrayval field="cCastTot" index="12" column="1" value="6"/>
+    <arrayval field="cCastTot" index="12" column="2" value="6"/>
+    <arrayval field="cCastTot" index="12" column="3" value="6"/>
+    <arrayval field="cCastTot" index="12" column="4" value="6"/>
+    <arrayval field="cCastTot" index="12" column="5" value="6"/>
+    <arrayval field="cCastTot" index="12" column="6" value="4"/>
+    <arrayval field="cCastTot" index="13" value="99"/>
+    <arrayval field="cCastTot" index="13" column="1" value="6"/>
+    <arrayval field="cCastTot" index="13" column="2" value="6"/>
+    <arrayval field="cCastTot" index="13" column="3" value="6"/>
+    <arrayval field="cCastTot" index="13" column="4" value="6"/>
+    <arrayval field="cCastTot" index="13" column="5" value="6"/>
+    <arrayval field="cCastTot" index="13" column="6" value="5"/>
+    <arrayval field="cCastTot" index="13" column="7" value="3"/>
+    <arrayval field="cCastTot" index="14" value="99"/>
+    <arrayval field="cCastTot" index="14" column="1" value="6"/>
+    <arrayval field="cCastTot" index="14" column="2" value="6"/>
+    <arrayval field="cCastTot" index="14" column="3" value="6"/>
+    <arrayval field="cCastTot" index="14" column="4" value="6"/>
+    <arrayval field="cCastTot" index="14" column="5" value="6"/>
+    <arrayval field="cCastTot" index="14" column="6" value="6"/>
+    <arrayval field="cCastTot" index="14" column="7" value="4"/>
+    <arrayval field="cCastTot" index="15" value="99"/>
+    <arrayval field="cCastTot" index="15" column="1" value="6"/>
+    <arrayval field="cCastTot" index="15" column="2" value="6"/>
+    <arrayval field="cCastTot" index="15" column="3" value="6"/>
+    <arrayval field="cCastTot" index="15" column="4" value="6"/>
+    <arrayval field="cCastTot" index="15" column="5" value="6"/>
+    <arrayval field="cCastTot" index="15" column="6" value="6"/>
+    <arrayval field="cCastTot" index="15" column="7" value="5"/>
+    <arrayval field="cCastTot" index="15" column="8" value="3"/>
+    <arrayval field="cCastTot" index="16" value="99"/>
+    <arrayval field="cCastTot" index="16" column="1" value="6"/>
+    <arrayval field="cCastTot" index="16" column="2" value="6"/>
+    <arrayval field="cCastTot" index="16" column="3" value="6"/>
+    <arrayval field="cCastTot" index="16" column="4" value="6"/>
+    <arrayval field="cCastTot" index="16" column="5" value="6"/>
+    <arrayval field="cCastTot" index="16" column="6" value="6"/>
+    <arrayval field="cCastTot" index="16" column="7" value="6"/>
+    <arrayval field="cCastTot" index="16" column="8" value="4"/>
+    <arrayval field="cCastTot" index="17" value="99"/>
+    <arrayval field="cCastTot" index="17" column="1" value="6"/>
+    <arrayval field="cCastTot" index="17" column="2" value="6"/>
+    <arrayval field="cCastTot" index="17" column="3" value="6"/>
+    <arrayval field="cCastTot" index="17" column="4" value="6"/>
+    <arrayval field="cCastTot" index="17" column="5" value="6"/>
+    <arrayval field="cCastTot" index="17" column="6" value="6"/>
+    <arrayval field="cCastTot" index="17" column="7" value="6"/>
+    <arrayval field="cCastTot" index="17" column="8" value="5"/>
+    <arrayval field="cCastTot" index="17" column="9" value="3"/>
+    <arrayval field="cCastTot" index="18" value="99"/>
+    <arrayval field="cCastTot" index="18" column="1" value="6"/>
+    <arrayval field="cCastTot" index="18" column="2" value="6"/>
+    <arrayval field="cCastTot" index="18" column="3" value="6"/>
+    <arrayval field="cCastTot" index="18" column="4" value="6"/>
+    <arrayval field="cCastTot" index="18" column="5" value="6"/>
+    <arrayval field="cCastTot" index="18" column="6" value="6"/>
+    <arrayval field="cCastTot" index="18" column="7" value="6"/>
+    <arrayval field="cCastTot" index="18" column="8" value="6"/>
+    <arrayval field="cCastTot" index="18" column="9" value="4"/>
+    <arrayval field="cCastTot" index="19" value="99"/>
+    <arrayval field="cCastTot" index="19" column="1" value="6"/>
+    <arrayval field="cCastTot" index="19" column="2" value="6"/>
+    <arrayval field="cCastTot" index="19" column="3" value="6"/>
+    <arrayval field="cCastTot" index="19" column="4" value="6"/>
+    <arrayval field="cCastTot" index="19" column="5" value="6"/>
+    <arrayval field="cCastTot" index="19" column="6" value="6"/>
+    <arrayval field="cCastTot" index="19" column="7" value="6"/>
+    <arrayval field="cCastTot" index="19" column="8" value="6"/>
+    <arrayval field="cCastTot" index="19" column="9" value="6"/>
+    <arrayval field="cKnowTot" index="0" value="4"/>
+    <arrayval field="cKnowTot" index="0" column="1" value="2"/>
+    <arrayval field="cKnowTot" index="1" value="4"/>
+    <arrayval field="cKnowTot" index="1" column="1" value="2"/>
+    <arrayval field="cKnowTot" index="2" value="4"/>
+    <arrayval field="cKnowTot" index="2" column="1" value="3"/>
+    <arrayval field="cKnowTot" index="3" value="4"/>
+    <arrayval field="cKnowTot" index="3" column="1" value="3"/>
+    <arrayval field="cKnowTot" index="3" column="2" value="1"/>
+    <arrayval field="cKnowTot" index="4" value="4"/>
+    <arrayval field="cKnowTot" index="4" column="1" value="4"/>
+    <arrayval field="cKnowTot" index="4" column="2" value="2"/>
+    <arrayval field="cKnowTot" index="5" value="4"/>
+    <arrayval field="cKnowTot" index="5" column="1" value="4"/>
+    <arrayval field="cKnowTot" index="5" column="2" value="2"/>
+    <arrayval field="cKnowTot" index="5" column="3" value="1"/>
+    <arrayval field="cKnowTot" index="6" value="4"/>
+    <arrayval field="cKnowTot" index="6" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="6" column="2" value="3"/>
+    <arrayval field="cKnowTot" index="6" column="3" value="2"/>
+    <arrayval field="cKnowTot" index="7" value="4"/>
+    <arrayval field="cKnowTot" index="7" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="7" column="2" value="3"/>
+    <arrayval field="cKnowTot" index="7" column="3" value="2"/>
+    <arrayval field="cKnowTot" index="7" column="4" value="1"/>
+    <arrayval field="cKnowTot" index="8" value="4"/>
+    <arrayval field="cKnowTot" index="8" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="8" column="2" value="4"/>
+    <arrayval field="cKnowTot" index="8" column="3" value="3"/>
+    <arrayval field="cKnowTot" index="8" column="4" value="2"/>
+    <arrayval field="cKnowTot" index="9" value="4"/>
+    <arrayval field="cKnowTot" index="9" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="9" column="2" value="4"/>
+    <arrayval field="cKnowTot" index="9" column="3" value="3"/>
+    <arrayval field="cKnowTot" index="9" column="4" value="2"/>
+    <arrayval field="cKnowTot" index="9" column="5" value="1"/>
+    <arrayval field="cKnowTot" index="10" value="4"/>
+    <arrayval field="cKnowTot" index="10" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="10" column="2" value="5"/>
+    <arrayval field="cKnowTot" index="10" column="3" value="4"/>
+    <arrayval field="cKnowTot" index="10" column="4" value="3"/>
+    <arrayval field="cKnowTot" index="10" column="5" value="2"/>
+    <arrayval field="cKnowTot" index="11" value="4"/>
+    <arrayval field="cKnowTot" index="11" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="11" column="2" value="5"/>
+    <arrayval field="cKnowTot" index="11" column="3" value="4"/>
+    <arrayval field="cKnowTot" index="11" column="4" value="3"/>
+    <arrayval field="cKnowTot" index="11" column="5" value="2"/>
+    <arrayval field="cKnowTot" index="11" column="6" value="1"/>
+    <arrayval field="cKnowTot" index="12" value="4"/>
+    <arrayval field="cKnowTot" index="12" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="12" column="2" value="5"/>
+    <arrayval field="cKnowTot" index="12" column="3" value="4"/>
+    <arrayval field="cKnowTot" index="12" column="4" value="4"/>
+    <arrayval field="cKnowTot" index="12" column="5" value="3"/>
+    <arrayval field="cKnowTot" index="12" column="6" value="2"/>
+    <arrayval field="cKnowTot" index="13" value="4"/>
+    <arrayval field="cKnowTot" index="13" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="13" column="2" value="5"/>
+    <arrayval field="cKnowTot" index="13" column="3" value="4"/>
+    <arrayval field="cKnowTot" index="13" column="4" value="4"/>
+    <arrayval field="cKnowTot" index="13" column="5" value="3"/>
+    <arrayval field="cKnowTot" index="13" column="6" value="2"/>
+    <arrayval field="cKnowTot" index="13" column="7" value="1"/>
+    <arrayval field="cKnowTot" index="14" value="4"/>
+    <arrayval field="cKnowTot" index="14" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="14" column="2" value="5"/>
+    <arrayval field="cKnowTot" index="14" column="3" value="4"/>
+    <arrayval field="cKnowTot" index="14" column="4" value="4"/>
+    <arrayval field="cKnowTot" index="14" column="5" value="4"/>
+    <arrayval field="cKnowTot" index="14" column="6" value="3"/>
+    <arrayval field="cKnowTot" index="14" column="7" value="2"/>
+    <arrayval field="cKnowTot" index="15" value="4"/>
+    <arrayval field="cKnowTot" index="15" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="15" column="2" value="5"/>
+    <arrayval field="cKnowTot" index="15" column="3" value="4"/>
+    <arrayval field="cKnowTot" index="15" column="4" value="4"/>
+    <arrayval field="cKnowTot" index="15" column="5" value="4"/>
+    <arrayval field="cKnowTot" index="15" column="6" value="3"/>
+    <arrayval field="cKnowTot" index="15" column="7" value="2"/>
+    <arrayval field="cKnowTot" index="15" column="8" value="1"/>
+    <arrayval field="cKnowTot" index="16" value="4"/>
+    <arrayval field="cKnowTot" index="16" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="16" column="2" value="5"/>
+    <arrayval field="cKnowTot" index="16" column="3" value="4"/>
+    <arrayval field="cKnowTot" index="16" column="4" value="4"/>
+    <arrayval field="cKnowTot" index="16" column="5" value="4"/>
+    <arrayval field="cKnowTot" index="16" column="6" value="3"/>
+    <arrayval field="cKnowTot" index="16" column="7" value="3"/>
+    <arrayval field="cKnowTot" index="16" column="8" value="2"/>
+    <arrayval field="cKnowTot" index="17" value="4"/>
+    <arrayval field="cKnowTot" index="17" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="17" column="2" value="5"/>
+    <arrayval field="cKnowTot" index="17" column="3" value="4"/>
+    <arrayval field="cKnowTot" index="17" column="4" value="4"/>
+    <arrayval field="cKnowTot" index="17" column="5" value="4"/>
+    <arrayval field="cKnowTot" index="17" column="6" value="3"/>
+    <arrayval field="cKnowTot" index="17" column="7" value="3"/>
+    <arrayval field="cKnowTot" index="17" column="8" value="2"/>
+    <arrayval field="cKnowTot" index="17" column="9" value="1"/>
+    <arrayval field="cKnowTot" index="18" value="4"/>
+    <arrayval field="cKnowTot" index="18" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="18" column="2" value="5"/>
+    <arrayval field="cKnowTot" index="18" column="3" value="4"/>
+    <arrayval field="cKnowTot" index="18" column="4" value="4"/>
+    <arrayval field="cKnowTot" index="18" column="5" value="4"/>
+    <arrayval field="cKnowTot" index="18" column="6" value="3"/>
+    <arrayval field="cKnowTot" index="18" column="7" value="3"/>
+    <arrayval field="cKnowTot" index="18" column="8" value="3"/>
+    <arrayval field="cKnowTot" index="18" column="9" value="2"/>
+    <arrayval field="cKnowTot" index="19" value="4"/>
+    <arrayval field="cKnowTot" index="19" column="1" value="5"/>
+    <arrayval field="cKnowTot" index="19" column="2" value="5"/>
+    <arrayval field="cKnowTot" index="19" column="3" value="4"/>
+    <arrayval field="cKnowTot" index="19" column="4" value="4"/>
+    <arrayval field="cKnowTot" index="19" column="5" value="4"/>
+    <arrayval field="cKnowTot" index="19" column="6" value="3"/>
+    <arrayval field="cKnowTot" index="19" column="7" value="3"/>
+    <arrayval field="cKnowTot" index="19" column="8" value="3"/>
+    <arrayval field="cKnowTot" index="19" column="9" value="3"/>
+    <usesource source="jadeDragon"/>
+    <tag group="cWill" tag="Good"/>
+    <tag group="AgeColumn" tag="3"/>
+    <tag group="CastInfini" tag="0"/>
+    <tag group="CasterSrc" tag="Arcane"/>
+    <tag group="CasterType" tag="SpontKnow"/>
+    <tag group="cRef" tag="Good"/>
+    <tag group="Classes" tag="cHelpBlkL" name="Black Lotus Sorcerer" abbrev="Sorcerer"/>
+    <tag group="cAttack" tag="Good"/>
+    <tag group="cFort" tag="Poor"/>
+    <tag group="AlgnReq" tag="Evil"/>
+    <tag group="ClassSkill" tag="skFly"/>
+    <tag group="ClassSkill" tag="skSpellcr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="cSorEschew">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <link linkage="spellattr" thing="aCHA"/>
+    <eval phase="PostLevel" priority="10500"><![CDATA[
+      ~ we're allowed Sor spells from the Illusion and Necromancy schools and the Evil domain
+      field[cSpellExpr].text = "(" & field[cSpellExpr].text & ") | ((sClass.cHelpSor) & (sSchool.Illusion | sSchool.Necromancy)) | sClass.cdEvil"]]></eval>
+    </thing>
+  <thing id="ccHelpBlkL" name="Black Lotus Sorcerer" compset="ClassLevel" maxlimit="20">
+    <usesource source="jadeDragon"/>
+    <tag group="ClassType" tag="Prestige"/>
+    <bootstrap thing="cHelpBkL"></bootstrap>
+    <link linkage="helper" thing="cHelpBkL"/>
+    <exprreq message="Shiko me race required."><![CDATA[#hasrace[ruShikoMe] <> 0]]></exprreq>
+    </thing>
+  <thing id="ruShikoMe" name="Shiko Me" description="Shiko me are thin, long-horned female devils who move with the speed of a striking snake. They are unnaturally thin, and skilled at striking quickly and retreating. They ahve a fondness for masks and constumes and are proficient with musical instruments, ususally the samisen. They typically hide their clawed hand sunder gloves or makeup. Their racial weapons are the jutte, katana, naginata, sai, and shuriken.\n\nIn the outer planes the shiko me are the consorts, messengers, and assassins of powerful devils. Because they are protected by infernal patrons, few creatures of the outer planes will cross them.\n\nShiko me are silent, rather flashy fighters who depend on great speed and ruthlessness to make up for a lack of raw power, reach, and mass. They strike fallen opponents to be sure they stay down; they fight with poison and from amush; and they do not accept surrenders, other than to laugh and behead anyone foolish enough to offer up the sword. They are very capable of posing as geishas or entertainers to get close to an enemy, then pulling weapons from their robes to attack. They typically adopt their elemental forms to escape from a fight, or to intimidate the weak.\n\n{b}Note:{/b} The shiko me can advance racial HD via the Black Lotus Sorcerer class." compset="Race">
+    <fieldval field="rHitDice" value="3"/>
+    <fieldval field="rHPStart" value="16"/>
+    <fieldval field="rSTR" value="3"/>
+    <fieldval field="rDEX" value="9"/>
+    <fieldval field="rCON" value="2"/>
+    <fieldval field="rINT" value="3"/>
+    <fieldval field="rWIS" value="-1"/>
+    <fieldval field="rCHA" value="4"/>
+    <fieldval field="rSpeed" value="40"/>
+    <fieldval field="rFeat" value="-1"/>
+    <fieldval field="rCR" value="3"/>
+    <fieldval field="rLangBonus" value="-1"/>
+    <fieldval field="rAC" value="3"/>
+    <fieldval field="rEnviron" value="any land"/>
+    <fieldval field="rOrgan" value="solitary or troupe (2-5)"/>
+    <fieldval field="rTreasure" value="standard"/>
+    <fieldval field="rSpCastLev" value="7"/>
+    <usesource source="jadeDragon"/>
+    <tag group="HasType" tag="tpOutsider"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="SaveGood" tag="svRef"/>
+    <tag group="SaveGood" tag="svWill"/>
+    <tag group="WepProf" tag="wJutte"/>
+    <tag group="WepProf" tag="wKatana"/>
+    <tag group="WepProf" tag="wNaginata"/>
+    <tag group="WepProf" tag="wSai"/>
+    <tag group="WepProf" tag="wShuriken"/>
+    <tag group="Alignment" tag="Lawful"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="SplLookup" tag="cHelpBkL"/>
+    <tag group="Language" tag="lMinakian"/>
+    <tag group="Language" tag="lTien"/>
+    <tag group="ClassSkill" tag="skPerfStr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="lAuran"></bootstrap>
+    <bootstrap thing="lIgnan"></bootstrap>
+    <bootstrap thing="stEvil"></bootstrap>
+    <bootstrap thing="lInfernal"></bootstrap>
+    <bootstrap thing="stLawful"></bootstrap>
+    <bootstrap thing="rauBlkLotS"></bootstrap>
+    <bootstrap thing="xImmEnerDr"></bootstrap>
+    <bootstrap thing="xImmNegEn"></bootstrap>
+    <bootstrap thing="xImmCold"></bootstrap>
+    <bootstrap thing="cfguElemSt"></bootstrap>
+    <bootstrap thing="fImpInit"></bootstrap>
+    <bootstrap thing="skPerfStr"></bootstrap>
+    <bootstrap thing="xImmElec"></bootstrap>
+    <bootstrap thing="stExtrapla"></bootstrap>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d4_4"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="xImmAbilDm"></bootstrap>
+    <bootstrap thing="skKnowPlan"></bootstrap>
+    <bootstrap thing="xImmAbilDr"></bootstrap>
+    <eval phase="PostLevel" priority="10500" index="2"><![CDATA[
+      ~ we're allowed Sor spells from the Illusion and Necromancy schools and the Evil domain
+      field[cSpellExpr].text = "(" & field[cSpellExpr].text & ") | ((sClass.cHelpSor) & (sSchool.Illusion | sSchool.Necromancy)) | sClass.cdEvil"]]></eval>
+    <eval phase="PreLevel" priority="4000">
+      #skillinnate[skAcrobat] += 2
+      #skillinnate[skBluff] += 2
+      #skillinnate[skDisguise] += 2
+      #skillinnate[skEscape] += 2
+      #skillinnate[skFly] += 2
+      #skillinnate[skPercep] += 2
+      #skillinnate[skPerfStr] += 1
+      #skillinnate[skRide] += 1
+      #skillinnate[skSenseMot] += 2
+      #skillinnate[skSpellcr] += 2
+      #skillinnate[skStealth] += 1
+      #skillinnate[skKnowPlan] += 1</eval>
+    </thing>
+  </document>

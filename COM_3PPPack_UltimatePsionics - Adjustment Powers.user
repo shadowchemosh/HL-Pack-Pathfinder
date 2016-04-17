@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_UltimatePsionics - Adjustment Powers"/>
+  <thing id="pForcScrn" name="Force Screen" description="You create an invisible mobile disk of force that hovers in front of you. The force screen provides a +4 shield bonus to Armor Class (which applies against incorporeal touch attacks, since the force screen is a force effect). Since it hovers in front of you, the effect has no armor check penalty associated with it.\n\n{b}Augment{/b}: For every 4 additional power points you spend, the shield bonus to Armor Class improves by 1.\n\n{b}Note:{/b} Use the counter to set the Shield Bonus provided." compset="InPlay">
+    <fieldval field="pDuration" value="1 min./level (D)"/>
+    <fieldval field="pMinimum" value="4"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="AdjSpell" name="Spell Adjustment" abbrev="Spell Adjustment"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Give a Shield Bonus to AC
+      #applybonus[tACShield,hero.child[ArmorClass],field[pAdjust].value]]]></eval>
+    </thing>
+  <thing id="pForcScrn0" name="Force Screen (Kineticist Talent)" description="You create an invisible mobile disk of force that hovers in front of you. \n\nAs long as you maintain your psionic focus, the force screen provides a +2 shield bonus to Armor Class (which applies against incorporeal touch attacks, since the force screen is a force effect). Since it hovers in front of you, the effect has no armor check penalty associated with it.\n\nAs a Talent, this cannot be augmented or have metapsionics applied to it." compset="InPlay">
+    <fieldval field="pDuration" value="1 min./level (D)"/>
+    <fieldval field="pMinimum" value="2"/>
+    <fieldval field="pMaximum" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="AdjSpell" name="Spell Adjustment" abbrev="Spell Adjustment"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Give a Shield Bonus to AC
+      #applybonus[tACShield,hero.child[ArmorClass],field[pAdjust].value]]]></eval>
+    </thing>
+  <thing id="pPUCallWep" name="Call Weaponry" description="You call a weapon &quot;from thin air&quot; into your waiting hand (actually, it is a real weapon hailing from another location in space and time). You don&apos;t have to see or know of a weapon to call it - in fact, you can&apos;t call a specific weapon; you just specify the kind. If you call a projectile weapon, it comes with 3d6 nonmagical bolts, arrows, or sling bullets, as appropriate. The weapon is made of ordinary materials as appropriate for its kind. If you relinquish your grip on the weapon you called for 2 or more consecutive rounds, it automatically returns to wherever it originated.\n\nWeapons gained by {i}call weaponry{/i} are distinctive due to their astral glimmer. They are considered magic weapons and thus are effective against damage reduction that requires a magic weapon to overcome.\n\n{b}Augment:{/b} For every 4 additional power points you spend, this power improves the weapon&apos;s enhancement bonus on attack rolls and damage rolls by 1.\n\n{B}Note:{/b} If you have the &quot;Psi-Warrior: Trance (Mind Knight&apos;s Path)&quot; class ability then the weapon you select here will gain a bonus based on your class ability.\n\n{b}Counter:{/b} Set the bonus attack/damage you get for agumenting the power." compset="InPlay">
+    <usesource source="pPsiUn"/>
+    <tag group="Adjustment" tag="YourWep"/>
+    <tag group="Helper" tag="AdjSpell"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="20000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~if nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      ~ Set bonus based on counter
+      field[abValue].value += field[pAdjust].value
+      ~ Set bonus from the "Psi-Warrior: Trance (Mind Knight's Path)"
+      ~ Class ability.
+      field[abValue2].value += #value[cPWaTraMin]
+      
+      ~ Compentance Bonus
+      #applybonus[BonComp,field[pChosen].chosen,field[abValue2].value]
+      ~ Augment bonus
+      field[pChosen].chosen.field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  </document>

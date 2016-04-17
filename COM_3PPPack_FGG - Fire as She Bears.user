@@ -1,0 +1,1360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_3PPPack_FGG - Fire as She Bears"/>
+  <fileinfo>
+    <info_history><![CDATA[
+      6/14/2014 - Tim Shadow
+      -Fixed MW/Magical catapults not picking up weight and not becoming equipable.
+      -New Adjustments for affecting all hardness for rigging and all HP.
+
+      3/9/2014 - Tim Shadow
+      -Fixed "Speed" to display half knots so that small speed difference between ships is shown.
+      -Added a "Fire as She Bears" activation for "Getting the Guage" and "Aboard a moving Ship".  When Razor Coast is active all characters will now have two new activations they can turn on.
+      --Getting the Guage: Gives a bonus to any Siege engines on a character. Add gives a situational note that your Naval Initiative check is two higher.
+      --Aboard a moving Ship: Gives a -4 to hit with ranged attacks or -2 if you have Navel Gunnary feat.
+      -Fixed all Cannons again.
+      -Siege engines will now be equipable on the iPad so that players can actually use the ipad to roll attacks.
+      -Siege Engine (Catapults) will not correctly use your Knowledge (Engineering) skill total to calculate the attack roll.
+
+      2/22/2014 - Tim Shadow
+      -Fixed "Speeds" that where reverised.
+      -Added "Ship Type" so that the type of ship can be entered and it will change the Race Name.
+      -Always hide the "Unarmed Strike" weapon for the Fire as she Bears ship.
+      -Prevent Bluff, Diplomacy, disguise, and intimidate skills from going to statblock for the Fire as she Bears ship.
+      -Lots of statblock text desc fixes for Fire as She Bears ships.
+      -Added Skull and Shackles ship equipment.
+      -Added more FasB ship equipment.
+      -Lots of misc script fixes for FasB.
+      -Added weights for Siege Engines into the game.  They will display the weight after you added the weapon to the ship.]]></info_history>
+    </fileinfo>
+  <thing id="stS2FaSBSh" name="Fire as Ship Bears" compset="Subtype" uniqueness="unique">
+    <usesource source="srcFASB"/>
+    <tag group="NeedType" tag="tpS2Ship"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rcS2HullLo" name="Hull" description="A Hull Location is Colossal, and has a hardness of 5 and 150 hit points. The standard hull is sized for non-specialized vessels. Most ships use the standard hull but you can purchase other types on the {b}&quot;Gear&quot;{/b} tab.\n\nThe Armor Class of a ship’s Hull Location is 10 + your ship’s Dexterity bonus + your ship’s armor bonus.\n\n{B}Note:{/b} This hull location will disable itself once it has zero hit points. Please type in the hull location identifier to help keep track of its location in your ship." compset="RaceCustom" summary="A single hull location of your ship.">
+    <comment>1 = Hardness
+2 = 
+3 = 
+4 = Base AC</comment>
+    <fieldval field="abValue" value="5"/>
+    <fieldval field="trkMax" value="150"/>
+    <fieldval field="abValue4" value="10"/>
+    <tag group="User" tag="NeedDomain"/>
+    <tag group="AllowRCust" tag="rS2FasBShp"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="HitPoints"/>
+    <tag group="FaSB" tag="Hull" name="Hull Location"/>
+    <eval phase="First" priority="50" index="2">~ If we have no HP left then get out now
+doneif (field[trkMax].value = field[trkUser].value)
+
+~ Set the hull location tag on the hero
+perform hero.assign[FaSB.Hull]</eval>
+    <eval phase="Final" priority="25000"><![CDATA[
+field[abValue4].value += #attrbonus[aDEX]
+field[livename].text = field[name].text & "-Hard: " & field[abValue].value & " AC: " & field[abValue4].value]]></eval>
+    <prereq message="Hull Type required. Please add the ship&apos;s Hull Type on the &quot;Gear&quot; tab.">
+      <validate><![CDATA[validif (hero.childlives[gS2HullSle] <> 0)
+validif (hero.childlives[gS2HullSta] <> 0)
+validif (hero.childlives[gS2HullBro] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcS2RiggLo" name="Rigging" description="Standard Razor Coast Rigging Location with 75HP.  On the {B}&quot;Gear&quot;{/b} tab you can purchase &quot;Rigging Materials, Silk Ropes&quot;.\n\n{B}Note:{/b} This rigging location will disable itself once it has zero hit points. Please type in the rigging location identifier to help keep track of its location in your ship." compset="RaceCustom" summary="A single rigging location of your ship.">
+    <comment>1 = Weight
+2 = Hardness
+3 = AC</comment>
+    <fieldval field="trkMax" value="75"/>
+    <fieldval field="abValue" value="1500"/>
+    <fieldval field="abValue2" value="1"/>
+    <tag group="Usage" tag="HitPoints"/>
+    <tag group="User" tag="NeedDomain"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="AllowRCust" tag="rS2FasBShp"/>
+    <tag group="FaSB" tag="Rigging" name="Rigging Location"/>
+    <eval phase="Final" priority="25000" index="2"><![CDATA[
+~ Calc AC
+field[abValue3].value += 10 + #attrbonus[aDEX] + 2
+
+~ Set livename of Hardness and AC value
+field[livename].text = field[name].text &  "-Hard: " & field[abValue2].value & " AC: " & field[abValue3].value]]></eval>
+    <eval phase="First" priority="50" index="3">~ If we have no HP left then get out now!
+doneif (field[trkMax].value = field[trkUser].value)
+
+~ Set the rigging location tag on the hero
+perform hero.assign[FaSB.Rigging]</eval>
+    <eval phase="PostLevel" priority="10000">~ Add riggging weight to ship creature
+herofield[tEncum].value += field[abValue].value</eval>
+    </thing>
+  <thing id="raS2HullNu" name="Number of Hull Locations" description="Enter the number of hull locations your ship has.\n\nA Hull Location is one or more decks of a ship. Combine multiple Hull Locations to make a ship longer, wider, or higher than 20 feet. For example, you construct a 60-foot long caravel from at least three Hull Locations. The first set of Hull Locations you purchase, and upon which all other locations sit, is called the &quot;base level&quot; or &quot;base deck&quot; of your ship." compset="RaceSpec">
+    <tag group="User" tag="NeedDomain"/>
+    <eval phase="PreLevel" priority="10000">root.field[rGiveSpec].value += field[domDomain].text</eval>
+    </thing>
+  <thing id="raS2RiggNu" name="Number of Rigging Locations" description="Enter the number of rigging locations your ship has.\n\nTo calculate the number of Rigging Locations allowed on a ship, divide the number of Hull Locations in half and round down, then add two. That&apos;s the maximum number of Rigging Locations your ship can have. For example, if your ship has 6 Hull Locations (regardless of configuration), it can have up to 5 Rigging Locations (6 divided by 2 = 3; plus 2 = 5). You can opt to purchase fewer than the maximum number of Rigging Locations." compset="RaceSpec">
+    <tag group="User" tag="NeedDomain"/>
+    <eval phase="PreLevel" priority="10000">root.field[rGiveSp2nd].value += field[domDomain].text</eval>
+    </thing>
+  <thing id="tpS2Ship" name="Ship" description="This is a Ship design creature for Razor Coast&apos;s Fire as She Bears rules." compset="Type">
+    <usesource source="srcFASB"/>
+    <tag group="cAttack" tag="Medium"/>
+    </thing>
+  <thing id="gS2Plunder" name="Plunder" description="An approximation of valuable but non-useful cargo. One point of plunder is worth about 1,000 gp, and takes up 1 ton of cargo capacity, unless otherwise noted.  This is used for the Skull and Shackles AP and the weight has been decreased to match Fire as She Bear values." compset="Gear" summary="One point of plunder is worth about 1,000 gp, and takes up 1 ton of cargo capacity, unless otherwise noted.">
+    <fieldval field="gCost" value="1000"/>
+    <fieldval field="gWeight" value="2000"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="gType" tag="TradeGood"/>
+    </thing>
+  <thing id="raS2BlwWat" name="Below the water line TOTAL" description="The Below the Waterline Location of your ship lies beneath the waves and has its own hit point pool.\n\nEverything beneath the water is treated as a single section, regardless of how many Hull Locations are in the ship.\n\nThe hit points of the Below the Waterline level are tracked separately and are not part of the 150 hit points regular Hull Locations possess; however, the number of Hull Locations is part of calculating how many starting hit points the Below the Waterline Location of your ship possesses.\n\n{b}Below the Waterline Location Hit Points = 20% x (Total of all Hull Location Hit Points) An unmodified base Hull Location (broad, sleek or standard) contributes 30 hit points to the Below the Waterline Location, though magic and special materials can change that value either by changing the hit points of a Hull Location or because it changes the percentage from 20% to another number.{/b}\n\nAn unmodified base Hull Location (broad, sleek or standard) contributes 30 hit points to the Below the Waterline Location, though magic and special materials can change that value either by changing the hit points of a Hull Location or because it changes the percentage from 20% to another number." compset="RaceSpec" summary="The Below the Waterline Location of your ship lies beneath the waves and has its own hit point pool.">
+    <fieldval field="abValue" value="30"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="HitPoints"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostLevel" priority="25000"><![CDATA[~ 30HP per Base Hull Locations.
+~ Note we don't use the tags here as destroying a Hull Location does
+~ not directly change the Below Water Line HP.
+field[trkMax].value += field[abValue].value * hero.child[raS2HullNu].field[domDomain].text]]></eval>
+    </thing>
+  <thing id="minS2Ship" name="Vessel, Water Ship" description="Fire as She Bears ship." compset="Minion" stacking="never">
+    <usesource source="srcFASB"/>
+    <tag group="gType" tag="Constructs"/>
+    <minion id="Mount">
+      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
+      <bootstrap thing="rS2FasBShp"></bootstrap>
+      </minion>
+    </thing>
+  <thing id="raS2SpdInt" name="Speed, Into the Wind" description="Your ship has three tactical movement speeds: Base Speed, Into the Wind, and With the Wind. Your Base Speed is your ship&apos;s speed when you are not sailing Into the Wind or With the Wind. Your base speed is the listed {i}speed{/I} of your ship character.\n\nYour &quot;Into the Wind&quot; value is your ship&apos;s speed when you are sailing directly against the wind, and the wind slows your vessel.\n\nFinally, your &quot;With the Wind&quot; value is your ship&apos;s speed when the wind is directly at your back, pushing your ship faster as she sails the high seas.\n\nYour total number of Rigging Locations determines your tactical movement speed. In addition, other features such as carrying capacity, engines (mundane, alchemical or magical in nature), and magic can alter your speed. Those features are discussed in the next section, Equipping Your Ship." compset="RaceSpec" summary="Your ship&apos;s Into the Wind speed is one-half her Base Speed, rounded down.">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="25000"><![CDATA[
+~ Calc speed as Half our normal speed
+field[abValue].value += round(hero.child[Speed].field[tSpeed].value/2,0,-1)
+
+~ Set the live name value
+field[livename].text = field[name].text & " (" & field[abValue].value & ")"]]></eval>
+    </thing>
+  <thing id="raS2SpdWth" name="Speed, With the Wind" description="Your ship has three tactical movement speeds: Base Speed, Into the Wind, and With the Wind. Your Base Speed is your ship&apos;s speed when you are not sailing Into the Wind or With the Wind. Your base speed is the listed {i}speed{/I} of your ship character.\n\nYour &quot;Into the Wind&quot; value is your ship&apos;s speed when you are sailing directly against the wind, and the wind slows your vessel.\n\nFinally, your &quot;With the Wind&quot; value is your ship&apos;s speed when the wind is directly at your back, pushing your ship faster as she sails the high seas.\n\nYour total number of Rigging Locations determines your tactical movement speed. In addition, other features such as carrying capacity, engines (mundane, alchemical or magical in nature), and magic can alter your speed. Those features are discussed in the next section, Equipping Your Ship." compset="RaceSpec" summary="Your ship&apos;s with the Wind speed is double her Base Speed.">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="25000"><![CDATA[
+~ Calc speed as double our normal speed
+field[abValue].value += hero.child[Speed].field[tSpeed].value * 2
+
+~ Set the live name value
+field[livename].text = field[name].text & " (" & field[abValue].value & ")"]]></eval>
+    </thing>
+  <thing id="raS2ManRat" name="Maneuverability Rating" description="Much like a flying creature, your ship has a maneuverability rating that helps determine how quickly it can adjust course.\n\nYour ship&apos;s Dexterity score determines this rating, as shown on {b}Table 5: Maneuverability Rating{/b}. If your ship is burdened with a medium load (see &quot;Carrying Capacity&quot; above), her maneuverability rating is one step worse than the table&apos;s entry; a ship with a heavy load is two steps worse.\n\n{B}Note:{/b} On the &quot;In-Play&quot; tab is a counter you can use to manually adjust the maneuverabilty rating up or down. This is needed as many affects like Wind and Magic can affect a ship&apos;s maneuverability.\n\n{b}Getting the gauge{/b} \nA ship that claims the weather gauge gains four benefits.\n-All officers aboard the ship gain a +2 circumstance bonus to their Naval Initiative checks.\n-The ship gains a +2 Speed bonus.\n-The maneuverability rating of a ship with the gauge increases by one step.\n-Finally, all attacks made by the ship gain a +1 circumstance bonus to attack rolls." compset="RaceSpec">
+    <fieldval field="actUserMin" value="-5"/>
+    <fieldval field="actUserMax" value="5"/>
+    <fieldval field="actName" value="Getting the Gauge"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="25000" index="2"><![CDATA[
+~ Set the live name
+field[livename].text = field[name].text & " (" & tagnames[Maneuver.?] & " " & signed(field[abValue2].value) & ")"
+~ Set Summary text
+field[abSumm].text = signed(field[abValue2].value) & " to all maneuver skill checks."]]></eval>
+    <eval phase="Final"><![CDATA[
+~ Calculate the Rating and Bonus/Penalty  
+If (#attrvalue[aDEX] >= 19) Then
+   field[abValue].value += 5
+Elseif (#attrvalue[aDEX] >= 14) Then
+   field[abValue].value += 4
+Elseif (#attrvalue[aDEX] >= 11) Then
+   field[abValue].value += 3
+Elseif (#attrvalue[aDEX] >= 7) Then
+   field[abValue].value += 2
+Elseif (#attrvalue[aDEX] >= 1) Then
+   field[abValue].value += 1
+Endif
+
+~ Check to see if medium or heavy encumbered
+If (hero.tagis[Encumbered.Medium] <> 0) Then
+   field[abValue].value += -1
+   ~ Reduce speed by 1
+   hero.child[Speed].field[tSpeed].value += -1
+ElseIf (hero.tagis[Encumbered.Heavy] <> 0) Then
+   field[abValue].value += -2
+   ~ Reduce speed by 3
+   hero.child[Speed].field[tSpeed].value += -3
+Endif
+
+~ Include manual adjustment
+field[abValue].value += field[actUser].value
+
+~ Calculate the Rating and Bonus/Penalty  
+If (field[abValue].value >= 5) Then
+   perform assign[Maneuver.Perfect]
+   field[abValue2].value += 10
+Elseif (field[abValue].value = 4) Then
+   perform assign[Maneuver.Good]
+   field[abValue2].value += 5
+Elseif (field[abValue].value = 3) Then
+   perform assign[Maneuver.Average]
+   field[abValue2].value += 0
+Elseif (field[abValue].value = 2) Then
+   perform assign[Maneuver.Poor]
+   field[abValue2].value += -5
+Elseif (field[abValue].value <= 1) Then
+   perform assign[Maneuver.Clumsy]
+   field[abValue2].value += -10
+Endif]]></eval>
+    <eval phase="PostLevel" priority="10000" index="3"><![CDATA[
+~ If not active get out now!
+doneif (field[abilActive].value <> 1)
+
+~ Increase speed by 2
+hero.child[Speed].field[tSpeed].value += 2
+~ Increase maneuverabilty rating by 1
+field[abValue].value += 1
+
+~ Loop through all the siege engines to give a +1 attack
+foreach pick in hero from BaseWep where "wClass.Siege"
+  #applybonus[atrModCirc,eachpick,1]
+nexteach]]></eval>
+    </thing>
+  <thing id="raS2SpdBas" name="Speed, Base" description="Your ship has three tactical movement speeds: Base Speed, Into the Wind, and With the Wind. Your Base Speed is your ship&apos;s speed when you are not sailing Into the Wind or With the Wind. Your base speed is the listed {i}speed{/I} of your ship character.\n\nYour &quot;Into the Wind&quot; value is your ship&apos;s speed when you are sailing directly against the wind, and the wind slows your vessel.\n\nFinally, your &quot;With the Wind&quot; value is your ship&apos;s speed when the wind is directly at your back, pushing your ship faster as she sails the high seas.\n\nYour total number of Rigging Locations determines your tactical movement speed. In addition, other features such as carrying capacity, engines (mundane, alchemical or magical in nature), and magic can alter your speed. Those features are discussed in the next section, Equipping Your Ship." compset="RaceSpec" summary="Your Base Speed is your ship&apos;s speed when you are not sailing Into the Wind or With the Wind.">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="25000"><![CDATA[
+~ Calc speed as double our normal speed
+field[abValue].value += hero.child[Speed].field[tSpeed].value
+
+~ Set the live name value
+field[livename].text = field[name].text & " (" & field[abValue].value & ")"]]></eval>
+    </thing>
+  <thing id="gS2HullLeL" name="Hull Material, Lead Lining" description="{b}Cost Per Location:{/b} +1,000gp\n{b}Weight Per Location:{/b} 500 lbs.\n{b}Special:{/b} -2 Dex\n\nThis ship has a lining of thinly hammered lead built into its bulkheads and decks that foils divination magic aimed at targets inside a ship. It does not however, prevent divination magic from locating a ship or targeting those above decks or in the rigging.\n\n{b}Note:{/b} The value of the weight and gold will be calculated after you added to the ship." compset="Gear" summary="This ship has a lining of thinly hammered lead built into its bulkheads and decks that foils divination magic aimed at targets inside a ship. It does not however, prevent divination magic from locating a ship or targeting those above decks or in the">
+    <usesource source="srcFASB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10500">~ +0 to Strength
+hero.child[aSTR].field[Bonus].value += 0
+~ -2 to Dexterity
+hero.child[aDEX].field[Bonus].value += -2
+~ 0 to Speed
+hero.child[Speed].field[tSpeed].value += 0
+~ 0 to Manuever Rating
+#value[raS2ManRat] += 0
+
+~ Calc Cost
+field[gCost].value += hero.tagcount[FaSB.Hull] * 1000
+~ Calc Weight
+field[gWeight].value += hero.tagcount[FaSB.Hull] * 500
+field[gearWeight].value += hero.tagcount[FaSB.Hull] * 500</eval>
+    </thing>
+  <thing id="gS2HullOak" name="Hull Material, Reinforced Oak" description="{b}Cost Per Location:{/b} +1,000gp\n{b}Weight Per Location:{/b} +1,000 lbs.\n{b}Hardness:{/b} 6\n{b}HP:{/b} 250\n{b}Special:{/b} +2 Strength, -1 maneuverability rating\n\nThicker oak planks and iron reinforcements are used in this ship&apos;s construction, granting +2 to Strength, but at the cost of maneuverability.\n\n{b}Note:{/b} The value of the weight and gold will be calculated after you added to the ship." compset="Gear" summary="Thicker oak planks and iron reinforcements are used in this ship&apos;s construction, granting +2 to Strength, but at the cost of maneuverability.">
+    <usesource source="srcFASB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10500"><![CDATA[
+~ +2 to Strength
+hero.child[aSTR].field[Bonus].value += 2
+~ 0 to Dexterity
+hero.child[aDEX].field[Bonus].value += 0
+~ 0 to Speed
+hero.child[Speed].field[tSpeed].value += 0
+~ -1 to Manuever Rating
+#value[raS2ManRat] += -1
+
+~ Calc Cost
+field[gCost].value += hero.tagcount[FaSB.Hull] * 1000
+~ Calc Weight
+field[gWeight].value += hero.tagcount[FaSB.Hull] * 1000
+field[gearWeight].value += hero.tagcount[FaSB.Hull] * 1000
+
+~ Update all Hull Locations
+foreach pick in hero from RaceAbil where "FaSB.Hull"
+   ~ Hit Points
+   eachpick.field[trkMax].value = 250
+   ~ Hardness
+   eachpick.field[abValue].value = 6
+   ~ AC
+   eachpick.field[abValue4].value += 0
+   ~ Add material name
+   eachpick.field[livename].text = eachpick.field[name].text & ", Oak"
+nexteach]]></eval>
+    </thing>
+  <thing id="gS2HullIro" name="Hull Material, Iron" description="{b}Cost Per Location:{/b} +2,500gp\n{b}Weight Per Location:{/b} +4,500 lbs.\n{b}Hardness:{/b} 8\n{b}HP:{/b} 400\n{b}Special:{/b} +6 Str, +4 armor bonus to AC, -2 Dex, -1 maneuverability rating, -2 Speed\n\nThe hull of this ship is clad in iron, significantly increasing its resilience. Note that this is not the same thing as armor plating (described later in this chapter). A ship clad in iron is stronger and tougher, but also slower and less agile. Note that the penalty to Speed cannot reduce the ship&apos;s Speed below 1.\n\n{b}Note:{/b} The value of the weight and gold will be calculated after you added to the ship." compset="Gear" summary="The hull of this ship is clad in iron, significantly increasing its resilience. Note that this is not the same thing as armor plating (described later in this chapter). A ship clad in iron is stronger and tougher, but also slower and less agile. Note">
+    <usesource source="srcFASB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10500"><![CDATA[
+~ +6 to Strength
+hero.child[aSTR].field[Bonus].value += 6
+~ -2 to Dexterity
+hero.child[aDEX].field[Bonus].value += -2
+~ 0 to Speed
+hero.child[Speed].field[tSpeed].value += 0
+~ -1 to Manuever Rating
+#value[raS2ManRat] += -1
+
+~ Calc Cost
+field[gCost].value += hero.tagcount[FaSB.Hull] * 2500
+~ Calc Weight
+field[gWeight].value += hero.tagcount[FaSB.Hull] * 4500
+field[gearWeight].value += hero.tagcount[FaSB.Hull] * 4500
+
+~ Update all Hull Locations
+foreach pick in hero from RaceAbil where "FaSB.Hull"
+   ~ Hit Points
+   eachpick.field[trkMax].value = 400
+   ~ Hardness
+   eachpick.field[abValue].value = 8
+   ~ AC
+   eachpick.field[abValue4].value += 4
+   ~ Add material name
+   eachpick.field[livename].text = eachpick.field[name].text & ", Iron"
+nexteach]]></eval>
+    </thing>
+  <thing id="gS2HullDar" name="Hull Material, Darkwood" description="{b}Cost Per Location:{/b} +5,000gp\n{b}Weight Per Location:{/b} 1/2 original\n{b}Hardness:{/b} 5\n{b}HP:{/b} 200\n{b}Special:{/b} +2 Dex, +1 maneuverability rating\n\nBuilding your ship&apos;s Hull Locations from this magical wood greatly increases the cost, but the finished product is lighter and more nimble.\n\n{b}Note:{/b} The value of the weight and gold will be calculated after you added to the ship." compset="Gear" summary="Building your ship&apos;s Hull Locations from this magical wood greatly increases the cost, but the finished product is lighter and more nimble.">
+    <usesource source="srcFASB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10500"><![CDATA[
+~ +0 to Strength
+hero.child[aSTR].field[Bonus].value += 0
+~ +2 to Dexterity
+hero.child[aDEX].field[Bonus].value += 2
+~ 0 to Speed
+hero.child[Speed].field[tSpeed].value += 0
+~ +1 to Manuever Rating
+#value[raS2ManRat] += 1
+
+~ Calc Cost
+field[gCost].value += hero.tagcount[FaSB.Hull] * 5000
+~ Calc Weight
+~field[gWeight].value += hero.tagcount[FaSB.Hull] * 500
+~field[gearWeight].value += hero.tagcount[FaSB.Hull] * 500
+
+~ Update all Hull Locations
+foreach pick in hero from RaceAbil where "FaSB.Hull"
+   ~ Hit Points
+   eachpick.field[trkMax].value = 200
+   ~ Hardness
+   eachpick.field[abValue].value = 5
+   ~ AC
+   eachpick.field[abValue4].value += 0
+   ~ Add material name
+   eachpick.field[livename].text = eachpick.field[name].text & ", Darkwood"
+nexteach]]></eval>
+    </thing>
+  <thing id="gS2CrowNes" name="Crow&apos;s Nest" description="This item can be added to one of the Rigging Locations for the listed cost. A crewmember in a crow&apos;s nest receives a +5 circumstance bonus to Perception checks to see other ships, distant land formations, and similar objects. A standard crow&apos;s nest is 10 feet in diameter and made from wood. It can support up to 500 pounds." compset="Gear">
+    <fieldval field="gCost" value="500"/>
+    <fieldval field="gWeight" value="75"/>
+    <usesource source="srcFASB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    </thing>
+  <thing id="wS2ShipRam" name="Ship&apos;s Ram" description="A ship&apos;s ram deals an additional 6d8 damage in addition to the standard collision damage to the targeted ship (see the Combat chapter for information about collisions). A ship fitted with a ram does not take damage from a collision it instigates. A ram is a single-use item." compset="Weapon">
+    <fieldval field="gWeight" value="1000"/>
+    <fieldval field="gCost" value="4000"/>
+    <usesource source="srcFASB"/>
+    <tag group="wCategory" tag="Melee"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCritMult" tag="2"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wType" tag="B"/>
+    <tag group="wType" tag="P"/>
+    <tag group="wProfReq" tag="Siege"/>
+    <tag group="EquipType" tag="Wood"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <eval phase="Final" priority="50000"><![CDATA[field[wAttack].value = 0
+
+~ If not equipped get out now!
+doneif (field[gIsEquip].value <> 1)
+
+If (hero.childlives[wS2RamAtt] <> 0) Then
+   #extradamage[hero.child[wS2RamAtt],"+6d8",field[name].text]
+Endif]]></eval>
+    </thing>
+  <thing id="wS2Canno3" name="Cannon, 3 pounder" description="{b}# Per Gun Deck:{/b} 12\n{b}Size:{/b} Large\n\nThe cannon presented in the table above are standard &quot;longs.&quot; Larger cannons pack a bigger punch, but require more space, powder, and crew to operate. The damage a cannon inflicts is the number of its damage dice times the damage of the ammunition. For example a cannon ball inflicts d10 points of damage. A cannon ball shot from a 9-pounder inflicts 5d10 points of damage." compset="Weapon">
+    <fieldval field="wFixRanDam" value="3d"/>
+    <fieldval field="gCost" value="500"/>
+    <fieldval field="wLoad" value="1"/>
+    <fieldval field="wCrew" value="2"/>
+    <fieldval field="gWeight" value="800"/>
+    <usesource source="srcFASB"/>
+    <tag group="wCritMult" tag="3"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wProfReq" tag="SiegeFire"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wRangeInc" tag="140"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    </thing>
+  <thing id="wS2Canno6" name="Cannon, 6 pounder" description="{b}# Per Gun Deck:{/b} 6\n{b}Size:{/b} Large\n\nThe cannon presented in the table above are standard &quot;longs.&quot; Larger cannons pack a bigger punch, but require more space, powder, and crew to operate. The damage a cannon inflicts is the number of its damage dice times the damage of the ammunition. For example a cannon ball inflicts d10 points of damage. A cannon ball shot from a 9-pounder inflicts 5d10 points of damage." compset="Weapon">
+    <fieldval field="wFixRanDam" value="4d"/>
+    <fieldval field="gCost" value="1000"/>
+    <fieldval field="wLoad" value="1"/>
+    <fieldval field="wCrew" value="3"/>
+    <fieldval field="gWeight" value="2000"/>
+    <usesource source="srcFASB"/>
+    <tag group="wCritMult" tag="3"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wProfReq" tag="SiegeFire"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wRangeInc" tag="180"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    </thing>
+  <thing id="wS2Canno9" name="Cannon, 9 pounder" description="{b}# Per Gun Deck:{/b} 4\n{b}Size:{/b} Huge\n\nThe cannon presented in the table above are standard &quot;longs.&quot; Larger cannons pack a bigger punch, but require more space, powder, and crew to operate. The damage a cannon inflicts is the number of its damage dice times the damage of the ammunition. For example a cannon ball inflicts d10 points of damage. A cannon ball shot from a 9-pounder inflicts 5d10 points of damage." compset="Weapon">
+    <fieldval field="wFixRanDam" value="5d"/>
+    <fieldval field="gCost" value="1500"/>
+    <fieldval field="wLoad" value="1"/>
+    <fieldval field="wCrew" value="4"/>
+    <fieldval field="gWeight" value="2500"/>
+    <usesource source="srcFASB"/>
+    <tag group="wCritMult" tag="3"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wProfReq" tag="SiegeFire"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wRangeInc" tag="220" name="220" abbrev="220"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    </thing>
+  <thing id="wS2Canno12" name="Cannon, 12 pounder" description="{b}# Per Gun Deck:{/b} 3\n{b}Size:{/b} Huge\n\nThe cannon presented in the table above are standard &quot;longs.&quot; Larger cannons pack a bigger punch, but require more space, powder, and crew to operate. The damage a cannon inflicts is the number of its damage dice times the damage of the ammunition. For example a cannon ball inflicts d10 points of damage. A cannon ball shot from a 9-pounder inflicts 5d10 points of damage." compset="Weapon">
+    <fieldval field="wFixRanDam" value="6d"/>
+    <fieldval field="gCost" value="2000"/>
+    <fieldval field="wLoad" value="2"/>
+    <fieldval field="wCrew" value="5"/>
+    <fieldval field="gWeight" value="3000"/>
+    <usesource source="srcFASB"/>
+    <tag group="wCritMult" tag="3"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wProfReq" tag="SiegeFire"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wRangeInc" tag="260" name="260" abbrev="260"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    </thing>
+  <thing id="wS2Canno24" name="Cannon, 24 pounder" description="{b}# Per Gun Deck:{/b} 1\n{b}Size:{/b} Gargantuan\n\nThe cannon presented in the table above are standard &quot;longs.&quot; Larger cannons pack a bigger punch, but require more space, powder, and crew to operate. The damage a cannon inflicts is the number of its damage dice times the damage of the ammunition. For example a cannon ball inflicts d10 points of damage. A cannon ball shot from a 9-pounder inflicts 5d10 points of damage." compset="Weapon">
+    <fieldval field="wFixRanDam" value="7d"/>
+    <fieldval field="gCost" value="4000"/>
+    <fieldval field="wLoad" value="2"/>
+    <fieldval field="wCrew" value="6"/>
+    <fieldval field="gWeight" value="5000"/>
+    <usesource source="srcFASB"/>
+    <tag group="wCritMult" tag="3"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wProfReq" tag="SiegeFire"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wRangeInc" tag="300" name="300" abbrev="300"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    </thing>
+  <thing id="wS2Canno32" name="Cannon, 32 pounder" description="{b}# Per Gun Deck:{/b} 1\n{b}Size:{/b} Gargantuan\n\nThe cannon presented in the table above are standard &quot;longs.&quot; Larger cannons pack a bigger punch, but require more space, powder, and crew to operate. The damage a cannon inflicts is the number of its damage dice times the damage of the ammunition. For example a cannon ball inflicts d10 points of damage. A cannon ball shot from a 9-pounder inflicts 5d10 points of damage." compset="Weapon">
+    <fieldval field="wFixRanDam" value="8d"/>
+    <fieldval field="gCost" value="6000"/>
+    <fieldval field="wLoad" value="2"/>
+    <fieldval field="wCrew" value="7"/>
+    <fieldval field="gWeight" value="5600"/>
+    <usesource source="srcFASB"/>
+    <tag group="wCritMult" tag="3"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wProfReq" tag="SiegeFire"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wRangeInc" tag="340" name="340" abbrev="340"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    </thing>
+  <thing id="wS2Canno48" name="Cannon, 48 pounder" description="{b}# Per Gun Deck:{/b} 1/2\n{b}Size:{/b} Colossal\n\nThe cannon presented in the table above are standard &quot;longs.&quot; Larger cannons pack a bigger punch, but require more space, powder, and crew to operate. The damage a cannon inflicts is the number of its damage dice times the damage of the ammunition. For example a cannon ball inflicts d10 points of damage. A cannon ball shot from a 9-pounder inflicts 5d10 points of damage." compset="Weapon">
+    <fieldval field="wFixRanDam" value="9d"/>
+    <fieldval field="gCost" value="12000"/>
+    <fieldval field="wLoad" value="2"/>
+    <fieldval field="wCrew" value="8"/>
+    <fieldval field="gWeight" value="8000"/>
+    <usesource source="srcFASB"/>
+    <tag group="wCritMult" tag="3"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wProfReq" tag="SiegeFire"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wRangeInc" tag="380" name="380" abbrev="380"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    </thing>
+  <thing id="wS2Canno68" name="Cannon, 68 pounder" description="{b}# Per Gun Deck:{/b} 1/2\n{b}Size:{/b} Colossal\n\nThe cannon presented in the table above are standard &quot;longs.&quot; Larger cannons pack a bigger punch, but require more space, powder, and crew to operate. The damage a cannon inflicts is the number of its damage dice times the damage of the ammunition. For example a cannon ball inflicts d10 points of damage. A cannon ball shot from a 9-pounder inflicts 5d10 points of damage." compset="Weapon">
+    <fieldval field="wFixRanDam" value="10d"/>
+    <fieldval field="gCost" value="12000"/>
+    <fieldval field="wLoad" value="3"/>
+    <fieldval field="wCrew" value="9"/>
+    <fieldval field="gWeight" value="8000"/>
+    <usesource source="srcFASB"/>
+    <tag group="wCritMult" tag="3"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="wProfReq" tag="SiegeFire"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="wRangeInc" tag="420" name="420" abbrev="420"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    </thing>
+  <thing id="wS2CanPo3" name="Cannon, Powder 3 lb" description="Generally, this highly flammable substance is needed to fire ammunition from a cannon. The larger the cannon, the more powder it requires. \n\nOnce set afire, powder explodes 1 round later (except in the touchhole of a cannon, in which case the explosion to fire the weapon is instantaneous). A gunpowder explosion inflicts 5d8 points of fire damage if at least a quarter-pound of powder is present; each full pound of gunpowder present increases the damage caused by 1. For example, 20 pounds of gunpowder causes an explosion that inflicts 5d8+20 points of damage. The blast has a radius of 5 feet per 5 pounds of powder (rounded down) to a maximum radius of 200 feet. For example, the same 20-pound explosion has a blast radius of 20 feet. Any creature caught in the blast area may attempt a Reflex saving throw with a DC equal to 15 +1 per 5 pounds of powder (A DC 19 save for our example blast) for half damage." compset="Weapon">
+    <fieldval field="gCost" value="15"/>
+    <fieldval field="gWeight" value="1"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="wCategory" tag="Ammunition"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wProfReq" tag="Siege"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    </thing>
+  <thing id="wS2canPo6" name="Cannon, Powder 6 lb" description="Generally, this highly flammable substance is needed to fire ammunition from a cannon. The larger the cannon, the more powder it requires. \n\nOnce set afire, powder explodes 1 round later (except in the touchhole of a cannon, in which case the explosion to fire the weapon is instantaneous). A gunpowder explosion inflicts 5d8 points of fire damage if at least a quarter-pound of powder is present; each full pound of gunpowder present increases the damage caused by 1. For example, 20 pounds of gunpowder causes an explosion that inflicts 5d8+20 points of damage. The blast has a radius of 5 feet per 5 pounds of powder (rounded down) to a maximum radius of 200 feet. For example, the same 20-pound explosion has a blast radius of 20 feet. Any creature caught in the blast area may attempt a Reflex saving throw with a DC equal to 15 +1 per 5 pounds of powder (A DC 19 save for our example blast) for half damage." compset="Weapon">
+    <fieldval field="gCost" value="15"/>
+    <fieldval field="gWeight" value="2"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="wCategory" tag="Ammunition"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wProfReq" tag="Siege"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    </thing>
+  <thing id="wS2canPo9" name="Cannon, Powder 9 lb" description="Generally, this highly flammable substance is needed to fire ammunition from a cannon. The larger the cannon, the more powder it requires. \n\nOnce set afire, powder explodes 1 round later (except in the touchhole of a cannon, in which case the explosion to fire the weapon is instantaneous). A gunpowder explosion inflicts 5d8 points of fire damage if at least a quarter-pound of powder is present; each full pound of gunpowder present increases the damage caused by 1. For example, 20 pounds of gunpowder causes an explosion that inflicts 5d8+20 points of damage. The blast has a radius of 5 feet per 5 pounds of powder (rounded down) to a maximum radius of 200 feet. For example, the same 20-pound explosion has a blast radius of 20 feet. Any creature caught in the blast area may attempt a Reflex saving throw with a DC equal to 15 +1 per 5 pounds of powder (A DC 19 save for our example blast) for half damage." compset="Weapon">
+    <fieldval field="gCost" value="15"/>
+    <fieldval field="gWeight" value="3"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="wCategory" tag="Ammunition"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    <tag group="wProfReq" tag="Siege"/>
+    </thing>
+  <thing id="wS2canPo12" name="Cannon, Powder 12 lb" description="Generally, this highly flammable substance is needed to fire ammunition from a cannon. The larger the cannon, the more powder it requires. \n\nOnce set afire, powder explodes 1 round later (except in the touchhole of a cannon, in which case the explosion to fire the weapon is instantaneous). A gunpowder explosion inflicts 5d8 points of fire damage if at least a quarter-pound of powder is present; each full pound of gunpowder present increases the damage caused by 1. For example, 20 pounds of gunpowder causes an explosion that inflicts 5d8+20 points of damage. The blast has a radius of 5 feet per 5 pounds of powder (rounded down) to a maximum radius of 200 feet. For example, the same 20-pound explosion has a blast radius of 20 feet. Any creature caught in the blast area may attempt a Reflex saving throw with a DC equal to 15 +1 per 5 pounds of powder (A DC 19 save for our example blast) for half damage." compset="Weapon">
+    <fieldval field="gCost" value="15"/>
+    <fieldval field="gWeight" value="4"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wCategory" tag="Ammunition"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="SpecGroup" tag="Siege"/>
+    </thing>
+  <thing id="wS2canPo24" name="Cannon, Powder 24 lb" description="Generally, this highly flammable substance is needed to fire ammunition from a cannon. The larger the cannon, the more powder it requires. \n\nOnce set afire, powder explodes 1 round later (except in the touchhole of a cannon, in which case the explosion to fire the weapon is instantaneous). A gunpowder explosion inflicts 5d8 points of fire damage if at least a quarter-pound of powder is present; each full pound of gunpowder present increases the damage caused by 1. For example, 20 pounds of gunpowder causes an explosion that inflicts 5d8+20 points of damage. The blast has a radius of 5 feet per 5 pounds of powder (rounded down) to a maximum radius of 200 feet. For example, the same 20-pound explosion has a blast radius of 20 feet. Any creature caught in the blast area may attempt a Reflex saving throw with a DC equal to 15 +1 per 5 pounds of powder (A DC 19 save for our example blast) for half damage." compset="Weapon">
+    <fieldval field="gCost" value="15"/>
+    <fieldval field="gWeight" value="8"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="wCategory" tag="Ammunition"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    <tag group="wProfReq" tag="Siege"/>
+    </thing>
+  <thing id="wS2canPo32" name="Cannon, Powder 32 lb" description="Generally, this highly flammable substance is needed to fire ammunition from a cannon. The larger the cannon, the more powder it requires. \n\nOnce set afire, powder explodes 1 round later (except in the touchhole of a cannon, in which case the explosion to fire the weapon is instantaneous). A gunpowder explosion inflicts 5d8 points of fire damage if at least a quarter-pound of powder is present; each full pound of gunpowder present increases the damage caused by 1. For example, 20 pounds of gunpowder causes an explosion that inflicts 5d8+20 points of damage. The blast has a radius of 5 feet per 5 pounds of powder (rounded down) to a maximum radius of 200 feet. For example, the same 20-pound explosion has a blast radius of 20 feet. Any creature caught in the blast area may attempt a Reflex saving throw with a DC equal to 15 +1 per 5 pounds of powder (A DC 19 save for our example blast) for half damage." compset="Weapon">
+    <fieldval field="gCost" value="15"/>
+    <fieldval field="gWeight" value="10"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="wCategory" tag="Ammunition"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wProfReq" tag="Siege"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    </thing>
+  <thing id="wS2canPo48" name="Cannon, Powder 48 lb" description="Generally, this highly flammable substance is needed to fire ammunition from a cannon. The larger the cannon, the more powder it requires. \n\nOnce set afire, powder explodes 1 round later (except in the touchhole of a cannon, in which case the explosion to fire the weapon is instantaneous). A gunpowder explosion inflicts 5d8 points of fire damage if at least a quarter-pound of powder is present; each full pound of gunpowder present increases the damage caused by 1. For example, 20 pounds of gunpowder causes an explosion that inflicts 5d8+20 points of damage. The blast has a radius of 5 feet per 5 pounds of powder (rounded down) to a maximum radius of 200 feet. For example, the same 20-pound explosion has a blast radius of 20 feet. Any creature caught in the blast area may attempt a Reflex saving throw with a DC equal to 15 +1 per 5 pounds of powder (A DC 19 save for our example blast) for half damage." compset="Weapon">
+    <fieldval field="gCost" value="15"/>
+    <fieldval field="gWeight" value="12"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="wCategory" tag="Ammunition"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wProfReq" tag="Siege"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    </thing>
+  <thing id="wS2canPo68" name="Cannon, Powder 68 lb" description="Generally, this highly flammable substance is needed to fire ammunition from a cannon. The larger the cannon, the more powder it requires. \n\nOnce set afire, powder explodes 1 round later (except in the touchhole of a cannon, in which case the explosion to fire the weapon is instantaneous). A gunpowder explosion inflicts 5d8 points of fire damage if at least a quarter-pound of powder is present; each full pound of gunpowder present increases the damage caused by 1. For example, 20 pounds of gunpowder causes an explosion that inflicts 5d8+20 points of damage. The blast has a radius of 5 feet per 5 pounds of powder (rounded down) to a maximum radius of 200 feet. For example, the same 20-pound explosion has a blast radius of 20 feet. Any creature caught in the blast area may attempt a Reflex saving throw with a DC equal to 15 +1 per 5 pounds of powder (A DC 19 save for our example blast) for half damage." compset="Weapon">
+    <fieldval field="gCost" value="15"/>
+    <fieldval field="gWeight" value="14"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="wCategory" tag="Ammunition"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="wProfReq" tag="Siege"/>
+    <tag group="wFtrGroup" tag="Siege"/>
+    </thing>
+  <thing id="wS2canBall" name="Cannon, Ball" description="This ammunition is a solid ball of iron. If the cannonball hits a Location, roll and apply damage normally. In addition, flying splinters inflict 1 point of damage per damage dice rolled on any crew in that Location (DC 15 Reflex save for half)." compset="Weapon">
+    <fieldval field="wFixRanDam" value="d10"/>
+    <fieldval field="gWeight" value="3"/>
+    <fieldval field="gCost" value="20"/>
+    <usesource source="srcFASB"/>
+    <tag group="wType" tag="B"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="wSpecial" tag="S2Splinter" name="Splinter"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    </thing>
+  <thing id="wS2canGrap" name="Cannon, Grapeshot" description="This ammunition is a canister containing hundreds of small iron pellets, designed to kill and injure crew rather than damage a ship. Grapeshot deals damage to any creature in one Location (Reflex DC 10 + damage dice rolled halves damage), but does no damage to the Location itself.\n\n{i}Example: A 12-pounder that fires grapeshot deals 6d4 points of damage to all creatures in one Location and would require a DC 16 Reflex saving throw.{/i}\n\nWhen firing grapeshot, the targeted Location must be at least partially exposed (open-air, portholes, etc.). The shot must beat the AC of the Location in order to affect the creatures in that Location. Failure to beat the AC indicates the shot didn&apos;t penetrate a ship&apos;s defenses.\n\nGrapeshot can only be fired up to a distance of five range increments, rather than the usual ten, due to the nature of the shot." compset="Weapon">
+    <fieldval field="wFixRanDam" value="d4"/>
+    <fieldval field="gWeight" value="3"/>
+    <fieldval field="gCost" value="10"/>
+    <usesource source="srcFASB"/>
+    <tag group="wType" tag="B"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="wType" tag="P"/>
+    <tag group="wSpecial" tag="S2RefSave" name="Reflex save required" abbrev="Reflex save required"/>
+    <tag group="wSpecial" tag="S2Half5" name="half range and only 5 increments" abbrev="Half range 5 increments"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="EquipType" tag="Metal"/>
+    </thing>
+  <thing id="wS2canChSh" name="Cannon, Chain Shot" description="This ammunition consists of two balls joined by a chain or telescoping bar, designed to destroy Rigging Locations. Chainshot ignores any dodge bonus to AC when targeting a Rigging Location. It has no effect against Hull Locations. Due to the lack of aerodynamics, chainshot can only be fired up to a distance of five range increments." compset="Weapon">
+    <fieldval field="wFixRanDam" value="d4"/>
+    <fieldval field="gWeight" value="6"/>
+    <fieldval field="gCost" value="30"/>
+    <usesource source="srcFASB"/>
+    <tag group="wType" tag="B"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wClass" tag="Siege"/>
+    <tag group="wType" tag="S"/>
+    <tag group="wSpecial" tag="S2Half5"/>
+    <tag group="wSpecial" tag="S2Rigging" name="No dodge bonus on Rigging"/>
+    <tag group="wCategory" tag="RangeProj"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    </thing>
+  <thing id="gS2HullBro" name="Hull Type, Broad" description="{b}Cost Per Hull Location:{/b} +3,000gp\n{b}Special:{/b} Str +4, -1 maneuverability rating\n\nThis wide hull slows a vessel, but its reinforced interior increases its strength (and therefore its carrying capacity). This increased capacity comes at the cost of maneuverability in the water.\n\n{b}Note:{/b} The cost in gold will be calculated after you add to your ship." compset="Gear" summary="This wide hull slows a vessel, but its reinforced interior increases its strength (and therefore its carrying capacity). This increased capacity comes at the cost of maneuverability in the water.">
+    <fieldval field="gWeight" value="3000"/>
+    <usesource source="srcFASB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10500">~ +4 to Strength
+hero.child[aSTR].field[Bonus].value += 4
+~ 0 to Dexterity
+hero.child[aDEX].field[Bonus].value += 0
+~ 0 to Speed
+hero.child[Speed].field[tSpeed].value += 0
+~ -1 to Manuever Rating
+#value[raS2ManRat] += -1
+
+~ Calc Cost
+field[gCost].value += hero.tagcount[FaSB.Hull] * 3000</eval>
+    </thing>
+  <thing id="gS2HullSta" name="Hull Type, Standard" description="{b}Cost Per Hull Location:{/b} +2,400gp\n{b}Special:{/b} Str +0, speed +0\n\nThe standard hull is sized for non-specialized vessels. Most ships use the standard hull.\n\n{b}Note:{/b} The cost in gold will be calculated after you add to your ship." compset="Gear" summary="The standard hull is sized for non-specialized vessels.">
+    <fieldval field="gWeight" value="3000"/>
+    <usesource source="srcFASB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10500">~ +0 to Strength
+hero.child[aSTR].field[Bonus].value += 0
+~ 0 to Dexterity
+hero.child[aDEX].field[Bonus].value += 0
+~ 0 to Speed
+hero.child[Speed].field[tSpeed].value += 0
+~ 0 to Manuever Rating
+#value[raS2ManRat] += 0
+
+~ Calc Cost
+field[gCost].value += hero.tagcount[FaSB.Hull] * 2400</eval>
+    </thing>
+  <thing id="gS2HullSle" name="Hull Type, Sleek" description="{b}Cost Per Hull Location:{/b} +3,000gp\n{b}Special:{/b} Str -4, +1 maneuverability rating\n\nThis streamlined hull increases a vessel&apos;s maneuverability, but its smaller cross-section reduces strength.\n\n{b}Note:{/b} The cost in gold will be calculated after you add to your ship." compset="Gear" summary="This streamlined hull increases a vessel&apos;s maneuverability, but its smaller cross-section reduces strength.">
+    <fieldval field="gWeight" value="1500"/>
+    <usesource source="srcFASB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10500">~ +0 to Strength
+hero.child[aSTR].field[Penalty].value += -4
+~ 0 to Dexterity
+hero.child[aDEX].field[Bonus].value += 0
+~ 0 to Speed
+hero.child[Speed].field[tSpeed].value += 0
+~ -1 to Manuever Rating
+#value[raS2ManRat] += -1
+
+~ Calc Cost
+field[gCost].value += hero.tagcount[FaSB.Hull] * 3000</eval>
+    </thing>
+  <thing id="raS2SpdOvr" name="Speed, Overland" description="Your first Rigging Location allows you to move at a rate of 2 miles per hour; each additional Rigging Location increases that speed by 1/2 mile per hour. For example, a ship with 4 Rigging Locations has an overland movement speed of 3-1/2 miles per hour, or 84 miles per 24 hours.\n\n{b}Note:{/b} To be more nautical I changed the wording to use knots and nautical miles (NM).  1 Knot equals 1.151 MPH and one nautical mile is 1.151 miles." compset="RaceSpec" summary="Overland movement speed.">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="25000"><![CDATA[
+~ Calc MPH
+field[abValue].value += 2 + ((hero.tagcount[FaSB.Rigging]-1)*.5)
+~ Change to Knots
+field[abValue].value = round(field[abValue].value * 1.151,2,-1)
+
+~ Calc 24 hrs speed
+field[abValue2].value += round(field[abValue].value * 24,2,-1)
+
+~ Set the live name value
+field[livename].text = field[name].text & " (" & field[abValue].value & " knot " & field[abValue2].value & " NM per 24hrs)"]]></eval>
+    </thing>
+  <thing id="gS2RigSilk" name="Rigging Materials, Silk Ropes" description="{b}Weight Per Location:{/b} 3/4 of original\n{B}Hardness:{/b} 4\n{b}HP:{/b} 100\nThese ropes reduce the weight of your Rigging Locations by 75% but cost more than standard hemp ropes." compset="Gear">
+    <fieldval field="gCost" value="1500"/>
+    <fieldval field="usrCandid1" value="FaSB.Rigging"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we have not chosen then get out now
+doneif (field[usrChosen1].ischosen <> 1)
+
+~ Hit Points
+field[usrChosen1].chosen.field[trkMax].value = 100
+~ Weight
+field[usrChosen1].chosen.field[abValue].value *= .75
+~ Hardness
+field[usrChosen1].chosen.field[abValue2].value = 4
+~ AC
+field[usrChosen1].chosen.field[abValue3].value += 0
+~ Add material name
+field[usrChosen1].chosen.field[livename].text = field[usrChosen1].chosen.field[name].text & ", Silk"]]></eval>
+    </thing>
+  <thing id="gS2ShArSca" name="Ship Armor, Scale" description="{b}Armor Bonus:{/b} +5\n\nScale plating involves layering smaller iron plates in a pattern very similar to a dragon&apos;s scales. Each individual plate (roughly 1 foot per side) doesn&apos;t offer much protection on its own, but when layered and reinforced with other plates it offers stronger protection than link armor. Installing scale plating requires more labor than link armor, and so the cost is slightly higher." compset="Gear" summary="Scale plating involves layering smaller iron plates in a pattern very similar to a dragon&apos;s scales. Each individual plate (roughly 1 foot per side) doesn&apos;t offer much protection on its own, but when layered and reinforced with other plates it offers">
+    <fieldval field="gCost" value="1750"/>
+    <fieldval field="usrCandid1" value="FaSB.Hull"/>
+    <fieldval field="gWeight" value="1000"/>
+    <usesource source="srcFASB"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we have not chosen then get out now
+doneif (field[usrChosen1].ischosen <> 1)
+
+~ AC
+field[usrChosen1].chosen.field[abValue4].value += 5]]></eval>
+    </thing>
+  <thing id="gS2ShArLnk" name="Ship Armor, Link" description="{b}Armor Bonus:{/b} +3\n\nMuch like a chain shirt for a PC, this style of armor involves a bevy of interlinking chains, which are then bolted to the side of the Hull Location. Link armor is the easiest to manufacture and install, but provides the least amount of protection of the various armor types." compset="Gear" summary="Much like a chain shirt for a PC, this style of armor involves a bevy of interlinking chains, which are then bolted to the side of the Hull Location. Link armor is the easiest to manufacture and install, but provides the least amount of protection of">
+    <fieldval field="gCost" value="1000"/>
+    <fieldval field="usrCandid1" value="FaSB.Hull"/>
+    <fieldval field="gWeight" value="750"/>
+    <usesource source="srcFASB"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we have not chosen then get out now
+doneif (field[usrChosen1].ischosen <> 1)
+
+~ AC
+field[usrChosen1].chosen.field[abValue4].value += 3]]></eval>
+    </thing>
+  <thing id="gS2ShArIrP" name="Ship Armor, Iron Plates" description="{b}Armor Bonus:{/b} +8\n\nThe strongest - and heaviest - of the armor options, iron plating involves bolting massive iron plates directly to the side of the Hull Location. The sheer weight of the plates requires specialized booms to lift into place, increasing the cost to produce and install this armor." compset="Gear" summary="The strongest - and heaviest - of the armor options, iron plating involves bolting massive iron plates directly to the side of the Hull Location. The sheer weight of the plates requires specialized booms to lift into place, increasing the cost to pro">
+    <fieldval field="gCost" value="2250"/>
+    <fieldval field="usrCandid1" value="FaSB.Hull"/>
+    <fieldval field="gWeight" value="2500"/>
+    <usesource source="srcFASB"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we have not chosen then get out now
+doneif (field[usrChosen1].ischosen <> 1)
+
+~ AC
+field[usrChosen1].chosen.field[abValue4].value += 8]]></eval>
+    </thing>
+  <thing id="gS2ShArSIP" name="Ship Armor, Sculpted Iron Plates" description="{b}Armor Bonus:{/b} +8\n\nThese specially crafted plates provide a ship with the same defense as standard iron plates, but are instead shaped in such a way as to make the ship appear more fearsome. For example, you could opt to sculpt your plates so that your ship appears to be a dragon." compset="Gear" summary="These specially crafted plates provide a ship with the same defense as standard iron plates, but are instead shaped in such a way as to make the ship appear more fearsome. For example, you could opt to sculpt your plates so that your ship appears to">
+    <fieldval field="gCost" value="10000"/>
+    <fieldval field="usrCandid1" value="FaSB.Hull"/>
+    <fieldval field="gWeight" value="2500"/>
+    <usesource source="srcFASB"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we have not chosen then get out now
+doneif (field[usrChosen1].ischosen <> 1)
+
+~ AC
+field[usrChosen1].chosen.field[abValue4].value += 8]]></eval>
+    </thing>
+  <thing id="gS2ShArDIP" name="Ship Armor, Deflective Iron Plates" description="{b}Armor Bonus:{/b} +8\n\nThese iron plates are shaped in such a way as to deflect cannonballs away from the ship. In addition to the standard armor bonus provided by the plates, they also grant a +1 deflection bonus to the armor class of the Hull Location they protect." compset="Gear" summary="These iron plates are shaped in such a way as to deflect cannonballs away from the ship. In addition to the standard armor bonus provided by the plates, they also grant a +1 deflection bonus to the armor class of the Hull Location they protect.">
+    <fieldval field="gCost" value="6500"/>
+    <fieldval field="usrCandid1" value="FaSB.Hull"/>
+    <fieldval field="gWeight" value="2500"/>
+    <usesource source="srcFASB"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we have not chosen then get out now
+doneif (field[usrChosen1].ischosen <> 1)
+
+~ AC
+field[usrChosen1].chosen.field[abValue4].value += 9]]></eval>
+    </thing>
+  <thing id="raS2ShipTy" name=" Ship Type" description="Use this to fill in the ship type (ie sailing ship, Sargavan fishing hooker)." compset="RaceSpec">
+    <tag group="User" tag="NeedDomain"/>
+    <tag group="User" tag="OptDomain"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="600"><![CDATA[      
+~set our ship's type to our own name
+hero.findchild[BaseRace].field[livename].text = field[domDomain].text]]></eval>
+    </thing>
+  <thing id="rS2FasBShp" name="Fire as She Bears, Ship" description="This is not a race or creature.  Its a non-living ship that can be used to build a ship based on the FGG rules &quot;Fire as She Bears&quot;.  As the ship has strength, dexterity, CMB, and CMD scores it was easiest in Hero Lab to build it as a Creature instead of as Equipment.\n\nThe Gear tab is where you can find &quot;Ship Armor&quot;, Special Materials for the hull, and silk ropes for the rigging.\n\nThe Weapons tab has weapons like Rams, Cannons, Gun Powder, and ammo for the cannons." compset="Race">
+    <fieldval field="rSpecSing" value="Hull Location"/>
+    <fieldval field="rSpec2ndSi" value="Rigging Location"/>
+    <fieldval field="rSpeed" value="2"/>
+    <fieldval field="rHitDice" value="1"/>
+    <usesource source="srcFASB"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="NoScore" tag="aWIS"/>
+    <tag group="HasType" tag="tpS2Ship"/>
+    <tag group="RaceType" tag="NPC"/>
+    <tag group="Helper" tag="OptCustom"/>
+    <tag group="RaceSize" tag="Colossal4"/>
+    <tag group="Helper" tag="OptCustSec"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="Helper" tag="Quadruped"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="Hero" tag="NoDefComm"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="NoScore" tag="aCHA"/>
+    <tag group="NoScore" tag="aCON"/>
+    <bootstrap thing="raS2BlwWat"></bootstrap>
+    <bootstrap thing="raS2RiggNu"></bootstrap>
+    <bootstrap thing="raS2SpdWth"></bootstrap>
+    <bootstrap thing="raS2SpdInt"></bootstrap>
+    <bootstrap thing="raS2ManRat"></bootstrap>
+    <bootstrap thing="raS2SpdBas"></bootstrap>
+    <bootstrap thing="raS2SpdOvr"></bootstrap>
+    <bootstrap thing="raS2ShipTy"></bootstrap>
+    <bootstrap thing="raS2Encumb"></bootstrap>
+    <bootstrap thing="wS2RamAtt"></bootstrap>
+    <bootstrap thing="raS2HullNu"></bootstrap>
+    <bootstrap thing="stS2FaSBSh"></bootstrap>
+    <eval phase="First" priority="10000" index="2">~ Calculate speed as 2 + Rigging Locations
+hero.child[Speed].field[tSpeed].value += hero.tagcount[FaSB.Rigging]
+
+~ If we have no rigging locations we have speed zero
+If (hero.tagcount[FaSB.Rigging] = 0) Then
+   hero.child[Speed].field[tSpeed].value = 0
+Endif</eval>
+    <eval phase="Final" priority="25000" index="3"><![CDATA[
+~ Force Mod Speed to be same as base speed
+hero.child[Speed].field[tSpeedMod].value = hero.child[Speed].field[tSpeed].value
+
+#situational[hero.child[svFort],"Captain's base save value",""]
+#situational[hero.child[svWill],"Captain's base save value",""]
+#situational[hero.child[svRef],"Captain's base save value -2",""]]]></eval>
+    <eval phase="First">~ Strength (Str) = 30 + the number of Hull Locations. 
+~ A ship’s Strength will be further modified by whether 
+~ you opted to build with Sleek (–4) or Broad (+4) Hulls.
+field[rSTR].value += 20 + hero.tagcount[FaSB.Hull]
+
+~ Dexterity (Dex) = 10 + the number of Rigging Locations 
+~ - the number of Hull Locations.
+field[rDEX].value += hero.tagcount[FaSB.Rigging] - hero.child[raS2HullNu].field[domDomain].text
+
+~ Hide Unarmed Strike weapon always
+perform hero.child[wUnarmed].assign[Hide.Weapon]
+
+~ Hide skills when exported to statblock
+perform hero.child[skBluff].assign[Hide.Statblock]
+perform hero.child[skDiplo].assign[Hide.Statblock]
+perform hero.child[skDisguise].assign[Hide.Statblock]
+perform hero.child[skIntim].assign[Hide.Statblock]</eval>
+    </thing>
+  <thing id="gS2BroaRud" name="Broad Rudder" description="A wide rudder makes a ship more nimble, granting a +1 bonus on all Profession (sailor) checks to maneuver the vessel.\n\n{i}Requirements{/i}: Craft (ships) DC 16" compset="Gear">
+    <fieldval field="gCost" value="500"/>
+    <fieldval field="gWeight" value="50"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="mecFASB" name="Fire as she Bears Mechanic" compset="Mechanics">
+    <usesource source="srcFASB"/>
+    <bootstrap thing="raS2FaSB">
+      <containerreq phase="First" priority="2000">!IsRace.rS2FasBShp</containerreq>
+      </bootstrap>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+~ Add weight to siege engines for Fire as She Bears
+~ Loop through all the siege engines
+foreach pick in hero from BaseWep where "wClass.Siege"
+  ~ Light Ballista
+  If (eachpick.tagis[thingid.wBallistLt] <> 0) Then
+    eachpick.field[gWeight].value += 250
+  ~ Heavy Ballista
+  ElseIf (eachpick.tagis[thingid.wBallistHv] <> 0) Then
+    eachpick.field[gWeight].value += 500
+  ~ Gate Breaker Ballista
+  ElseIf (eachpick.tagis[thingid.wBallisGB] <> 0) Then
+    eachpick.field[gWeight].value += 1000
+  ~ Light Catapult
+  ElseIf (eachpick.tagis[thingid.wCatapulLt] <> 0) Then
+    eachpick.field[gWeight].value += 250
+  ~ Standard Catapult
+  ElseIf (eachpick.tagis[thingid.wCatapulSt] <> 0) Then
+    eachpick.field[gWeight].value += 500
+  ~ Heavy Catapult
+  ElseIf (eachpick.tagis[thingid.wCatapulHv] <> 0) Then
+    eachpick.field[gWeight].value += 1000
+  ~ Cannon, Fiend's Mouth
+  ElseIf (eachpick.tagis[thingid.wCannFiend] <> 0) Then
+    eachpick.field[gWeight].value += 2500
+  ~ Firedrake
+  ElseIf (eachpick.tagis[thingid.wFiredrake] <> 0) Then
+    eachpick.field[gWeight].value += 250
+  ~ Springal, Arrow
+  ElseIf (eachpick.tagis[thingid.wSpringArr] <> 0) Then
+    eachpick.field[gWeight].value += 250
+  ~ Springal, Arrow
+  ElseIf (eachpick.tagis[thingid.wSpringRoc] <> 0) Then
+    eachpick.field[gWeight].value += 300
+  ~ UC Cannon
+  ElseIf (eachpick.tagis[thingid.wCannon] <> 0) Then
+    eachpick.field[gWeight].value += 2000
+  Endif
+  ~ Make it so that a Siege engin can be equipped so it can get 
+  ~ rolled on the iPad.
+  perform eachpick.assign[Helper.AllEqBoth]
+nexteach]]></eval>
+    <eval phase="Final" priority="25000"><![CDATA[~ Navel Tatics added to Profession Sailor
+#appenddesc[skProfSail,"{B}NAVAL TACTICS - Fire as She Bears{/B}{br} MANEUVER / DC / SPEED USED{br} {b}Sudden Slow{/b}, 15, varies{br} {b}Sudden Acceleration{/b}, 15, varies{br} {b}45 Degree Turn{/b}, 15, 2{br} {b}90 Degree Turn{/b}, 20, 3{br} {b}180 Degree Turn{/b}, 30, 4{br} {b}Harness Furious Wind{/b}, 20, n/a{br}"]]]></eval>
+    <eval phase="Final" priority="50000" index="3"><![CDATA[
+var bonus as number
+bonus = hero.childfound[skKnowEng].field[skTotal].value
+~ Add weight to siege engines for Fire as She Bears
+~ Loop through all the siege engines
+foreach pick in hero from BaseWep where "thingid.wCatapulLt|thingid.wCatapulSt|thingid.wCatapulHv"
+  eachpick.field[wRanAtk].value = bonus + eachpick.field[wAttBonus].value
+nexteach]]></eval>
+    </thing>
+  <thing id="gS2ConWePo" name="Concealed Weapon Port" description="The ship&apos;s belowdecks area undergoes major reconstruction in order to house Large direct-fire siege engines, such as light ballistae or cannons, if they are in use in the campaign. A concealed weapon port can only be recognized on a successful DC 15 Perception check. Each concealed port reduces a ship&apos;s cargo capacity by 2 tons, in addition to the space required by the weapon itself.\n\n{i}Requirements{/i}: Craft (ships) DC 16" compset="Gear">
+    <fieldval field="gCost" value="100"/>
+    <fieldval field="gWeight" value="4400"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2ExtKeel" name="Extended Keel" description="The ship&apos;s keel is longer than usual for a vessel of its type. The ship&apos;s measurements from bow to stern are 10% longer than normal, though cargo capacity is not appreciably affected. The ship is more stable, and grants a +1 bonus on all Profession (sailor) checks. This improvement must be installed at the time of the ship&apos;s construction and cannot be added later.\n\n{i}Cost{/i}: 10% of base ship cost" compset="Gear">
+    <fieldval field="gCraftDC" value="19"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="CraftSkill" tag="skCrafShip"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2Figureh" name="Figurehead" description="Some ships sport fanciful carvings on their bowsprits. This modification is strictly cosmetic, with no real impact on game play. Players are encouraged to design their own custom figureheads, such as dolphins, mermaids, and other such creatures of myth.\n\n{i}Cost{/i}: 100-1,000 gp, depending on the port and the craftsman" compset="Gear">
+    <fieldval field="gCraftDC" value="10"/>
+    <fieldval field="gWeight" value="100"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="User" tag="OptDomain"/>
+    <tag group="CraftSkill" tag="skCrafCarp"/>
+    <tag group="CraftSkill" tag="skCrafScul"/>
+    <tag group="Helper" tag="CustomSpec"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2GlasBot" name="Glass Bottom" description="The bottom of the ship is inset with wide windows, permitting those inside to gaze into the ocean. This has no effect on ship performance, other than making the ship&apos;s bottom only as strong as thick glass (hardness 1, hp 3, Break DC 8).\n\n{i}Cost{/i}: 5% of base ship cost" compset="Gear">
+    <fieldval field="gCraftDC" value="19"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="CraftSkill" tag="skCrafGlas"/>
+    </thing>
+  <thing id="gS2MaTrCoD" name="Magically Treated Control Device" description="The ship&apos;s steering wheel or tiller is magically treated, doubling its hit points and hardness. This improvement can only be added by a spellcaster with the Craft Wondrous Item feat.\n\n{i}Requirements{/i}: Craft Wondrous Item" compset="Gear" summary="The ship&apos;s steering wheel or tiller is magically treated, doubling its hit points and hardness.">
+    <fieldval field="gCraftDC" value="15"/>
+    <fieldval field="gCost" value="1000"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="CraftSkill" tag="skCrafShip"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2MaTrOar" name="Magically Treated Oars" description="The ship&apos;s oars are magically treated, doubling their hit points and hardness. This improvement can only be added by a spellcaster with the Craft Wondrous Item feat.\n\n{i}Requirements{/i}: Craft Wondrous Item" compset="Gear" summary="The ship&apos;s oars are magically treated, doubling their hit points and hardness.">
+    <fieldval field="gCraftDC" value="15"/>
+    <fieldval field="gCost" value="100"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="CraftSkill" tag="skCrafShip"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="CraftSkill" tag="skCrafCarp"/>
+    </thing>
+  <thing id="gS2MovDeck" name="Movable Deck" description="The features of the ship&apos;s decks are designed to be moved in order to disguise the ship as an altogether different vessel. After pulling up dozens of kingpins, the crew can slide the sterncastle forward on hidden rails, rearrange the position of the masts, extend the gunwales, lower the poop deck, transfer the ship&apos;s wheel, and make other cosmetic changes such as a new figurehead and different-colored sails. The secret pins, levers, and tracks can only be found with a DC 20 Perception check during a close examination of the ship.\n\n{i}Cost{/i}: 40% of base ship cost" compset="Gear">
+    <fieldval field="gCraftDC" value="28"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="CraftSkill" tag="skCrafShip"/>
+    </thing>
+  <thing id="gS2RaDeSai" name="Rapid-Deploy Sails" description="The ship&apos;s rigging undergoes a wholesale change as improvements in engineering enable the sails to be raised and lowered much faster than normal. Any sail adjustments can be made in half the normal time, granting a +2 bonus on all &quot;Sudden Slow&quot; and &quot;Sudden Acceleration&quot; maneuvers.\n\n{i}Cost{/i}: 10% of base ship cost" compset="Gear">
+    <fieldval field="gCraftDC" value="25"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="CraftSkill" tag="skCrafShip"/>
+    <tag group="CraftSkill" tag="skKnowEng"/>
+    <eval phase="Final" priority="25000"><![CDATA[#situational[hero.childfound[skProfSail],"+2 bonus vs Sudden Slow and Sudden Acceleration maneuvers.",field[name].text]]]></eval>
+    </thing>
+  <thing id="gS2SmugCom" name="Smuggling Compartments" description="The ship&apos;s bulkheads are modified so that gaps between them can serve as hidden cargo storage areas. This does not change a ship&apos;s cargo capacity. A smuggling compartment can hold anything that fits within a 5-foot cubic space. If you are using the plunder rules (see &quot;The Life of a Pirate&quot; in {i}Pathfinder Adventure Path{/i} #55 for details on the plunder system), in general, two smuggling compartments are required to hold 1 point of plunder. A DC 20 Perception check is required to locate smuggling compartments in a search of the ship.\n\n{i}Requirements{/i}: Craft (ships) DC 19" compset="Gear">
+    <fieldval field="gCraftDC" value="19"/>
+    <fieldval field="gCost" value="500"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="CraftSkill" tag="skCrafShip"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2JailWoo" name="Brig, Wooden" description="A brig is an onboard prison. Used to allow drunkards to sleep off their booze or to lock up a mutinous crewmember before his message spreads, a typical brig consists of numerous isolation cells - barely more than 8&apos; to a side - as well as one large holding area. In addition, it has a desk and chair, where guards take care of necessary paperwork. A brig is manned by three crewmembers at all times if it is in use. The simplest of brigs simply uses iron bars to separate cells, while those with a bit more planning have solid bulkheads between cells, preventing inhabitants from having physical contact.\n\n{i}Requirements{/i}: Craft (ships) DC 15" compset="Gear">
+    <fieldval field="gCraftDC" value="15"/>
+    <fieldval field="gCost" value="150"/>
+    <fieldval field="gWeight" value="100"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="CraftSkill" tag="skCrafShip"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2JailMet" name="Brig, Metal" description="A brig is an onboard prison. Used to allow drunkards to sleep off their booze or to lock up a mutinous crewmember before his message spreads, a typical brig consists of numerous isolation cells - barely more than 8&apos; to a side - as well as one large holding area. In addition, it has a desk and chair, where guards take care of necessary paperwork. A brig is manned by three crewmembers at all times if it is in use. The simplest of brigs simply uses iron bars to separate cells, while those with a bit more planning have solid bulkheads between cells, preventing inhabitants from having physical contact.\n\n{i}Requirements{/i}: Craft (ships) DC 15" compset="Gear">
+    <fieldval field="gCraftDC" value="15"/>
+    <fieldval field="gCost" value="300"/>
+    <fieldval field="gWeight" value="200"/>
+    <usesource source="PathSkulSh"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="CraftSkill" tag="skCrafBlac"/>
+    </thing>
+  <thing id="gS2Galley" name="Galley" description="A galley is used to prepare and serve food to the crew. The price in the table is for a single galley, which requires a full Hull Location and provides space to feed up to 30 crewmembers at once. Multiple Hull Locations can be placed together to create a larger galley if desired. A standard galley includes a rudimentary pantry for storing enough food and water for 90 meals; the remainder of the food must be stored elsewhere. In addition, simple tools - butcher knives, pots and pans, cutting blocks, and so on - are included as part of this Location, though food is not." compset="Gear">
+    <fieldval field="gCost" value="3000"/>
+    <fieldval field="gWeight" value="2000"/>
+    <usesource source="PathSkulSh"/>
+    <usesource source="srcFASB"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2CapQuar" name="Captain&apos;s Quarters" description="This Location provides the Captain some privacy from the rest of the crew, and also provides an antechamber the Captain can use for meetings with his mates and other officers. The standard Captain&apos;s quarters provides basic comforts. The room is furnished with a comfortable bed, armoire, chest-of-drawers, and a simple safe (Disable Device DC 25 to open without the key). The antechamber comes with a simple table and ten chairs." compset="Gear">
+    <fieldval field="gCost" value="1000"/>
+    <fieldval field="gWeight" value="500"/>
+    <usesource source="srcFASB"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2CapQuLu" name="Captain&apos;s Quarters, Luxurious" description="This specialized Location is similar to the standard Captain&apos;s quarters, but is far more decadent. The furniture is made of the finest wood and inlaid with gold filigree. Thick, plush carpets cover the decks; spectacular paintings and tapestries adorn the bulkheads. The antechamber&apos;s table and chairs are likewise upgraded and far more comfortable than the standard outfitting." compset="Gear">
+    <fieldval field="gCost" value="5000"/>
+    <fieldval field="gWeight" value="1000"/>
+    <usesource source="srcFASB"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2Cistern" name="Cistern" description="This special Location can only be incorporated into the ship when it is first being built. The cistern is typically set near the center of the ship to provide balance. Special tubing runs through the masts and spars, collecting rainwater when it&apos;s available. The tubes all flow to the central cistern location, where the water becomes available through taps to consume and use. A cistern holds up to 2,000 gallons of water. The listed weight does not include the weight of the water. When full, add 16,000 pounds to the weight (one gallon weighs 8 pounds)." compset="Gear">
+    <fieldval field="gCost" value="2500"/>
+    <fieldval field="gWeight" value="1000"/>
+    <usesource source="srcFASB"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2Oars" name="Oars" description="A ship can be equipped with one or more banks of oars rowed by an expanded crew. The oars can propel the ship even if there is no wind. A single oar bank requires a crew of 20 to operate successfully, and adds +1 to a ship&apos;s speed. For purposes of fatigue, treat operating an oar bank as a forced march (including gaining a +4 to Constitution checks from the Endurance feat). Typically, a ship will have 60 crew assigned to oar duty, and rotate them through 3 shifts during the day. The listed price includes the work necessary to allow the oars to move through the Hull Location, a supply of a dozen oars, and benches for the rowers to sit on.\n\nA ship can have multiple oar banks. The bonus to speed stacks; that is, a ship with two oar banks gains +2 Speed when they&apos;re in use, three oar banks grants +3 Speed, and so on. Each oar bank takes up half the space available in the appropriate Hull Location.\n\nA ship cannot benefit from an oar bank at the same time it is under sail or engine power. To do so would be deadly to the crew manning the oars. Generally, oars are only used when Rigging Locations are either completely destroyed or there is no wind power available." compset="Gear">
+    <fieldval field="gCost" value="1000"/>
+    <fieldval field="gWeight" value="200"/>
+    <usesource source="srcFASB"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2PowdMag" name="Powder Magazine" description="This compartment contains a ship&apos;s supply of gunpowder and is usually water tight and has magical lighting to minimize potential sparks. The typical powder magazine requires a full Hull Location worth of space on board the ship. Generally, a powder magazine contains several bins or large barrels full of powder, as well as the means to transfer powder to smaller casks used near the cannons. When full, a powder magazine can hold one ton of gunpowder. Standing orders on most ships forbid any metal tools (shovels, scoops, wheelbarrows, etc.) from entering the powder magazine, lest they generate a spark.{br}{br}Instead, a standard powder magazine comes equipped with appropriate tools made from highly polished wood. The listed weight does not include the powder.\n\nThe smallest of sparks - let alone an actual fire - often results in the demise of the ship and her crew. If the gunpowder catches fire, it explodes 1 round later. Rules for gunpowder explosions can be found under the Powder entry in the Weapons section of this product. Creatures physically in the powder magazine when it explodes suffer a -10 penalty on the saving throw due to the confined space.{br}{br}Standard practice is to hire a spellcaster to cast {i}continual flame{/i} inside the powder room, to remove the need for torches or candles to provide light. Such spellcasting service is not included in the listed cost." compset="Gear">
+    <fieldval field="gCost" value="10000"/>
+    <fieldval field="gWeight" value="500"/>
+    <usesource source="srcFASB"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2FaSBsmu" name="Smuggling Compartment" description="This special Location is built in such a way as to have a portion of the Location hidden from plain view. The most common method is to place this Location in the hold of the ship, and have the hold only be 15 feet in height. The remaining 5 feet are hidden beneath the floor. Finding a standard Smuggling Compartment requires a DC 30 Perception check." compset="Gear">
+    <fieldval field="gCost" value="10000"/>
+    <usesource source="srcFASB"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="gS2LifeBoa" name="Life Boat" description="Life Boat carried aboard a ship.  Typically this is a type of &quot;Ships Boat&quot; like a cutter." compset="Gear" stacking="new">
+    <fieldval field="gWeight" value="250"/>
+    <fieldval field="gCost" value="500"/>
+    <usesource source="srcFASB"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="Helper" tag="GearNoSize" name="GearNoSize" abbrev="GearNoSize"/>
+    <tag group="User" tag="OptDomain"/>
+    <tag group="Helper" tag="CustomSpec"/>
+    </thing>
+  <thing id="gS21stMate" name="First Mate&apos;s Quarters" description="This Location provides the First Mate and other officers some privacy from the rest of the crew  The standard quarters provides basic comforts. The room is furnished with a comfortable beds and chests." compset="Gear">
+    <fieldval field="gCost" value="1000"/>
+    <fieldval field="gWeight" value="500"/>
+    <usesource source="srcFASB"/>
+    <tag group="gType" tag="Transport"/>
+    </thing>
+  <thing id="wS2catChS1" name="Catapult, Chain Shot Light" description="Made of two small catapult stones chained together, this ammunition can be fired from catapults. Chain shot is especially good at tearing through sails and rigging, dealing double its normal damage to that form of propulsion. It deals normal damage to a creature, and if hit, the creature must succeed at a DC 20 Fortitude saving throw or be knocked prone. Chain shot is relatively ineffective against ships themselves, dealing only 2d6 points of damage for a light catapult, or 4d6 points of damage for a standard catapult." compset="Weapon">
+    <fieldval field="gWeight" value="55"/>
+    <fieldval field="gCost" value="30"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wType" tag="B"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wCategory" tag="Ammunition"/>
+    </thing>
+  <thing id="wS2catChS2" name="Catapult, Chain Shot Standard" description="Made of two small catapult stones chained together, this ammunition can be fired from catapults. Chain shot is especially good at tearing through sails and rigging, dealing double its normal damage to that form of propulsion. It deals normal damage to a creature, and if hit, the creature must succeed at a DC 20 Fortitude saving throw or be knocked prone. Chain shot is relatively ineffective against ships themselves, dealing only 2d6 points of damage for a light catapult, or 4d6 points of damage for a standard catapult." compset="Weapon">
+    <fieldval field="gWeight" value="55"/>
+    <fieldval field="gCost" value="30"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wType" tag="B"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="wCategory" tag="Ammunition"/>
+    </thing>
+  <thing id="pS2BelWaLi" name="Fire as She Bears: Below Water Line" description="Use this adjustment to increase/decrease the hit points your ship has Below the Water Line." compset="InPlay">
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we're not enabled, get out now
+doneif (field[pIsOn].value <> 1)
+
+~ Increase/Decrease Below Water Line HP
+#trkmax[raS2BlwWat] += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pS2HullHP" name="Fire as She Bears: Hull HP" description="Use this adjustment to increase/decrease the hit points for the selected Hull Locatoin." compset="InPlay">
+    <fieldval field="pCandExpr" value="FaSB.Hull"/>
+    <usesource source="srcFASB"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we're not enabled, get out now
+doneif (field[pIsOn].value <> 1)
+
+~ Increase/Decrease Hull Location HP
+field[pChosen].chosen.field[trkMax].value += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pS2RiggHP" name="Fire as She Bears: Rigging HP" description="Use this adjustment to increase/decrease the hit points for the selected Rigging Locatoin." compset="InPlay">
+    <fieldval field="pCandExpr" value="FaSB.Rigging"/>
+    <usesource source="srcFASB"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10050"><![CDATA[
+~ If we're not enabled, get out now
+doneif (field[pIsOn].value <> 1)
+
+~ Increase/Decrease Hull Location HP
+field[pChosen].chosen.field[trkMax].value += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="gS2Crew" name="Crew Members" description="Add this to track the number of crew members and caculate weight at 600lbs a crew member." compset="Gear">
+    <comment>1 = Weight of each crew member
+2 = Total Weight to add to ship</comment>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="CustomSpec"/>
+    <tag group="gType" tag="Transport"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <eval phase="PreLevel" priority="10500">~ Calc Weight
+field[gWeight].value += field[domDomain].text * 600
+field[gearWeight].value += field[domDomain].text * 600</eval>
+    </thing>
+  <thing id="raS2Encumb" name="Encumbrance" description="This is used to help those running on the iPad as the Encumbrance values do not display." compset="RaceSpec">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+var text as string
+text = "{b}Current Encumbrance: " & herofield[tEncum].value & "/" & herofield[tEncumHvy].value & " lbs{/b}"
+text &= "{br}"
+text &= "Light Load: {b}up to " & herofield[tEncumLgt].value & " lbs{/b}"
+text &= "{br}"
+text &= "Medium Load: {b}up to " & herofield[tEncumMed].value & " lbs{/b}"
+text &= "{br}"
+text &= "Heavy Load: {b}up to " & herofield[tEncumHvy].value & " lbs{/b}"
+
+#appenddesc[raS2Encumb,text]
+
+~ Set livename
+field[livename].text = field[name].text & " " & herofield[tEncum].value & "/" & herofield[tEncumHvy].value & " lbs, " & hero.tagnames[Encumbered.?]
+~ Set Summary text
+field[abSumm].text = "Current Encumbrance: " & herofield[tEncum].value & "/" & herofield[tEncumHvy].value & " lbs"]]></eval>
+    </thing>
+  <thing id="wS2RamAtt" name="Ram Attack" description="In order to make a ram attack, your ship must move at least 8 squares in a straight line. Up to 6 of those squares of movement can occur in the previous round — essentially, the Captain can choose to make a ram attack over 2 rounds if he doesn’t have enough movement available in one round. The Captain targets a specific Hull Location on the enemy ship. His ship collides with this Location, inflicting 4d8 + the ship’s Strength modifier to that Location, and half this amount of damage to all neighboring Locations. In addition, any Hull Locations at the front of the ramming Captain’s ship also takes half the total damage, unless the ship was equipped with a ram. A ram attack ignores up to 10 points of hardness on the Hull Location it strikes. Damage suffered applies equally to the Hull Location and the Below the Waterline Location; that is, if the damage inflicted is 35 points, this amount of damage is applied to both the struck Hull Location as well as the Below the Waterline Location." compset="Weapon">
+    <usesource source="srcFASB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="FixSizeDmg"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="NoSelect"/>
+    <tag group="wMain" tag="4d8_206"/>
+    <tag group="wType" tag="B"/>
+    <tag group="wClass" tag="OneHanded"/>
+    <tag group="wCategory" tag="Melee"/>
+    <tag group="wProfReq" tag="Simple"/>
+    <tag group="Helper" tag="Helper"/>
+    <eval phase="Final" priority="50000">field[wAttack].value = 0</eval>
+    </thing>
+  <thing id="pS2FasBSpd" name="Fire as She Bears: Base Speed" description="Use this adjustment to increase/decrease the base speed of your ship." compset="InPlay">
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we're not enabled, get out now
+doneif (field[pIsOn].value <> 1)
+
+~ Increase/Decrease Ships Base Speed
+hero.child[Speed].field[tSpeed].value += field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="raS2FaSB" name="Fire as She Bears" description="This is a helper ability for characters to help calculate some values correctly. \n\n{B}Getting the Gauge{/b}\n-All officers aboard the ship gain a +2 circumstance bonus to their Naval Initiative checks (see the next section).\n-The ship gains a +2 Speed bonus.\n-The maneuverability rating of a ship with the gauge increases by one step.\n-Finally, all attacks made by the ship gain a +1 circumstance bonus to attack rolls.\n\n{b}Aboard a Moving Ship{/b}\nFiring a ranged weapon (including a cannon) from a ship at sea is difficult due to the pitching up and down caused by the waves. All your ranged attack rolls suffer a -4 penalty." compset="RaceSpec" summary="FaSB Helper for Getting the Gauge and Aboard a moving ship.">
+    <comment><![CDATA[abValue = Penalty for "Aboard a Moving Ship".]]></comment>
+    <fieldval field="actName2" value="Aboard a Moving Ship"/>
+    <fieldval field="abValue" value="-4"/>
+    <fieldval field="actName" value="Getting the Gauge"/>
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+~ If aboard a ship give a -4 range attack penalty
+If (field[abilAct2].value <> 0) Then
+  hero.child[Attack].field[atrPenalty].value += field[abValue].value
+Endif
+
+~ If we have the guage then give bonus
+If (field[abilActive].value <> 0) Then
+  #situational[hero.child[Initiative],"+2 circumstance bonus on Naval Initiative checks","Getting the Gauge"]
+  ~ Give a +1 Circumstance bonus to siege engines  
+  foreach pick in hero from BaseWep where "wClass.Siege"
+    eachpick.field[atrModCirc].value += 1
+  nexteach
+Endif]]></eval>
+    </thing>
+  <thing id="pS2HullAC" name="Fire as She Bears: AC All Hulls" description="Use this adjustment to increase/decrease the AC of ALL Hull Locations." compset="InPlay">
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we're not enabled, get out now
+doneif (field[pIsOn].value <> 1)
+
+~ Find all ship hull locations
+foreach pick in hero where "FaSB.Hull"
+  ~ Increase all Hull Locations AC
+  eachpick.field[abValue4].value += field[pAdjust].value
+nexteach]]></eval>
+    </thing>
+  <thing id="pS2RiggAC" name="Fire as She Bears: AC All Rigging" description="Use this adjustment to increase/decrease the AC of ALL rigging locations." compset="InPlay">
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we're not enabled, get out now
+doneif (field[pIsOn].value <> 1)
+
+~ Find all ship rigging locations
+foreach pick in hero where "FaSB.Rigging"
+  ~ Increase all Rigging Locations AC
+  eachpick.field[abValue3].value += field[pAdjust].value
+nexteach]]></eval>
+    </thing>
+  <thing id="pS2HulHard" name="Fire as She Bears: Hardness All Hulls" description="Use this adjustment to increase/decrease the hardness value of ALL Hull Locations." compset="InPlay">
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we're not enabled, get out now
+doneif (field[pIsOn].value <> 1)
+
+~ Find all ship hull locations
+foreach pick in hero where "FaSB.Hull"
+  ~ Increase all hull hardness
+  eachpick.field[abValue].value += field[pAdjust].value
+nexteach]]></eval>
+    </thing>
+  <thing id="pS2RigHard" name="Fire as She Bears: Hardness All Rigging" description="Use this adjustment to increase/decrease the hardness of ALL rigging locations." compset="InPlay">
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+~ If we're not enabled, get out now
+doneif (field[pIsOn].value <> 1)
+
+~ Find all ship rigging locations
+foreach pick in hero where "FaSB.Rigging"
+  ~ Increase all Rigging Locations hardness
+  eachpick.field[abValue2].value += field[pAdjust].value
+nexteach]]></eval>
+    </thing>
+  <thing id="pS2RiggHPa" name="Fire as She Bears: Rigging HP, All" description="Use this adjustment to increase/decrease the hit points for all Rigging Locations." compset="InPlay">
+    <usesource source="srcFASB"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10050"><![CDATA[
+~ If we're not enabled, get out now
+doneif (field[pIsOn].value <> 1)
+
+~ Find all ship rigging locations
+foreach pick in hero where "FaSB.Rigging"
+  ~ Increase all Rigging Locations HP after Post-Levels/10000
+  eachpick.field[trkMax].value += field[pAdjust].value
+nexteach]]></eval>
+    </thing>
+  </document>

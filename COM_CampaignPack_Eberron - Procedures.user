@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_CampaignPack_Eberron - Procedures"/>
+  <fileinfo>
+    <info_author>
+      Tim Shadow
+      Email: ShadowChemosh@yahoo.com
+    </info_author>
+    <info_history><![CDATA[
+      Oct 7, 2012 - Tim Shadow
+      -Created new
+      -Added the new procedure "ShifterDmg" to increase the natural attack damage of shifters.
+      ]]>
+    </info_history>
+  </fileinfo>
+
+
+  <procedure id="ShifterDmg" context="pick"><![CDATA[
+    ~ This procedure gives a Bonus on damage for every 4 levels we have
+    var s2Shifter as string
+    
+    ~ Bonus every 4 levels
+    field[abValue3].value += round(#totallevelcount[]/4,0,-1)
+
+    ~ Pull all the shifter tags from the parent thing
+    s2Shifter = tagids[Shifter.?,"|"]
+
+    ~ Only process if bonus is +1 or higher
+    if (field[abValue3].value >= 1) then
+
+      ~ Go through each natural attack that matchs our Shifter tags and give a bonus on damage
+      foreach pick in hero from BaseWep where s2Shifter
+         each.field[wDamBonus].value += field[abValue3].value
+      nexteach
+
+    endif
+    ]]>
+  </procedure>
+
+  <procedure id="SetupEbEth" context="pick"><![CDATA[
+    ~ This procedure sets up Eberron Ethnicities
+
+    ~ Only give weapon proficiencies when taken as a Ethnicity and not
+    ~ a Region of Origin.
+    if (tagis[CustTaken.cfgS2RegOr] = 0) then
+
+      ~ Assign our weapon proficiencies to the hero that this
+      ~ Ethnicity gives.
+      perform hero.pushtags[WepProf.?]
+      perform hero.pushtags[EasyWeapon.?]
+
+      ~we are a Ethnicity for a race so reduce the number of Regions of Origin by one.
+      hero.childfound[cfgS2RegOr].field[cfgMax1].value += -1
+    endif
+
+    ~ Set our Ethnicity onto the hero
+    perform hero.pushtags[EberronEth.?]
+    ~ Set any Eberron Helper tags onto the hero
+    perform hero.pushtags[Eberron.?]
+    ]]>
+  </procedure>
+
+  <procedure id="ECSRaceFtW" context="pick"><![CDATA[
+    ~ This procedure is used for Racial Feats for weapons in example Drow Skirmisher
+    ~ or Mror Stalwart.
+    ~ Timing: First/10000
+
+    ~ Find all racial weapons. The feat must be setup with IsWeapon tags. Each
+    ~ weapon apply the feats effects to all weapons: Improved Critical, Weapon Focus,
+    ~ Weapon Specialization, Greater Weapon Focus, or Greater Weapon Specialization.
+    foreach pick in hero from BaseWep where tagids[IsWeapon.?,"|"]
+      perform eachpick.pushtags[IsWeapon.?]
+
+      ~ Ability is active so give the abValue on melee damage bonus
+      if (tagis[Helper.Activated] = 1) then
+        eachpick.field[dmmBonus].value += field[abValue].value
+      endif
+    nexteach
+
+    ~ Let any racial exotic weapons get treated as martial
+    perform hero.pushtags[EasyWeapon.?]
+    ]]>
+  </procedure>
+
+  <procedure id="ECSEternal" context="pick"><![CDATA[
+    ~ This procedure is used for Eternal Wands to pull the SpInfo tag from the 
+    ~ selected tag.
+    
+    ~ If nothing chosen get out now!
+    doneif (field[usrChosen1].ischosen = 0)
+
+    ~ Get the Spell Info tag
+    perform field[usrChosen1].chosen.pulltags[SpInfo.?]
+    ]]>
+  </procedure>
+
+
+</document>

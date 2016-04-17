@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Data">
+  <loadonce key="COM_GMPack_FGG_TomeOfHorrors - Feats"/>
+  <thing id="fuAlignSpA" name="Align Spell-Like Ability" description="The creature can use a spell-like ability tuned to either law, chaos, good, or evil.\n\n{b}Prerequisite:{/b} Spell-like ability at caster level 4th.\n\n{b}Benefit:{/b} Choose one of the creature&apos;s spell-like abilities, subject to the restrictions below. The creature can use that ability as an aligned spell-like ability three times per day (or less, if the ability normally usable only once or twice per day). An aligned spell-like ability gains the good, evil, lawful, or chaotic descriptor.\n\nWhen a creature uses an aligned spell-like ability, one-half the spell-like ability&apos;s damage is of that type (evil, good, lawful, or chaotic). For example, a creature casts an aligned (evil) lightning bolt with a caster level of 6th. The aligned lightning bolt deals 3d6 points of unholy damage and 3d6 points of electricity damage. Thus, a creature immune to electricity suffers no damage from the electricity effect, but still takes 3d6 points of unholy damage.\n\nAligned spell-like abilities deal normal damage to creatures with regeneration if the creature&apos;s description states that it takes damage from that type of effect (for instance, devils that are only harmed by goodaligned spells and effects would take damage from a good-aligned spell-like ability). Saving throws and opposed rolls (such as the one made when a character casts dispel magic) are not affected. Spell-like abilities that already have an alignment descriptor are not affected.\n\nThe creature can only select a spell-like ability duplicating a spell with a level less than or equal to half its caster level &#150;1. For example, a creature that uses its spell-like abilities as a 6th-level caster can only align spell-like abilities duplicating spells of 2nd level or lower.\n\n{b}Special:{/b} This feat can be taken multiple times. Each time it is taken, the creature can apply it to a different one of its spell-like abilities." compset="Feat" summary="Spell-like ability gains alignment descriptor." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="fShowWhat" tag="SpellLike"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Spell-like ability at caster level 4th required." iserror="no"><![CDATA[hero.findchild[BaseRace].field[rSpCastLev].value >= 4]]></exprreq>
+    </thing>
+  <thing id="fuCrush" name="Crush" description="The creature can land on opponents and crush them under its weight.\n\n{b}Prerequisites:{/b} Ability to fly or 5 ranks of Acrobatics, size Large or larger.\n\n{b}Benefit:{/b} The creature can land on a foe three or more sizes smaller than itself and deal bludgeoning damage as follows: Large, 2d6; Huge, 2d8; Gargantuan, 4d6; Colossal, 4d8. A creature with this feat deals the indicated damage plus 1-1/2 times its Strength bonus.\n\nA crush attack affects as many foes as can fit under the creature&apos;s body. An affected creature must attempt a Reflex save (DC 10 + 1/2 of the creature&apos;s HD + the creature&apos;s Constitution modifier) or be pinned. If the creature wishes to continue the pin, it must make a new CMB check each round. Pinned creatures take damage each round the hold is maintained if they do not escape." compset="Feat" summary="Gain crush special attack." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="General"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~get 1.5x our STR bonus to damage
+      field[abValue].value += round(hero.child[Damage].field[tDamStr].value * 1.5,0,-1)
+
+      ~apply different text based upon our size
+      if (herofield[tSize].value = 1) then
+        field[livename].text = "Crush (Tiny creatures, 2d6" & signed(field[abValue].value) & ")" 
+      elseif (herofield[tSize].value = 2) then
+        field[livename].text = "Crush (Small creatures, 2d8" & signed(field[abValue].value) & ")"
+      elseif (herofield[tSize].value = 3) then
+        field[livename].text = "Crush (Medium creatures, 4d6" & signed(field[abValue].value) & ")"
+      elseif (herofield[tSize].value >= 4) then
+        field[livename].text = "Crush (Large creatures, 4d8" & signed(field[abValue].value) & ")"
+      else
+        perform delete[Helper.ShowSpec]
+        endif]]></eval>
+    <exprreq message="Size Large or larger required."><![CDATA[herofield[tSize].value >= 1]]></exprreq>
+    <prereq message="Fly speed or 5 ranks of Acrobatics required.">
+      <validate><![CDATA[
+        if (hero.childlives[xFly] > 0) then
+           validif (hero.child[xFly].field[abValue].value > 0)
+        endif
+
+        if (hero.childlives[skAcrobat] > 0) then
+           validif (hero.child[skAcrobat].field[skRanks].value >= 5)
+        endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fuEnlgSpLk" name="Enlarge Spell-Like Ability" description="The creature can use a spell-like ability to a range farther than normal.\n\n{b}Prerequisite:{/b} Spell-like ability at caster level 4th.\n\n{b}Benefit:{/b} Choose one of the creature&apos;s spell-like abilities, subject to the restrictions below. The creature can use that ability as an enlarged spell-like ability three times per day (or less, if the ability normally usable only once or twice per day).\n\nWhen a creature uses an enlarged spell-like ability with a range of close, medium, or long the range increases by 100%. An enlarged spell-like ability with a range of close now has a range of 50 ft. + 5 ft./level, while a mediumrange spell-like ability has a range of 200 ft. + 20 ft./level, and a long-range spell-like ability has a range of 800 ft. + 80 ft./level. Saving throws and opposed rolls (such as the one made when a character casts dispel magic) are not affected. Spell-like abilities whose ranges are not defined by distance, as well as spell-like abilities whose ranges are not close, medium, or long are not affected.\n\nThe creature can only select a spell-like ability duplicating a spell with a level less than or equal to half its caster level &#150;1. For example, a creature that uses its spell-like abilities as a 6th-level caster can only enlarge spell-like abilities duplicating spells of 2nd level or lower.\n\n{b}Special:{/b} This feat can be taken multiple times. Each time it is taken, the creature can apply it to a different one of its spell-like abilities." compset="Feat" summary="Spell-like ability&apos;s range is doubled." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="fShowWhat" tag="SpellLike"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Spell-like ability at caster level 4th required." iserror="no"><![CDATA[hero.findchild[BaseRace].field[rSpCastLev].value >= 4]]></exprreq>
+    </thing>
+  <thing id="fuExtndSpA" name="Extend Spell-Like Ability" description="The creature can use a spell-like ability that lasts longer than normal.\n\n{b}Prerequisite:{/b} Spell-like ability at caster level 4th.\n\n{b}Benefit:{/b} Choose one of the creature&apos;s spell-like abilities, subject to the restrictions below. The creature can use that ability as an extended spell-like ability three times per day (or less, if the ability normally usable only once or twice per day).\n\nWhen a creature uses an extended spell-like ability, its duration is doubled. Spell-like abilities whose durations are instantaneous, concentration, or permanent are not affected.\n\nThe creature can only select a spell-like ability duplicating a spell with a level less than or equal to half its caster level (round down) -1. For example, a creature that uses its spell-like abilities as a 6th-level caster can only extend spelllike abilities duplicating spells of 2nd level or lower.\n\n{b}Special:{/b} This feat can be taken multiple times. Each time it is taken, the creature can apply it to a different one of its spell-like abilities." compset="Feat" uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="fShowWhat" tag="SpellLike"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Spell-like ability at caster level 4th required." iserror="no"><![CDATA[hero.findchild[BaseRace].field[rSpCastLev].value >= 4]]></exprreq>
+    </thing>
+  <thing id="fuHealingS" name="Healing Shift" description="When a therianthrope shifts forms, it heals a limited amount of damage.\n\n{b}Prerequisites:{/b} Therianthrope.\n\n{b}Benefit:{/b} When a therianthrope changes forms, it immediately heals a number of hit points equal to its total character level (Hit Dice plus any class levels). This does not function if the therianthrope is slain (and reverts back to its animal form). This feat is usable once per day.\n\n{b}Normal:{/b} Therianthropes do not regain lost hit points for changing forms." compset="Feat" summary="Therianthrope heals a limited amount of damage when it shifts forms." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Therianthrope template required."><![CDATA[hero.tagcount[Template.tmuTherian] <> 0]]></exprreq>
+    </thing>
+  <thing id="fuImpConst" name="Improved Constriction" description="The creature&apos;s constriction attack is deadlier than normal.\n\n{b}Prerequisite:{/b} Constrict special attack, base attack bonus +4.\n\n{b}Benefit:{/b} The damage for the creature&apos;s constrict attack increases by one step, as if the creature&apos;s size had increased by one category: 1d2, 1d3, 1d4, 1d6, 1d8, 2d6, 3d6, 4d6, 6d6, 8d6, 12d6." compset="Feat" uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="First">perform hero.childfound[wConstrict].assign[Helper.DamageUp]</eval>
+    <exprreq message="Base attack bonus of +4 or higher required." iserror="no"><![CDATA[child[Attack].field[tAtkBase].value >= 4]]></exprreq>
+    <prereq message="Constrict attack required." iserror="no">
+      <validate><![CDATA[validif (hero.childlives[wConstrict] > 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fuImpFligh" name="Improved Flight" description="The creature has more control over flying than normal.\n\n{b}Prerequisite:{/b} Fly speed.\n\n{b}Benefit:{/b} The creature&apos;s maneuverability improves by one category: clumsy to poor; poor to average; average to good. If the creature&apos;s maneuverability is already good, it gains no benefit from this feat.\n\n{b}Special:{/b} This feat can be taken more than once. Each time a creature takes this feat its maneuverability improves by one category." compset="Feat" summary="Flight maneuverability increases one catagory to a maximum of good.">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final"><![CDATA[
+      if (hero.child[xFly].tagcount[Maneuver.Clumsy] <> 0) then
+        perform hero.child[xFly].delete[Maneuver.Clumsy]
+        perform hero.child[xFly].assign[Maneuver.Poor]
+      elseif (hero.child[xFly].tagcount[Maneuver.Poor] <> 0) then
+        perform hero.child[xFly].delete[Maneuver.Poor]
+        perform hero.child[xFly].assign[Maneuver.Average]
+      elseif (hero.child[xFly].tagcount[Maneuver.Average] <> 0) then
+        perform hero.child[xFly].delete[Maneuver.Average]
+        perform hero.child[xFly].assign[Maneuver.Good]
+      endif]]></eval>
+    <prereq message="Fly speed prequired.">
+      <validate><![CDATA[
+        if (hero.childlives[xFly] > 0) then
+           validif (hero.child[xFly].field[abValue].value > 0)
+        endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fuImpScent" name="Improved Scent" description="The creature&apos;s scent ability is greater than normal.\n\n{b}Prerequisites:{/b} Scent, Wisdom 15.\n\n{b}Benefit:{/b} The creature can detect opponents within 60 feet by sense of smell. If the opponent is upwind, the range increases to 120 feet. If the opponent is downwind, the range decreases to 30 feet. This otherwise follows the rules of the scent ability.\n\n{b}Special:{/b} Scent allows the creature to detect opponents to a range of 30 feet by smell." compset="Feat" summary="Detect opponents within 30+ feet by sense of smell." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final"><![CDATA[hero.child[xScent].field[abSumm].text = "Detect opponents within 30+ feet by sense of smell."]]></eval>
+    <exprreq message="Wisdom 15 or greater required."><![CDATA[#attrvalue[aWIS] >= 15]]></exprreq>
+    <exprreq message="Scent ability required"><![CDATA[#hasability[xScent] <> 0]]></exprreq>
+    </thing>
+  <thing id="fuImpSplRs" name="Improved Spell Resistance" description="The creature&apos;s ability to resist spells is more potent than normal.\n\n{b}Prerequisite:{/b} Spell resistance as an extraordinary ability.\n\n{b}Benefit:{/b} The creature&apos;s spell resistance increases by +2. This feat can only be taken once." compset="Feat" summary="Spell resistance increases by +2" uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final">hero.childfound[xSplRs].field[abValue].value += 2</eval>
+    <exprreq message="Spell resistance is required."><![CDATA[hero.childfound[xSplRs].field[abValue].value > 0]]></exprreq>
+    </thing>
+  <thing id="fuMightyBl" name="Mighty Blow" description="The creature delivers a devastating hit that sends an opponent flying.\n\n{b}Prerequisites:{/b} Str 25, Awesome Blow, Power Attack, Improved Bull Rush, size Huge or larger.\n\n{b}Benefit:{/b} For every size over Large, the creature adds 10 feet to the distance it knocks a foe backwards when using the Awesome Blow feat. Therefore, a creature of Huge size adds +10 feet; Gargantuan, +20 feet; Colossal, +30 feet" compset="Feat" summary="Distance flung by Awsome Blow is increased." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Combat" name="Combat" abbrev="Combat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <exprreq message="Improved Bull Rush required." iserror="no"><![CDATA[#hasfeat[fImpBull] <> 0]]></exprreq>
+    <exprreq message="Size Huge or larger required." iserror="no"><![CDATA[herofield[tSize].value >= 2]]></exprreq>
+    <exprreq message="Awsome Blow required." iserror="no"><![CDATA[#hasfeat[fAwesomeBl] <> 0]]></exprreq>
+    <exprreq message="Strength 25 required." iserror="no"><![CDATA[#attrvalue[aSTR] >= 25]]></exprreq>
+    <exprreq message="Power Attack required." iserror="no"><![CDATA[#hasfeat[fPowerAtt] <> 0]]></exprreq>
+    </thing>
+  <thing id="fuNativeSp" name="Native Spell-Like Ability" description="The creature can use a spell-like ability with greater effect when on its native plane.\n\n{b}Prerequisites:{/b} Spell-like ability at caster level 6th or higher, any plane of origin other than the Material Plane.\n\n{b}Benefit:{/b} Choose one of the creature&apos;s spell-like abilities, subject to the restrictions below. The creature can use that ability as a native spell-like ability three times per day (or less, if the ability normally usable only once or twice per day).\n\nWhen a creature uses a native spell-like ability while on its home (or native) plane, the spell-like ability has an effective caster level of one level higher. All effects dependent on the spell-like ability&apos;s level (such as saving throw DCs and ability to penetrate a lesser globe of invulnerability) are calculated according to the increased caster level. Creatures native to the Material Plane gain no benefit from this feat.\n\nThe creature can only select a spell-like ability duplicating a spell with a level less than or equal to half its caster level &#150;2. For example, a creature that uses its spell-like abilities as a 10th-level caster can only make native spell-like abilities duplicating spells of 3rd level or lower.\n\n{b}Special:{/b} This feat can be taken multiple times. Each time it is taken, the creature can apply it to a different one of its spell-like abilities." compset="Feat" summary="Spell-like ability CL +1 when on native plane." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fShowWhat" tag="SpellLike"/>
+    <exprreq message="Spell-like ability at caster level 6th required." iserror="no"><![CDATA[hero.findchild[BaseRace].field[rSpCastLev].value >= 6]]></exprreq>
+    </thing>
+  <thing id="fuPowerEvi" name="Power of Evil" description="The creature can gain a profane bonus to its AC when on any evil-aligned plane.\n\n{b}Prerequisites:{/b} Must be an outsider, must have an evil alignment, must be from an evil-aligned outer plane, Charisma 13, base attack bonus +8.\n\n{b}Benefit:{/b} When on an evil-aligned outer plane, the creature can imbue itself with a portion of the plane as a full-round action. This grants it a profane bonus to its AC equal to its Charisma bonus. The profane bonus lasts for a number of rounds equal to the creature&apos;s Charisma bonus.\n\nThis feat can be used three times per day. This feat can only be taken once. For example, a pit fiend on an evil-aligned plane spends a full-round action using this feat. It gains a +8 profane bonus to its Armor Class that lasts for 8 rounds." compset="Feat" summary="Gain profane bonus to AC when on evil-aligned plane." uniqueness="useronce">
+    <fieldval field="trkMax" value="3"/>
+    <fieldval field="actName" value="Power of Evil"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="PostAttr">
+      doneif (field[abilActive].value = 0)
+      #applybonus[BonProfane,hero.child[ArmorClass],hero.child[aCHA].field[aModBonus].value]</eval>
+    <exprreq message="Evil alignemnet required." iserror="no"><![CDATA[hero.tagcount[Alignment.Evil] > 0]]></exprreq>
+    <exprreq message="Base attack bonus +8 required." iserror="no"><![CDATA[child[Attack].field[tAtkBase].value >= 8]]></exprreq>
+    <exprreq message="Outsider type required." iserror="no"><![CDATA[#hastype[tpOutsider] > 0]]></exprreq>
+    <exprreq message="Charisma 13 required." iserror="no"><![CDATA[#attrvalue[aCHA] >= 13]]></exprreq>
+    </thing>
+  <thing id="fuPowerRig" name="Power of Righteousness" description="The creature can gain a sacred bonus to its AC when on any good-aligned plane.\n\n{b}Prerequisites:{/b} Must be an outsider, must have good alignment, must be from a good-aligned outer plane, Charisma 13, base attack bonus +8.\n\n{b}Benefit:{/b} When on a good-aligned outer plane, the creature can imbue itself with a portion of the plane as a full-round action. This grants it a sacred bonus to its AC equal to its Charisma bonus. The sacred bonus lasts for a number of rounds equal to the creature&apos;s Charisma bonus. This feat can be used three times per day. This feat can only be taken once.\n\nFor example, a solar on a good-aligned plane spends a full-round action using this feat. It gains a +7 sacred bonus to its Armor Class that lasts for 7 rounds." compset="Feat" summary="Gain sacred bonus to AC when on evil-aligned plane." uniqueness="useronce">
+    <fieldval field="trkMax" value="3"/>
+    <fieldval field="actName" value="Power of Righteousness"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="PostAttr">
+      doneif (field[abilActive].value = 0)
+      #applybonus[BonSacred,hero.child[ArmorClass],hero.child[aCHA].field[aModBonus].value]</eval>
+    <exprreq message="Good alignemnet required." iserror="no"><![CDATA[hero.tagcount[Alignment.Good] > 0]]></exprreq>
+    <exprreq message="Base attack bonus +8 required." iserror="no"><![CDATA[child[Attack].field[tAtkBase].value >= 8]]></exprreq>
+    <exprreq message="Outsider type required." iserror="no"><![CDATA[#hastype[tpOutsider] > 0]]></exprreq>
+    <exprreq message="Charisma 13 required." iserror="no"><![CDATA[#attrvalue[aCHA] >= 13]]></exprreq>
+    </thing>
+  <thing id="fuQuickShf" name="Quicken Shift" description="When a therianthrope shifts forms, it heals a limited amount of damage.\n\n{b}Prerequisites:{/b} Therianthrope.\n\n{b}Benefit:{/b} When a therianthrope changes forms, it immediately heals a number of hit points equal to its total character level (Hit Dice plus any class levels). This does not function if the therianthrope is slain (and reverts back to its animal form). This feat is usable once per day.\n\n{b}Normal:{/b} Therianthropes do not regain lost hit points for changing forms." compset="Feat" summary="Therianthrope shifts forms as a move action." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Therianthrope template required." iserror="no"><![CDATA[hero.tagcount[Template.tmuTherian] <> 0]]></exprreq>
+    <exprreq message="Intelligence 13 required." iserror="no"><![CDATA[#attrvalue[aINT] >= 13]]></exprreq>
+    </thing>
+  <thing id="fuNegEnRes" name="Resistance to Negative Energy" description="The creature gains resistance to the effects of negative energy (such as that delivered by inflict spells, channeled energy, some undead, or exposure to negative energy creatures).\n\n{b}Benefit:{/b} The creature gains resistance 5 to any damage-dealing/healing negative energy effect.\n\n{b}Special:{/b} This feat can be taken twice. The second time it is taken, the creature&apos;s resistance rises to 10." compset="Feat" summary="Gain negative energy resistance.">
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="Custom" tag="NegEngRes" name="Negative Energy Resistance"/>
+    <bootstrap thing="xDamRsNeg"></bootstrap>
+    <eval phase="Final"><![CDATA[
+      doneif (hero.child[xDamRsNeg].field[abValue].value > 10)
+
+      perform hero.assign[Custom.NegEngRes]
+      hero.child[xDamRsNeg].field[abValue].value = minimum(10, hero.child[xDamRsNeg].field[abValue].value + 5)]]></eval>
+    <prereq message="Feat can only be taken twice." iserror="no">
+      <validate><![CDATA[validif (hero.tagcount[Custom.NegEngRes] <= 2)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fuPosEnRes" name="Resistance to Positive Energy" description="The creature gains resistance to the effects of positive energy (such as that delivered by cure spells, channeled energy, or exposure to positive energy creatures).\n\n{b}Benefit:{/b} The creature gains resistance 5 to any damage-dealing/healing positive energy effect.\n\n{b}Special:{/b} This feat can be taken twice. The second time it is taken, the creature&apos;s resistance rises to 10." compset="Feat" summary="Gain positive energy resistance.">
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="Custom" tag="PosEngRes" name="Positive Energy Resistance"/>
+    <bootstrap thing="xDamRsPos"></bootstrap>
+    <eval phase="Final"><![CDATA[
+      doneif (hero.child[xDamRsPos].field[abValue].value > 10)
+      perform hero.assign[Custom.PosEngRes]
+      hero.child[xDamRsPos].field[abValue].value = minimum(10, hero.child[xDamRsPos].field[abValue].value + 5)]]></eval>
+    <prereq message="Feat can only be taken twice." iserror="no">
+      <validate><![CDATA[validif (hero.tagcount[Custom.PosEngRes] <= 2)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fuShpBrWep" name="Shape Breath Weapon" description="The creature can control the shape of its breath weapon, releasing it in a cone, line, or burst.\n\n{b}Prerequisite:{/b} Breath weapon as a special attack.\n\n{b}Benefit:{/b} The creature can shape the area of effect of its breath weapon as a free action whenever it uses it. If the creature&apos;s base breath weapon is cone-shaped, it can release it in a line twice as long that deals 1-1/2 times the amount of normal damage (where applicable) to a single target due to the concentration of the effect. (Damage includes physical damage, ability damage, ability drain, energy drain.) Breath weapons that cause petrification, slow, haste, or replicate any spell that cannot be quantified as damage (see above) do not gain the bonus for increased damage. For example, a gorgon&apos;s normal breath weapon is a 60-foot cone of petrifying gas. Using this feat, the same gorgon could release its breath in a line to a range of 120 feet. Since its breath weapon petrifies an opponent, it does not gain the 1-1/2 bonus to damage (as there really isn&apos;t any physical damage dealt).\n\nA line-shaped breath weapon can be released in a cone with a range of one-half its normal effect. The breath weapon deals half normal damage due to the effect being diluted over an area. For example, a behir&apos;s normal breath weapon is a 20-foot line that deals 7d6 points of electricity damage. Using this feat, it could release it in a 10-foot cone that dealt 3d6 points of electricity damage to all creatures in the area.\n\nA breath weapon can be shaped as a burst with a range of 30 feet or the normal range for the creature&apos;s breath weapon if it was released in a line (whichever is smaller). The breath weapon travels to the range indicated or until it contacts a solid surface (whichever happens first). Upon impacting a solid surface or reaching maximum range, the breath weapon explodes in a burst from the point of origin and covers an area as if the creature had released its breath weapon in a cone. Affected creatures in the area take damage as if the creature had released its breath weapon in a cone. For example, a behir (normal breath weapon is a line, 20 feet long, 7d6 electricity damage) could release its breath weapon as a burst with a range of 20 feet. When the breath weapon contacts a solid surface or reaches a point 20 feet away, it explodes and deals 3d6 points of electricity damage to all within 10 feet of the point of origin." compset="Feat" summary="Can release breath weapon as a cone, line, or burst." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="fuThump" name="Thump" description="The creature can stomp its foot on the ground causing it to tremble, thereby knocking creatures smaller than it prone.\n\n{b}Prerequisites:{/b} Str 20, size Huge or larger.\n\n{b}Benefit:{/b} As a standard action, the creature can stomp its foot on the ground. This causes the ground to shake and shudder, and all creatures up to one size smaller and within a 10-foot radius must make a successful Acrobatics check (DC 10 + the creature&apos;s Strength modifier) or fall prone." compset="Feat" summary="Stamp on ground to knock creatures within 10-ft. prone." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final">field[abDC].value= 10 + hero.child[aSTR].field[aModBonus].value</eval>
+    <exprreq message="Huge size of larger required." iserror="no"><![CDATA[herofield[tSize].value >= 2]]></exprreq>
+    <exprreq message="Strength 20 required." iserror="no"><![CDATA[#attrvalue[aSTR] >= 20]]></exprreq>
+    </thing>
+  <thing id="fuWidenSpL" name="Widen Spell-Like Ability" description="The creature can use a spell-like ability with an increased area.\n\n{b}Prerequisite:{/b} Spell-like ability at caster level 8th.\n\n{b}Benefit:{/b} Choose one of the creature&apos;s spell-like abilities, subject to the restrictions below. The creature can use that ability as a widened spell-like ability three times per day (or less, if the ability normally usable only once or twice per day).\n\nWhen a creature uses a widened spell-like ability with a burst, emanation, line, or spread-shaped area, increase its area by 100%. For example, a devil with a fireball spell-like ability (which normally produces a 20-foot spread) that is widened now fills a 40-foot-radius spread.\n\nSaving throws and opposed rolls (such as the one made when a character casts dispel magic) are not affected. Spell-like abilities whose area is not a burst, emanation, line, or spread are not affected.\n\nThe creature can only select a spell-like ability duplicating a spell with a level less than or equal to half its caster level &#150;3. For a summary, see the table at the end of this section. For example, a creature that uses its spell-like abilities as a 10th-level caster can only widen spell-like abilities duplicating spells of 2nd level or lower.\n\n{b}Special:{/b} This feat can be taken multiple times. Each time it is taken, the creature can apply it to a different one of its spell-like abilities." compset="Feat" uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Spell-like ability at caster level 8th required." iserror="no"><![CDATA[hero.findchild[BaseRace].field[rSpCastLev].value >= 8]]></exprreq>
+    </thing>
+  <thing id="fuSwimbyAt" name="Swim-by Attack" description="This creature can make an attack before and after it moves while swimming.\n\n{b}Prerequisite{/b}: Swim speed.\n\n{b}Benefit{/b}: When swimming, the creature can take a move action and another standard action at any point during the move. The creature cannot take a second move action during a round when it makes a swim-by attack.\n\n{b}Normal{/b}: Without this feat, the creature takes a standard action either before or after its move." compset="Feat" summary="Can attack before and after swimming movement." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <prereq message="Swim speed required." iserror="no">
+      <validate><![CDATA[
+        if (hero.childlives[xSwim] >0) then
+          validif (hero.child[xSwim].field[abValue].value > 0)
+          endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fuMaxSpAbi" name="Maximize Spell-Like Ability" description="The creature can use a spell-like ability to maximum effect.\n\n{b}Prerequiste:{/b} Spell-like ability at caster level 8th.\n\n{b}Benefit:{/b} Choose one of the creature&apos;s spell-like abilities, subject to the restrictions below. The creature can use that ability as a maximized spelllike ability three times per day (or less, if the ability normally usable only once or twice per day).\n\nWhen a creature uses a maximized spell-like ability, all variable, numeric effects of the spell-like ability are increased to their maximum effect. A maximized spell-like ability deals maximum damage, cures maximum hit points, affects maximum targets, and so on as appropriate. For example, a hellstoker devil&apos;s burning hands deals 20 points of damage (5d4 maximized). Saving throws and opposed rolls (such as the one made when a character casts dispel magic) are not affected. Spelllike abilities without random variables are not affected.\n\nThe creature can only select a spell-like ability duplicating a spell with a level less than or equal to half its caster level -3. For example, a creature that uses its spell-like abilities as a 10th-level caster can only maximize spell-like abilities duplicating spells of 2nd level or lower.\n\n{b}Special:{/b} This feat can be taken multiple times. Each time it is taken, the creature can apply it to a different one of its spell-like abilities." compset="Feat" summary="All variable effects of a spell are maximized. +3 Levels.">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="fShowWhat" tag="SpellLike"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <exprreq message="Spell-like ability at caster level 8th required." iserror="no"><![CDATA[hero.findchild[BaseRace].field[rSpCastLev].value >= 8]]></exprreq>
+    </thing>
+  <thing id="fuImpPoiso" name="Improved Poison" description="The creature&apos;s poison is more potent than normal.\n\n{b}Prerequisite:{/b} Ability to deliver poison from a natural attack, base attack bonus +4.\n\n{b}Benefit:{/b} The damage (hit point or ability) for the creature&apos;s poison increases by one step using the following progression: 1, 1d2, 1d3, 1d4, 1d6, 1d8, 2d6, 2d8, 4d6, 6d6, 8d6, 12d6.\n\n{b}Special:{/b} Poisons that do not deal damage or drain are unaffected by this feat." compset="Feat" summary="Poison attack is more potent." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="thingid.raPoi? | thingid.xxPoi?"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="19000"><![CDATA[
+      ~ If we haven't chosen anything, get out now
+      doneif (field[usrChosen1].ischosen + tagis[Target.?] = 0)
+
+      debug field[usrChosen1].chosen.idstring
+
+      ~ increase damage depending on abValue and abValue3 values
+      var noDice as number
+      var diceTyp as number
+      noDice = field[usrChosen1].chosen.field[abValue3].value
+      diceTyp = field[usrChosen1].chosen.field[abValue].value
+
+      ~ make current damage dice
+      var dam as string
+      if (diceTyp = 1) then
+        dam = "1x1"
+      else
+        dam = noDice & "d" & diceTyp
+      endif
+
+      ~ now up damage
+      if (compare(dam,"1x1") = 0) then
+        field[usrChosen1].chosen.field[abValue3].value = 1
+        field[usrChosen1].chosen.field[abValue].value = 2
+      elseif (compare(dam,"1d2") = 0) then 
+        field[usrChosen1].chosen.field[abValue3].value = 1
+        field[usrChosen1].chosen.field[abValue].value = 3
+      elseif (compare(dam,"1d3") = 0) then 
+        field[usrChosen1].chosen.field[abValue3].value = 1
+        field[usrChosen1].chosen.field[abValue].value = 4
+      elseif (compare(dam,"1d4") = 0) then 
+        field[usrChosen1].chosen.field[abValue3].value = 1
+        field[usrChosen1].chosen.field[abValue].value = 6
+      elseif (compare(dam,"1d6") = 0) then 
+        field[usrChosen1].chosen.field[abValue3].value = 1
+        field[usrChosen1].chosen.field[abValue].value = 8
+      elseif (compare(dam,"1d8") = 0) then 
+        field[usrChosen1].chosen.field[abValue3].value = 2
+        field[usrChosen1].chosen.field[abValue].value = 6
+      elseif (compare(dam,"2d6") = 0) then 
+        field[usrChosen1].chosen.field[abValue3].value = 2
+        field[usrChosen1].chosen.field[abValue].value = 8
+      elseif (compare(dam,"2d8") = 0) then 
+        field[usrChosen1].chosen.field[abValue3].value = 4
+        field[usrChosen1].chosen.field[abValue].value = 6
+      elseif (compare(dam,"4d6") = 0) then 
+        field[usrChosen1].chosen.field[abValue3].value = 6
+        field[usrChosen1].chosen.field[abValue].value = 6
+      elseif (compare(dam,"6d6") = 0) then 
+        field[usrChosen1].chosen.field[abValue3].value = 8
+        field[usrChosen1].chosen.field[abValue].value = 6
+      elseif (compare(dam,"8d6") = 0) then 
+        field[usrChosen1].chosen.field[abValue3].value = 12
+        field[usrChosen1].chosen.field[abValue].value = 6
+      endif]]></eval>
+    <prereq message="BAB of +4 or higher required.">
+      <validate><![CDATA[validif (hero.child[Attack].field[tAtkBase].value >= 4)]]></validate>
+      </prereq>
+    <prereq message="Natural poison attack required.">
+      <validate><![CDATA[validif (hero.childlives[xxPoiSTR] + hero.childlives[xxPoiCON] + hero.childlives[xxPoiDEX] + hero.childlives[xxPoiINT] + hero.childlives[xxPoiWIS] + hero.childlives[xxPoiCHA] + hero.childlives[xxPoiALL] <> 0)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fuGazeToRa" name="Gaze to Ray" description="The creature can use its gaze attack as a ray.\n\n{b}Prerequisite:{/b} Int 13, gaze attack.\n\n{b}Benefit:{/b} The creature can project its gaze attack as a ray of energy to a range of 30 feet. This requires the creature to succeed at a ranged touch attack to affect an opponent. A creature hit by the ray suffers the effects just as if it had met the creature&apos;s gaze (if the gaze allows a save, the opponent gets its save to avoid its effects).\n\nAfter using this feat, the creature cannot use its gaze attack (that is, its gaze attack effectively &#147;turns off&#148;) for 1d4 rounds and it is disoriented during this time (-2 penalty on attack rolls, saves, skill checks, and ability checks).\n\nFor example, normally to be affected by a medusa&apos;s gaze, a creature must meet the medusa&apos;s gaze. Using this feat, the medusa can project a ray of petrification to a range of 30 feet. If it hits the target, the creature receives a Fortitude save. If the save fails, the creature is turned to stone (just as if it had met the medusa&apos;s gaze). Regardless of whether the ray hits or whether the creature saves, the medusa cannot use its gaze attack for 1d4 rounds (and it is disoriented). Creatures viewing the medusa during this time are not required to make a save (since the medusa&apos;s gaze weapon is effectively &#147;off&#148;)." compset="Feat" summary="Can use gaze attack as a ray." uniqueness="useronce">
+    <fieldval field="actName" value="Gaze to Ray"/>
+    <usesource source="srcTomeHor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="fCategory" tag="General"/>
+    <eval phase="First">
+      doneif (field[abilActive].value = 0)
+
+      hero.child[Attack].field[Penalty].value += -2
+      hero.child[AllSkills].field[Penalty].value += -2
+      hero.child[svAll].field[Penalty].value += -2</eval>
+    <exprreq message="Intelligence 13 required." iserror="no"><![CDATA[#attrvalue[aINT] >= 13]]></exprreq>
+    </thing>
+  <thing id="fuSprtRunn" name="Spirited Runner" description="The creature can turn while running.\n\n{b}Prerequisite:{/b} Dex 15, Endurance.\n\n{b}Benefit:{/b} When running, the creature can turn 90&#176; left or right. The creature slows just before, during, and after its makes the turn but can assume full speed once the turn is complete. It costs 2 squares of movement in the space before the turn, the space the creature turns in, and the space after the turn. Any movement the creature has left can be taken normally once the turn is completed. A creature can turn as many times as it wants using this feat so long as it can pay the movement cost.\n\nFor example, a leopard (base speed 40 feet) has a run speed of 160 feet (32 squares). It could move 13 squares, turn, then move 13 more squares to finish out its movement. It costs the leopard 13 squares of movement to move the first 13 squares (1 square each), then 2 squares just before, during, and after the turn (a total of 6 squares). The leopard has 13 squares of movement left in which to move after making the turn.\n\n{b}Special:{/b} Creatures with a swim speed can use this feat when swimming if they take a run action.\n\n{b}Normal:{/b} When running, the creature can normally only run in a straight line." compset="Feat" summary="Creature can turn when running." uniqueness="useronce">
+    <usesource source="srcTomeHor"/>
+    <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Dexterity 15 or greater required."><![CDATA[#attrvalue[aDEX] >= 15]]></exprreq>
+    <exprreq message="Endurance feat required."><![CDATA[#hasfeat[fEndure] <> 0]]></exprreq>
+    </thing>
+
+
+
+
+
+
+  </document>
