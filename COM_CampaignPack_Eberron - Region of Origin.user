@@ -594,5 +594,53 @@
       ~ Setup Eberron Ethnicity
       Call SetupEbEth]]></eval>
     </thing>
+  <thing id="rcS2Custom" name="- Custom -" description="Use this to add your own custom region." compset="RaceCustom" summary="Custom region." uniqueness="useronce">
+    <comment>Region of Origin</comment>
+    <fieldval field="domDomain" value="Custom Region????"/>
+    <usesource source="S2Eberron"/>
+    <tag group="Eberron" tag="RegionOrig"/>
+    <tag group="Helper" tag="Ethnicity"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="NeedDomain"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="DomainTerm" tag="Name"/>
+    <tag group="Eberron" tag="Ethnicity"/>
+    <eval phase="First" priority="11000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+
+      ~ Setup Eberron Ethnicity
+      Call SetupEbEth]]></eval>
+    <eval phase="Render" priority="10000" index="2"><![CDATA[
+      ~ Setup custom name &
+      field[livename].text = field[domDomain].text
+      field[shortname].text = field[domDomain].text]]></eval>
+    <evalrule phase="Validation" priority="10000" message="Name must be specified." summary="Name must be specified."><![CDATA[
+      ~ Since this region specifies domain text, 
+      ~ it won't trip the normal evalrule that requires text to be 
+      ~ entered.
+      ~ We want the gamer to change the value, so we're valid if
+      ~ something has changed.
+      validif (field[domDomain].ischanged <> 0)]]></evalrule>
+    </thing>
+  <thing id="rcS2NoneRe" name="- None -" description="Select this if you have no region of origin for your character." compset="RaceCustom" summary="No region." uniqueness="useronce">
+    <comment>Region of Origin</comment>
+    <usesource source="S2Eberron"/>
+    <tag group="Eberron" tag="RegionOrig"/>
+    <tag group="Helper" tag="Ethnicity"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DomainTerm" tag="Name"/>
+    <tag group="Eberron" tag="Ethnicity"/>
+    <eval phase="First" priority="11000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+
+      ~ Setup Eberron Ethnicity
+      Call SetupEbEth]]></eval>
+    </thing>
   <preclude id="cfgS2RegOr" source="srcHideReg"/>
   </document>
