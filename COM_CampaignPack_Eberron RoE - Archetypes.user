@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document signature="Hero Lab Data">
   <loadonce key="COM_CampaignPack_Eberron RoE - Archetypes"/>
-  <thing id="arS2ChaEgo" name="Changeling Egoist" description="A changeling’s aptitude at reshaping his body makes him naturally inclined toward psionic powers that perform similar tasks, such as those of the psychometabolism discipline. The egoist—a psion who specializes in psychometabolic powers—is an avenue often pursued by psionic changelings; such characters are well-known for their superior mastery of the discipline.\n\n{b}Pathfinder:{/b} This archetype is desgined to work with the Psion class from Ulatimate Psionics.\n\nTODO: Implement this fully when the packs all become one." compset="ClassVary" uniqueness="unique">
+  <thing id="arS2ChaEgo" name="Changeling Egoist" description="A changeling’s aptitude at reshaping his body makes him naturally inclined toward psionic powers that perform similar tasks, such as those of the psychometabolism discipline. The egoist—a psion who specializes in psychometabolic powers—is an avenue often pursued by psionic changelings; such characters are well-known for their superior mastery of the discipline.\n\n{b}Pathfinder:{/b} This archetype is desgined to work with the Psion class from Ultimate Psionics." compset="ClassVary" uniqueness="unique">
+    <fieldval field="cvSkillPts" value="4"/>
+    <arrayval field="cvBonFtMod" index="0" value="-1"/>
+    <arrayval field="cvBonFtMod" index="4" value="-2"/>
     <usesource source="srcRaOfEb"/>
+    <tag group="ClassSkill" tag="skDisguise"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassSkill" tag="skBluff"/>
     <tag group="Helper" tag="NoPathSoc"/>
-    <link linkage="varies" thing="cHelpAdV"/>
+    <bootstrap thing="cPsiS2ExPK">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cPsiS2BoCo">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPsiS2EvPs">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpPsi"/>
     <exprreq message="Eberron Changeling race required."><![CDATA[#hasrace[rS2Changel] <> 0]]></exprreq>
+    <exprreq message="Psion with Egoist discipline required."><![CDATA[#hasability[cPsiEgoist] <> 0]]></exprreq>
     </thing>
   <thing id="arS2ChaRog" name="Changeling" description="The changeling rogue follows the natural proclivities of the race and its favored class, with most multiclass changelings beginning their careers as rogues in order to benefit from the class’s wide range of skills. Though he gives up some of his adventure-oriented talents, the changeling rogue gains new abilities that aid him in more mainstream settings. Focusing on social deception and manipulation, he uses and shapes his racial abilities to strong advantage." compset="ClassVary" uniqueness="unique">
     <fieldval field="cvSkillPts" value="10"/>
@@ -128,5 +143,50 @@
       doneif (tagis[Helper.SpcDisable] <> 0)
 
       field[livename].text = field[thingname].text & " " & field[abValue].value & "%"]]></eval>
+    </thing>
+  <thing id="cPsiS2BoCo" name="Body Control" description="Beginning at 1st level, whenever a changeling egoist manifests a psychometabolism power that targets himself (and only himself), he can treat his manifester level as one higher than normal.{br}{br}This substitution feature replaces the standard egoist&apos;s bonus feat gained at 1st level." compset="ClSpecial" summary="+1 ML for psychometabolism powers that targets only yourself.">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cPsiS2EvPs" name="Everchanging Psicrystal" description="At 3rd level, a changeling egoist gains the ability to reshape his psicrystal&apos;s personality, selecting a new personality as a full-round action. The egoist gains the benefit of the new personality while losing the previous benefit. If he does not have a psicrystal, this ability has no effect until the egoist gains one.\n\nThis substitution feature replaces one of the powers gained by a standard egoist at 3rd level. From this point on, the changeling egoist knows one less power than the number indicated in Ultimate Psionics." compset="ClSpecial" summary="Change your Psicrystal&apos;s personality as a full-round action.">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+
+      ~ If no psicyrstal affinity feat then we are disabled
+      if (hero.tagis[Ability.fPUPsicry] = 0) then
+        perform assign[Helper.SpcDisable]
+      endif
+
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ One less power known
+      root.linkage[varies].field[cPsiPowMax].value += -1]]></eval>
+    </thing>
+  <thing id="cPsiS2ExPK" name="Extra Powers Known" description="A 5th-level changeling egoist adds the following powers to his list of powers known: {i}chameleon{/i}, {i}hustle{/i}, {i}metamorphosis{/i}, and {i}thicken skin{/i}. The egoist adds {i}metamorphosis{/i} to his list of powers known even though it exceeds the normal maximum power level known (he gains the power but can&apos;t yet manifest it). These powers do not count against his limit on powers known.\n\nThis substitution feature replaces the bonus feat gained by a standard egoist at 5th level." compset="ClSpecial" summary="Gain {i}chameleon{/i}, {i}hustle{/i}, {i}metamorphosis{/i}, and {i}thicken skin{/i}.">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="puChamele2">
+      <containerreq phase="First" priority="1000"><![CDATA[count:Classes.Psion >= 5]]></containerreq>
+      <autotag group="SpellType" tag="cHelpPsi"/>
+      <autotag group="SpellSort" tag="cHelpPsi"/>
+      </bootstrap>
+    <bootstrap thing="puHustle2">
+      <containerreq phase="First" priority="1000"><![CDATA[count:Classes.Psion >= 5]]></containerreq>
+      <autotag group="SpellType" tag="cHelpPsi"/>
+      <autotag group="SpellSort" tag="cHelpPsi"/>
+      </bootstrap>
+    <bootstrap thing="puMetamor3">
+      <containerreq phase="First" priority="1000"><![CDATA[count:Classes.Psion >= 5]]></containerreq>
+      <autotag group="SpellType" tag="cHelpPsi"/>
+      <autotag group="SpellSort" tag="cHelpPsi"/>
+      </bootstrap>
+    <bootstrap thing="puThickSk1">
+      <containerreq phase="First" priority="1000"><![CDATA[count:Classes.Psion >= 5]]></containerreq>
+      <autotag group="SpellType" tag="cHelpPsi"/>
+      <autotag group="SpellSort" tag="cHelpPsi"/>
+      </bootstrap>
     </thing>
   </document>
