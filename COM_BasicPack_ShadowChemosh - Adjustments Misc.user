@@ -3672,7 +3672,7 @@ call S2SetName]]></eval>
         perform hero.assign[MythicTier.MythicRank]
       loop]]></eval>
     </thing>
-  <thing id="pS2PFSncSp" name="PFS, Spell" description="Adding this adjustment will allow you to make a spell on your character legal in a Pathfinder Society Characters (including &quot;Core Only Campaign&quot;).\n\n{B}Note:{/b} Add the spell you wish to make legal first and then use this adjustment to select the spell." compset="InPlay">
+  <thing id="pS2PFSncSp" name="PFS, Spell" description="Adding this adjustment will allow you to make a spell on your character legal in a Pathfinder Society Characters (including &quot;Core Only Campaign&quot;). In addition it will allow a Racial Spell to be used by other races. Add the spell you wish to make legal first and then use this adjustment to select the spell.\n\n{b}Note:{/b} If you enter text into the &quot;Source&quot; below then it will be appended to the race name. This allows you to easily note which boon is making this race as valid." compset="InPlay">
     <fieldval field="pCandExpr" value="component.BaseSpell"/>
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="NoIncr"/>
@@ -3690,9 +3690,12 @@ call S2SetName]]></eval>
       ~ wizards we have a copy in the spell book and memorized and we
       ~ have to set the tag onto "both" instances.
       foreach pick in hero from BaseSpell where field[pChosen].chosen.tagids[ClsAllowSp.?]
-        ~ Set Core Campaign OK tag and remove the Not allowed PFS tag
+        ~ Set Core Campaign OK tag
         perform eachpick.assign[Helper.CoreCampOK]
+        ~ Remove the Not allowed for PFS tag
         perform eachpick.delete[Helper.NoPathSoc]
+        ~ Remove the Race Spell PFS tag
+        perform eachpick.assign[thing.skipprereq]
       nexteach]]></eval>
     <eval phase="Render" priority="999999999" index="2"><![CDATA[
       ~ If we're not enabled, get out now
@@ -3729,7 +3732,7 @@ call S2SetName]]></eval>
       ~ Append Source/Duration text onto Pick name
       Call S2PFSName]]></eval>
     </thing>
-  <thing id="pS2PFSrace" name="PFS, Race Boon" description="Adding this adjustment will make your race legal for Pathfinder Society Characters (including &quot;Core Only Campaign&quot;).\n\n{B}Note:{/b} This will not work on all races. Specifically the &quot;Uncommon&quot; races can&apos;t at this time have their warning message prevented as its hard-coded into the system files that can not be adjusted.\n\n{b}Note:{/b} If you enter text into the &quot;Source&quot; below then it will be appended to the race name. This allows you to easily note which boon is making this race as valid." compset="InPlay">
+  <thing id="pS2PFSrace" name="PFS, Race" description="Adding this adjustment will make your race legal for Pathfinder Society Characters (including &quot;Core Only Campaign&quot;).\n\n{b}Note:{/b} If you enter text into the &quot;Source&quot; below then it will be appended to the race name. This allows you to easily note which boon is making this race as valid." compset="InPlay">
     <fieldval field="pCandExpr" value="component.BaseRace"/>
     <usesource source="srcS2Adjus"/>
     <tag group="Adjustment" tag="S2Custom"/>
@@ -3742,23 +3745,12 @@ call S2SetName]]></eval>
       ~if nothing's been chosen, get out now
       doneif (field[pChosen].ischosen <> 1)
 
-      ~set our focus to the hero's race
-      perform field[pChosen].chosen.setfocus
-      doneif (state.isfocus = 0)
       ~ Remove the not valid for PFS tag
-      perform focus.delete[Helper.NoPathSoc]
-      perform focus.assign[Helper.CoreCampOK]
-
-      ~ set the live name
-      field[livename].text = field[name].text & ": " & focus.field[name].text
-
-      ~ If we are an extra race we need to be changed to a normal race
-      If (focus.tagis[RaceType.Extra] <> 0) Then
-        perform focus.delete[RaceType.?]
-        perform focus.assign[RaceType.Normal]
-        perform hero.delete[RaceType.?]
-        perform hero.assign[RaceType.Normal]
-      Endif]]></eval>
+      perform field[pChosen].chosen.delete[Helper.NoPathSoc]
+      ~ Allowed for PFS Core Campaign
+      perform field[pChosen].chosen.assign[Helper.CoreCampOK]
+      ~ Add skip pre-req tag     
+      perform field[pChosen].chosen.assign[thing.skipprereq]]]></eval>
     <eval phase="Render" priority="999" index="2"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
@@ -3809,7 +3801,7 @@ call S2SetName]]></eval>
 
       perform field[pChosen].chosen.delete[Helper.NoPathSoc]
       perform field[pChosen].chosen.assign[Helper.CoreCampOK]]]></eval>
-    <eval phase="Render" priority="999999999" index="2"><![CDATA[
+    <eval phase="Render" priority="99999999" index="2"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
       ~ If nothing chosen, get out now
@@ -4610,7 +4602,7 @@ call S2SetName]]></eval>
       ~ Select Domain Things &
       field[pUsePicks].value = 0]]></eval>
     </thing>
-  <thing id="pS2AllowLa" name="Allow Race Language" description="Use this adjustment to allow any additional valid starting languages for your character.  In example if you race does not norally allow choosing Gnome language you can use this adjustment to make Gnome a valid choice for your character." compset="InPlay">
+  <thing id="pS2AllowLa" name="Allow Starting Language" description="Use this adjustment to allow any additional valid starting languages for your character.  In example if you race does not norally allow choosing Gnome language you can use this adjustment to make Gnome a valid choice for your character." compset="InPlay">
     <fieldval field="pCandExpr" value="component.BaseLang"/>
     <usesource source="srcS2Adjus"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -4630,5 +4622,36 @@ call S2SetName]]></eval>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[      
       ~ Select Domain Things &
       field[pUsePicks].value = 0]]></eval>
+    </thing>
+  <thing id="pS2PFSlang" name="PFS, Language" description="Adding this adjustment will make a language legal for Pathfinder Society Characters (including &quot;Core Only Campaign&quot;).\n\n{b}Note:{/b} If you enter text into the &quot;Source&quot; below then it will be appended to the race name. This allows you to easily note which boon is making this race as valid." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.BaseLang"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="OthAdjCat" tag="PFS"/>
+    <eval phase="First" priority="1000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      ~ Remove the not valid for PFS tag
+      perform field[pChosen].chosen.delete[Helper.NoPathSoc]
+      ~ Allowed for PFS Core Campaign
+      perform field[pChosen].chosen.assign[Helper.CoreCampOK]
+      ~ Add skip pre-req tag     
+      perform field[pChosen].chosen.assign[thing.skipprereq]]]></eval>
+    <eval phase="Render" priority="99999999" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
+
+      ~ Append Source/Duration text onto Pick name
+      Call S2PFSName]]></eval>
+    </thing>
+  <thing id="pS2HdPFS" name="{bmp npcclass} Pathfinder Society {bmp npcclass}" description="Adjustments in this category allow for setting specail Boons that allow things not nrormally allowed for PFS or PFS Core characters." compset="InPlay" uniqueness="unique" isshowonly="yes">
+    <tag group="OthAdjCat" tag="PFS"/>
     </thing>
   </document>
