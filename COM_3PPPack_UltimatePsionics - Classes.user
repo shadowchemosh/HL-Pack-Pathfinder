@@ -16292,4 +16292,104 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
     <tag group="Helper" tag="RemovePrim"/>
     <link linkage="varies" thing="cHelpSkn"/>
     </thing>
+  <thing id="arPUBatWld" name="Battle Wilder" description="{i}{b}Not fully implemented{/i}{/b}\nThe battle wilder channels her emotions not into her manifesting ability, but into her combat prowess. While the battle wilder is still capable of and effective at using powers, she also gains improved battle capacity, as well as expanded training in weapons." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="290"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
+    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AbReplace" tag="cWldWildSu"/>
+    <tag group="AbReplace" tag="raKPPriEup"/>
+    <tag group="AbReplace" tag="cWldImpSur"/>
+    <tag group="AbReplace" tag="cWldSurBla"/>
+    <tag group="AbReplace" tag="cWldSurBnd"/>
+    <tag group="AbReplace" tag="cWldPerSur"/>
+    <bootstrap thing="cPUCombFrt">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="fWepMart"></bootstrap>
+    <bootstrap thing="cPUCombSur">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUSurgAss">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUCombEup">
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="cPUPhyOver">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpWld"/>
+    </thing>
+  <thing id="cPUCombSur" name="Combat Surge" description="A battle wilder channels her emotions into a physical boost of energy that strengthens her body. A battle wilder can invoke a combat surge in two possible manners. She can invoke a combat surge while manifesting a power or by spending 1 power point as a swift action. In either case, the battle wilder gains a +2 enhancement bonus to her Strength for one round after invoking a combat surge.\n  At 3rd level, the enhancement bonus to Strength increases to +4. At 7th level, the battle wilder also gains a +2 enhancement bonus to Constitution during a combat surge. At 11th level, the enhancement bonus to Constitution increases by +2. At 15th level, the enhancement bonus to Strength increases to +6. At 19th level, the enhancement bonus to Constitution increases to +6.\n  This ability replaces wild surge. The battle wilder does not get to select a surge type." compset="ClSpecial">
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="4"/>
+    <fieldval field="abValue3" value="6"/>
+    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ if ability not activated, get out now
+      doneif (tagis[Helper.Activated] = 0)
+
+      ~if activated calculate the bonus based on level
+      if (#levelcount[Wilder] >= 19) then
+         #applybonus[BonEnhance,hero.childfound[aSTR],field[abValue3].value]
+         #applybonus[BonEnhance,hero.childfound[aCON],field[abValue3].value]
+      elseif (#levelcount[Wilder] >= 15) then
+         #applybonus[BonEnhance,hero.childfound[aSTR],field[abValue3].value]
+         #applybonus[BonEnhance,hero.childfound[aCON],field[abValue2].value]
+      elseif (#levelcount[Wilder] >= 11) then
+         #applybonus[BonEnhance,hero.childfound[aSTR],field[abValue2].value]
+         #applybonus[BonEnhance,hero.childfound[aCON],field[abValue2].value]
+      elseif (#levelcount[Wilder] >= 7) then
+         #applybonus[BonEnhance,hero.childfound[aSTR],field[abValue2].value]
+         #applybonus[BonEnhance,hero.childfound[aCON],field[abValue].value]
+      elseif (#levelcount[Wilder] >= 3) then
+         #applybonus[BonEnhance,hero.childfound[aSTR],field[abValue2].value]
+      elseif (#levelcount[Wilder] >= 1) then
+         #applybonus[BonEnhance,hero.childfound[aSTR],field[abValue].value]
+      endif]]></eval>
+    </thing>
+  <thing id="cPUSurgAss" name="Surging Assault" description="A battle wilder can expend her psionic focus as part of a full attack to gain one additional attack at her highest attack bonus. This ability replaces surge blast." compset="ClSpecial">
+    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cPUCombEup" name="Combat Euphoria" description="{i}{b}Not fully implemented{/i}{/b}\nAt 4th level. when a battle wilder uses her combat surge ability, she gains a +1 morale bonus on attack rolls, damage rolls, and saving throws for a number of rounds equal to the battle wilder’s Charisma modifier (minimum 1).\n  If a battle wilder is overcome by psychic enervation following her combat surge, she does not gain the morale bonus for this use of her combat surge ability.\n  At 12th level, the morale bonus on a battle wilder’s attack rolls, damage rolls, and saving throws increases to +2. At 20th level, the bonus increases to +3.\n  This ability replaces surging euphoria." compset="ClSpecial">
+    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cPUCombFrt" name="Combat Fortitude" description="Starting at 5th level, the battle wilder gains a +1 bonus to Fortitude saves as long as she is maintaining psionic focus. Every four levels beyond 5th (9th, 13th, and 17th level), this bonus improves by +1.\n  Starting at 17th level, whenever the battle wilder is subject to an effect that allows a Fortitude save, the battle wilder receives a second Fortitude save to negate the effect in addition to any save the effect may allow; if the spell or power already allows a Fortitude save to\nnegate, the battle wilder makes a second one, and would need to fail both to be affected.\n  This ability replaces Improved surge bond." compset="ClSpecial">
+    <eval phase="PreAttr" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ If not psionically focused get out now!
+      doneif (v_focus = 0)
+
+      ~if psi-focused calculate the bonus based on level
+      if (#levelcount[Wilder] >= 17) then
+         #applybonus[Bonus,hero.childfound[svFort],4]
+      elseif (#levelcount[Wilder] >= 13) then
+         #applybonus[Bonus,hero.childfound[svFort],3]
+      elseif (#levelcount[Wilder] >= 9) then
+         #applybonus[Bonus,hero.childfound[svFort],2]
+      elseif (#levelcount[Wilder] >= 5) then
+         #applybonus[Bonus,hero.childfound[svFort],1]
+      endif]]></eval>
+    </thing>
+  <thing id="cPUPhyOver" name="Physical Overload" description="{i}{b}Not fully implemented{/i}{/b}\nA battle wilder of 20th level is able to push herself and greatly increase her combat ability. Once per day, the battle wilder can invoke a combat surge and gain a +8 enhancement bonus to both Strength and Constitution for a number of rounds equal to the battle wilder’s Charisma modifier (minimum 1). In addition, while under the affects of physical overload, the battle wilder treats her base attack bonus as equal to her battle wilder level, which may grant additional iterative attacks. Invoking a physical overload comes with it a guaranteed psychic enervation that does double the normal effect when the physical overload ends and this psychic enervation cannot be modified by feats or other abilities that would mitigate or otherwise alter it. This ability replaces perfect surge." compset="ClSpecial">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
   </document>
