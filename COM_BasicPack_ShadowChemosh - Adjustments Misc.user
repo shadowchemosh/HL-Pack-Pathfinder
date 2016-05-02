@@ -4654,4 +4654,28 @@ call S2SetName]]></eval>
   <thing id="pS2HdPFS" name="{bmp npcclass} Pathfinder Society {bmp npcclass}" description="Adjustments in this category allow for setting specail Boons that allow things not nrormally allowed for PFS or PFS Core characters." compset="InPlay" uniqueness="unique" isshowonly="yes">
     <tag group="OthAdjCat" tag="PFS"/>
     </thing>
+  <thing id="pS2svAbili" name="Saving Throw Ability Score" description="Select this adjustment to change the ability score that is associated to a specific saving throw.  In example you could change Will saves to use Charisma instead of Wisdom." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.BaseSave &amp; !Helper.AllSaves"/>
+    <fieldval field="pCandExpr2" value="component.BaseAttr"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="OthAdjCat" tag="Saves"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Adjust2nd" tag="S2Custom"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ If nothing chosen, get out now &
+      doneif (field[pChosen].ischosen = 0)
+      doneif (field[pChosen2].ischosen = 0)
+
+      ~ Get the Save Override tag from the ability score
+      perform field[pChosen2].chosen.pulltags[SaveOver.?]
+
+      ~ Push the save override tag to the saving throw
+      perform field[pChosen].chosen.pushtags[SaveOver.?]]]></eval>
+    <eval phase="PreLevel" priority="11000" index="2">
+      ~ Picks on Hero
+      field[pUsePicks].value = 1</eval>
+    </thing>
   </document>
