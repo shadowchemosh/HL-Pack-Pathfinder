@@ -122,21 +122,52 @@ Email: mail@theirongolem.com</info_author>
     <tag group="Helper" tag="ShowSpec"/>
     <exprreq message="Dark Claim class feature required"><![CDATA[#hasability[cPW4DrkClm] <> 0]]></exprreq>
     </thing>
-  <thing id="fPWKatExp" name="Katana Expertise" description="{b}Prerequisites:{/b} Proficiency with Katana\n\n{b}Benefits:{/b} Increase the damage die of katanas you wield by one die step.  Additionally, you may treat katanas as light weapons for the purpose of Weapon Finesse." compset="Feat" uniqueness="useronce">
+  <thing id="fPWKatExp" name="Daisho Expertise" description="Your grace and skill with both the katana and wakizashi is on the level of a prodigy.\n\n{b}Prerequisites:{/b} Proficiency with the katana or wakizashi.\n\n{b}Benefit:{/b} Increase the damage die of katanas and wakizashi you wield by one die step. In addition, you may use your Dexterity modifier instead of your Strength modifier when making attack rolls with either weapon. This feat counts as Weapon Finesse for purposes of meeting the prerequisites of other feats.\n\n{b}Special:{/b} If you are proficient with the katana as a martial weapon, you meet the prerequisites for this feat, although you only gain its benefit while wielding a katana in two hands (to gain these benefits while wielding the katana in one hand, you must possess Exotic Weapon Proficiency with the weapon). You must possess Exotic Weapon Proficiency with the wakizashi to gain the benefits of this feat with a wakizashi." compset="Feat" summary="Use Dex instead of Str on attack rolls with katanas and wakizashi, and increase their damage dice." uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="fCategory" tag="Combat"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostLevel" priority="5000"><![CDATA[      ~ If we're disabled, do nothing
+    <tag group="HasFeat" tag="fWepFin"/>
+    <eval phase="PostLevel" priority="5000"><![CDATA[
+      ~ If we're disabled, do nothing & 
       doneif (tagis[Helper.FtDisable] <> 0)
 
-      ~ Find all katanas on the hero
-      foreach pick in hero from BaseWep where "IsWeapon.wKatana"
-        ~ Mark the weapon as finessable, and increase the damage by a die step
-        perform eachpick.assign[Helper.Finesse]
-        perform eachpick.assign[Helper.DamageUp]
+      var searchexpr as string
+      
+      ~ Default to Katana only
+      searchexpr = "IsWeapon.wKatana"
+      
+      ~ We have Wakizashi exotic profic then include Wakizashi
+      if (hero.tagis[WepProf.wWakizashi] = 1) then
+        searchexpr &= "|IsWeapon.wWakizashi"
+      endif
+
+      ~ Find all katanas/Wakizashi on the hero
+      foreach pick in hero from BaseWep where searchexpr
+      
+        ~ Katana
+        if (eachpick.tagis[IsWeapon.wKatana] = 1) then
+          ~ Do we have exotic weapon prof?
+          if (hero.tagis[WepProf.wKatana] = 1) then
+            perform eachpick.assign[Helper.Finesse]
+            perform eachpick.assign[Helper.DamageUp]          
+
+          ~..No exotic weapon prof
+          else
+            ~ Check to see if we have it in two hands?
+            if (eachpick.field[gIsEquip].value + eachpick.field[wIs2nd].value = 2) then
+              perform eachpick.assign[Helper.Finesse]
+              perform eachpick.assign[Helper.DamageUp]
+            endif
+          endif
+  
+        ~ Wakizashi      
+        elseif (eachpick.tagis[IsWeapon.wWakizashi] = 1) then
+          perform eachpick.assign[Helper.DamageUp]        
+        endif
+        
       nexteach]]></eval>
-    <exprreq message="Katana proficiency required"><![CDATA[tagis[WepProf.wKatana] <> 0]]></exprreq>
+    <exprreq message="Katana or wakizashi proficiency required"><![CDATA[#hasfeat[fWepMart] + hero.tagis[WepProf.wKatana] + hero.tagis[WepProf.wWakizashi] <> 0]]></exprreq>
     </thing>
   <thing id="fPWAglDncr" name="Agile Dancer" description="{b}Prerequisites:{/b} Perform (Dance) 3 ranks\n\n{b}Benefits:{/b} You can use Perform (Dance) in place of Acrobatics and can use the higher of your Dexterity or Charisma modifiers for Perform (Dance) checks." compset="Feat" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
