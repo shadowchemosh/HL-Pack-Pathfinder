@@ -5,33 +5,36 @@
     <fieldval field="gWeight" value=".5"/>
     <fieldval field="gCost" value="3000"/>
     <fieldval field="iCL" value="1"/>
-    <usesource source="srcMurdMrk" parent="pModules" name="Murder&apos;s Mark"/>
-    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
-    <tag group="gType" tag="Wonder" name="Wondrous Item" abbrev="Wonder"/>
-    <tag group="iSchool" tag="Enchant" name="Enchantment" abbrev="Ench"/>
-    <tag group="Helper" tag="EquipAvail" name="EquipAvail" abbrev="EquipAvail"/>
-    <tag group="Helper" tag="EquipMag" name="EquipMag" abbrev="EquipMag"/>
-    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
-    <tag group="Hero" tag="EqpWaist" name="Belt" abbrev="Belt"/>
+    <fieldval field="abValue" value="5"/>
+    <fieldval field="abValue2" value="1"/>
+    <usesource source="srcMurdMrk"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="iSchool" tag="Enchant"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Hero" tag="EqpWaist"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-      if (field[gIsEquip].value <> 0) then
-        #applybonus[BonComp,hero.child[skPerfDanc],5]
+      ~ If not equipped get out now!
+      doneif (field[gIsEquip].value = 0)
 
-        if (hero.tagis[Ability.cBrdPFas] <> 0) then
-          hero.child[cBrdPFas].field[abDC].value += 1
-          endif
+      #applybonus[BonComp,hero.child[skPerfDanc],field[abValue].value]
 
-        if (hero.tagis[Ability.cBrdPSugg] <> 0) then
-          hero.child[cBrdPSugg].field[abDC].value += 1
-          endif
-        endif]]></eval>
+      if (hero.tagis[Ability.cBrdPFas] <> 0) then
+        hero.child[cBrdPFas].field[abDC].value += field[abValue2].value
+      endif
+
+      if (hero.tagis[Ability.cBrdPSugg] <> 0) then
+        hero.child[cBrdPSugg].field[abDC].value += field[abValue2].value
+      endif]]></eval>
     </thing>
   <thing id="guPoiMaLil" name="Poison, Maiden Lily Attar" description="{b}Type{/b} poison, inhaled; {b}Save{/b} Fortitude DC 13\n{b}Frequency{/b 1/round for 4 rounds\n{b}Initial Effect{/b unconsciousness for 1 minute; {b}Secondary Effect{/b\nunconsciousness for 1d4 hours; {b}Cure{/b 1 save" compset="Gear">
     <usesource source="srcMurdMrk"/>
     <tag group="Helper" tag="EquipMag"/>
-    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="gType" tag="Poison"/>
     <tag group="User" tag="Tracker"/>
     <tag group="Helper" tag="UsesQty"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   </document>
