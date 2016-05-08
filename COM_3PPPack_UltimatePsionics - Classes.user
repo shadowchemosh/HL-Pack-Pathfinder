@@ -16196,6 +16196,39 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
     <usesource source="pPsiUn"/>
     <tag group="ClVaryName" tag="AppParen"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPUAbMndAr">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUShpMArm">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnhMArm">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnhMArm">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnhMArm">
+      <autotag group="ClSpecWhen" tag="7"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnhMArm">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnhMArm">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnhMArm">
+      <autotag group="ClSpecWhen" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnhMArm">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnhMArm">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnhMArm">
+      <autotag group="ClSpecWhen" tag="19"/>
+      </bootstrap>
     <link linkage="varies" thing="cHelpSkn"/>
     </thing>
   <thing id="arPUCuthrt" name="Cutthroat" description="{i}{b}Not fully implemented{/i}{/b}\nWith the ability to create a blade from thin air, soulknives can be extremely effective assassins. Cutthroat soulknives work to be even better at infiltration as well as how to perfectly place strikes against their opponents." compset="ClassVary" uniqueness="unique">
@@ -16391,5 +16424,71 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
     <tag group="User" tag="Tracker"/>
     <tag group="Usage" tag="Day"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cPUAbMndAr" name="Form Mind Armaments" description="{i}{b}Not fully implemented{/i}{/b}\nThe armored blade can form a mind blade in the same fashion as a standard soulknife, using the normal rules under the Form Mind Blade class feature. In addition, as a separate move action, he may form mind armor.\n  Mind armor can be formed as light, medium, or heavy form. Light form is treated in all ways (except visually) as a masterwork chain shirt. Medium form is treated in all ways (except visually) as masterwork chainmail. Heavy form is treated in all ways (except visually) as masterwork splint mail. Mind armor is treated like a mind blade in all other ways (breaking, null psionics fields, etc) and can be dismissed as a free action.\n  An armored blade is always considered proficient in his mind armor.\n  This replaces the form mind blade class feature, but counts as form mind blade for prerequisites or requirements.\n\n{b}Note:{/b} From the two drop down menus you must pick the type of mind armor (ie Light, Medium, or Heavy). Because these values can be changed often and in combat they display now on the In-Play tab also." compset="ClSpecial" summary="Form a semi-solid armor composed of psychic energy distilled from your own mind.">
+    <arrayval field="usrArray" index="0" value="Light"/>
+    <arrayval field="usrArray" index="1" value="Medium"/>
+    <arrayval field="usrArray" index="2" value="Heavy"/>
+    <tag group="SpecType" tag="ArmorClass"/>
+    <tag group="ChooseSrc1" tag="Hero" name="All Picks on Hero" abbrev="All Picks on Hero"/>
+    <tag group="Helper" tag="ActivMenu" name="ActivMenu" abbrev="ActivMenu"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <eval phase="First" priority="50" name="Add Mind Blade Tags"><![CDATA[
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      perform field[usrChosen1].chosen.pulltags[MindBlade.?]
+      perform hero.pushtags[MindBlade.?]]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we've not chosen anything, get out
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Bludgeoning      
+      if (field[usrIndex].value = 0) then
+        perform assign[wType.B]
+      ~ Piercing
+      elseif (field[usrIndex].value = 1) then
+        perform assign[wType.P]
+      ~ Slashing
+      elseif (field[usrIndex].value = 2) then
+        perform assign[wType.S]
+      endif
+
+      ~ Find all Mindblades and set the damage type tag      
+      foreach pick in hero from BaseWep where "IsWeapon.wMindBlade"
+        perform eachpick.delete[wType.?]
+        perform eachpick.gizmo.delete[wType.?]
+        perform eachpick.pushtags[wType.?]
+        perform eachpick.gizmo.pushtags[wType.?]
+      nexteach]]></eval>
+    </thing>
+  <thing id="cPUShpMArm" name="Shape Mind Armaments" description="The armored blade can shape his mind blade and mind armor in the same fashion as a standard soulknife shapes his mind blade. Her mind blade and mind armor must be reshaped separately.\n  This replaces the shape mind blade class feature, but counts as shape mind blade for prerequisites or requirements." compset="ClSpecial" summary="Change the form of your mind armament, or reassign its abilities">
+    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cPUEnhMArm" name="Enhanced Mind Armament" description="{i}{b}Not fully implemented{/i}{/b}\nThe armored blade’s mind armor and mind blade are improved like a standard soulknife’s mind blade, including if the armored blade creates two mind blades, except the enhancement bonus increases at a reduced rate, rather than every odd level, as indicated on Table: Mind Armament Progression. The enhancement bonus for mind armor is unaffected if the armored blade shapes two mind blades.\nThe armored blade can select armor special abilities from the following.\nThis replaces the enhanced mind blade class feature, but counts as enhanced mind blade for prerequisites or requirements.\n\n{b}Note:{/b}  Currently the scripts will not error check if you increase the bonus past what you should be allowed or take a invalid item power.  This will come in a future update." compset="ClSpecial" summary="You can enhance your mind armament with extra power.">
+    <usesource source="pPsiUn"/>
+    <tag group="SpecType" tag="ArmorClass"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & signed(field[xIndex].value)
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+      field[abSumm].text = "You can enhance your Mind Armament with a total enhancement bonus of +" & field[abValue].value & "."]]></eval>
     </thing>
   </document>
