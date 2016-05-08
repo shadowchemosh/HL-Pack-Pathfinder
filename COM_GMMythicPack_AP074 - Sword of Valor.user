@@ -52,15 +52,23 @@
     <tag group="User" tag="Tracker"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="Usage" tag="CB1d4Rnds"/>
-    <eval phase="Render" priority="90000"><![CDATA[~set up summary
+    <eval phase="Render" priority="90000"><![CDATA[
+      ~ If we're disabled, do nothing &
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-field[abSumm].text = "40-cone, 6d8 cold + 2d8 piercing, Reflex DC " & field[abDC].value & " half, 1/1d4 rounds"
+      ~ Set up summary
+      field[abSumm].text = "40-cone, 6d8 cold + 2d8 piercing, Reflex DC " & field[abDC].value & " half, 1/1d4 rounds"
+      field[sbName].text = "mythic breath (" & field[abSumm].text & ")"]]></eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ If we're disabled, do nothing &
+      doneif (tagis[Helper.SpcDisable] <> 0)    
 
-field[sbName].text = "mythic breath (" & field[abSumm].text & ")"]]></eval>
-    <eval phase="First" priority="1000" index="2">~ hide breath weapon for chimera
-
-perform hero.child[raChiBreaW].assign[Helper.SpcDisable]
-perform hero.child[raChiBreaW].assign[Hide.Special]</eval>
+      ~ hide breath weapon for chimera
+      perform hero.childfound[raChiBreaW].assign[Helper.SpcDisable]
+      perform hero.childfound[raChiBreaW].assign[Hide.Special]
+      perform hero.childfound[raBreath].assign[Helper.SpcDisable]
+      perform hero.childfound[raBreath].assign[Hide.Special]      
+      ]]></eval>
     </thing>
   <thing id="raAP74ExEn" name="Endure Sunlight" description="Eustoyriax does not possess the standard shadow demon weakness of sunlight powerlessness." compset="RaceSpec">
     <fieldval field="shortname" value="endure sunlight"/>
@@ -70,8 +78,12 @@ perform hero.child[raChiBreaW].assign[Hide.Special]</eval>
     <tag group="SpecType" tag="Defense"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="Mythic"/>
-    <eval phase="Final">perform hero.child[raShaSunlP].assign[Helper.SpcDisable]
-perform hero.child[raShaSunlP].assign[Hide.Special]</eval>
+    <eval phase="Final"><![CDATA[
+      ~ If we're disabled, do nothing &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      perform hero.child[raShaSunlP].assign[Helper.SpcDisable]
+      perform hero.child[raShaSunlP].assign[Hide.Special]]]></eval>
     </thing>
   <thing id="raAP74ExPM" name="Possession Mastery" description="Eustoyriax can use {i}magic jar{/i} three times per day. When he affects a creature with this ability, he can use all of its abilities, including spellcasting." compset="RaceSpec" summary="Can use magic jar 3/day.">
     <usesource source="PathWraRig"/>
