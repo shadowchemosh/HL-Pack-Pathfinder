@@ -106,13 +106,10 @@ Page 27 of Book 1 Book of thorns contains 2 versions of an "Iron Circlet". Still
       <autotag group="Usage" tag="AtWill"/>
       </bootstrap>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-~ If not equipped get out now
-doneif (field[gIsEquip].value <> 1)
-~ +10 to disguise
-#skillbonus[skDisguise] += 10
-
-~ Add -10 Penalty to our saving throws against divine spells
-#situational[hero.child[svAll],"-10 penalty on all saves against divination spells cast by the talisman's possessor.",field[thingname].text]]]></eval>
+      ~ If not equipped get out now
+      doneif (field[gIsEquip].value <> 1)
+        ~ +10 to disguise
+        #skillbonus[skDisguise] += 10]]></eval>
     </thing>
   <thing id="ioWoWIrCiC" name="Iron Circlet CL 10" description="In addition to functioning as a {i}hat of disguise{/i}, this circlet also makes it easy to scry upon the wearer if a talisman bound to these circlets is possessed. The wearer receives a -10 penalty on all saves against divination spells cast by the talisman&apos;s possessor.\n\nThis is of course identical to a traditional {i}hat of disguise{/i} save for aesthetics. In truth, the iron circlet is a far more powerful magic item more akin to a {i}cursed amulet of inescapable location{/i}. Its true statistics can only be revealed by use of the spell {i}analyze dweomer{/i}. A DC 30 Spellcraft skill check to identify magic items will reveal that there is something very odd about these iron circlets and they are not simply {i}hat of disguise{/i} analogues.\n\n{b}Construction\nRequirements{/b} Craft Wondrous Item, {i}disguise self{/i}, {i}nondetection{/i}{b}; Cost{/b} 18,400 gp" compset="Wondrous" summary="Alter appearance as with {i}disguise self{/i}. -10 penalty on all saves against divination spells">
     <comment><![CDATA[Data Input by Bodrin
@@ -137,12 +134,12 @@ Page 27 of Book 1 Book of thorns contains 2 versions of an "Iron Circlet". Still
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="spDisgSel1"></bootstrap>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-~ If not equipped get out now
-doneif (field[gIsEquip].value <> 1)
-~ +10 bonus to disguise
-#skillbonus[skDisguise] += 10
-~ Add -10 Penalty to our saving throws against divine spells
-#situational[hero.child[svAll],"-10 penalty on all saves against divination spells cast by the talisman's possessor.",field[thingname].text]]]></eval>
+      ~ If not equipped get out now
+	  doneif (field[gIsEquip].value <> 1)
+	    ~ +10 bonus to disguise
+	    #skillbonus[skDisguise] += 10
+	    ~ Add -10 Penalty to our saving throws against divine spells
+	    #situational[hero.child[svAll],"-10 penalty on all saves against divination spells cast by the talisman's possessor.",field[thingname].text]]]></eval>
     </thing>
   <thing id="gWoWRTAArm" name="Richter&apos;s Tome of Arcane Armament (Level 3 Universalist)" description="{i}This beautiful book is made of fine cerulean leather embossed with gold leaf. Its edges are reinforced with brass fittings and strange arcane symbols adorn its covered. It bears the draconic rune of &quot;R&quot; in the center of its front cover.\n\n{/i}{b}Value{/b} 350 gp\n\n{b}Blank Pages{/b} 63\n\n{b}SPELLS{/b} 2nd - {i}bull&apos;s strength, flaming sphere, hideous laughter, invisibility{/i} 1st - {i}alarm, charm person, expeditious retreat, feather fall, mage armor, magic missile, mount, shield, sleep{/i} 0th - all cantrips in the Pathfinder Roleplaying Game Core Rulebook" compset="Gear" summary="Richter&apos;s Spellbook Way of the Wicked Book 1" stacking="merge" uniqueness="unique">
     <comment>Data Input by Bodrin
@@ -168,12 +165,12 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreLevel" priority="5000">#applybonus[BonTrait, hero.childfound[skIntim], 2]
-
-      #makeclassskill[skIntim]</eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      #applybonus[BonTrait, hero.childfound[skIntim], 2]
+      #makeclassskill[skIntim]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWArson" name="Arson" description="You have willfully started a fire that destroyed property.\n\nTo be sent to Branderscar, you didn&apos;t start just a minor little trash fire. Your act of arson threatened a major town, city, church or castle and likely cost someone their life. You&apos;ll be punished for your crime by facing the fire yourself.\n\n{b}Punishment:{/b} Death by burning\n\n{b}Benefit:{/b} Whenever you score a critical hit with a fire attack, you receive a +2 fire damage bonus to your damage roll. This bonus is a trait bonus." compset="Trait" summary="+2 bonus on a critical hit with a fire attack." uniqueness="useronce">
+  <thing id="trWoWArson" name="Arson" description="You have willfully started a fire that destroyed property. To be sent to Branderscar, you didn&apos;t start just a minor little trash fire. Your act of arson threatened a major town, city, church or castle and likely cost someone their life. You&apos;ll be punished for your crime by facing the fire yourself.\n\n{b}Punishment:{/b} Death by burning\n\n{b}Benefit:{/b} Whenever you score a critical hit with a fire attack, you receive a +2 fire damage bonus to your damage roll. This bonus is a trait bonus." compset="Trait" summary="+2 bonus on a critical hit with a fire attack." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -183,10 +180,11 @@ bodrinbarlow@gmail.com
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add +2 fire damage bonus to your damage roll.
-foreach pick in hero from BaseWep
-   #extradamage[eachpick," +2 trait fire damage on a critical hit with a fire attack",field[name].text]
-nexteach]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Add +2 fire damage bonus to your damage roll.
+      foreach pick in hero from BaseWep
+        #extradamage[eachpick," +2 trait fire damage on a critical hit with a fire attack",field[name].text]
+      nexteach]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
   <thing id="trWoWBlasp" name="Blasphemy" description="Either you have defamed the great god Mitra or you have been found guilty of worshipping one of the forbidden deities (who preeminent among them is Asmodeus).\n\n{b}Punishment:{/b} Death by burning\n\n{b}Benefit:{/b} +2 trait bonus to Knowledge (religion) and Knowledge (religion) is always a class skill for you." compset="Trait" summary="+2 trait bonus to Knowledge (religion) and Knowledge (religion) is always a class skill for you." uniqueness="useronce">
@@ -199,12 +197,12 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreLevel" priority="5000">#applybonus[BonTrait, hero.childfound[skKnowRel], 2]
-
-      #makeclassskill[skKnowRel]</eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+	  #applybonus[BonTrait, hero.childfound[skKnowRel], 2]
+      #makeclassskill[skKnowRel]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWConDa" name="Consorting with the Dark Powers (Witchcraft)" description="You have been found guilty of summoning an evil outsider.\n\nLikely you were captured by the famed witch hunter Sir Balin of Karfeld. The last thing he said to you was, &quot;May Mitra have mercy upon your wretched, damned soul.&quot; If only you could get a chance at revenge!\n\n{b}Punishment:{/b} Death by burning\n\n{b}Benefit:{/b} You receive a +1 trait bonus to Knowledge (planes) and Knowledge (arcana) checks, and one of these skills (your choice) is always a class skill for you." compset="Trait" summary="+1 trait bonus to Knowledge (planes) and Knowledge (arcana) checks, and one of these skills (your choice) is always a class skill for you." uniqueness="useronce">
+  <thing id="trWoWConDa" name="Consorting with the Dark Powers (Witchcraft)" description="You have been found guilty of summoning an evil outsider. Likely you were captured by the famed witch hunter Sir Balin of Karfeld. The last thing he said to you was, &quot;May Mitra have mercy upon your wretched, damned soul.&quot; If only you could get a chance at revenge!\n\n{b}Punishment:{/b} Death by burning\n\n{b}Benefit:{/b} You receive a +1 trait bonus to Knowledge (planes) and Knowledge (arcana) checks, and one of these skills (your choice) is always a class skill for you." compset="Trait" summary="+1 trait bonus to Knowledge (planes) and Knowledge (arcana) checks, and one of these skills (your choice) is always a class skill for you." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -216,13 +214,13 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000">~ add +1 trait bonus to Knowledge (planes) and Knowledge (arcana)
- ~ and one of these skills is always a class skill.
-
-     #applybonus[BonTrait,hero.childfound[skKnowPlan],1]
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ add +1 trait bonus to Knowledge (planes) and (arcana)
+      #applybonus[BonTrait,hero.childfound[skKnowPlan],1]
       #applybonus[BonTrait,hero.childfound[skKnowArca],1]
 
-      perform field[usrChosen1].chosen.assign[Helper.ClassSkill]</eval>
+      ~ one of these skills is always a class skill.
+      perform field[usrChosen1].chosen.assign[Helper.ClassSkill]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
   <thing id="trWoWDesec" name="Desecration" description="You have violated one of the churchs, cathedrals or holy shrines of the great god Mitra. To be sent to Branderscar this was no minor act of vandalism. Instead you have done something flagrant and spectacular to dishonor the Shining Lord.\n\n{b}Punishment:{/b} Death by burning\n\n{b}Benefit:{/b} You receive +1 trait bonus on all saving throws against divine spells." compset="Trait" summary="+1 trait bonus on all saving throws against divine spells." uniqueness="useronce">
@@ -235,9 +233,9 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add +1 Trait Bonus to our saving throws against divine spells
-
-#situational[hero.child[svAll],"+1 trait vs. divine spells",field[thingname].text]]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Add +1 Trait Bonus to our saving throws against divine spells
+      #situational[hero.child[svAll],"+1 trait vs. divine  spells",field[thingname].text]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
   <thing id="trWoWDeser" name="Desertion" description="You have deserted from the Talirean military and been recaptured. To get sent to Branderscar this was not some minor or routine dereliction of duty. Instead, you abandoned your post during a time of crisis -- perhaps battle or while defending the Watch Wall. Regardless of the exact circumstances, your laziness and cowardness must have caused loss of life.\n\n{b}Punishment:{/b} Death by hanging\n\n{b}Benefit:{/b} You receive one bonus skill point per level that must be spent on the Profession (Soldier) skill. Profession (Soldier) is always a class skill for you." compset="Trait" summary="one bonus skill point per level that must be spent on the Profession (Soldier) skill." uniqueness="useronce">
@@ -251,16 +249,17 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
     <bootstrap thing="skProfSold"></bootstrap>
-    <eval phase="PreLevel" priority="5000">~ Lets make Profession(Soldier) a class skill
-#makeclassskill[skProfSold]
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+	  ~ Lets make Profession(Soldier) a class skill
+      #makeclassskill[skProfSold]
 
-~ Now lets add a skill point per level to Profession(Soldier)
-field[abValue].value = #totallevelcount[]
-#resmax[resSkill] += field[abValue].value
-#skillinnate[skProfSold] += field[abValue].value</eval>
+      ~ Now lets add a skill point per level to Profession(Soldier)
+      field[abValue].value = #totallevelcount[]
+      #resmax[resSkill] += field[abValue].value
+      #skillinnate[skProfSold] += field[abValue].value]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWDuDea" name="Dueling unto Death" description="You have engaged in a duel to the death and mortally wounded an opponent. The opponent was honorable enough to say nothing before he expired. Alas that his family or companions was nowhere near so honorable.\n\nDueling was once common in Talingarde before the House of Darius came to power. The House of Barca all but encouraged duels of honor. Now, dueling of any sort is punished severely. Dueling to the death is a sure way to be sent to Branderscar Prison.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You gain a +1 trait bonus to Fortitude saves" compset="Trait" summary="+1 trait bonus to Fortitude saves" uniqueness="useronce">
+  <thing id="trWoWDuDea" name="Dueling unto Death" description="You have engaged in a duel to the death and mortally wounded an opponent. The opponent was honorable enough to say nothing before he expired. Alas that his family or companions were nowhere near so honorable. Dueling was once common in Talingarde before the House of Darius came to power. The House of Barca all but encouraged duels of honor. Now, dueling of any sort is punished severely. Dueling to the death is a sure way to be sent to Branderscar Prison.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You gain a +1 trait bonus to Fortitude saves" compset="Trait" summary="+1 trait bonus to Fortitude saves" uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -270,8 +269,9 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000">~ Add a +1 trait bonus to Fortitude saves
-#applybonus[BonTrait,hero.childfound[svFort],1]</eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add a +1 trait bonus to Fortitude saves
+      #applybonus[BonTrait,hero.childfound[svFort],1]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
   <thing id="trWoWExtor" name="Extortion" description="You have defrauded money from someone by holding information of their wrongdoing over their heads. To end up in Branderscar, this was no minor act of merely threatening to expose someone. Instead you have attempted extortion against someone of great prominence and for exorbitant stakes.\n\n{b}Punishment:{/b} Life at hard labor in the salt mines\n\n{b}Benefit{/b}: You receive a +2 trait bonus to Intimidate checks, and Intimidate is always a class skill for you." compset="Trait" summary="+2 trait bonus to Intimidate checks, and Intimidate is always a class skill for you." uniqueness="useronce">
@@ -284,11 +284,12 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreLevel" priority="5000">#applybonus[BonTrait, hero.childfound[skIntim], 2]
-#makeclassskill[skIntim]</eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+	  #applybonus[BonTrait, hero.childfound[skIntim], 2]
+      #makeclassskill[skIntim]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWForge" name="Forgery" description="You have forged documents issued either by the crown or by the Church of Mitra. Alas, that your forgery while competent was not entirely undetectable. To be sent to Branderscar, this was no minor finagling of paperwork.\n\nThis forged document could have cost lives, undermined the reputation of the Church or endangered the security of the realm.\n\n{b}Punishment:{/b} Life at hard labor in the salt mines\n\n{b}Benefit:{/b} You gain a +3 trait bonus to Linguistics skill checks to commit forgery and Linguistics is always a class skill for you." compset="Trait" summary="+3 trait bonus to Linguistics skill checks to commit forgery and Linguistics is always a class skill for you." uniqueness="useronce">
+  <thing id="trWoWForge" name="Forgery" description="You have forged documents issued either by the crown or by the Church of Mitra. Alas, that your forgery while competent was not entirely undetectable. To be sent to Branderscar, this was no minor finagling of paperwork. This forged document could have cost lives, undermined the reputation of the Church or endangered the security of the realm.\n\n{b}Punishment:{/b} Life at hard labor in the salt mines\n\n{b}Benefit:{/b} You gain a +3 trait bonus to Linguistics skill checks to commit forgery and Linguistics is always a class skill for you." compset="Trait" summary="+3 trait bonus to Linguistics skill checks to commit forgery and Linguistics is always a class skill for you." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -300,11 +301,11 @@ bodrinbarlow@gmail.com
     <tag group="Helper" tag="ShowSpec"/>
     <bootstrap thing="skLinguist"></bootstrap>
     <eval phase="PreLevel" priority="5000"><![CDATA[
-~ Add +3 trait bonus to Linguistics skill checks to commit forgery
-#situational[hero.child[skLinguist],"+3 trait bonus to commit forgery",field[thingname].text]
+      ~ Add +3 trait bonus to Linguistics skill checks to commit forgery
+      #situational[hero.child[skLinguist],"+3 trait bonus to create forgery",field[thingname].text]
 
-~ And lets make Linguistics a Class skill
-#makeclassskill[skLinguist]]]></eval>
+      ~ And lets make Linguistics a Class skill
+      #makeclassskill[skLinguist]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
   <thing id="trWoWFraud" name="Fraud" description="You tried to bilk someone out of their cash. To end up in Brandescar Prison, this was no petty con job or penny ante racket. Instead, you brazenly tried to defraud someone important of a huge sum of money. And it almost worked too!\n\n{b}Punishment:{/b} Life at hard labor in the salt mines\n\n{b}Benefit:{/b} You receive a +2 trait bonus to Bluff checks and Bluff is always a class kill for you." compset="Trait" summary="+2 trait bonus to Bluff checks and Bluff is always a class kill for you." uniqueness="useronce">
@@ -317,14 +318,15 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreLevel" priority="5000">~ Add a +2 Trait bonus to our Bluff skill
-   #applybonus[BonTrait, hero.childfound[skBluff], 2]
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+	  ~ Add a +2 Trait bonus to our Bluff skill
+      #applybonus[BonTrait, hero.childfound[skBluff], 2]
 
-   ~ Lets make Bluff a Class skill
-      #makeclassskill[skBluff]</eval>
+      ~ Lets make Bluff a Class skill
+      #makeclassskill[skBluff]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWGrRob" name="Grave Robbery" description="It is forbidden by sacred law to dishonor a corpse after it is been sealed in its tomb by a clergy of the Mitran faith.\n\nSome may not honor this ban: necromancers, golem crafters, self-styled scientists, and alchemists delving into the forbidden secrets of life and death. These ghouls can expect no mercy from the Talirean Magistrates. And by sending you to Branderscar Prison, you have received none.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You receive a +1 trait bonus to confirm critical hits" compset="Trait" summary="+1 trait bonus to confirm critical hits" uniqueness="useronce">
+  <thing id="trWoWGrRob" name="Grave Robbery" description="It is forbidden by sacred law to dishonor a corpse after it is been sealed in its tomb by a clergy of the Mitran faith. Some may not honor this ban: necromancers, golem crafters, self-styled scientists, and alchemists delving into the forbidden secrets of life and death. These ghouls can expect no mercy from the Talirean Magistrates. And by sending you to Branderscar Prison, you have received none.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You receive a +1 trait bonus to confirm critical hits" compset="Trait" summary="+1 trait bonus to confirm critical hits" uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -334,12 +336,12 @@ bodrinbarlow@gmail.com
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add +1 Trait bonus to our chosen saving throw against divine spells
-
-#situational[hero.child[Attack],"+1 trait bonus to confirm critical hits",field[thingname].text]]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Add +1 Trait bonus to our chosen saving throw against divine spells
+      #situational[hero.child[Attack],"+1 trait bonus to confirm critical hits",field[thingname].text]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWHeres" name="Heresy" description="You have denied the supremacy of Mitra and been condemned for it. For this to be a crime, you were not content to keep your heresy to yourself. You tried to sway others. Likely you were captured by the famed witch hunter Sir Balin of Karfeld. The last thing he said to you was: &quot;Mitra may forgive you yet for your lies. Talingarde will not.&quot;; If only you could get a chance at revenge!\n\n{b}Punishment:{/b} Death by burning.\n\n{b}Benefit:{/b} You receive a +1 trait bonus on all saving throws against divine spells." compset="Trait" summary="+1 trait bonus on all saving throws against divine spells." uniqueness="useronce">
+  <thing id="trWoWHeres" name="Heresy" description="You have denied the supremacy of Mitra and been condemned for it. For this to be a crime, you were not content to keep your heresy to yourself. You tried to sway others. Likely you were captured by the famed witch hunter Sir Balin of Karfeld. The last thing he said to you was: &quot;Mitra may forgive you yet for your lies. Talingarde will not.&quot; If only you could get a chance at revenge!\n\n{b}Punishment:{/b} Death by burning.\n\n{b}Benefit:{/b} You receive a +1 trait bonus on all saving throws against divine spells." compset="Trait" summary="+1 trait bonus on all saving throws against divine spells." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -349,12 +351,12 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add +1 Trait Bonus to our saving throws against divine spells
-
-#situational[hero.child[svAll],"+1 trait vs. divine spells",field[thingname].text]]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Add +1 Trait Bonus to our saving throws against divine spells
+      #situational[hero.child[svAll],"+1 trait vs. divine spells",field[thingname].text]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWHiThe" name="High Theft" description="You had a foolproof plan to steal some great treasure.\n\nAlas, the scheme had a fatal flaw and went horribly awry.\n\nTo be sent to Branderscar prison, this was no ordinary robbery attempt. You tried to steal something of great value or religious significance.\n\n{b}Punishment:{/b} Life at hard labor in the salt mines\n\n{b}Benefit:{/b} You receive a +1 trait bonus to Reflex saves." compset="Trait" summary="+1 trait bonus to Reflex saves." uniqueness="useronce">
+  <thing id="trWoWHiThe" name="High Theft" description="You had a foolproof plan to steal some great treasure. Alas, the scheme had a fatal flaw and went horribly awry. To be sent to Branderscar prison, this was no ordinary robbery attempt. You tried to steal something of great value or religious significance.\n\n{b}Punishment:{/b} Life at hard labor in the salt mines\n\n{b}Benefit:{/b} You receive a +1 trait bonus to Reflex saves." compset="Trait" summary="+1 trait bonus to Reflex saves." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -364,11 +366,12 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000">~ Add a +1 Trait bonus to our Reflex save
-   #applybonus[BonTrait, hero.child[svRef], 1]</eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Add a +1 Trait bonus to our Reflex save
+      #applybonus[BonTrait, hero.child[svRef], 1]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWHiTre" name="High Treason" description="You have willfully worked to bring down the current Monarch of Talingarde -- the beloved King Markadian V called the Brave of House Darius. To be successfully tried for High Treason you have done more than merely dislike the king, you did something tangible to undermine his rule. Alas, that you failed at your plot and are now headed to Branderscar Prison. Treason is the only crime that is still punished by the gruesome ritual of being drawn and quartered. Your stay at Branderscar will be brief.\n\n{b}Punishment:{/b} Death by drawing and quartering\n\n{b}Benefit:{/b} You receive a +1 trait bonus to Will saves." compset="Trait" summary="+1 trait bonus to Will saves." uniqueness="useronce">
+  <thing id="trWoWHiTre" name="High Treason" description="You have willfully worked to bring down the current Monarch of Talingarde- the beloved King Markadian V called the Brave of House Darius. To be successfully tried for High Treason you have done more than merely dislike the king, you did something tangible to undermine his rule. Alas, that you failed at your plot and are now headed to Branderscar Prison. Treason is the only crime that is still punished by the gruesome ritual of being drawn and quartered. Your stay at Branderscar will be brief.\n\n{b}Punishment:{/b} Death by drawing and quartering\n\n{b}Benefit:{/b} You receive a +1 trait bonus to Will saves." compset="Trait" summary="+1 trait bonus to Will saves." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -378,11 +381,12 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000">~ Add a +1 Trait bonus to our Will save
-   #applybonus[BonTrait, hero.child[svWill], 1]</eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add a +1 Trait bonus to our Will save
+      #applybonus[BonTrait, hero.child[svWill], 1]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWKidna" name="Kidnapping" description="You have abducted someone perhaps to ransom them or do unspeakable things to them. Unfortunately, you were caught and your victim was rescued (if they weren&apos;t rescued -- you would be guilty of murder instead). To be sent to Branderscar Prison, you must have abducted someone of great importance or in a particularly gruesome manner.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You receive a +1 trait bonus to both Disarm and Grapple attempts." compset="Trait" summary="+1 trait bonus to both Disarm and Grapple attempts." uniqueness="useronce">
+  <thing id="trWoWKidna" name="Kidnapping" description="You have abducted someone perhaps to ransom them or do unspeakable things to them. Unfortunately, you were caught and your victim was rescued (if they weren&apos;t rescued, you would be guilty of murder instead). To be sent to Branderscar Prison, you must have abducted someone of great importance or in a particularly gruesome manner.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You receive a +1 trait bonus to both Disarm and Grapple attempts." compset="Trait" summary="+1 trait bonus to both Disarm and Grapple attempts." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -392,12 +396,13 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000">~ Add a +1 Trait bonus to our Disarm and Grapple
-   #applybonus[BonTrait, hero.child[manDisarm], 1]
-    #applybonus[BonTrait, hero.child[manGrapple], 1]</eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add a +1 Trait bonus to our Disarm and Grapple
+      #applybonus[BonTrait, hero.child[manDisarm], 1]
+      #applybonus[BonTrait, hero.child[manGrapple], 1]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWMurde" name="Murder" description="You have killed without just cause and been condemned for it. To be sent to Branderscar Prison, this was no typical killing but a particularly savage and unforgiveable act.\n\nYou may also have killed someone with powerful friends.\n\n{b}Note:{/b} You are not allowed to have killed someone in the royal family of Talingarde. You may have tried (his would instead be High Treason -- see above) but ultimately they are too well protected.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You deal 1 additional point of damage when flanking a foe. This additional damage is a trait bonus." compset="Trait" summary="+1 trait bonus to damage when flanking a foe." uniqueness="useronce">
+  <thing id="trWoWMurde" name="Murder" description="You have killed without just cause and been condemned for it. To be sent to Branderscar Prison, this was no typical killing but a particularly savage and unforgiveable act. You may also have killed someone with powerful friends.\n\n{b}Note:{/b} You are not allowed to have killed someone in the royal family of Talingarde. You may have tried (this would instead be High Treason- see above) but ultimately they are too well protected.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You deal 1 additional point of damage when flanking a foe. This additional damage is a trait bonus." compset="Trait" summary="+1 trait bonus to damage when flanking a foe." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -408,13 +413,17 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
     <eval phase="Final" priority="20000"><![CDATA[
-~ All weapons get flanking damage note
-foreach pick in hero from BaseWep
-   #extradamage[eachpick," +1 when flanking",field[name].text]
-nexteach]]></eval>
+      ~if we're disabled, get out
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~check for flanking
+      doneif (hero.tagis[Condition.pstFlankin] = 0)
+
+      ~apply +1 trait bonus to damage
+      #applybonus[BonTrait, hero.child[Damage], field[abValue].value]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWSedit" name="Sedition" description="You have attempted to covertly stir up rebellion against your rightful sovereign. This differs from high treason in that you attempted to convince others to make war against Talingarde instead of taking direct action yourself.\n\nA subtle difference to be sure. But it is the difference between receiving the swift justice of the axe instead of the slow suffering upon the rack.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You receive a +1 trait bonus to Bluff checks and Bluff is always a class skill for you. Further if you ever take the Leadership feat, you gain a +1 trait bonus to your Leadership score." compset="Trait" summary="+1 trait bonus to Bluff checks and Bluff is always a class skill for you and +1 trait bonus to Leadership score." uniqueness="useronce">
+  <thing id="trWoWSedit" name="Sedition" description="You have attempted to covertly stir up rebellion against your rightful sovereign. This differs from high treason in that you attempted to convince others to make war against Talingarde instead of taking direct action yourself. A subtle difference to be sure. But it is the difference between receiving the swift justice of the axe instead of the slow suffering upon the rack.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You receive a +1 trait bonus to Bluff checks and Bluff is always a class skill for you. Further if you ever take the Leadership feat, you gain a +1 trait bonus to your Leadership score." compset="Trait" summary="+1 trait bonus to Bluff checks and Bluff is always a class skill for you and +1 trait bonus to Leadership score." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -425,38 +434,42 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
-~ Do we have the Leadership feat, or a feat that counts as it?
-doneif (#hasfeat[fLeader] <> 1)
+      ~ Do we have the Leadership feat, or a feat that counts as it?
+      doneif (#hasfeat[fLeader] <> 1)
 
-~ If we do add a +1 to Leadership
-#value[fLeader] += 1]]></eval>
-    <eval phase="PostLevel" priority="10000">~ add +1 trait bonus to Bluff 
-~ and Bluff is always a class skill.
-#applybonus[BonTrait,hero.childfound[skBluff],1]
-#makeclassskill[skBluff]</eval>
+      ~ If we do add a +1 to Leadership
+      #value[fLeader] += 1]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ add +1 trait bonus to Bluff 
+      ~ and Bluff is always a class skill.
+      #applybonus[BonTrait,hero.childfound[skBluff],1]
+      #makeclassskill[skBluff]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWPirac" name="Piracy" description="You have been caught in the act of piracy on the high seas. This is a rare crime these days since Markadian I called the Victorious burned the last major pirate fleet to threaten these isles. Still the crime is punished harshly.\n\nLikely you are the sole survivor of your ship.\n\n{b}Punishment:{/b} Death by hanging\n\n{b}Benefit:{/b} You may select either Bluff or Intimidate. The selected skill receives a +2 trait bonus and is always a class skill for you." compset="Trait" summary="+2 Trait bonus to bluff or Intimidate." uniqueness="useronce">
+  <thing id="trWoWPirac" name="Piracy" description="You have been caught in the act of piracy on the high seas. This is a rare crime these days since Markadian I called the Victorious burned the last major pirate fleet to threaten these isles. Still the crime is punished harshly. Likely you are the sole survivor of your ship.\n\n{b}Punishment:{/b} Death by hanging\n\n{b}Benefit:{/b} You may select either Bluff or Intimidate. The selected skill receives a +2 trait bonus and is always a class skill for you." compset="Trait" summary="+2 Trait bonus to bluff or Intimidate." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
 20/11/2012
 20th November 2012</comment>
     <fieldval field="usrCandid1" value="component.BaseSkill &amp; (thingid.skIntim | thingid.skBluff)"/>
-    <usesource source="pWotW"/>
+    <usesource source="pWotW" parent="pFireMoun" name="CB - Way of the Wicked AP"/>
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000">~ add +2 trait bonus to Knowledge (planes) and Knowledge (arcana)
- ~ and one of these skills is always a class skill.
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ add +2 trait bonus to Bluff or Intimidate
+      ~ and that skill is always a class skill for you
+        ~ If we're disabled, do nothing
+        doneif (tagis[Helper.FtDisable] <> 0)
 
-     #applybonus[BonTrait,hero.childfound[skIntim],2]
-      #applybonus[BonTrait,hero.childfound[skBluff],2]
-
-      perform field[usrChosen1].chosen.assign[Helper.ClassSkill]</eval>
+        if (field[usrChosen1].ischosen <> 0) then
+          #applybonus[BonTrait,field[usrChosen1].chosen,2]
+          perform field[usrChosen1].chosen.assign[Helper.ClassSkill]
+        endif]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWSlTak" name="Slave Taking" description="Slavery is illegal in Talingarde and a very rare crime. Still, once in a great while, slavers from the mainland will foolishly make an incursion into Talirean protected territories.\n\nWhen they are captured alive they are always made an example of.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You receive a +1 trait bonus to both Disarm and Grapple attempts." compset="Trait" summary="+1 trait bonus to both Disarm and Grapple attempts." uniqueness="useronce">
+  <thing id="trWoWSlTak" name="Slave-Taking" description="Slavery is illegal in Talingarde and a very rare crime. Still, once in a great while, slavers from the mainland will foolishly make an incursion into Talirean protected territories. When they are captured alive they are always made an example of.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You receive a +1 trait bonus to both Disarm and Grapple attempts." compset="Trait" summary="+1 trait bonus to both Disarm and Grapple attempts." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -466,9 +479,10 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000">~ Add a +1 Trait bonus to our Disarm and Grapple
-#applybonus[BonTrait, hero.child[manDisarm], 1]
-#applybonus[BonTrait, hero.child[manGrapple], 1]</eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add a +1 Trait bonus to our Disarm and Grapple
+      #applybonus[BonTrait, hero.child[manDisarm], 1]
+      #applybonus[BonTrait, hero.child[manGrapple], 1]]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
   <thing id="trWoWSlTra" name="Slave Trading" description="Slavery is legal in other parts of the world and it can be tempting to the most decadent of Talingarde&apos;s nobility to acquire a &amp;quot;souvenir&amp;quot; when traveling abroad or to purchase the object of their desire from a less reputable merchant. However you ended up trading slaves in Talingarde, you were caught red handed and now you will lose more than simply your freedom.\n\n{b}Punishment:{/b} Death by beheading\n\n{b}Benefit:{/b} You receive one bonus skill point per level that must be spent on the Appraise skill. The Appraise skill is always a class skill for you." compset="Trait" summary="one bonus skill point per level that must be spent on the Appraise skill." uniqueness="useronce">
@@ -481,13 +495,14 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Crimes" name="Crimes" abbrev="Crimes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreLevel" priority="5000">~ Lets make Appraise a class skill
-#makeclassskill[skAppraise]
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+	  ~ Lets make Appraise a class skill
+      #makeclassskill[skAppraise]
 
-~ Now lets add a skill point per level to Appraise
-field[abValue].value = #totallevelcount[]
-#resmax[resSkill] += field[abValue].value
-#skillinnate[skAppraise] += field[abValue].value</eval>
+      ~ Now lets add a skill point per level to Appraise
+      field[abValue].value = #totallevelcount[]
+      #resmax[resSkill] += field[abValue].value
+      #skillinnate[skAppraise] += field[abValue].value]]></eval>
     <exprreq message="You may only have a single Crimes trait."><![CDATA[hero.tagcount[trCategory.Crimes] <= 1]]></exprreq>
     </thing>
   <thing id="trWoWTriNe" name="Tribal Negotiator" description="Diplomacy is a class skill and you gain a +1 trait bonus to Diplomacy" compset="Trait" summary="+1 trait bonus to Diplomacy and Diplomacy is a class skill for you." uniqueness="useronce">
@@ -500,11 +515,11 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Social" name="Social" abbrev="Social"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000">~ Add a +1 trait bonus to Diplomacy
-  ~ and make Diplomacy a Class skill.
-
-    #applybonus[BonTrait,hero.childfound[skDiplo],1]
-     #makeclassskill[skDiplo]</eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add a +1 trait bonus to Diplomacy
+      ~ and make Diplomacy a Class skill.
+      #applybonus[BonTrait,hero.childfound[skDiplo],1]
+      #makeclassskill[skDiplo]]]></eval>
     </thing>
   <thing id="lWoWYutak" name="Yutak" description="A strange musical tongue." compset="Language" uniqueness="useronce">
     <comment>Data Input by Bodrin
@@ -525,10 +540,11 @@ bodrinbarlow@gmail.com
     <tag group="trCategory" tag="Campaign" name="Campaign" abbrev="Campaign"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreLevel" priority="5000">#applybonus[BonTrait,hero.childfound[skSwim],1]
-#applybonus[BonTrait,hero.childfound[skProfSail],1]
-#makeclassskill[skSwim]
-#makeclassskill[skProfSail]</eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+	  #applybonus[BonTrait,hero.childfound[skSwim],1]
+      #applybonus[BonTrait,hero.childfound[skProfSail],1]
+	  #makeclassskill[skSwim]
+	  #makeclassskill[skProfSail]]]></eval>
     </thing>
   <thing id="lWoWNorspi" name="Norspik" compset="Language" uniqueness="useronce">
     <comment>Data Input by Bodrin
@@ -556,7 +572,7 @@ bodrinbarlow@gmail.com
     <eval phase="PreLevel" priority="10000"><![CDATA[
       if (field[gIsEquip].value <> 0) then
         hero.childfound[skProfEngi].field[ModCirc].value += 2
-        endif]]></eval>
+      endif]]></eval>
     </thing>
   <thing id="trWoWVetWa" name="Veteran of the Watch" description="Perception is a class skill and you gain a +1 trait bonus to Perception checks" compset="Trait" summary="Perception is a class skill and a gain +1 trait bonus to Perception checks" uniqueness="useronce">
     <comment>Data Input by Bodrin
@@ -568,11 +584,11 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="trCategory" tag="Campaign"/>
-    <eval phase="PostLevel" priority="10000">~ Add a +1 trait bonus to Perception
-  ~ and make Perception a Class skill.
-
-    #applybonus[BonTrait,hero.childfound[skPercep],1]
-     #makeclassskill[skPercep]</eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add a +1 trait bonus to Perception
+	  ~ and make Perception a Class skill.
+      #applybonus[BonTrait,hero.childfound[skPercep],1]
+      #makeclassskill[skPercep]]]></eval>
     </thing>
   <thing id="trWoWMemCh" name="Member of the Choir" description="Perform (sing) is always a class skill and you receive a +1 trait bonus to Perform (sing)." compset="Trait" summary="Perform (sing) is always a class skill and you receive a +1 trait bonus to Perform (sing)." uniqueness="useronce">
     <comment>Data Input by Bodrin
@@ -585,10 +601,11 @@ bodrinbarlow@gmail.com
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="trCategory" tag="Campaign"/>
     <bootstrap thing="skPerfSing"></bootstrap>
-    <eval phase="PostLevel" priority="10000">~ Add a +1 trait bonus to Perform (Sing)
-~ and make Perform (Sing)a Class skill.
-#applybonus[BonTrait,hero.childfound[skPerfSing],1]
-#makeclassskill[skPerfSing]</eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add a +1 trait bonus to Perform (Sing)
+      ~ and make Perform (Sing)a Class skill.
+      #applybonus[BonTrait,hero.childfound[skPerfSing],1]
+      #makeclassskill[skPerfSing]]]></eval>
     </thing>
   <thing id="gWoWTacSpe" name="Tacitus&apos; Spellbook &quot;The Heart of All Flame&quot;" description="Tacitus&apos; Spellbook &quot;The Heart of All Flame&quot; {i}Bound in the crimson, scaled leather of some indeterminate reptilian beast, this large locked tome bears its title proudly in Common across the front cover. Inside is found not just spells but a lovingly written treatise on the beauty and purity of flame and how ice, when it grows cold enough, also burns.\n\n{/i}{b}Protection{/b}Average lock (DC 25)\n\n{b}Oppositional Schools{/b} illusion, necromancy\n\n{b}Value{/b} 1445 gp\n\n{b}SPELLS{/b} 4th - {i}fire shield, ice storm, stoneskin, wall of fire{/i} 3rd - {i}dispel magic, flaming arrow, fireball, fly{/i} 2nd {i} - bull&apos;s strength, burning gaze, flaming sphere, protection from arrows, pyrotechnics, scorching ray, web{/i} 1st - {i}burning hands, dancing lantern, expeditious retreat, mage armor, magic missile, sleep{/i} 0th - standard plus {i}spark{/i}" compset="Gear" summary="Tacitus&apos; Spellbook Way of the Wicked Book 1" stacking="merge" uniqueness="unique">
     <comment>Data Input by Bodrin
@@ -610,19 +627,19 @@ bodrinbarlow@gmail.com
     <tag group="AlgnReq" tag="Evil"/>
     <tag group="AlgnForbid" tag="ChaotEvil"/>
     <link linkage="varies" thing="cHelpAPa"/>
-    <eval phase="Final" priority="25000"><![CDATA[~ As the player pack currently only works with "CORE" data sets 
-~ I can't have the below script actually active. If the person does
-~ not have the APG then the below script fails to load and HL falls
-~ into safe mode.
+    <eval phase="Final" priority="25000"><![CDATA[
+	  ~ As the player pack currently only works with "CORE" data sets 
+      ~ I can't have the below script actually active. If the person does
+      ~ not have the APG then the below script fails to load and HL falls
+      ~ into safe mode.
 
+      ~ If we don't have the Weapon Boon get out now
+      ~doneif (hero.childlives[cAPaFiendW] <> 1) 
+      ~ if not LE get out now
+      doneif (hero.tagis[Alignment.Lawful] <> 1)
 
-~ If we don't have the Weapon Boon get out now
-~doneif (hero.childlives[cAPaFiendW] <> 1) 
-~ if not LE get out now
-doneif (hero.tagis[Alignment.Lawful] <> 1)
-
-~ append desc for LE antipaladins
-~#appenddesc[cAPaFiendW,"{b}Way of the Wicked{/b} A lawful evil anti-paladin may not use their fiendish boon to add the 'anarchic' property to a weapon. Instead, they may add the 'axiomatic' property."]]]></eval>
+      ~ append desc for LE antipaladins
+      ~#appenddesc[cAPaFiendW,"{b}Way of the Wicked{/b} A lawful evil anti-paladin may not use their fiendish boon to add the 'anarchic' property to a weapon. Instead, they may add the 'axiomatic' property."]]]></eval>
     </thing>
   <thing id="trWoWAsmWi" name="Asmodeus is with you" description="Adrastus Thorn indoctrinates you into the deeper mysteries of worshipping the Prince of Hell. \n\nWhenever you channel energy, you gain a +1 trait bonus to the save DC of your channeled energy." compset="Trait" summary="+1 trait bonus to the save DC of your channeled energy." uniqueness="useronce">
     <comment>Data Input by Bodrin
@@ -634,11 +651,15 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="trCategory" tag="Training" name="Training" abbrev="Training"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="Final" priority="26000">~ Add a +1 trait bonus to our Channel Energy DC
-   #dc[xChannel] += 1</eval>
+    <eval phase="Final" priority="26000"><![CDATA[
+	  ~ Add a +1 trait bonus to our Channel Energy DC
+      #dc[xChannel] += 1]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+	  ~This is a bonus trait.
+      #resmax[resTrait] += 1]]></eval>
     <exprreq message="You may only have a single Training trait."><![CDATA[hero.tagcount[trCategory.Training] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWDisWh" name="Discover what is real and what is illusion" description="Adrastus has taught you to see through deceptions and to never lie to yourself. \n\nGain a +2 trait bonus on saving throws against illusions." compset="Trait" summary="+2 trait bonus on saving throws against illusions." uniqueness="useronce">
+  <thing id="trWoWDisWh" name="Discover what is real and what is illusion" description="Adrastus has taught you to see through deceptions and to never lie to yourself. Gain a +2 trait bonus on saving throws against illusions." compset="Trait" summary="+2 trait bonus on saving throws against illusions." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -648,12 +669,15 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="trCategory" tag="Training" name="Training" abbrev="Training"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add +2 Trait Bonus to our saving throws against illusions
-
- #situational[hero.child[svAll],"+2 trait bonus on saving throws against illusions",field[thingname].text]]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ Add +2 Trait Bonus to our saving throws against illusions
+      #situational[hero.child[svAll],"+2 trait bonus vs. illusions",field[thingname].text]]]></eval>
+    <eval phase="First"><![CDATA[
+	  ~This is a bonus trait.
+      #resmax[resTrait] += 1]]></eval>
     <exprreq message="You may only have a single Training trait."><![CDATA[hero.tagcount[trCategory.Training] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWFNoth" name="Fear nothing save our dread lord" description="Adrastus Thorn has shown you fear and taught you to master it within yourself. \n\nGain a +2 trait bonus on saving throws against fear effects." compset="Trait" summary="+2 trait bonus on saving throws against fear effects." uniqueness="useronce">
+  <thing id="trWoWFNoth" name="Fear nothing save our dread lord" description="Adrastus Thorn has shown you fear and taught you to master it within yourself. Gain a +2 trait bonus on saving throws against fear effects." compset="Trait" summary="+2 trait bonus on saving throws against fear effects." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -663,12 +687,16 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="trCategory" tag="Training" name="Training" abbrev="Training"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add +2 trait bonus on saving throws against fear effects.
+    <eval phase="PostLevel" priority="10000"><![CDATA[
 
- #situational[hero.child[svAll],"+2 trait bonus on saving throws against fear effects.",field[thingname].text]]]></eval>
+      ~ Add +2 trait bonus on saving throws against fear effects.
+      #situational[hero.child[svAll],"+2 trait bonus vs. fear",field[thingname].text]]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+	  ~This is a bonus trait.
+      #resmax[resTrait] += 1]]></eval>
     <exprreq message="You may only have a single Training trait."><![CDATA[hero.tagcount[trCategory.Training] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWFocSt" name="Focus strengthens your will" description="Adrastus Thorn drills you on ways to avoid magic that seek to take control of your mind and divert you from your mission. \n\nGain a +2 trait bonus on saving throws against charm and compulsion effects." compset="Trait" summary="+2 trait bonus on saving throws against charm and compulsion effects." uniqueness="useronce">
+  <thing id="trWoWFocSt" name="Focus strengthens your will" description="Adrastus Thorn drills you on ways to avoid magic that seek to take control of your mind and divert you from your mission. Gain a +2 trait bonus on saving throws against charm and compulsion effects." compset="Trait" summary="+2 trait bonus on saving throws against charm and compulsion effects." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -678,11 +706,15 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="trCategory" tag="Training" name="Training" abbrev="Training"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add +2 trait bonus on saving throws against charm and compulsion effects.
- #situational[hero.child[svAll],"+2 trait bonus on saving throws against charm and compulsion effects.",field[thingname].text]]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+     ~ Add +2 trait bonus on saving throws against charm and compulsion effects.
+      #situational[hero.child[svAll],"+2 trait bonus vs. charm, compulsion",field[thingname].text]]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+	  ~This is a bonus trait.
+      #resmax[resTrait] += 1]]></eval>
     <exprreq message="You may only have a single Training trait."><![CDATA[hero.tagcount[trCategory.Training] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWLePer" name="Let us perfect your favorite spell" description="Adrastus Thorn drills you again and again in the use of one particular spell.\n\nPick one spell. This spell&apos;s effects manifest at +1 caster level." compset="Trait" summary="Choose one spell, increase it&apos;s caster level by +1" uniqueness="useronce">
+  <thing id="trWoWLePer" name="Let us perfect your favorite spell" description="Adrastus Thorn drills you again and again in the use of one particular spell. Pick one spell. This spell&apos;s effects manifest at +1 caster level." compset="Trait" summary="Choose one spell, increase it&apos;s caster level by +1" uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -695,6 +727,9 @@ bodrinbarlow@gmail.com
     <tag group="ChooseSrc1" tag="Thing"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~if we're disabled, get out
+      doneif (tagis[Helper.FtDisable] <> 0)
+
       ~if nothing's been chosen, there's nothing we can do
       doneif (field[usrChosen1].ischosen = 0)
 
@@ -704,9 +739,12 @@ bodrinbarlow@gmail.com
       foreach pick in hero from BaseSpell where searchexpr
         eachpick.field[sCL].value += 1
         nexteach]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+	  ~This is a bonus trait.
+      #resmax[resTrait] += 1]]></eval>
     <exprreq message="You may only have a single Training trait."><![CDATA[hero.tagcount[trCategory.Training] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWQuiaD" name="Quiet as death" description="The Cardinal trained in the arts of being silent and stealthy. \n\nGain a +2 trait bonus to Stealth checks." compset="Trait" summary="+2 trait bonus to Stealth checks." uniqueness="useronce">
+  <thing id="trWoWQuiaD" name="Quiet as death" description="The Cardinal trained you in the arts of being silent and stealthy. Gain a +2 trait bonus to Stealth checks." compset="Trait" summary="+2 trait bonus to Stealth checks." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -716,11 +754,15 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="trCategory" tag="Training" name="Training" abbrev="Training"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="10000">~ Add a +2 trait bonus to Stealth
-  #applybonus[BonTrait,hero.childfound[skStealth],2]</eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add a +2 trait bonus to Stealth
+      #applybonus[BonTrait,hero.childfound[skStealth],2]]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+	  ~This is a bonus trait.
+      #resmax[resTrait] += 1]]></eval>
     <exprreq message="You may only have a single Training trait."><![CDATA[hero.tagcount[trCategory.Training] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWStrik" name="Strike first, strike ruthlessly and thus be victorious" description="Cardinal Thorn has taught you never to shirk or hesitate in a combat.\n\nGain a +2 trait bonus on Initiative checks." compset="Trait" summary="+2 trait bonus on Initiative checks." uniqueness="useronce">
+  <thing id="trWoWStrik" name="Strike first, strike ruthlessly and thus be victorious" description="Cardinal Thorn has taught you never to shirk or hesitate in a combat. Gain a +2 trait bonus on Initiative checks." compset="Trait" summary="+2 trait bonus on Initiative checks." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -730,11 +772,15 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="trCategory" tag="Training" name="Training" abbrev="Training"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreLevel" priority="10000">~ Add a +2 trait bonus to Initiative
-  #applybonus[BonTrait,hero.child[Initiative],2]</eval>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+	  ~ Add a +2 trait bonus to Initiative
+      #applybonus[BonTrait,hero.child[Initiative],2]]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+	  ~This is a bonus trait.
+      #resmax[resTrait] += 1]]></eval>
     <exprreq message="You may only have a single Training trait."><![CDATA[hero.tagcount[trCategory.Training] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWWeArm" name="Wear your armor like a second skin." description="You have drilled extensively in wearing armor in combat.\n\nWhen you wear armor of any sort, reduce that suit&apos;s armor check penalty by 1 to a minimum check penalty of 0." compset="Trait" summary="reduce armor check penalty by 1 to a minimum check penalty of 0." uniqueness="useronce">
+  <thing id="trWoWWeArm" name="Wear your armor like a second skin." description="You have drilled extensively in wearing armor in combat. When you wear armor of any sort, reduce that suit&apos;s armor check penalty by 1 to a minimum check penalty of 0." compset="Trait" summary="reduce armor check penalty by 1 to a minimum check penalty of 0." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -745,12 +791,18 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
     <eval phase="PostLevel" priority="3000"><![CDATA[
+      ~If we're not active, get out
+      doneif (tagis[Helper.FtDisable] <> 0)
+
       foreach pick in hero from BaseArmor where "EquipType.Armor"
         eachpick.field[arArmorChk].value += 1
         nexteach]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+	  ~This is a bonus trait.
+      #resmax[resTrait] += 1]]></eval>
     <exprreq message="You may only have a single Training trait."><![CDATA[hero.tagcount[trCategory.Training] <= 1]]></exprreq>
     </thing>
-  <thing id="trWoWYoAng" name="You shall be my angel slayer." description="Adrastus thorn spends exhausting amounts of time teaching you about good celestials, their strengths and weaknesses.\n\nGain a +2 trait bonus on Knowledge (planes) checks about good-aligned celestials and receive a +1 trait bonus to any damage roll you make against them." compset="Trait" summary="+2 trait bonus on Knowledge (planes) checks about good-aligned celestials and receive a +1 trait bonus to any damage roll you make against them." uniqueness="useronce">
+  <thing id="trWoWYoAng" name="You shall be my angel slayer" description="Adrastus thorn spends exhausting amounts of time teaching you about good celestials, their strengths and weaknesses. Gain a +2 trait bonus on Knowledge (planes) checks about good-aligned celestials and receive a +1 trait bonus to any damage roll you make against them." compset="Trait" summary="+2 trait bonus on Knowledge (planes) checks about good-aligned celestials and receive a +1 trait bonus to any damage roll you make against them." uniqueness="useronce">
     <comment>Data Input by Bodrin
 bodrinbarlow@gmail.com
 
@@ -761,13 +813,18 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
     <bootstrap thing="skKnowPlan"></bootstrap>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ add +2 trait bonus to Knowledge (Planes)
- #applybonus[BonTrait, hero.childfound[skKnowPlan], 2]
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-~ Add +1 damage to good-aligned celestials.
-foreach pick in hero from BaseWep
-   #extradamage[eachpick," +1 trait damage to good-aligned celestials",field[name].text]
-nexteach]]></eval>
+      ~Add note for +1 to damage vs. good-aligned celestials
+      #situational[hero.childfound[Attack],"+1 Trait bonus to damage vs. good-aligned celestials",field[thingname].text]
+      
+      ~Add situational +2 to knowledge (plaines)
+      #situational[hero.child[skKnowPlan],"+2 trait bonus regarding good-aligned celestials",field[thingname].text]]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+      ~This is a bonus trait.
+      #resmax[resTrait] += 1]]></eval>
     <exprreq message="You may only have a single Training trait."><![CDATA[hero.tagcount[trCategory.Training] <= 1]]></exprreq>
     </thing>
   <thing id="gWoWVisJui" name="Drug, Vision Juice" description="{b}Type{/b} drug (ingested)\n{b}Addiction{/b} moderate, Fortitude DC 20 \n{b}Effects{/b} 1 hour;fatigue, gain powerful visions as the augury spell, but only 60% likely to give a meaningful reply\n{b}Damage{/b} 1d3 Wis damage" compset="Gear" stacking="merge">
@@ -938,8 +995,9 @@ bodrinbarlow@gmail.com
 13/04/2013
 13th April 2013</comment>
     <usesource source="pWotW"/>
-    <eval phase="PostLevel" priority="10000">~ Add a +1 trait bonus to Knowledge (nobility)
-#applybonus[BonTrait,hero.childfound[skKnowNobl],1]</eval>
+    <eval phase="PostLevel" priority="10000">
+	  ~ Add a +1 trait bonus to Knowledge (nobility)
+      #applybonus[BonTrait,hero.childfound[skKnowNobl],1]</eval>
     </thing>
   <thing id="cWoWUnHCom" name="Unholy Command" description="At 1st level, whenever a hand of tyranny makes an unarmed strike, he can decide to add an unholy command to the attack.\n\nIf the attack hits, the target must make Will save, with a DC equal to 10 + 1/2 the hand of tyranny&apos;s character level + the hand of tyranny&apos;s Wisdom modifier. If the saving throw fails, the target must obey the order, as if a {i}command{/i} spell was cast upon the target.\n\nThe hand of tyranny can use this ability a number of times per day equal to his level. Using this ability is a free action. \n\nAt 8th level, this order instead works like the spell {i}suggestion{/i}.\n\nThis ability replaces stunning fist." compset="ClSpecial" summary="Add an unholy command to unarmed attacks.">
     <comment>Data Input by Bodrin
@@ -980,9 +1038,9 @@ bodrinbarlow@gmail.com
     <fieldval field="shortname" value="Tongue of Lies"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AbilType" tag="Extra"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add +10 Competence Bonus to our Bluff skill versus Lies
-
-#situational[hero.child[skBluff],"+10 competence bonus to lie and any lie you tell cannot be detected via {i}detect lies{/i}, {i}zone of truth{/i}, or similar spells.",field[thingname].text]]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add +10 Competence Bonus to our Bluff skill versus Lies
+	  #situational[hero.child[skBluff],"+10 competence bonus to lie and any lie you tell cannot be detected via {i}detect lies{/i}, {i}zone of truth{/i}, or similar spells.",field[thingname].text]]]></eval>
     </thing>
   <thing id="arWoWHaTyr" name="Hand of Tyranny" description="Those who find themselves heeding the call of self perfection sometimes turn to Asmodeus to help the overcome their failings. Unfortunately, his dark gifts often twist the thoughts and goals of the wielder, turning them into an instrument of tyranny." compset="ClassVary" uniqueness="unique">
     <comment>Data Input by Bodrin
@@ -1054,9 +1112,9 @@ bodrinbarlow@gmail.com
     <tag group="SpInfo" tag="spCommand1"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpecType" tag="Aura"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add +4 Morale Bonus to our Intimidate skill versus Lies
-
-#situational[hero.child[skIntim],"+4 morale bonus on Intimidate checks made against living creatures within 10 feet. Beat DC by 10 or more and issue a {i}command{/i} as the spell",field[thingname].text]]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add +4 Morale Bonus to our Intimidate skill versus Lies
+	  #situational[hero.child[skIntim],"+4 morale bonus on Intimidate checks made against living creatures within 10 feet. Beat DC by 10 or more and issue a {i}command{/i} as the spell",field[thingname].text]]]></eval>
     </thing>
   <thing id="cWoWApCCom" name="Cruelty (Commanded)" description="The target must obey one order from the lord of darkness, as per the {i}command{/i} spell." compset="CustomSpec" summary="Command target as per the {i}command{/i} spell." uniqueness="unique">
     <comment>Data Input by Bodrin
@@ -1088,8 +1146,8 @@ bodrinbarlow@gmail.com
     <tag group="SpInfo" tag="spCharMon5"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="StandardDC" tag="aCHA"/>
-    <eval phase="Render" priority="10000"><![CDATA[field[abDuration].value += round(linkage[table].field[cTotalLev].value/3,0,-1)
-      
+    <eval phase="Render" priority="10000"><![CDATA[
+	  field[abDuration].value += round(linkage[table].field[cTotalLev].value/3,0,-1)      
       field[livename].text &= " (" & field[abDuration].value & " rds)"]]></eval>
     <exprreq message="Cruelty (Commanded) required."><![CDATA[#hasability[cWoWApCCom] <> 0]]></exprreq>
     <exprreq message="Antipaladin level 9 required."><![CDATA[#levelcount[Antipal] >= 9]]></exprreq>
@@ -1195,17 +1253,17 @@ bodrinbarlow@gmail.com
     <link linkage="varies" thing="cHelpClr"/>
     <exprreq message="Must worship Asmodeus"><![CDATA[#hasdeity[deiAsmodeu] <> 0]]></exprreq>
     <prereq message="Evil or Law domain required">
-      <validate><![CDATA[~ Check for Evil or Law domain
- @valid = 0
+      <validate><![CDATA[
+	    ~ Check for Evil or Law domain
+		@valid = 0
+		if (#hasability[cdLaw] <> 0) then
+          @valid = 1
+        else
 
-  if (#hasability[cdLaw] <> 0) then
-   @valid = 1
-    else
-
-  if (#hasability[cdEvil] <> 0) then
-   @valid = 1
-    endif
-   endif]]></validate>
+        if (#hasability[cdEvil] <> 0) then
+          @valid = 1
+        endif
+        endif]]></validate>
       </prereq>
     </thing>
   <thing id="cWoWDeChan" name="Demanding Channel" description="At 1st level, the unholy barrister gains the ability to channel energy like a cleric of his level. This functions just like channel negative energy, allowing the unholy barrister to deal damage to all living creatures within 30 feet. The unholy barrister cannot use this ability, however, to heal undead creatures.\n\nInstead, the unholy barrister can spend two uses of his channel negative energy class feature to heal all evil living creatures within a 30 foot burst. To receive this bonus, the creatures must each spend an immediate action, swearing loyalty to Asmodeus.\n\nIn addition to the damage healed, creatures that swear loyalty gain the Devil&apos;s Pact feat for a number of minutes equal to the cleric&apos;s level, but can only use that feat once during that time. If the creature already possesses that feat, they can use it one additional time per day, as long as they use it during the duration of the demanding channel. Regardless of when the power is used, the creature&apos;s soul is bound to Asmodeus for the entire duration and if that creature dies during that time, it cannot be brought back to life by any means aside from a {i}miracle{/i} or {i}wish{/i}. Even if it is brought back to life, it gains three permanent negative levels (just as if it had the Devil&apos;s Pact feat).\n\nThis ability otherwise copies and replaces channel energy." compset="ClSpecial" summary="Channelled negative energy heals evil creatures">
@@ -1236,12 +1294,11 @@ bodrinbarlow@gmail.com
     <tag group="SpecType" tag="Aura"/>
     <tag group="SpInfo" tag="spImbuSpe3"/>
     <tag group="User" tag="NeedDomain"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add 1 to our uses per day if we are 14th level or above
-
-  if (#levelcount[Cleric] >= 14) then
-    
-   #trkmax[cWoWSoCont] += 1
-    endif]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add 1 to our uses per day if we are 14th level or above
+	  if (#levelcount[Cleric] >= 14) then
+        #trkmax[cWoWSoCont] += 1
+      endif]]></eval>
     </thing>
   <thing id="cInqWoWLiP" name="Lingering Pain" description="At 3rd level, whenever a torture master uses his torture ability on a target, that target gains a condition that lasts for a number of minutes equal to the torture master&apos;s level. The torture master must select one of the following conditions at 3rd level and every three levels thereafter. Whenever he tortures a creature, he can select the condition he wants to apply to the target.\n\n{i}Fatigued{/i}: The target is fatigued.\n\n{i}Shaken{/i}: The target gains the shaken condition.\n\n{i}Sickened{/i}: The target gains the sickened condition.\n\nAt 9th level, he adds the following conditions to the list of those that can be selected.\n\n{i}Exhausted{/i}: The target is exhausted. The torture master must have selected the fatigued condition before selecting this condition.\n\n{i}Frightened{/i}: The target is frightened. The torture master must have selected the shaken condition before selecting this condition.\n\n{i}Nauseated{/i}: The target is nauseated. The torture master must have selected the fatigued condition before selecting this condition.\n\n{i}Staggered{/i}: The target is staggered.\n\nThis ability replaces any teamwork feat ability and all additional teamwork feats the torture master might gain." compset="ClSpecial" summary="Apply selected condition to target.">
     <arrayval field="usrArray" index="0" value="Fatigued"/>
@@ -1252,17 +1309,18 @@ bodrinbarlow@gmail.com
     <tag group="Usage" tag="Minutes"/>
     <tag group="AbilType" tag="Extra"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
-~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] <> 1)
-~ If we've been Disabled, get out now
-doneif (tagis[Helper.SpcDisable] <> 0)
-
-~ If level 9+ add new conditions
-If (field[xTotalLev].value >= 9) Then
-   field[usrArray].arraytext[3] = "Exhausted"
-   field[usrArray].arraytext[4] = "Frightened"
-   field[usrArray].arraytext[5] = "Nauseated"
-Endif]]></eval>
+	  ~ If we're not shown, just get out now
+	  doneif (tagis[Helper.ShowSpec] <> 1)
+	  
+	  ~ If we've been Disabled, get out now
+	  doneif (tagis[Helper.SpcDisable] <> 0)
+	  
+	  ~ If level 9+ add new conditions
+	  If (field[xTotalLev].value >= 9) Then
+	    field[usrArray].arraytext[3] = "Exhausted"
+		field[usrArray].arraytext[4] = "Frightened"
+	    field[usrArray].arraytext[5] = "Nauseated"
+      Endif]]></eval>
     </thing>
   <thing id="ioWoWLeVet" name="The Left Eye of Vetra-Kali" description="This is the most common form of scrying device, a crystal sphere about 6 inches in diameter. So well-known are these items that many so-called oracles or fortune-tellers use similar appearing (but completely non-magical) replicas of these items to ply their trades. A character can use a magical crystal ball to see over virtually any distance or into other planes of existence, as with the spell {i}scrying{/i} (Will DC 16 negates). A crystal ball can be used multiple times per day, but the DC to resist its power decreases by 1 for each additional use.\n\nThis crystal ball has the additional power of {i}true seeing{/i}, which can be used through the crystal ball on the target viewed.\n\n{b}CONSTRUCTION Requirements{/b} : Craft Wondrous Item, {i}scrying{/i}, {i}true seeing{/i}; {b}Cost{/b} 40,000 gp" compset="Wondrous" summary="A crystal ball with true seeing">
     <comment>Data Input by Bodrin
@@ -1302,10 +1360,11 @@ bodrinbarlow@gmail.com
     <usesource source="pWotW"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
-    <eval phase="PreLevel" priority="5000">~We add a +1 Trait bonus to Perception
- ~And we make Perception a Class Skill
-   #applybonus[BonTrait, hero.childfound[skPercep], 1]
-    #makeclassskill[skPercep]</eval>
+    <eval phase="PreLevel" priority="5000">
+	  ~We add a +1 Trait bonus to Perception
+	  ~And we make Perception a Class Skill
+      #applybonus[BonTrait, hero.childfound[skPercep], 1]
+      #makeclassskill[skPercep]</eval>
     </thing>
   <thing id="gWoWPDagro" name="Daggerroot Extract" description="{b}Type{/b}contact; {b}Save{/b} Fortitude DC 23\n{b}Onset 1 minute; Frequency{/b} 1/minute for 6 minutes\n{b}Effect{/b} 1d6 Con damage and paralyzed for 1minutes ; {b}Cure{/b} 2 consecutive saves" compset="Gear" stacking="merge">
     <comment>Data Input by Bodrin
@@ -1347,9 +1406,10 @@ bodrinbarlow@gmail.com
 18/06/2013
 18th June 2013</comment>
     <usesource source="pWotW"/>
-    <eval phase="PreLevel" priority="5000">~Make Knowledge(Local) and Knowledge(Nobility) class skills
- #makeclassskill[skKnowLoc]
-  #makeclassskill[skKnowNobl]</eval>
+    <eval phase="PreLevel" priority="5000">
+	  ~Make Knowledge(Local) and Knowledge(Nobility) class skills
+	  #makeclassskill[skKnowLoc]
+	  #makeclassskill[skKnowNobl]</eval>
     </thing>
   <thing id="fWoWDevPac" name="Devil&apos;s Pact" description="You have signed a pact with Asmodeus, pledging your soul in exchange for unholy power.{br}{br}{b}Prerequisites{/b}: Evil alignment, you must sign a pact with Asmodeus or one of his agents.{br}{br}{b}Benefit{/b}: Three times per day, you can call upon the power of the Devil&apos;s Pact to grant you a +2 profane bonus to any one d20 roll. You must declare that you are using this ability before the roll is made.{br}{br}{b}Special{/b}: If you die, you cannot be brought back to life by any means aside from a {i}wish{/i} or {i}miracle{/i} spell. Even if such a spell is employed, you return to life with three permanent negative levels." compset="Feat" summary="grant a +2 profane bonus to any one d20 roll" uniqueness="useronce">
     <comment>Data Input by Bodrin
@@ -1413,11 +1473,12 @@ bodrinbarlow@gmail.com
     <usesource source="pWotW"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="1000"><![CDATA[~ If we're in output mode, don't do anything
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+	  ~ If we're in output mode, don't do anything
       doneif (state.isoutput <> 0)
 
       ~ If we're not enabled and haven't been activated externally, get out now
-     doneif (hero.tagis[Condition.pcnSicken] = 0)
+      doneif (hero.tagis[Condition.pcnSicken] = 0)
         
       ~ reduce the sickened penalties to -1
       hero.child[Damage].field[tDamBonus].value += 1
@@ -1716,7 +1777,6 @@ bodrinbarlow@gmail.com
     <fieldval field="pDuration" value="10 min/lvl (D)"/>
     <usesource source="pWotW"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    
     <tag group="OthAdjCat" tag="Campaign"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
       ~ If we're not enabled, get out now
@@ -1866,31 +1926,26 @@ field[abValue].value += round(hero.child[aSTR].field[aModBonus].value/1,0,-1)</c
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="EquipMag"/>
-    <eval phase="PostLevel" priority="1000" index="2"><![CDATA[~ Change our Blood Drain summary to show our vicious fangs info.
- ~ But first lets get our STR Mod value
-
-if (field[gIsEquip].value <> 0) then
-field[abValue].value += round(hero.child[aSTR].field[aModBonus].value/1,0,-1)
-
- hero.childfound[xVamBlood].field[abSumm].text = "1d4 CON / 1d8+" & field[abValue].value & " damage, plus 2 Bleed Damage."
-
-hero.childfound[xVamBlood].field[livename].text = "Blood Drain 1d4 CON and 1d8+" & field[abValue].value & " damage, plus 2 Bleed Damage."
- endif]]></eval>
-    <eval phase="Render" priority="10000" index="3"><![CDATA[if (field[gIsEquip].value <> 0) then
-
-#appenddesc[xVamBlood,"{b}Vicious Fangs{/b}: These small wicked barbs are meant to be worn over the fangs of a vampire. Made of enchanted jagged iron with a small hollow channel that allows for the blood to flow freely, they greatly increase the damage done when the vampire drains blood from their victims. Wickedly devised, they do this without hindering feeding. These fangs enhance a vampire's blood drain with 1d8 + Strength modifier damage plus 2 bleed damage in addition to the normal constitution loss. These fangs can be worn or removed as a move action. While worn, the vampire cannot retract their fangs and appears as the blood-feasting undead they are to observers."]
-
- endif]]></eval>
-    <eval phase="Render" priority="10000"><![CDATA[~ Change our Blood Drain summary to show our vicious fangs info.
- ~ But first lets get our STR Mod value as long as we are equipped
-
- if (field[gIsEquip].value <> 0) then
-field[abValue].value += round(hero.child[aSTR].field[aModBonus].value/1,0,-1)
-
- hero.childfound[xVamBlood].field[abSumm].text = "1d4 CON / 1d8+" & field[abValue].value & " damage, plus 2 Bleed Damage."
-
-hero.childfound[xVamBlood].field[livename].text = "Blood Drain 1d4 CON and 1d8+" & field[abValue].value & " damage, plus 2 Bleed Damage."
- endif]]></eval>
+    <eval phase="PostLevel" priority="1000" index="2"><![CDATA[
+	  ~ Change our Blood Drain summary to show our vicious fangs info.
+	  ~ But first lets get our STR Mod value
+	  if (field[gIsEquip].value <> 0) then
+	    field[abValue].value += round(hero.child[aSTR].field[aModBonus].value/1,0,-1)
+		hero.childfound[xVamBlood].field[abSumm].text = "1d4 CON / 1d8+" & field[abValue].value & " damage, plus 2 Bleed Damage."
+		hero.childfound[xVamBlood].field[livename].text = "Blood Drain 1d4 CON and 1d8+" & field[abValue].value & " damage, plus 2 Bleed Damage."
+      endif]]></eval>
+    <eval phase="Render" priority="10000" index="3"><![CDATA[
+	  if (field[gIsEquip].value <> 0) then
+	    #appenddesc[xVamBlood,"{b}Vicious Fangs{/b}: These small wicked barbs are meant to be worn over the fangs of a vampire. Made of enchanted jagged iron with a small hollow channel that allows for the blood to flow freely, they greatly increase the damage done when the vampire drains blood from their victims. Wickedly devised, they do this without hindering feeding. These fangs enhance a vampire's blood drain with 1d8 + Strength modifier damage plus 2 bleed damage in addition to the normal constitution loss. These fangs can be worn or removed as a move action. While worn, the vampire cannot retract their fangs and appears as the blood-feasting undead they are to observers."]
+      endif]]></eval>
+    <eval phase="Render" priority="10000"><![CDATA[
+	  ~ Change our Blood Drain summary to show our vicious fangs info.
+	  ~ But first lets get our STR Mod value as long as we are equipped
+	  if (field[gIsEquip].value <> 0) then
+	    field[abValue].value += round(hero.child[aSTR].field[aModBonus].value/1,0,-1)
+		hero.childfound[xVamBlood].field[abSumm].text = "1d4 CON / 1d8+" & field[abValue].value & " damage, plus 2 Bleed Damage."
+		hero.childfound[xVamBlood].field[livename].text = "Blood Drain 1d4 CON and 1d8+" & field[abValue].value & " damage, plus 2 Bleed Damage."
+	  endif]]></eval>
     </thing>
   <thing id="fWoWBitten" name="The Bitten" description="You have been bitten by a vampire and infected with the curse of undeath. As you sicken, your senses heighten and you become profoundly aware that every day, you are changing into something both more and less than mortal. You have only begun your transformation into the living dead.{br}{br}{b}Prerequisites{/b}: You must be bitten by a vampire.{br}{br}{b}Benefits:{/b} You gain darkvision 30 ft. and the alertness feat, however your Constitution score is lowered by two permanently." compset="Feat" summary="You have been bitten by a vampire and infected with the curse of undeath." uniqueness="useronce">
     <comment>Data Input by Bodrin
@@ -2180,34 +2235,35 @@ bodrinbarlow@gmail.com
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Undead"/>
     <prereq message="A vampire (the Risen or later) or a lich required.">
-      <validate><![CDATA[~ Check whether we are a vampire or a Lich
-@valid = 0
-if (#hasfeat[fWoWTrVamp] <> 0) then
- @valid = 1
-   else
-   if (#hasfeat[fWoWRisen] <> 0) then
-    @valid = 1
-     else
-     if (#hasfeat[fWoWInitia] <>0) then
-      @valid = 1
-        else
-        if (hero.tagis[Template.tmVampire] <> 0) then
-         @valid = 1
-           else
-           if (#hasfeat[fWoWLich] <> 0) then
-            @valid = 1
+      <validate><![CDATA[
+	    ~ Check whether we are a vampire or a Lich
+		@valid = 0
+		if (#hasfeat[fWoWTrVamp] <> 0) then
+		  @valid = 1
+		else
+		  if (#hasfeat[fWoWRisen] <> 0) then
+			@valid = 1
+		  else
+		    if (#hasfeat[fWoWInitia] <>0) then
+			  @valid = 1
+            else
+			  if (hero.tagis[Template.tmVampire] <> 0) then
+				@valid = 1
+            else
+			  if (#hasfeat[fWoWLich] <> 0) then
+			    @valid = 1
               else
-              if (hero.tagis[Template.tmLich] <> 0) then
-               @valid = 1
-                 else
-              if (hero.tagis[Template.tmForsLich] <> 0) then
-               @valid = 1
-endif
- endif
-  endif
-   endif
-    endif
-     endif
+                if (hero.tagis[Template.tmLich] <> 0) then
+                  @valid = 1
+                else
+				  if (hero.tagis[Template.tmForsLich] <> 0) then
+                  @valid = 1
+				  endif
+				endif
+			  endif
+			endif
+		  endif
+		endif
       endif]]></validate>
       </prereq>
     </thing>
@@ -2272,11 +2328,11 @@ Render 10,000
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Undead"/>
     <eval phase="Render" priority="10000" index="2"><![CDATA[
-    ~ Change our Blood Drain summary to the Red feast benefit.
-    hero.childfound[xVamBlood].field[abSumm].text = "Suck Blood for 1d6 Con dam and gain 10 Hp when pin foe"]]></eval>
+      ~ Change our Blood Drain summary to the Red feast benefit.
+      hero.childfound[xVamBlood].field[abSumm].text = "Suck Blood for 1d6 Con dam and gain 10 Hp when pin foe"]]></eval>
     <eval phase="First" priority="1000"><![CDATA[
-~ change the Vampire Blood Drain text to the Red feast Feat benefit
-perform state.thing[xVamBlood].amendthing[description, replace(state.thing[xVamBlood].field[descript].text,"A vampire can suck blood from a grappled opponent; if the vampire establishes or maintains a pin, it drains blood, dealing 1d4 points of Constitution damage. The vampire heals 5 hit points or gains 5 temporary hit points for 1 hour (up to a maximum number of temporary hit points equal to its full normal hit points) each round it drains blood.","A vampire can suck blood from a grappled opponent; if the vampire establishes or maintains a pin, it drains blood, dealing 1d6 Constitution damage The vampire heals 10 hit points or gains 10 temporary hit points for 1 hour (up to a maximum number of temporary hit points equal to its full normal hit points) each round it drains blood.",0)]]]></eval>
+	  ~ change the Vampire Blood Drain text to the Red feast Feat benefit
+	  perform state.thing[xVamBlood].amendthing[description, replace(state.thing[xVamBlood].field[descript].text,"A vampire can suck blood from a grappled opponent; if the vampire establishes or maintains a pin, it drains blood, dealing 1d4 points of Constitution damage. The vampire heals 5 hit points or gains 5 temporary hit points for 1 hour (up to a maximum number of temporary hit points equal to its full normal hit points) each round it drains blood.","A vampire can suck blood from a grappled opponent; if the vampire establishes or maintains a pin, it drains blood, dealing 1d6 Constitution damage The vampire heals 10 hit points or gains 10 temporary hit points for 1 hour (up to a maximum number of temporary hit points equal to its full normal hit points) each round it drains blood.",0)]]]></eval>
     <exprreq message="True Vampirism required."><![CDATA[#hasfeat[fWoWTrVamp] <> 0]]></exprreq>
     </thing>
   <thing id="fWoWSunRes" name="Sunlight Resistance" description="The sun, though still your nemesis, is not as instantly destructive to you as it is to other vampires. You still feel its sting, but you may actually function briefly in the light of day.\n\n{b}Prerequisites{/b}: A vampire (the Risen or later)\n\n{b}Normal:{/b} Exposing any vampire to direct sunlight staggers it on the first round of exposure and destroys it utterly on the second consecutive round of exposure if it does not escape.\n\n{b}Benefits:{/b} For a number of rounds equal to your Charisma modifier you are only staggered in direct sunlight.\n\nAfter that period of grace is over, you remain staggered and on the next round take one third of your hit points in damage. No damage reduction can reduce this. The next you are utterly destroyed.\n\nIf you ever make it back to cover from the sun for one full round, your &quot;count&quot; of rounds of resistance resets." compset="Feat" summary="Improved sunlight resistance" uniqueness="useronce">
@@ -2319,15 +2375,16 @@ bodrinbarlow@gmail.com
 
 ~ Add +2 to our Fear Aura DC
  #dc[xLichFear] += 2</eval>
-    <eval phase="Level" priority="5000"><![CDATA[~ Add +2 bonus to Diplomacy checks when dealing with the undead.
-
- #situational[hero.child[skDiplo],"+2 bonus to Diplomacy checks when dealing with the undead.",field[thingname].text]]]></eval>
+    <eval phase="Level" priority="5000"><![CDATA[
+	  ~ Add +2 bonus to Diplomacy checks when dealing with the undead.
+	  #situational[hero.child[skDiplo],"+2 bonus to Diplomacy checks when dealing with the undead.",field[thingname].text]]]></eval>
     <prereq message="15th level required">
-      <validate><![CDATA[~ Check whether you're at least 15th level
-@valid = 0
-if (#totallevelcount[] >= 15) then
-  @valid = 1
-  endif]]></validate>
+      <validate><![CDATA[
+	    ~ Check whether you're at least 15th level
+		@valid = 0
+	    if (#totallevelcount[] >= 15) then
+		@valid = 1
+		endif]]></validate>
       </prereq>
     <prereq message="Must be a Lich">
       <validate><![CDATA[~Check if we are a Lich
@@ -2389,17 +2446,19 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Undead"/>
-    <eval phase="First" index="2">~ Add 6 to our Channel Resistance
- #value[xChanRes] += 6
+    <eval phase="First" index="2">
+	  ~ Add 6 to our Channel Resistance
+	  #value[xChanRes] += 6
 
-~ Add +2 to our Dominate DC
- #dc[xVamDom] += 2</eval>
-    <eval phase="Level" priority="5000"><![CDATA[~ Add +2 bonus to Diplomacy checks when dealing with the undead.
-
- #situational[hero.child[skDiplo],"+2 bonus to Diplomacy checks when dealing with the undead.",field[thingname].text]]]></eval>
+	  ~ Add +2 to our Dominate DC
+	  #dc[xVamDom] += 2</eval>
+    <eval phase="Level" priority="5000"><![CDATA[
+	  ~ Add +2 bonus to Diplomacy checks when dealing with the undead.
+	  #situational[hero.child[skDiplo],"+2 bonus to Diplomacy checks when dealing with the undead.",field[thingname].text]]]></eval>
     <exprreq message="True Vampirism required"><![CDATA[#hasfeat[fWoWTrVamp] <> 0]]></exprreq>
     <prereq message="15th level required">
-      <validate><![CDATA[~ Check whether you're at least 15th level
+      <validate><![CDATA[
+	  ~ Check whether you're at least 15th level
 @valid = 0
 if (#totallevelcount[] >= 15) then
   @valid = 1
@@ -2426,29 +2485,26 @@ If you use your touch attack to heal any undead (includng yourself) the undead h
     <tag group="StandardDC" tag="aCHA"/>
     <tag group="SpecType" tag="Attack"/>
     <tag group="fCategory" tag="Undead"/>
-    <eval phase="Render" priority="10000" index="2"><![CDATA[~ Change our Touch attack summary to the withering touch benefit.
-
- hero.childfound[xLichTouch].field[abSumm].text = "2d8+" & field[abValue].value & " damage, plus Fort save or be paralyzed."
-
-hero.childfound[xLichTouch].field[livename].text = "Negative Energy Touch Attack 2d8+" & field[abValue].value
-
-field[abValue].value += round(herofield[tHitDice].value/1,0,-1)
-
-perform state.thing[xLichTouch].amendthing[description,"{b} Withering Touch {/b}: Your touch attack deals 2d8 points of negative energy damage +1 point of damage per Hit Dice of the lich. If you use your touch attack to heal any undead (includng yourself) the undead heals at this improved rate."]]]></eval>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Ensure our Withering Touch title contains our Damage and DC info
-
-field[abValue].value += round(herofield[tHitDice].value/1,0,-1)
+    <eval phase="Render" priority="10000" index="2"><![CDATA[
+	  ~ Change our Touch attack summary to the withering touch benefit.
+	  hero.childfound[xLichTouch].field[abSumm].text = "2d8+" & field[abValue].value & " damage, plus Fort save or be paralyzed."
+	  hero.childfound[xLichTouch].field[livename].text = "Negative Energy Touch Attack 2d8+" & field[abValue].value
+	  
+	  field[abValue].value += round(herofield[tHitDice].value/1,0,-1)
+	  perform state.thing[xLichTouch].amendthing[description,"{b} Withering Touch {/b}: Your touch attack deals 2d8 points of negative energy damage +1 point of damage per Hit Dice of the lich. If you use your touch attack to heal any undead (includng yourself) the undead heals at this improved rate."]]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Ensure our Withering Touch title contains our Damage and DC info
+      field[abValue].value += round(herofield[tHitDice].value/1,0,-1)
       field[livename].text = field[name].text & " 2d8+" & field[abValue].value
       field[abSumm].text = "2d8+" & field[abValue].value & " damage, plus Fort save or be paralyzed."]]></eval>
-    <eval phase="PostLevel" priority="5000" index="3">~lets get our total hit dice divided by 2 because we want to
- ~add half again
-
- Var Bonus as number
-
- Bonus = round(herofield[tHitDice].value/2,0,-1)
-
- ~Now lets add it to our Negative energy Touch attack
-  #value[xLichTouch] += Bonus</eval>
+    <eval phase="PostLevel" priority="5000" index="3">
+	  ~lets get our total hit dice divided by 2 because we want to
+      ~add half again
+	  Var Bonus as number
+	  Bonus = round(herofield[tHitDice].value/2,0,-1)
+	  
+	  ~Now lets add it to our Negative energy Touch attack
+	  #value[xLichTouch] += Bonus</eval>
     <prereq message="Must be a Lich">
       <validate><![CDATA[~Check if we are a Lich
 
@@ -2512,8 +2568,9 @@ bodrinbarlow@gmail.com
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
     <tag group="trCategory" tag="Religion"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add +1 trait bonus to damage celestials and followers of Mitra
-  #situational[hero.child[Damage],"trait bonus +1 damage to celestials and followers of Mitra.",field[thingname].text]]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ Add +1 trait bonus to damage celestials and followers of Mitra
+	  #situational[hero.child[Damage],"trait bonus +1 damage to celestials and followers of Mitra.",field[thingname].text]]]></eval>
     <exprreq message="You may only have a single Religion trait."><![CDATA[hero.tagcount[trCategory.Religion] <= 1]]></exprreq>
     </thing>
   <thing id="fWoWExtCru" name="Extra Cruelty" description="You gain an additional cruelty.\n\n{b}Prerequisites{/b}: Cruelty class feature.\n\n{b}Benefit{/b}: Select one additional cruelty for which you qualify.\n\n{b}Special{/b}: You can gain this feat multiple times. Its effects do not stack. Each time you take this feat, select a new cruelty." compset="Feat" summary="Gain an Extra Cruelty" uniqueness="useronce">
@@ -2526,7 +2583,8 @@ bodrinbarlow@gmail.com
     <usesource source="pWotW"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="10000"><![CDATA[~ If we're disabled, do nothing
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+	  ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
       
       hero.childfound[cHelpAPa].field[cGiveSpec].value += 1]]></eval>
@@ -3012,7 +3070,8 @@ If we are good and wielding the weapon we get 2 negative levels. Look at the Unh
       <assignval field="trkMax" value="1"/>
       <assignval field="sCL" value="13"/>
       </bootstrap>
-    <eval phase="PreLevel" priority="5000"><![CDATA[~ Assign negative levels based on alignment
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+	  ~ Assign negative levels based on alignment
       doneif (field[gIsEquip].value + field[wIs2nd].value = 0)
 
       if (hero.tagis[Alignment.Good] <> 0) then
@@ -3058,13 +3117,15 @@ bodrinbarlow@gmail.com
       <assignval field="trkMax" value="1"/>
       <assignval field="sCL" value="7"/>
       </bootstrap>
-    <eval phase="Final" priority="10000" index="2"><![CDATA[~ Assign the +1d6 Fire damage if we are equipped
+    <eval phase="Final" priority="10000" index="2"><![CDATA[
+	  ~ Assign the +1d6 Fire damage if we are equipped
       doneif (field[gIsEquip].value = 0)
-
-foreach pick in hero from BaseWep where "IsWeapon.wClaw"
-   #extradamage[eachpick,"+1d6 Fire",field[livename].text]
-   nexteach]]></eval>
-    <eval phase="PreLevel" priority="5000"><![CDATA[~ Assign negative levels based on alignment
+	  
+	  foreach pick in hero from BaseWep where "IsWeapon.wClaw"
+	  #extradamage[eachpick,"+1d6 Fire",field[livename].text]
+	  nexteach]]></eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+	  ~ Assign negative levels based on alignment
       doneif (field[gIsEquip].value = 0)
 
       if (hero.tagis[Alignment.Good] <> 0) then
@@ -3110,12 +3171,14 @@ bodrinbarlow@gmail.com
       <assignval field="livename" value="Summon 1 erinyes, 1d3 bearded devil, or 1d4+1 hell hounds"/>
       <assignval field="sCL" value="12"/>
       </bootstrap>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ We don't get our bonus if we aren't wearing it
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ We don't get our bonus if we aren't wearing it
       doneif (field[gIsEquip].value = 0)
 
-~ Add +4 profane bonus on Will saves made against compulsion effects.
-  #situational[hero.child[svWill],"+4 profane bonus on Will saves made against compulsion effects.",field[thingname].text]]]></eval>
-    <eval phase="PreLevel" priority="5000" index="2"><![CDATA[~ Assign negative levels based on alignment
+	  ~ Add +4 profane bonus on Will saves made against compulsion effects.
+	  #situational[hero.child[svWill],"+4 profane bonus on Will saves made against compulsion effects.",field[thingname].text]]]></eval>
+    <eval phase="PreLevel" priority="5000" index="2"><![CDATA[
+	  ~ Assign negative levels based on alignment
       doneif (field[gIsEquip].value = 0)
 
       if (hero.tagis[Alignment.Good] <> 0) then
@@ -3154,11 +3217,12 @@ Tim Shadow Sept 7, 2014
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="iSchool" tag="Abjur"/>
     <tag group="Helper" tag="CursedItem"/>
-    <eval phase="PreLevel" priority="5000"><![CDATA[~ if not equipped get out now!
-doneif (field[gIsEquip].value <> 1)
-
-~ +1 Deflection bonus
-#applybonus[tACDeflect,hero.child[ArmorClass],field[abValue].value]]]></eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+	  ~ if not equipped get out now!
+	  doneif (field[gIsEquip].value <> 1)
+	  
+	  ~ +1 Deflection bonus
+	  #applybonus[tACDeflect,hero.child[ArmorClass],field[abValue].value]]]></eval>
     </thing>
   <thing id="iWoWShHell" name="Shield of Hell" description="This {i}+2 fire resistance heavy steel shield{/i} is made from crude iron, but the front of the shield is sculpted to look like the face of a sneering devil. The wielder of this shield can see perfectly well in darkness of any kind, even magical darkness, out to a range of 30 feet.\n\nOnce per day, the wielder can cause the shield to belch forth a cloud of black smoke that spreads out in a 50-foot emanation, centered on the wielder. The smoke creates an illusion of hell that overlays the landscape within the area.\n\nThose inside the area (other than the wielder, devils, and other lawful evil creatures) must make a DC 14 Will save or be shaken as long as they remain in the area, as well as take an additional - 2 penalty on saves against fear effects. This illusion does not move with the wielder once created and lasts for 10 minutes.\n\n{b}CONSTRUCTION Requirements{/b} Craft Magic Arms and Armor, {i}darkvision, resist energy, visions of hell{/i}; {b}Cost{/b} 23,170 gp" compset="MagicArmor" summary="Create a 50-foot emanation Illusion of Hell, centered on the wielder.">
     <comment>Data Input by Bodrin
@@ -3208,7 +3272,6 @@ bodrinbarlow@gmail.com
     <usesource source="pWotW"/>
     <tag group="Helper" tag="AdjInfo"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    
     <tag group="OthAdjCat" tag="Campaign"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[      
       ~ If we're not enabled, get out now
@@ -3229,7 +3292,6 @@ bodrinbarlow@gmail.com
     <usesource source="pWotW"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="AdjInfo"/>
-    
     <tag group="OthAdjCat" tag="Campaign"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
     ~ If we're not enabled, get out now
@@ -3240,5 +3302,19 @@ bodrinbarlow@gmail.com
 
     ~ Add a +1 morale bonus to saving throws.
     #situational[hero.child[svAll],"+1 morale bonus on saving throws against compulsion effects.",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="trWoWDecep" name="Deception is a tool. Master it." description="Adrastus Thorn teaches you the subtle arts of deception and how to sense when they are being used against you. You gain a +1 trait bonus to Bluff and Sense Motive." compset="Trait" summary="+1 trait bonus to Bluff and Sense Motive" uniqueness="useronce">
+    <usesource source="pWotW"/>
+    <tag group="trCategory" tag="Training"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+	  ~ add +1 trait bonus to Bluff and Sense Motive
+      #applybonus[BonTrait,hero.childfound[skBluff],1]
+      #applybonus[BonTrait,hero.childfound[skSenseMot],1]]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+	  ~This is a bonus trait.
+      #resmax[resTrait] += 1]]></eval>
+    <exprreq message="You may only have a single Training trait."><![CDATA[hero.tagcount[trCategory.Training] <= 1]]></exprreq>
     </thing>
   </document>

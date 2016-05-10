@@ -247,7 +247,7 @@
       nexteach
 
         ~ Add the PrC levels and half of the other levels to the level of the current class to get our total IL
-      field[cIL].value = miPrc + round( otherlev/2,0,-1) + linkage[powClass].field[cTotalLev].value
+      field[cIL].value += miPrc + round( otherlev/2,0,-1) + linkage[powClass].field[cTotalLev].value
 
       ~ Set the IL onto the associated configurator to save time for later checks
       linkage[powCfg].field[cfgLevel].value += field[cIL].value  
@@ -397,6 +397,15 @@
         perform linkage[powDiscSk5].pushtags[Discipline.?]
         perform linkage[powDiscSk5].pulltags[ClassSkill.?]
       endif
+
+      ~ If no skill added tags get out now!
+      doneif (tagis[SkillAdded.?] = 0) 
+           
+      ~ If we have SkillAdd.? tags then we have to now loop through
+      ~ all the skills applying our Discipline tags.
+      foreach pick in hero from BaseSkill where tagids[SkillAdded.?,"|"]
+        perform eachpick.pushtags[Discipline.?]
+      nexteach
       ]]>
       </eval>
     
