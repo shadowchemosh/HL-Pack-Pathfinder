@@ -132,38 +132,23 @@ Email: mail@theirongolem.com</info_author>
       ~ If we're disabled, do nothing & 
       doneif (tagis[Helper.FtDisable] <> 0)
 
-      var searchexpr as string
-      
-      ~ Default to Katana only
-      searchexpr = "IsWeapon.wKatana"
-      
-      ~ We have Wakizashi exotic profic then include Wakizashi
-      if (hero.tagis[WepProf.wWakizashi] = 1) then
-        searchexpr &= "|IsWeapon.wWakizashi"
-      endif
+      ~ Find all katana/Wakizashi weapons on the hero
+      foreach pick in hero from BaseWep where "IsWeapon.wKatana|IsWeapon.wWakizashi"
 
-      ~ Find all katanas/Wakizashi on the hero
-      foreach pick in hero from BaseWep where searchexpr
-      
         ~ Katana
         if (eachpick.tagis[IsWeapon.wKatana] = 1) then
-          ~ Do we have exotic weapon prof?
-          if (hero.tagis[WepProf.wKatana] = 1) then
+          ~ Do we have exotic weapon prof? or wielding it in 2 hands
+          if (eachpick.tagis[Helper.Proficient] = 1) then
             perform eachpick.assign[Helper.Finesse]
-            perform eachpick.assign[Helper.DamageUp]          
-
-          ~..No exotic weapon prof
-          else
-            ~ Check to see if we have it in two hands?
-            if (eachpick.field[gIsEquip].value + eachpick.field[wIs2nd].value = 2) then
-              perform eachpick.assign[Helper.Finesse]
-              perform eachpick.assign[Helper.DamageUp]
-            endif
+            perform eachpick.tagreplace[wMain.1d8,wMain.1d10]
           endif
   
-        ~ Wakizashi      
+        ~ Wakizashi
         elseif (eachpick.tagis[IsWeapon.wWakizashi] = 1) then
-          perform eachpick.assign[Helper.DamageUp]        
+          ~ Are we proficient with the weapon?
+          if (eachpick.tagis[Helper.Proficient] = 1) then
+            perform eachpick.tagreplace[wMain.1d6,wMain.1d8]
+          endif
         endif
         
       nexteach]]></eval>
