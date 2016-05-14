@@ -16255,11 +16255,20 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
     <arrayval field="cvBonFtMod" index="18" value="-1"/>
     <arrayval field="cvBonFtMod" index="19" value="-1"/>
     <usesource source="pPsiUn"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="fDisable" tag="fArmMedium"/>
     <tag group="fDisable" tag="fArmShield"/>
     <tag group="ClVaryName" tag="AppParen"/>
     <tag group="AbReplace" tag="cSknPsyStr"/>
+    <tag group="fDisable" tag="fArmMedium"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPUCunning">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPUCovTrai">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cSneakAtt">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
     <link linkage="varies" thing="cHelpSkn"/>
     </thing>
   <thing id="arPUFerlHt" name="Feral Heart" description="{i}{b}Not fully implemented{/i}{/b}\nMind over matter is usually viewed to be the domain of the psion, the disciplined mind ruling over the body. Yet powerful feral instincts are also part of the mind, and when these instincts are born inside one with psionic potential, a feral heart is born. Their mind reforms their\nbodies, often into bestial forms, giving rise to many misconceptions about them being werewolves." compset="ClassVary" uniqueness="unique">
@@ -16490,5 +16499,52 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
       field[abValue].value += field[xCount].value
       field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
       field[abSumm].text = "You can enhance your Mind Armament with a total enhancement bonus of +" & field[abValue].value & "."]]></eval>
+    </thing>
+  <thing id="cPUCovTrai" name="Covert Training" description="A cutthroat gains 6 skill points + a number of skill points equal to his Intelligence modifier at each level, instead of the normal 4 skill points + Intelligence modifier at each level. This ability replaces the medium armor proficiency and shield proficiency normally gained by soulknives." compset="ClSpecial">
+    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      
+      ~increase hero's skill points earned from 4 to 6 per level
+      hero.child[Totals].field[tSkBonus].value += 2]]></eval>
+    </thing>
+  <thing id="cPUCunning" name="Cunning" description="A cutthroat of 2nd level gains a +1 competence bonus on Bluff and Stealth skill checks made while maintaining psionic focus.  Furthermore, Bluff is a class skill for the cutthroat. At 6th level and every four soulknife levels thereafter, this bonus increases by 1 (to\na maximum of +5 at 18th level).\n  The cutthroat can expend his psionic focus to double this bonus for a single Bluff or Stealth skill check.\n  This ability replaces the bonus feat gained at first level." compset="ClSpecial">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="abAction" tag="PUManFocus"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ make Bluff class skill
+      #makeclassskill[skBluff]
+
+      ~ check if Psi-focused
+      var v_focus as number
+      call PUPsiFocus
+      ~ If not psionically focused get out now!
+      doneif (v_focus = 0)
+
+      ~ gain comp bonus on Bluff and Stealth when Psi-focused
+      if (#levelcount[Soulknife] >= 18) then
+        field[abValue].value = 5
+      elseif (#levelcount[Soulknife] >= 14) then
+        field[abValue].value = 4
+      elseif (#levelcount[Soulknife] >= 10) then
+        field[abValue].value = 3
+      elseif (#levelcount[Soulknife] >= 6) then
+        field[abValue].value = 2
+      endif
+
+      #applybonus[BonComp,hero.childfound[skBluff],field[abValue].value]
+      #applybonus[BonComp,hero.childfound[skStealth],field[abValue].value]]]></eval>
     </thing>
   </document>
