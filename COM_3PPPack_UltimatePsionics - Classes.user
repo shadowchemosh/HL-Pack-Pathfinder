@@ -7408,23 +7408,26 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="User" tag="Activation"/>
-    <eval phase="UserPreAt" priority="1000"><![CDATA[if (field[abilActive].value <> 0) then
-   ~Activate Concealment condition
-   perform hero.assign[Condition.pstConcTot]
-endif]]></eval>
-    <pickreq thing="cPUTerConN"/>
-    <prereq message="Nightmare Form terror required">
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If not activated get out now!
+      doneif (field[abilActive].value = 0)
+      
+      ~Activate Concealment condition
+      perform hero.assign[Condition.pstConcTot]
+      ]]></eval>
+    <prereq message="Nightmare Form terror required.">
       <validate><![CDATA[validif (#hasability[cPUTerNFor] <> 0)]]></validate>
       </prereq>
+    <prereq message="Conceale Nightmare Form terror required.">
+      <validate><![CDATA[validif (#hasability[cPUTerConN] <> 0)]]></validate>
+      </prereq>
     <prereq message="Dread level 14 or higher required for this Terror">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[        
+        var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
-        validif (levels >= 8)]]></validate>
+        validif (levels >= 14)]]></validate>
       </prereq>
     </thing>
   <thing id="cPUTerCons" name="Consuming Nightmare" description="The dread’s next attack infects the target with nightmare so overwhelming it threatens to strike the creature dead. The target must make a Will save (DC 10 + 1/2 the dread’s class level + the dread’s Charisma modifier) or die. If the target succeeds, it becomes immune to this terror for 24 hours. This is a mind-affecting fear death effect. The dread must be at least 16th level to select this option." compset="CustomSpec" summary="Kill target if they fail a WillSave." uniqueness="unique">
@@ -14225,15 +14228,15 @@ field[listname].text = "Enhanced Mind Bolt +" & field[xIndex].value]]></eval>
     <tag group="SpecSource" tag="arPUSlbolt"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="NoPathSoc"/>
-    <pickreq thing="cPUClRngEx"/>
+    <prereq message="Close-Range Expert required.">
+      <validate><![CDATA[validif (#hasability[cPUClRngEx] <> 0)]]></validate>
+      </prereq>
     <prereq message="Soulbolt level 12+ required.">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[        
+        var classcheck as string
         var levels as number
-
         classcheck = "Soulknife"
-
         call PUPreReqs
-
         validif (levels >= 12)]]></validate>
       </prereq>
     </thing>
@@ -14284,15 +14287,15 @@ field[listname].text = "Enhanced Mind Bolt +" & field[xIndex].value]]></eval>
     <tag group="abSave" tag="RefHalf"/>
     <tag group="StandardDC" tag="aWIS"/>
     <tag group="SpecType" tag="Attack"/>
-    <pickreq thing="cPUChgShot"/>
+    <prereq message="Charged shot required.">
+      <validate><![CDATA[validif (#hasability[cPUChgShot] <> 0)]]></validate>
+      </prereq>
     <prereq message="Soulbolt level 10+ required.">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[        
+        var classcheck as string
         var levels as number
-
         classcheck = "Soulknife"
-
         call PUPreReqs
-
         validif (levels >= 10)]]></validate>
       </prereq>
     </thing>
