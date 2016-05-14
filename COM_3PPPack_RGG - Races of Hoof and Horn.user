@@ -25,14 +25,14 @@ Formshift:
     <fieldval field="usrCandid2" value="component.BaseSkill &amp; (Helper.SkCatPerf)"/>
     <tag group="ChooseSrc1" tag="Hero"/>
     <tag group="ChooseSrc2" tag="Hero"/>
-    <eval phase="UserPreAt" priority="5000"><![CDATA[
+    <eval phase="PreAttr" priority="5000"><![CDATA[
       ~if we've been replaced, get out now
       doneif (tagis[Helper.SpcReplace] <> 0)
 
       if (field[usrChosen1].ischosen <> 0) then
         field[usrChosen1].chosen.field[Bonus].value += 2
         endif]]></eval>
-    <eval phase="UserPreAt" priority="5000" index="2"><![CDATA[
+    <eval phase="PreAttr" priority="5000" index="2"><![CDATA[
       ~if we've been replaced, get out now
       doneif (tagis[Helper.SpcReplace] <> 0)
 
@@ -54,7 +54,7 @@ Formshift:
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="User" tag="Tracker"/>
     <tag group="Usage" tag="Day"/>
-    <eval phase="UserFinal" priority="10000"><![CDATA[~if we're disabled, do nothing
+    <eval phase="Final" priority="10000"><![CDATA[~if we're disabled, do nothing
 doneif (tagis[Helper.FtHide] <> 0)
 
 
@@ -95,13 +95,13 @@ field[trkMax].value += maximum(hero.child[aCHA].field[aModBonus].value + 3, 1)]]
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="SpecType" tag="Attack"/>
     <tag group="Usage" tag="Day"/>
-    <eval phase="UserFinal" priority="10000"><![CDATA[~if we're disabled, do nothing
+    <eval phase="Final" priority="10000"><![CDATA[~if we're disabled, do nothing
 doneif (tagis[Helper.FtHide] <> 0)
 
 
 
 field[trkMax].value += hero.child[aCHA].field[aModBonus].value]]></eval>
-    <eval phase="UserPostAt" priority="15000" index="2"><![CDATA[~if we're disabled, do nothing
+    <eval phase="PostAttr" priority="15000" index="2"><![CDATA[~if we're disabled, do nothing
 doneif (tagis[Helper.FtHide] <> 0)
 
 
@@ -159,11 +159,11 @@ field[abDC].value += round(10 + hero.child[aCHA].field[aModBonus].value + field[
     <bootstrap thing="raMVigChrg"></bootstrap>
     </thing>
   <thing id="raMStnd2Ft" name="Stand on Your Own Two Feet" description="Asterion do not do well when traveling by means other than their own two hooves. Asterion take a &#150;2 penalty to all Fly and Ride checks." compset="RaceSpec">
-    <eval phase="UserPreLv" priority="4000">#skillbonus[skFly] += -2
+    <eval phase="PreLevel" priority="4000">#skillbonus[skFly] += -2
 #skillbonus[skRide] += -2</eval>
     </thing>
   <thing id="raMWldInst" name="Wild Instinct" description="Asterion receive a +2 racial bonus to Survival checks." compset="RaceSpec">
-    <eval phase="UserPreLv" priority="4000">#skillbonus[skSurvival] += 2</eval>
+    <eval phase="PreLevel" priority="4000">#skillbonus[skSurvival] += 2</eval>
     </thing>
   <thing id="raMVigChrg" name="Vigorous Charge" description="Asterion take only a &#150;1 penalty to AC when charging, and deal +1d6 damage to any melee attack made as part of a charge." compset="RaceSpec">
     <comment>need script</comment>
@@ -188,7 +188,7 @@ hero.childfound[pstChargin].field[abValue2].value += 1]]></eval>
       <autotag group="wMain" tag="1d4_4"/>
       <autotag group="Value" tag="1"/>
       </bootstrap>
-    <eval phase="UserPostLv" priority="10000"><![CDATA[~if we're disabled, do nothing
+    <eval phase="PostLevel" priority="10000"><![CDATA[~if we're disabled, do nothing
 doneif (tagis[Helper.FtHide] <> 0)
 
 
@@ -204,7 +204,7 @@ endif]]></eval>
   <thing id="fMImpStbl" name="Improved Stability" description="{i}Your heavy frame and firm footing make you difficult to move or knock over.{/i}\n\n{b}Prerequisites{/b}: Asterion, Con 13, base attack +1. \n\n{b}Benefit{/b}: You gain a +4 CMD against bull rush, trip, and overrun attacks." compset="Feat" uniqueness="useronce">
     <usesource source="RoHH"/>
     <tag group="Helper" tag="NoPathSoc"/>
-    <eval phase="UserPostAt" priority="4000"><![CDATA[~if we're disabled, do nothing
+    <eval phase="PostAttr" priority="4000"><![CDATA[~if we're disabled, do nothing
 doneif (tagis[Helper.FtHide] <> 0)
 
 
@@ -242,7 +242,7 @@ hero.child[manOverrun].field[manCMD].value += 4]]></eval>
     <bootstrap thing="raRHFrmshf"></bootstrap>
     </thing>
   <thing id="raMLAdptbl" name="Adaptable" description="Lapith are born able to see multiple points of view, in part because they themselves experience life in two different ways. As a result, lapith are good at understanding the motivations of others, and finding common ground with them. Lapith gain a +2 racial bonus to all Diplomacy and Sense Motive checks." compset="RaceSpec">
-    <eval phase="UserPreLv" priority="4000">#skillbonus[skDiplo] += 2
+    <eval phase="PreLevel" priority="4000">#skillbonus[skDiplo] += 2
 #skillbonus[skSenseMot] += 2</eval>
     </thing>
   <thing id="raMUnmount" name="Unmounted" description="Lapith never receive Ride as a class skill. If a class would give a lapith Ride as a class skill, the lapith instead receive Acrobatics or Swim as a class skill (player&#146;s choice).\n\n{b}Note{/b}: This ability has not been implemented" compset="RaceSpec">
@@ -272,7 +272,7 @@ hero.child[manOverrun].field[manCMD].value += 4]]></eval>
       call SizeChange
 
 endif]]></eval>
-    <eval phase="UserPostLv" priority="1000" index="2"><![CDATA[if (field[abilActive].value <> 0) then
+    <eval phase="PostLevel" priority="1000" index="2"><![CDATA[if (field[abilActive].value <> 0) then
         hero.child[aSTR].field[Bonus].value += 2
         hero.child[aDEX].field[Bonus].value += 2
         hero.child[Speed].field[tSpeed].value += 10
@@ -283,7 +283,7 @@ endif]]></eval>
       herofield[tReach].value = 5
 
 endif]]></eval>
-    <eval phase="UserPostAt" priority="5000" index="4">field[trkMax].value += round(#totallevelcount[]/4, 0, -1) + 1</eval>
+    <eval phase="PostAttr" priority="5000" index="4">field[trkMax].value += round(#totallevelcount[]/4, 0, -1) + 1</eval>
     </thing>
   <thing id="fRHCentCm" name="Centaurian Combat" description="You are adept at moving through combat in your quadrupedal form.\n\n{b}Prerequisites{/b}: Lapith, Acrobatics 1 rank.\n\n{b}Benefit{/b}: When you are in your quadrupedal form, once per round when you are hit by an attack of opportunity in combat, you may attempt an Acrobatics check (as an immediate action) to negate the hit. The hit is negated if your Acrobatics check result is greater than the opponent&#146;s attack roll.\n\n{b}Special{/b}: This feat counts as Mounted Combat for feat prerequisites. Any feat you take that has Mounted Combat as a prerequisite you may use when in quadrupedal form, but not when riding a steed. (If you have both Centaurian Combat and Mounted Combat, you may use mounted feats both in quadrupedal form and when riding a steed.) [note: this has not been implemented]" compset="Feat" uniqueness="useronce">
     <usesource source="RoHH"/>
@@ -296,7 +296,7 @@ endif]]></eval>
     <usesource source="RoHH"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="UserPreLv" priority="10000"><![CDATA[
+    <eval phase="PreLevel" priority="10000"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
 
@@ -335,7 +335,7 @@ hero.childfound[raRHFrmshf].field[trkMax].value += 1]]></eval>
     <usesource source="RoHH"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="UserPostLv" priority="10000"><![CDATA[~if we're disabled, do nothing
+    <eval phase="PostLevel" priority="10000"><![CDATA[~if we're disabled, do nothing
 doneif (tagis[Helper.FtHide] <> 0)
 
 ~ If our related ability is not active, stop now.
@@ -360,7 +360,7 @@ hero.child[aSTR].field[Bonus].value += 2]]></eval>
     <usesource source="RoHH"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="UserPostLv" priority="10000"><![CDATA[~if we're disabled, do nothing
+    <eval phase="PostLevel" priority="10000"><![CDATA[~if we're disabled, do nothing
 doneif (tagis[Helper.FtHide] <> 0)
 
 ~ If our related ability is not active, stop now.
@@ -385,7 +385,7 @@ hero.child[aCON].field[Bonus].value += 2]]></eval>
     <usesource source="RoHH"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="UserPostLv" priority="10000"><![CDATA[~if we're disabled, do nothing
+    <eval phase="PostLevel" priority="10000"><![CDATA[~if we're disabled, do nothing
 doneif (tagis[Helper.FtHide] <> 0)
 
 ~ If our related ability is not active, stop now.
@@ -415,7 +415,7 @@ doneif (hero.childfound[raRHFrmshf].field[abilActive].value = 0)
     <tag group="SpecType" tag="SpellLike"/>
     <tag group="User" tag="Tracker"/>
     <tag group="Usage" tag="DayRound"/>
-    <eval phase="UserPostAt" priority="10000">~ set DC value
+    <eval phase="PostAttr" priority="10000">~ set DC value
 field[abValue].value += round(#totallevelcount[]/2, 0, -1)
 
 field[abDC].value += 10 + hero.child[aWIS].field[aModBonus].value + field[abValue].value
