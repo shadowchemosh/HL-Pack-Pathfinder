@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <document signature="Hero Lab Data">
   <thing id="pAP75Arues" name="Specific Individual: Arushalae" compset="InPlay">
     <usesource source="PathWraRig"/>
@@ -6,25 +6,30 @@
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="NoIncr"/>
     <tag group="Helper" tag="AdjNoPlus"/>
-    <bootstrap thing="raAP75ArPR"></bootstrap>
-    <eval phase="Final" priority="1000" index="2">~ adjust CR
-~ +1 for wealthy
-~ +1 for 3 mytic tiers (HL not handling this right)
-
-herofield[tCR].value += 3</eval>
+    <tag group="OthAdjCat" tag="UniqueChar"/>
+    <bootstrap thing="raAP75ArPR">
+      </bootstrap>
     <eval phase="First">~ class skills
-perform hero.child[skAcrobat].assign[Helper.ClassSkill]
+      doneif (field[pIsOn].value = 0)
+      perform hero.child[skAcrobat].assign[Helper.ClassSkill]
 
-~ adjust some skills and saves
-hero.child[skBluff].field[Bonus].value += 1
-hero.child[skDisguise].field[Bonus].value += 1
-hero.child[skSenseMot].field[Bonus].value += 1
-hero.child[skStealth].field[Bonus].value += 1
-hero.child[skUseMagic].field[Bonus].value += 1
+      ~ adjust some skills and saves
+      hero.child[skBluff].field[Bonus].value += 1
+      hero.child[skDisguise].field[Bonus].value += 1
+      hero.child[skSenseMot].field[Bonus].value += 1
+      hero.child[skStealth].field[Bonus].value += 1
+      hero.child[skUseMagic].field[Bonus].value += 1
 
-hero.child[svAll].field[Bonus].value += 1</eval>
+      hero.child[svAll].field[Bonus].value += 1</eval>
+    <eval phase="Final" priority="1000" index="2">doneif (field[pIsOn].value = 0)
+    
+      ~ adjust CR
+      ~ +1 for wealthy
+      ~ +1 for 3 mytic tiers (HL not handling this right)
+
+      herofield[tCR].value += 3</eval>
     </thing>
-  <thing id="raAP75ArPR" name="Path to Redemption" description="Arueshalae's hopeful path toward redemption has had some unique effects on her abilities as a demon. She no longer has the evil subtype, and she's lost the use of some of her demonic spell-like abilities as detailed above. Her DR has changed from DR 10/cold iron or good to DR 10/cold iron or lawful. When she's within 30 feet of a CR 6 or higher demon at the start of any turn, she must succeed at a DC 15 Fortitude save or be staggered for 1 round by flashbacks of her evil past." compset="RaceSpec" summary="In being redeemed, various demonic abilities have changed.">
+  <thing id="raAP75ArPR" name="Path to Redemption" description="Arueshalae&apos;s hopeful path toward redemption has had some unique effects on her abilities as a demon. She no longer has the evil subtype, and she&apos;s lost the use of some of her demonic spell-like abilities as detailed above. Her DR has changed from DR 10/cold iron or good to DR 10/cold iron or lawful. When she&apos;s within 30 feet of a CR 6 or higher demon at the start of any turn, she must succeed at a DC 15 Fortitude save or be staggered for 1 round by flashbacks of her evil past." compset="RaceSpec" summary="In being redeemed, various demonic abilities have changed.">
     <fieldval field="actName" value="Redeemed"/>
     <usesource source="PathWraRig"/>
     <tag group="User" tag="Activation"/>
@@ -38,64 +43,57 @@ hero.child[svAll].field[Bonus].value += 1</eval>
       <autotag group="Value" tag="10"/>
       </bootstrap>
     <eval phase="Final" priority="1000" index="4">~ adjust DRs
+      hero.child[xDamRdGoCI].field[abValue].value = 0
+      hero.child[xDamRsFire].field[abValue].value = 0
+      perform hero.child[xDamRdGoCI].delete[Value.?]</eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ hide some spells if we are not fully redeemed
+      doneif (hero.tagis[Custom.AruRedeeme] <> 0)
 
-hero.child[xDamRdGoCI].field[abValue].value = 0
-hero.child[xDamRsFire].field[abValue].value = 0
+      foreach pick in hero from BaseSpell where "Helper.SpellLike & !(thingid.spCharMon? | thingid.spDeteGoo? | thingid.spDeteTho? | thingid.spMagiAur? | thingid.spNondete? | thingid.spSuggest? | thingid.spTongues? | thingid.spVampTou?)"
+        perform eachpick.assign[Hide.Spell]
+      nexteach
 
-perform hero.child[xDamRdGoCI].delete[Value.?]</eval>
-    <eval phase="First" priority="1000" index="2"><![CDATA[~ hide some spells if we are not fully redeemed
+      ~ adjust times per day for some spells
+      perform hero.childfound[spSuggest3].tagreplace[Usage.?,Usage.Day]
+      hero.childfound[spSuggest3].field[trkMax].value = 3
 
-doneif (hero.tagis[Custom.AruRedeeme] <> 0)
+      perform hero.childfound[spCharMon4].tagreplace[Usage.?,Usage.Day]
+      hero.childfound[spCharMon4].field[trkMax].value = 3
 
-var keep as string
-keep = "Helper.SpellLike & !(thingid.spCharMon3 | thingid.spDeteGoo1 | thingid.spDeteTho2 | thingid.spMagiAur1 | thingid.spNondete3 | thingid.spSuggest2 | thingid.spTongues2 | thingid.spVampTou3)"
-
-foreach pick in hero from BaseSpell where keep
-  perform eachpick.assign[Hide.Spell]
-nexteach
-
-~ adjust times per day for some spells
-perform hero.child[spSuggest2].tagreplace[Usage.?,Usage.Day]
-hero.child[spSuggest2].field[trkMax].value = 3
-
-perform hero.child[spCharMon3].tagreplace[Usage.?,Usage.Day]
-hero.child[spCharMon3].field[trkMax].value = 3
-
-perform hero.child[spVampTou3].tagreplace[Usage.?,Usage.Day]
-hero.child[spVampTou3].field[trkMax].value = 3]]></eval>
+      perform hero.childfound[spVampTou3].tagreplace[Usage.?,Usage.Day]
+      hero.childfound[spVampTou3].field[trkMax].value = 3]]></eval>
     <eval phase="First" priority="510" index="3">~ remove evil subtype
+      perform hero.assign[NoTypeAbil.stEvil]
+      hero.child[stEvil].activated = 0</eval>
+    <eval phase="First" priority="50" index="5"><![CDATA[
+      ~ set tag if we are redeemed else hide and disable invigoration and redeemed
+      if (field[abilActive].value <> 0) then
+        perform hero.assign[Custom.AruRedeeme]
+      else
+        perform hero.child[raAP75ArIv].assign[Helper.SpcDisable]
+        perform hero.child[raAP75ArIv].assign[Hide.Special]
+        perform hero.child[raAP75ArRd].assign[Helper.SpcDisable]
+        perform hero.child[raAP75ArRd].assign[Hide.Special]
+      endif]]></eval>
+    <eval phase="Final" priority="1000" index="6"><![CDATA[
+      ~ change profane gift to arcane gift & 
+      hero.child[raSucProfG].field[livename].text = "Anarchic Gift"
+      hero.child[raSucProfG].field[shortname].text = "anarchic gift"
 
-perform hero.assign[NoTypeAbil.stEvil]
+      var desc as string
 
-hero.child[stEvil].activated = 0</eval>
-    <eval phase="First" priority="50" index="5"><![CDATA[~ set tag if we are redeemed else hide and disable invigoration and redeemed
+      if (hero.tagis[Custom.AruRedeeme] = 0) then
 
-if (field[abilActive].value <> 0) then
-  perform hero.assign[Custom.AruRedeeme]
-else
-  perform hero.child[raAP75ArIv].assign[Helper.SpcDisable]
-  perform hero.child[raAP75ArIv].assign[Hide.Special]
-  perform hero.child[raAP75ArRd].assign[Helper.SpcDisable]
-  perform hero.child[raAP75ArRd].assign[Hide.Special]
-endif]]></eval>
-    <eval phase="Final" priority="1000" index="6">~ change profane gift to arcane gift
+        desc = "Arueshalae's redemption has altered her profane gift ability. This ability functions the same, except the bonus to an ability score granted by anarchic gift is asacred bonus, and the gift cannot be removed by {i}dispel evil{/i}. She can maintain only one anarchic gift at a time."
 
-hero.child[raSucProfG].field[livename].text = &quot;Anarchic Gift&quot;
-hero.child[raSucProfG].field[shortname].text = &quot;anarchic gift&quot;
+      else
 
-var desc as string
+        desc = "Arueshalae's redemption has altered her profane gift ability. This ability functions the same, except the bonus to an ability score granted by anarchic gift is asacred bonus, and the gift cannot be removed by {i}dispel evil{/i}. She can maintain anarchic gift on an unlimited number of creatures."
+      endif
 
-if (hero.tagis[Custom.AruRedeeme] = 0) then
-
-desc = &quot;Arueshalae's redemption has altered her profane gift ability. This ability functions the same, except the bonus to an ability score granted by anarchic gift is asacred bonus, and the gift cannot be removed by {i}dispel evil{/i}. She can maintain only one anarchic gift at a time.&quot;
-
-else
-
-desc = &quot;Arueshalae's redemption has altered her profane gift ability. This ability functions the same, except the bonus to an ability score granted by anarchic gift is asacred bonus, and the gift cannot be removed by {i}dispel evil{/i}. She can maintain anarchic gift on an unlimited number of creatures.&quot;
-endif
-
-perform state.thing[raSucProfG].amendthing[description,desc]
-perform state.thing[raSucProfG].amendthing[name,&quot;Anarchic Gift&quot;]</eval>
+      perform state.thing[raSucProfG].amendthing[description,desc]
+      perform state.thing[raSucProfG].amendthing[name,"Anarchic Gift"]]]></eval>
     </thing>
   <thing id="pAP75Xanth" name="Specific Individual: Xanthir Vang" compset="InPlay">
     <usesource source="PathWraRig"/>
@@ -103,6 +101,7 @@ perform state.thing[raSucProfG].amendthing[name,&quot;Anarchic Gift&quot;]</eval
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="NoIncr"/>
     <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="OthAdjCat" tag="UniqueChar"/>
     <bootstrap thing="raAP75XnCn"></bootstrap>
     </thing>
   <thing id="raAP75XnCn" name="Contingency" description="If Xanthir is reduced to 0 or fewer hit points, his {i}contingency{/i} spell activates a {i}false life{/i} on him." compset="RaceSpec">
@@ -132,19 +131,20 @@ perform state.thing[raSucProfG].amendthing[name,&quot;Anarchic Gift&quot;]</eval
       <autotag group="Helper" tag="SpellLike"/>
       </bootstrap>
     <eval phase="First" priority="1000" index="2"><![CDATA[
-if (hero.tagis[Custom.AruRedeeme] <> 0) then
-  perform hero.child[raSucEnerD].assign[Helper.SpcDisable]
-  perform hero.child[raSucEnerD].assign[Hide.Special]
-  perform hero.child[spDeteGoo1].assign[Hide.Spell]
-endif]]></eval>
+      if (hero.tagis[Custom.AruRedeeme] <> 0) then
+        perform hero.child[raSucEnerD].assign[Helper.SpcDisable]
+        perform hero.child[raSucEnerD].assign[Hide.Special]
+        perform hero.child[spDeteGoo1].assign[Hide.Spell]
+      endif]]></eval>
     </thing>
   <thing id="pAP75Jerri" name="Specific Individual: Jerribeth" compset="InPlay">
     <usesource source="PathWraRig"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="NoIncr"/>
     <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="OthAdjCat" tag="UniqueChar"/>
     </thing>
-  <thing id="raAP75JeCS" name="Change Shape (any humanoid form, {i}alter self{/i})" description="Jerribeth is a unique glabrezu. She's an advanced member of her kind with an unusual ability to change shape as a swift action into a humanoid form or back to her true form-a gift from Baphomet himself to aid her in her position as a leader among the humanoid cultists she has been tasked to interact with. She's come to favor the form of a beautiful green-haired elven woman, since she's found that this beautiful form works wonders when she's seducing and manipulating mortal minions." compset="RaceSpec">
+  <thing id="raAP75JeCS" name="Change Shape (any humanoid form, {i}alter self{/i})" description="Jerribeth is a unique glabrezu. She&apos;s an advanced member of her kind with an unusual ability to change shape as a swift action into a humanoid form or back to her true form-a gift from Baphomet himself to aid her in her position as a leader among the humanoid cultists she has been tasked to interact with. She&apos;s come to favor the form of a beautiful green-haired elven woman, since she&apos;s found that this beautiful form works wonders when she&apos;s seducing and manipulating mortal minions." compset="RaceSpec">
     <usesource source="PathWraRig"/>
     <tag group="Helper" tag="Mythic"/>
     <tag group="ProductId" tag="HLCommunit"/>
