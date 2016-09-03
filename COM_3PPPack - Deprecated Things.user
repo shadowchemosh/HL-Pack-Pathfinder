@@ -110,6 +110,29 @@
       </prereq>
     </thing>
 
+  <!-- This is not actually hidden as I need it to still work for any .por files. -->
+  <thing id="pCBBonFeat" name="NPC Bonus Feat" description="Make one of your feats a bonus feat for a NPC. This means the feat will not be required to meet any of its prerequisites." compset="InPlay">
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="OthAdjCat" tag="FeatTrait"/>
+    <eval phase="PreLevel" priority="11000"><![CDATA[
+      ~ Picks on Hero
+      field[pUsePicks].value = 1
+      ~ Set search expression for Feats
+      field[pCandExpr].text = "component.BaseFeat & Helper.ShowSpec"]]></eval>
+    <eval phase="First" priority="20000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value <> 1)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      ~ Make chose feat a bonus feat
+      perform field[pChosen].chosen.assign[thing.skipprereq]]]></eval>
+    </thing>
+
 
   <hidden id="puCreaSnd1"/>
   <hidden id="fPWAglDncr"/>
