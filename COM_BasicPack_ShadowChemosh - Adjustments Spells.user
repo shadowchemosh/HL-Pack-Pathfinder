@@ -109,14 +109,25 @@
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="AdjSpell"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <bootstrap thing="cBonusHD">
-      <autotag group="Helper" tag="CLErrHP"/>
-      </bootstrap>
+    <tag group="Helper" tag="NoPathSoc"/>
     <bootstrap thing="pAwaAniCHA"></bootstrap>
     <bootstrap thing="tpMagBeast"></bootstrap>
     <bootstrap thing="cBonusHD">
       <autotag group="Helper" tag="CLErrHP"/>
       </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <autotag group="Helper" tag="CLErrHP"/>
+      </bootstrap>
+    <eval phase="PreAttr" priority="10000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Vermin now have a INT. Or at least most gamers think so
+      ~ Remove the No Score tag from INT ability pick
+      perform hero.child[aINT].delete[Helper.NoScore]      
+
+      ~ add the selected amount to our INT
+      hero.child[aINT].field[aStartMod].value += field[pAdjust].value]]></eval>
     <eval phase="First" priority="510"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
@@ -132,17 +143,9 @@
       ~ since the language list for an awakened animal is rather
       ~ uncertain, we'll
       ~ just go ahead and grant them access to all languages
-      perform hero.assign[Language.Any]]]></eval>
-    <eval phase="PreAttr" priority="10000" index="2"><![CDATA[
-      ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value = 0)
+      perform hero.assign[Language.Any]
 
-      ~ Vermin now have a INT. Or at least most gamers think so
-      ~ Remove the No Score tag from INT ability pick
-      perform hero.child[aINT].delete[Helper.NoScore]      
-
-      ~ add the selected amount to our INT
-      hero.child[aINT].field[aStartMod].value += field[pAdjust].value]]></eval>
+      hero.findchild[BaseRace].field[rINT].value = -9]]></eval>
     <exprreq message="Cannot be cast on a familiar, animal companion, or special mount.">tagis[CompIs.?] = 0</exprreq>
     <prereq message="Can only be applied to an vermin." iserror="no">
       <validate><![CDATA[
