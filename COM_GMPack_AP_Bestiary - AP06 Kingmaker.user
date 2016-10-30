@@ -22,44 +22,44 @@
     <tag group="SpecType" tag="Attack"/>
     <tag group="ChooseSrc1" tag="Thing"/>
     <tag group="User" tag="NoAutoName"/>
-    <eval phase="Final" priority="8000"><![CDATA[~ unhide selected disease
-
-~if nothing's been chosen yet, there's nothing we can do
+    <eval phase="Final" priority="8000"><![CDATA[
+    
+      ~ unhide selected disease
+      ~ if nothing's been chosen yet, there's nothing we can do
       doneif (field[usrChosen1].ischosen = 0)
 
-var idStr as string
-idStr = "thingid." & field[usrChosen1].chosen.idstring
+      var idStr as string
+      idStr = "thingid." & field[usrChosen1].chosen.idstring
 
-foreach pick in hero from Ability where idStr
-   perform eachpick.delete[Hide.?]
-   perform eachpick.delete[Helper.SpcDisable]
-~ since we are undead change the DC to Cha based
-   perform eachpick.tagreplace[StandardDC.?,StandardDC.aCHA]
-~ set target for the disease in this race
-   perform eachpick.assign[Target.wOtherMel]
-
-nexteach]]></eval>
-    <eval phase="Render" priority="10000" index="2"><![CDATA[ ~if nothing's been chosen yet, there's nothing we can do
+      foreach pick in hero from Ability where idStr
+        perform eachpick.delete[Hide.?]
+        perform eachpick.delete[Helper.SpcDisable]
+        ~ since we are undead change the DC to Cha based
+        perform eachpick.tagreplace[StandardDC.?,StandardDC.aCHA]
+        ~ set target for the disease in this race
+        perform eachpick.assign[Target.wOtherMel]
+      nexteach]]></eval>
+    <eval phase="Render" priority="10000" index="2"><![CDATA[ 
+      ~if nothing's been chosen yet, there's nothing we can do
       doneif (field[usrChosen1].ischosen = 0)
 
-foreach pick in hero from BaseNatWep where "thingid.wOtherMel"
-  if (compare(eachpick.field[wFixDamage].text,"Disease") = 0) then 
-    eachpick.field[wDamExtra].text = ""
-  endif
-nexteach]]></eval>
-    <eval phase="Render" priority="10000" index="3"><![CDATA[      ~if nothing's been chosen yet, there's nothing we can do
+      foreach pick in hero from BaseNatWep where "thingid.wOtherMel"
+        if (compare(eachpick.field[wFixDamage].text,"Disease") = 0) then 
+          eachpick.field[wDamExtra].text = ""
+        endif
+      nexteach]]></eval>
+    <eval phase="Render" priority="10000" index="3"><![CDATA[
+      ~ if nothing's been chosen yet, there's nothing we can do
       doneif (field[usrChosen1].ischosen = 0)
 
-var idStr as string
-idStr = "thingid." & field[usrChosen1].chosen.idstring
+      var idStr as string
+      idStr = "thingid." & field[usrChosen1].chosen.idstring
 
-
-var poiDesc as string
-foreach pick in hero from Ability where idStr
-  poiDesc = eachpick.field[CustDesc].text
-nexteach
-
-debug poiDesc]]></eval>
+      var poiDesc as string
+      foreach pick in hero from Ability where idStr
+        poiDesc = eachpick.field[CustDesc].text
+      nexteach
+      ]]></eval>
     </thing>
   <thing id="rauDrkDsSh" name="Diseased Shadow" description="Any creature touched by a drekavac&apos;s shadow is also affected by the creature&apos;s disease ability. If there is a question about which way the drekavac&apos;s shadow falls, roll 1d8 to determine a random square around the creature. A character with a light source cannot be touched by the drekavac&apos;s shadow, but the light causes the shadow to fall directly opposite the character (unless there is another light source there as well). A drekavac can deliberately touch a creature with its shadow as a standard action by making a successful touch attack.\n\nA target missed by the drekavac&apos;s chilling grasp attack must make a Reflex save to avoid being touched by the creature&apos;s shadow as well. This save DC is Charisma-based." compset="RaceSpec" summary="Shadow transmits disease.">
     <usesource source="PathKingma"/>

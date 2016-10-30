@@ -1395,20 +1395,18 @@ hero.child[xFly].field[abValue].value = 2 * spd]]></eval>
       <assignval field="livename" value="in forested areas and thickets"/>
       </bootstrap>
     <eval phase="First" index="4">hero.child[aSTR].field[aNormMin].value = 1</eval>
-    <eval phase="First" index="3"><![CDATA[~ check if we need gore attack
-~ if we do add tag
-~ if not hide the gore given by this template
+    <eval phase="First" index="3"><![CDATA[
+      ~ check if we need gore attack
+      ~ if we do add tag
+      ~ if not hide the gore given by this template
+      if (hero.childcount[wGore] > 1) then
+        foreach pick in hero from BaseNatWep where "thingid.wGore & Custom.AddAttack"
+           perform eachpick.assign[Hide.Weapon]
+        nexteach
 
-debug hero.childcount[wGore]
-
-if (hero.childcount[wGore] > 1) then
-  foreach pick in hero from BaseNatWep where "thingid.wGore & Custom.AddAttack"
-     perform eachpick.assign[Hide.Weapon]
-  nexteach
-
-else
-  perform hero.assign[Custom.NeedGore]
-endif]]></eval>
+      else
+        perform hero.assign[Custom.NeedGore]
+      endif]]></eval>
     <eval phase="First">~ Improve nat ac bonus is base nat ac is 1 or lower.
 
 var baseNat as number
@@ -1808,8 +1806,6 @@ hero.child[Speed].field[tSpeed].value += 10]]></eval>
     <eval phase="PostLevel" priority="1000" index="2"><![CDATA[~get size
 var sz as number
 sz = herofield[tSize].value
-debug sz
-
 
 ~ BASE CREATURE BASED ABILITIES
 ~ CLOUD GIANT
@@ -1898,8 +1894,6 @@ else
   nexteach
   ~ if we donot set the trample damage 
   
-debug cnt
-
   if (cnt = 0) then
     ~ base damage on size (use sz variable for earlier)
     if (sz <= -4) then
@@ -2776,8 +2770,6 @@ cnt = 0
 foreach pick in hero from BaseNatWep where "!Custom.AddAttack"
   cnt += 1
 nexteach
-
-debug cnt
 
 if (cnt > 0) then
 
