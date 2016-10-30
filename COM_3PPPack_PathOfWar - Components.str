@@ -198,6 +198,8 @@
         This does some initial setup of tags.
     -->
     <eval phase="First" priority="50" index="1"><![CDATA[
+      var searchexpr as string
+
       ~ Name the custom ability lists
       linkage[powCfg].field[cfgObject1].text = "Maneuvers"
       linkage[powCfg].field[cfgObject2].text = "Stances"
@@ -205,13 +207,12 @@
       ~ Check for additional classes we "could" be linked to.
       ~ This is mostly going to happen with classes like the Unchained Rogue.
       ~ We need to allow changing the linkage to the correct class.
-      if (intersect[ArchCntAs,ArchCntAs] <> 0) then
-        var searchexpr as string
-        perform pulltags[ArchCntAs.?,Classes]
-        searchexpr = tagids[Classes.?,"|"]
-        debug searchexpr
+      perform pulltags[ArchCntAs.?,Classes]
+      searchexpr = tagids[Classes.?]
+      perform hero.findchild[BaseClHelp,searchexpr].setfocus
+      ~ If we found an alternate class reset the linkage to that class
+      if (state.isfocus <> 0) then
         perform setlinkage[powClass,Class,searchexpr]
-        debug linkage[powClass].tagids[thingid.?]
       endif
 
       ~ Pull the Class Counts As tag from the class
