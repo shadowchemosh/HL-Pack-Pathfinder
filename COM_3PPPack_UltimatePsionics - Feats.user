@@ -873,7 +873,7 @@
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="fPUWildTal" name="Wild Talent" description="Your mind wakes to a previously unrealized talent for psionics.{br}{br}{b}Benefit:{/b} Your latent power of psionics flares to life, conferring upon you the designation of a psionic character. As a psionic character, you gain a reserve of 2 power points and can take psionic feats, metapsionic feats, and psionic item creation feats. You do not, however, gain the ability to manifest powers simply by virtue of having this feat." compset="Feat" summary="You are a psionic character and gain 2 power points." uniqueness="useronce">
+  <thing id="fPUWildTal" name="Wild Talent" description="Your mind wakes to a previously unrealized talent for psionics.\n\n{b}Benefit:{/b} Your latent power of psionics flares to life, conferring upon you the designation of a psionic character. As a psionic character, you gain a reserve of 2 power points and can take psionic feats, metapsionic feats, and psionic item creation feats. You do not, however, gain the ability to manifest powers simply by virtue of having this feat.\n\n{b}Note:{/b} To get the power point information to print to a character sheet this feat will display on a printed character sheet a number/day value." compset="Feat" summary="You are a psionic character and gain 2 power points." uniqueness="useronce">
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -884,8 +884,18 @@
       ~ Set hero.Psionic
       call SetHeroPsi
 
+      ~ In addition we need the Manifester tag so that HL will
+      ~ Print Powers and Points to a character sheet
+      perform hero.assign[Hero.Manifester]
+
       ~ Increase our total amount of Power Points by 2
       #resmax[resPowerPt] += 2]]></eval>
+    <eval phase="Final" priority="50000" index="2"><![CDATA[      ~ If we're not in output mode, don't do anything
+      doneif (state.isoutput = 0)
+
+      perform assign[User.Tracker]
+      perform assign[Usage.Day]
+      field[trkMax].value += #resmax[resPowerPt]]]></eval>
     </thing>
   <thing id="fPUWndAtt" name="Wounding Attack" description="Your vicious attacks wound your foe.\n\n{b}Prerequisite:{/b} Base attack bonus +8.\n\n{b}Benefit:{/b} To use this feat, you must expend your psionic focus. You can make an attack with such vicious force that you wound your opponent. A wound deals 1 point of Constitution damage to your foe in addition to the usual damage dealt.\n  You must decide whether or not to use this feat prior to making an attack. If your attack misses, you still expend your psionic focus." compset="Feat" uniqueness="useronce">
     <usesource source="pPsiUn" parent="UserParent" name="Psionics Unleashed: Feats and Skills"/>
