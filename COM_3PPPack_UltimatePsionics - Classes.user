@@ -2879,20 +2879,28 @@ if (field[abilAct2].value <> 0) then
     <arrayval field="cBonFtTot" index="4" value="1"/>
     <arrayval field="cBonFtTot" index="9" value="2"/>
     <usesource source="pPsiUn"/>
-    <tag group="ClassSkill" tag="skEscape"/>
-    <tag group="ClassSkill" tag="skPUKnwPsi"/>
-    <tag group="ClassSkill" tag="skSpellcr"/>
-    <tag group="ClassSkill" tag="skStealth"/>
     <tag group="cRef" tag="Medium"/>
     <tag group="cWill" tag="Medium"/>
     <tag group="Classes" tag="PsyFist" name="Psychic Fist"/>
     <tag group="fCategory" tag="Psionic"/>
     <tag group="cAttack" tag="Medium"/>
-    <tag group="Custom" tag="FstBonPP" name="Bonus PP Gained for Psychic Fist"/>
     <tag group="cFort" tag="Poor"/>
     <tag group="ClassSkill" tag="skPUAhypno"/>
     <tag group="ClassSkill" tag="skAcrobat"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassSkill" tag="skEscape"/>
+    <tag group="ClassSkill" tag="skStealth"/>
+    <tag group="ClassSkill" tag="skPUKnwPsi"/>
+    <tag group="ClassSkill" tag="skSpellcr"/>
+    <bootstrap thing="cMesmerGlo">
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="cConcWill">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cInfuseBod">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
     <bootstrap thing="cPsiAcro">
       <autotag group="ClSpecWhen" tag="7"/>
       </bootstrap>
@@ -2900,15 +2908,12 @@ if (field[abilAct2].value <> 0) then
       <autotag group="ClSpecWhen" tag="10"/>
       </bootstrap>
     <bootstrap thing="cInfuseBod">
-      <autotag group="ClSpecWhen" tag="6"/>
-      </bootstrap>
-    <bootstrap thing="cInfuseBod">
       <autotag group="ClSpecWhen" tag="9"/>
       </bootstrap>
-    <bootstrap thing="cMesmerGlo">
-      <autotag group="ClSpecWhen" tag="4"/>
-      </bootstrap>
     <bootstrap thing="cPsyFstMnk">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cFstPUMani">
       <autotag group="ClSpecWhen" tag="1"/>
       </bootstrap>
     <bootstrap thing="cKiPower">
@@ -2917,62 +2922,128 @@ if (field[abilAct2].value <> 0) then
     <bootstrap thing="cInfuseBod">
       <autotag group="ClSpecWhen" tag="3"/>
       </bootstrap>
-    <bootstrap thing="cConcWill">
-      <autotag group="ClSpecWhen" tag="6"/>
-      </bootstrap>
-    <link linkage="spellattr" thing="aWIS"/>
     </thing>
   <thing id="cPsyFist" name="Psychic Fist" description="Martial artists who work to combine the power of the mind with the physical form, psychic fists believe that psionic power is something to be nurtured and developed.\n\nMonks of psionic races are the most common to become psychic fists, although monks who have taken levels in psionic classes could also become psychic fists. As most psychic fists are monks, they are typically of a lawful alignment. However, it is not uncommon that monks who have become nonlawful take up the path of the psychic fist to continue developing their abilities while exploring their psionic potential.\n\n{b}Role:{/b} The psychic fist is a front-line fighter who excels at blending his martial prowess with his mental ability to overcome enemies. While they do not have the defensive capabilities of others, they gain unique features that allow them to survive in the fray.\n\n{b}Alignment:{/b} Any." compset="ClassLevel" maxlimit="10">
-    <usesource source="pPsiUn"/>
     <tag group="ClassType" tag="Prestige"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="cHelpFst"></bootstrap>
     <link linkage="helper" thing="cHelpFst"/>
     <exprreq message="Base Attack Bonus 4+ required"><![CDATA[child[Attack].field[tAtkBase].value >= 4]]></exprreq>
     <exprreq message="Acrobatics rank 6+ required."><![CDATA[#skillranks[skAcrobat] >= 6]]></exprreq>
-    <exprreq message="Power Point reserve of 1 required."><![CDATA[#resmax[resPowerPt] > 0]]></exprreq>
-    <prereq message="Psionic Fist or Psionic Weapon feat required.">
-      <validate><![CDATA[if (#hasfeat[fPUPsiFist] + #hasfeat[fPUPsiWep] >= 1 )then
-       @valid = 1
-       done
-     endif]]></validate>
-      </prereq>
-    <prereq message="Must have Ki pool of at least 1 point">
-      <validate><![CDATA[if (hero.childfound[cMnkKiPool].tagis[Helper.ShowSpec] <> 0) then
-  @valid = 1
-  done
-  endif]]></validate>
-      </prereq>
+    <exprreq message="Power Point reserve of 1+ required."><![CDATA[#resmax[resPowerPt] > 0]]></exprreq>
+    <exprreq message="Psionic Fist or Psionic Weapon feat required."><![CDATA[#hasfeat[fPUPsiFist] + #hasfeat[fPUPsiWep] <> 0]]></exprreq>
+    <exprreq message="Must have Ki pool of at least 1 point."><![CDATA[#hasability[cMnkKiPool] <> 0]]></exprreq>
     </thing>
   <thing id="cPsyFstMnk" name="Monk Abilities" description="A psychic fist&apos;s class levels stack with his monk levels for the purpose of determining his unarmed damage, bonuses to Armor Class, unarmored speed, and flurry of blows. His class levels do not apply to other monk abilities such as slow fall, ki strike abilities, and so on." compset="ClSpecial">
-    <eval phase="Level" priority="1000"><![CDATA[~get current Psychic Fist level
-var level as number
-level = #levelcount[PsyFist]
+    <eval phase="Level" priority="1000"><![CDATA[
+      ~ We're earlier than the normal test for whether we've reached the correct level, so we'll recreate that test here
+      doneif (root.field[cTotalLev].value + field[xExtraLev].value + field[xEffectLev].value < tagvalue[ClSpecWhen.?])
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)    
 
-~Add Psychic Fist level to Monk for Unarmed, AC, 
-if (hero.tagis[Classes.Monk] <> 0) then
-  hero.child[cMnkAC].field[xExtraLev].value += level
-  hero.child[cMnkUnarm].field[xExtraLev].value += level
-  hero.childfound[cMnkSpeed].field[xExtraLev].value += level
-  hero.childfound[cMnkFlurr].field[xExtraLev].value += level
-  endif]]></eval>
+      ~ psychic fist level
+      field[abValue].value = root.field[cTotalLev].value
+    
+      ~ Add Psychic Fist level to Monk for Unarmed, AC, 
+      hero.childfound[cMnkAC].field[xExtraLev].value += field[abValue].value
+      hero.childfound[cMnkUnarm].field[xExtraLev].value += field[abValue].value
+      hero.childfound[cMnkSpeed].field[xExtraLev].value += field[abValue].value
+      hero.childfound[cMnkFlurr].field[xExtraLev].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cFstPUMani" name="Manifesting" description="A psychic fist gains manifesting ability if he did not already have it. His power points per day, powers known, and maximum power level known are given on Table 6-6: The Psychic Fist. He chooses his powers from the psychic warrior power list. To learn or manifest a power, he must have a Wisdom score of at least 10 + the power&apos;s level, the save DCs for his powers are Wisdom-based, and he uses his Wisdom score to determine bonus power points.\n\nAlternatively, if the psychic fist was capable of manifesting psionic powers before becoming a psychic fist, he may choose to forgo this training, instead opting to progress his existing manifesting class as described on the table below. At each indicated level, he gains power points, access to new powers, and an improved manifester level as if he had gained a level in whatever manifesting class he belonged to earlier. If he belonged to more than one manifesting class before becoming a psychic fist, he must choose which class to add the level of psychic fist to for the purposes of power points, access to new powers, and manifester level.\n\nOnce the psychic fist has chosen his manifesting path, it can never be changed - not even with effects such as {i}psychic reformation{/i}.\n\n{b}Note:{/b} The drop down lets you select if you with to progress your existing manifesting class or manifest psionic powers yourself." compset="ClSpecial">
+    <arrayval field="usrArray" index="0" value="Progress Manifesting"/>
+    <arrayval field="usrArray" index="1" value="Manifest Powers"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First"><![CDATA[
+
+      ~<arrayval field="cMagLevTot" index="0" value="1"/>
+      If (field[usrIndex].value = 0) then
+        root.field[cMagLevTot].arrayvalue[1] += 1
+        root.field[cMagLevTot].arrayvalue[2] += 1
+        root.field[cMagLevTot].arrayvalue[3] += 1
+        root.field[cMagLevTot].arrayvalue[5] += 1
+        root.field[cMagLevTot].arrayvalue[8] += 1
+        root.field[cMagLevTot].arrayvalue[9] += 1
+      
+      ~<arrayval field="cPsiPPTot" index="0" value="1"/>
+      ~<arrayval field="cPsiPowTot" index="0" value="1"/>
+      ~<arrayval field="cPsiLevTot" index="0" value="1"/>      
+      ElseIf (field[usrIndex].value = 1) then
+        ~ Set Psionic attribute linkage to Wisdom. THIS DOES NOT WORK!
+        ~ We needed to have a initial linkage set to change it.
+        ~<link linkage="psiattr" thing="aWIS"/>
+        ~perform setlinkage[psiattr,BaseAttr,"PsiAttr.aWIS"]
+        ~ Set that we use Psyic Warrior powers
+        perform root.assign[psiClass.cHelpPWa]
+        ~ Set that we are now a Manifesting class
+        perform root.assign[Helper.Manifester]
+        ~ Set hero.Psionic as at this level we are now a full Psionic Character with a ML
+        call SetHeroPsi
+        perform hero.assign[Psionics.Class]
+        ~root.field[cPsiPPMax].value += 1
+
+        ~ Set Power Points/day
+        root.field[cPsiPPTot].arrayvalue[0] = 1
+        root.field[cPsiPPTot].arrayvalue[1] = 3
+        root.field[cPsiPPTot].arrayvalue[2] = 6
+        root.field[cPsiPPTot].arrayvalue[3] = 10
+        root.field[cPsiPPTot].arrayvalue[4] = 15
+        root.field[cPsiPPTot].arrayvalue[5] = 23
+        root.field[cPsiPPTot].arrayvalue[6] = 31
+        root.field[cPsiPPTot].arrayvalue[7] = 43
+        root.field[cPsiPPTot].arrayvalue[8] = 55
+        root.field[cPsiPPTot].arrayvalue[9] = 71
+        ~ Set Powers Known
+        root.field[cPsiPowTot].arrayvalue[0] = 1
+        root.field[cPsiPowTot].arrayvalue[1] = 2
+        root.field[cPsiPowTot].arrayvalue[2] = 3
+        root.field[cPsiPowTot].arrayvalue[3] = 4
+        root.field[cPsiPowTot].arrayvalue[4] = 5
+        root.field[cPsiPowTot].arrayvalue[5] = 6
+        root.field[cPsiPowTot].arrayvalue[6] = 7
+        root.field[cPsiPowTot].arrayvalue[7] = 8
+        root.field[cPsiPowTot].arrayvalue[8] = 9
+        root.field[cPsiPowTot].arrayvalue[9] = 10
+        ~ Set Level Known
+        root.field[cPsiLevTot].arrayvalue[0] = 1
+        root.field[cPsiLevTot].arrayvalue[1] = 1
+        root.field[cPsiLevTot].arrayvalue[2] = 2
+        root.field[cPsiLevTot].arrayvalue[3] = 2
+        root.field[cPsiLevTot].arrayvalue[4] = 3
+        root.field[cPsiLevTot].arrayvalue[5] = 3
+        root.field[cPsiLevTot].arrayvalue[6] = 4
+        root.field[cPsiLevTot].arrayvalue[7] = 4
+        root.field[cPsiLevTot].arrayvalue[8] = 5
+        root.field[cPsiLevTot].arrayvalue[9] = 5      
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="1000" index="2"><![CDATA[
+      ~ If we are now a manifesting character we need to set DC
+      ~ & power points as if we have a set the linkage to Wisdom
+      If (field[usrIndex].value = 1) then
+        root.field[cPsiPPMax].value += #attrmod[aWIS]
+        root.field[cPsiSaveDC].value += #attrmod[aWIS]
+      endif]]></eval>
     </thing>
   <thing id="cKiPower" name="Ki Power" description="Upon achieving 2nd level, a psychic fist adds 1/2 his psychic fist level to his monk level to determine the number of points in his ki pool and the effect of his ki strike." compset="ClSpecial">
-    <eval phase="Level" priority="1000"><![CDATA[~get current Psychic Fist level
-var level as number
-level = #levelcount[PsyFist] / 2
-level = round(level,0,1)
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Level" priority="1000"><![CDATA[
+      ~ We're earlier than the normal test for whether we've reached the correct level, so we'll recreate that test here
+      doneif (root.field[cTotalLev].value + field[xExtraLev].value + field[xEffectLev].value < tagvalue[ClSpecWhen.?])
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)    
 
-~Add Psychic Fist level to Monk for Unarmed, AC, 
-if (hero.tagis[Classes.Monk] <> 0) then
-  hero.child[cMnkKiPool].field[xExtraLev].value += level
-  endif]]></eval>
+      ~ 1/2 his psychic fist level
+      field[abValue].value = round(root.field[cTotalLev].value / 2,0,1)
+
+      ~ Add Psychic Fist level to Monk for Unarmed, AC, 
+      hero.childfound[cMnkKiPool].field[xExtraLev].value += field[abValue].value]]></eval>
     </thing>
   <thing id="cInfuseBod" name="Infused Body" description="A 3rd level psychic fist&apos;s internal power strengthens his physical form. As long as the psychic fist maintains psionic focus, he gains damage reduction 1/-. This improves to 2/- at 6th level, and 3/- at 9th level." compset="ClSpecial" summary="Damage Reduction against weapons and natural attacks.">
-    <tag group="SpecType" tag="DR" name="Damage Reduction" abbrev="Damage Reduction"/>
+    <tag group="SpecType" tag="DR"/>
     <tag group="AbilType" tag="Super"/>
-    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="Helper" tag="SpecUp"/>
     <tag group="abAction" tag="PUManFocus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="xDamRd"></bootstrap>
     <eval phase="PostLevel" priority="10000"><![CDATA[
       field[listname].text = field[name].text & " (DR: " & field[xIndex].value & "/-)"
