@@ -11568,11 +11568,9 @@ hero.childfound[cfgPUPsFtR].field[cfgMaxF1].value += 1</eval>
     </thing>
   <thing id="cfgPUTranB" name="Transformed Body" compset="Configure" uniqueness="unique">
     <fieldval field="cfgObject1" value="Customization"/>
+    <fieldval field="cfgMax1" value="1"/>
     <usesource source="pPsiUn"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <bootstrap thing="rcPUaHarS2">
-      <autotag group="CustTaken" tag="cfgPUTranB"/>
-      </bootstrap>
     <bootstrap thing="raDarkVis">
       <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 2]]></containerreq>
       <autotag group="CustTaken" tag="cfgPUTranB"/>
@@ -11584,6 +11582,9 @@ hero.childfound[cfgPUPsFtR].field[cfgMaxF1].value += 1</eval>
     <bootstrap thing="rcPUaBraw2">
       <autotag group="CustTaken" tag="cfgPUTranB"/>
       </bootstrap>
+    <bootstrap thing="rcPUaHarS2">
+      <autotag group="CustTaken" tag="cfgPUTranB"/>
+      </bootstrap>
     <eval phase="PostLevel" priority="1000">~Set cfgLevel and configurable points from Aegis Helper
 field[cfgLevel].value = hero.childfound[cPUAegHelp].field[abValue].value
 
@@ -11591,20 +11592,26 @@ field[cfgMax1].value = hero.childfound[cPUAegHelp].field[abValue2].value</eval>
     </thing>
   <thing id="cPUTranBod" name="Transformed Body" description="An aberrant learns to modify his own form, rather than covering himself in an ectoplasmic suit. The aberrant gains a +1 natural armor bonus to his AC. At 5th level and every 5 levels thereafter (10th, 15th, and 20th), the natural armor bonus increases by 1.{br}{br}An aberrant can modify his form in a fashion similar to the aegis&apos;s customization, but his options are more limited. He can choose customizations from the customization list below, as well as new customizations exclusive to the aberrant. Because the aberrant is modifying his own body, he can wear armor as normal.{br}{br}The aberrant gains hardened strikes and brawn as a free customization. At 2nd level, the aberrant gains darkvision as a free customization. At 10th level, the aberrant gains improved damage reduction as a free customization.{br}{br}This ability replaces astral suit." compset="ClSpecial">
     <fieldval field="actName" value="Transformed"/>
-    <usesource source="pPsiUn"/>
     <tag group="User" tag="Activation"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="SpecType" tag="Defense"/>
     <bootstrap thing="cfgPUTranB"></bootstrap>
-    <eval phase="PreLevel" priority="10000"><![CDATA[if (hero.childlives[cfgPUAstSu] <> 0) then
-  hero.childfound[cfgPUAstSu].field[cfgMax1].value += 1
-  endif]]></eval>
-    <eval phase="PostLevel" index="2">var armorbonus as number
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & signed(field[xIndex].value)
 
-armorbonus += (1 + #levelcount[Aegis]/5)
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-~apply a natural armor bonus
-hero.child[ArmorClass].field[tACNatural].value += round(armorbonus,0,-1)</eval>
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      hero.child[ArmorClass].field[tACNatural].value += field[abValue].value]]></eval>
     </thing>
   <thing id="arPUAberra" name="Aberrant" description="Using ectoplasm is the way a typical aegis protects and enhances the physical body. Others have discovered that by directly altering the body, they can achieve similar results, although they might have a more grisly appearance. These aberrants often have misshapen or twisted forms, yet they are equally deadly." compset="ClassVary" uniqueness="unique">
     <fieldval field="srcPageNum" value="261"/>
@@ -11616,18 +11623,30 @@ hero.child[ArmorClass].field[tACNatural].value += round(armorbonus,0,-1)</eval>
     <tag group="AbReplace" tag="cPUAstrRep"/>
     <tag group="AbReplace" tag="cPUCraftsm"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <bootstrap thing="cPUIntim">
-      <autotag group="ClSpecWhen" tag="2"/>
-      </bootstrap>
-    <bootstrap thing="cPUPsiForm">
-      <autotag group="ClSpecWhen" tag="5"/>
-      </bootstrap>
     <bootstrap thing="cPUVim">
       <autotag group="ClSpecWhen" tag="1"/>
       </bootstrap>
     <bootstrap thing="cPUTranBod">
       <autotag group="ClSpecWhen" tag="1"/>
       </bootstrap>
+    <bootstrap thing="cPUIntim">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPUPsiForm">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cPUTranBod">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cPUTranBod">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cPUTranBod">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cPUTranBod">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>      
     <link linkage="varies" thing="cHelpPU0"/>
     </thing>
   <thing id="cPUVim" name="Vim" description="The aberrant gains {i}vim{/i} as a psi-like ability usable at will at first level as long as he maintains psionic focus. This ability replaces astral repair." compset="ClSpecial">
