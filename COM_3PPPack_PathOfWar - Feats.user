@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document signature="Hero Lab Data">
   <loadonce key="COM_3PPPack_PathOfWar - Feats"/>
-  <fileinfo>
-    <info_history><![CDATA[
-April 10, 2014 - Tim Shadow
--Fixed "Deadly Agility" feat pre-req scripts.]]></info_history>
-    </fileinfo>
-  <thing id="fPWAdvStud" name="Advanced Study" description="You&apos;ve delved deeper into your martial learning to find new skills.\n\n{b}Prerequisite{/b}: Must be a martial disciple of 4th level or higher.\n\n{b}Benefit{/b}: You may select two maneuvers or one stance from your class&apos; list of disciplines and add them to your known maneuvers and stances. You must meet all prerequisites for the new maneuvers or stance to qualify for you to learn them. You may select maneuvers from a discipline that is not in class to you with this feat; doing so reduces the effectiveness of this feat to one maneuver or stance of your choice from an out of class discipline.\n\n{b}Special:{/b} You may select this feat multiple times.\n\n{b}Note:{/b} Use the first drop down is used to select if you want Manuevers or a Stance.  The 2nd drop down is used to select which class to give the bonus too." compset="Feat">
+  <thing id="fPWAdvStud" name="Advanced Study (Bonus)" description="You&apos;ve delved deeper into your martial learning to find new skills.\n\n{b}Prerequisite{/b}: Must be a martial disciple of 4th level or higher.\n\n{b}Benefit{/b}: You may select two maneuvers or one stance from your class&apos; list of disciplines and add them to your known maneuvers and stances. You must meet all prerequisites for the new maneuvers or stance to qualify for you to learn them. You may select maneuvers from a discipline that is not in class to you with this feat; doing so reduces the effectiveness of this feat to one maneuver or stance of your choice from an out of class discipline.\n\n{b}Special:{/b} You may select this feat multiple times.\n\n{b}Note:{/b} Use the first drop down is used to select if you want Manuevers or a Stance. The 2nd drop down is used to select which class to give the bonus too.\n\n{b}Not Fully Implemented:{/b} This feat does not currently allow for selecting maneuvers/stances outside your classes allowed disciplines." compset="Feat">
     <fieldval field="usrCandid1" value="PathOfWar.Config &amp; component.Configure"/>
     <arrayval field="usrArray" index="0" value="Manuevers"/>
     <arrayval field="usrArray" index="1" value="Stance"/>
@@ -30,7 +25,7 @@ April 10, 2014 - Tim Shadow
       Endif]]></eval>
     <exprreq message="Martial disciple of 4th level or higher required."><![CDATA[#value2[PWDisLevel] >= 4]]></exprreq>
     </thing>
-  <thing id="fPWDiscFoc" name="Discipline Focus" description="You’ve trained extensively in the arts of a single martial discipline.\n\n{b}Prerequisites{/b}: Ability to initiate three maneuvers of a single discipline.\n\n{b}Benefit{/b}: You gain a +2 bonus to saving throw DCs when using maneuvers of the selected discipline. You also inflict an additional +2 points of damage when wielding associated weapons of the chosen discipline.\n\n{b}Special{/b}: If the character ever has fewer than three maneuvers known from the specialized discipline, then he loses the benefits of this feat until such a time that he does. This feat may be selected multiple times, each time selecting a new discipline to receive the benefits of this feat." compset="Feat" summary="Gain +2 to discipline maneuver save DC&apos;s, +2 damage with discipline weapons">
+  <thing id="fPWDiscFoc" name="Discipline Focus" description="You've trained extensively in the arts of a single martial discipline.\n\n{b}Prerequisites{/b}: Ability to initiate three maneuvers of a single discipline.\n\n{b}Benefit{/b}: You gain a +2 bonus to saving throw DCs when using maneuvers of the selected discipline. You also inflict an additional +2 points of damage when wielding associated weapons of the chosen discipline.\n\n{b}Special{/b}: If the character ever has fewer than three maneuvers known from the specialized discipline, then he loses the benefits of this feat until such a time that he does. This feat may be selected multiple times, each time selecting a new discipline to receive the benefits of this feat." compset="Feat" summary="Gain +2 to discipline maneuver save DC&apos;s, +2 damage with discipline weapons">
     <fieldval field="usrCandid1" value="component.Simple &amp; PathOfWar.selDisc"/>
     <fieldval field="abValue" value="2"/>
     <usesource source="srcPathOfW"/>
@@ -38,7 +33,8 @@ April 10, 2014 - Tim Shadow
     <tag group="ChooseSrc1" tag="Thing"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="fCategory" tag="General"/>
-    <eval phase="PostLevel" priority="20000"><![CDATA[      ~ If we're disabled, do nothing
+    <eval phase="PostLevel" priority="20000"><![CDATA[      
+      ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
       ~ stop now if discipline not chosen
       doneif (field[usrChosen1].ischosen = 0)
@@ -273,7 +269,7 @@ April 10, 2014 - Tim Shadow
       field[livename].text = field[thingname].text & " -" & field[abValue].value & "/" & signed(field[abValue2].value)]]></eval>
     <exprreq message="Knowledge of at least one maneuver or stance required."><![CDATA[hero.tagcount[HasMan.?] + hero.tagcount[HasStance.?] <> 0]]></exprreq>
     </thing>
-  <thing id="fPWMartTr1" name="Martial Training I" description="You’ve learned the basics in a martial discipline.\n\n{b}Prerequisites{/b}: Base attack bonus +3 or Knowledge (martial) 3 ranks.\n\n{b}Benefit{/b}: Select a martial discipline. The associated skill for this discipline is now a class skill. Your martial initiator level maneuvers granted by this feat (and subsequent Martial Training feats) is equal to half your character level + your attribute modifier that modifies your chosen discipline for use with this discipline (example, Dexterity for a discipline that uses Acrobatics), not to exceed your character level. Likewise, your initiation modifier is the attribute modifier that effects the associated skill of this chosen discipline (for example, Charisma if the discipline uses Diplomacy). You may select any two maneuvers from the 1st level maneuvers from this discipline, and you may ready one of your maneuvers for use. You may recover one maneuver by expending a full round action to recover it.\n\n{b}Special{/b}: If you ever gain levels in a martial adept class or possess them previously, these maneuvers continue to use their own initiator level and recovery method, independent of your martial adept level. Those wishing to add new maneuvers from a discipline that is already available to their class should instead select the Advanced Study feat instead." compset="Feat" uniqueness="useronce">
+  <thing id="fPWMartTr1" name="Martial Training I" description="You've learned the basics in a martial discipline.\n\n{b}Prerequisites{/b}: Base attack bonus +3 or Knowledge (martial) 3 ranks.\n\n{b}Benefit{/b}: Select a martial discipline. The associated skill for this discipline is now a class skill. Your martial initiator level maneuvers granted by this feat (and subsequent Martial Training feats) is equal to half your character level + your attribute modifier that modifies your chosen discipline for use with this discipline (example, Dexterity for a discipline that uses Acrobatics), not to exceed your character level. Likewise, your initiation modifier is the attribute modifier that effects the associated skill of this chosen discipline (for example, Charisma if the discipline uses Diplomacy). You may select any two maneuvers from the 1st level maneuvers from this discipline, and you may ready one of your maneuvers for use. You may recover one maneuver by expending a full round action to recover it.\n\n{b}Special{/b}: If you ever gain levels in a martial adept class or possess them previously, these maneuvers continue to use their own initiator level and recovery method, independent of your martial adept level. Those wishing to add new maneuvers from a discipline that is already available to their class should instead select the Advanced Study feat instead." compset="Feat" uniqueness="useronce">
     <comment>abValue  = Manuevers Known
       abValue2 = Maneuvers Allowed to be Readied
       abValue3 = Stances Known
@@ -335,7 +331,7 @@ April 10, 2014 - Tim Shadow
         validif (#BAB[] >= 3)]]></validate>
       </prereq>
     </thing>
-  <thing id="fPWMartTr2" name="Martial Training II" description="You’ve continued to progress your martial studies.\n\n{b}Prerequisite{/b}: Martial Training I, base attack bonus +5 or Knowledge (martial) 5 ranks.\n\n{b}Benefit{/b}: You may select two new maneuvers and one stance from your chosen discipline of up to 2nd level, and you may ready an additional maneuver. You must meet the minimum initiator level to select any maneuver." compset="Feat" uniqueness="useronce">
+  <thing id="fPWMartTr2" name="Martial Training II" description="You've continued to progress your martial studies.\n\n{b}Prerequisite{/b}: Martial Training I, base attack bonus +5 or Knowledge (martial) 5 ranks.\n\n{b}Benefit{/b}: You may select two new maneuvers and one stance from your chosen discipline of up to 2nd level, and you may ready an additional maneuver. You must meet the minimum initiator level to select any maneuver." compset="Feat" uniqueness="useronce">
     <comment>abValue  = Manuevers Known
       abValue2 = Maneuvers Readied
       abValue3 = Stances Known</comment>
@@ -532,7 +528,7 @@ April 10, 2014 - Tim Shadow
          perform eachpick.assign[Helper.Proficient]
       nexteach]]></eval>
     </thing>
-  <thing id="fPWDiscExp" name="Discipline Expertise" description="You are quite adept at the use of your available discipline’s associated skills.\n\n{b}Benefit:{/b} Choose a class you have at least one level in. You gain a +2 competence bonus to checks with the skills associated with maneuvers available to that class." compset="Feat" summary="+2 bonus to skills associated to class disciplines" uniqueness="useronce">
+  <thing id="fPWDiscExp" name="Discipline Expertise" description="You are quite adept at the use of your available discipline's associated skills.\n\n{b}Benefit:{/b} Choose a class you have at least one level in. You gain a +2 competence bonus to checks with the skills associated with maneuvers available to that class." compset="Feat" summary="+2 bonus to skills associated to class disciplines" uniqueness="useronce">
     <fieldval field="usrCandid1" value="component.Configure &amp; PathOfWar.Config"/>
     <fieldval field="abValue" value="2"/>
     <usesource source="srcPathOfW"/>
@@ -549,7 +545,7 @@ foreach pick in hero from BaseSkill where field[usrChosen1].chosen.tagids[Discip
   #applybonus[BonComp, eachpick, field[abValue].value]
 nexteach]]></eval>
     </thing>
-  <thing id="fPWDiscMst" name="Discipline Mastery" description="You’ve learned to use certain skills in reference to your martial ability with practiced ease.\n\n{b}Prerequisites:{/b} 8 or more ranks in a discipline’s associated skill.\n\n{b}Benefit:{/b}  You may take 10 on skill checks made with any associated skill of a discipline you possess (with 8 or more ranks) without increasing the time needed to make the check, even if combat or distractions would otherwise prevent you from doing so." compset="Feat" summary="Always take 10 with discipline skills, with no increase in time needed" uniqueness="useronce">
+  <thing id="fPWDiscMst" name="Discipline Mastery" description="You've learned to use certain skills in reference to your martial ability with practiced ease.\n\n{b}Prerequisites:{/b} 8 or more ranks in a discipline's associated skill.\n\n{b}Benefit:{/b}  You may take 10 on skill checks made with any associated skill of a discipline you possess (with 8 or more ranks) without increasing the time needed to make the check, even if combat or distractions would otherwise prevent you from doing so." compset="Feat" summary="Always take 10 with discipline skills, with no increase in time needed" uniqueness="useronce">
     <comment><![CDATA[This feat's pre-reqs script refers to its thingid, so if you change the thingid you need to update that script to match.]]></comment>
     <fieldval field="abValue" value="8"/>
     <usesource source="srcPathOfW"/>
@@ -663,7 +659,7 @@ nexteach]]></eval>
         @valid = ValidStaOn</validate>
       </prereq>
     </thing>
-  <thing id="fPWXtraMrk" name="Extra Marks" description="You are able to mark more opponents than most.\n\n{b}Prerequisite:{/b} Armiger’s mark class feature.\n\n{b}Benefit:{/b} You gain two additional daily uses of your armiger’s mark class feature.\n\n{b}Special:{/b} This feat can be taken multiple times. Its effects stack." compset="Feat" summary="+2 uses of Armiger&apos;s Mark">
+  <thing id="fPWXtraMrk" name="Extra Marks" description="You are able to mark more opponents than most.\n\n{b}Prerequisite:{/b} Armiger's mark class feature.\n\n{b}Benefit:{/b} You gain two additional daily uses of your armiger's mark class feature.\n\n{b}Special:{/b} This feat can be taken multiple times. Its effects stack." compset="Feat" summary="+2 uses of Armiger&apos;s Mark">
     <fieldval field="abValue" value="2"/>
     <usesource source="srcPathOfW"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -679,7 +675,7 @@ nexteach]]></eval>
       focus.field[trkMax].value += field[abValue].value]]></eval>
     <exprreq message="Armiger&apos;s Mark ability required" iserror="no"><![CDATA[#hasability[cPW3ArmMrk] <> 0]]></exprreq>
     </thing>
-  <thing id="fPWXtndMrk" name="Extended Mark" description="Your marks are more potent and are capable of keeping your foe’s attention longer.\n\n{b}Prerequisite:{/b} Armiger’s mark class feature\n\n{b}Benefit:{/b} The duration of your armiger’s mark is doubled." compset="Feat" summary="Armiger&apos;s Mark duration doubled" uniqueness="useronce">
+  <thing id="fPWXtndMrk" name="Extended Mark" description="Your marks are more potent and are capable of keeping your foe's attention longer.\n\n{b}Prerequisite:{/b} Armiger's mark class feature\n\n{b}Benefit:{/b} The duration of your armiger's mark is doubled." compset="Feat" summary="Armiger&apos;s Mark duration doubled" uniqueness="useronce">
     <fieldval field="abValue" value="2"/>
     <usesource source="srcPathOfW"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -694,7 +690,7 @@ nexteach]]></eval>
       focus.field[abDuration].value *= field[abValue].value]]></eval>
     <exprreq message="Armiger&apos;s Mark ability required" iserror="no"><![CDATA[#hasability[cPW3ArmMrk] <> 0]]></exprreq>
     </thing>
-  <thing id="fPWGrdsGlr" name="Guard&apos;s Glare" description="Your unflinching stare keeps your targets terrified of fleeing from you.\n\n{b}Prerequisite:{/b} Armiger’s mark class feature, Intimidate 4 ranks\n\n{b}Benefit:{/b} A creature that is demoralized, frightened, shaken, or panicked and marked by your armiger’s mark must make a Will save (DC 10 + half your warder level + Intelligence modifier) to move in a direction away from you. A creature only needs to make this save once per round. This is a mind-affecting fear effect." compset="Feat" uniqueness="useronce">
+  <thing id="fPWGrdsGlr" name="Guard&apos;s Glare" description="Your unflinching stare keeps your targets terrified of fleeing from you.\n\n{b}Prerequisite:{/b} Armiger's mark class feature, Intimidate 4 ranks\n\n{b}Benefit:{/b} A creature that is demoralized, frightened, shaken, or panicked and marked by your armiger's mark must make a Will save (DC 10 + half your warder level + Intelligence modifier) to move in a direction away from you. A creature only needs to make this save once per round. This is a mind-affecting fear effect." compset="Feat" uniqueness="useronce">
     <usesource source="srcPathOfW"/>
     <tag group="fCategory" tag="Combat"/>
     <tag group="abSave" tag="WillNeg"/>
@@ -718,7 +714,7 @@ nexteach]]></eval>
       <validate><![CDATA[validif (#skillranks[skIntim] >= 3)]]></validate>
       </prereq>
     </thing>
-  <thing id="fPWPwflMrk" name="Powerful Mark" description="Your ability to mark foes is more potent than others of your trade.\n\n{b}Prerequisite:{/b} Armiger’s mark class feature.\n\n{b}Benefit:{/b} The penalty for your armiger’s mark ability increases by 2, and the save DC for your armiger’s mark grand challenge increases by +2.\n\n{b}Special:{/b} This feat can be taken multiple times. Its effects stack." compset="Feat" summary="Extra -2 to-hit for marked foes, +2 DC for grand challenge">
+  <thing id="fPWPwflMrk" name="Powerful Mark" description="Your ability to mark foes is more potent than others of your trade.\n\n{b}Prerequisite:{/b} Armiger's mark class feature.\n\n{b}Benefit:{/b} The penalty for your armiger's mark ability increases by 2, and the save DC for your armiger's mark grand challenge increases by +2.\n\n{b}Special:{/b} This feat can be taken multiple times. Its effects stack." compset="Feat" summary="Extra -2 to-hit for marked foes, +2 DC for grand challenge">
     <fieldval field="abValue" value="2"/>
     <usesource source="srcPathOfW"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -734,7 +730,7 @@ nexteach]]></eval>
       focus.field[abValue].value -= field[abValue].value]]></eval>
     <exprreq message="Armiger&apos;s Mark ability required" iserror="no"><![CDATA[#hasability[cPW3ArmMrk] <> 0]]></exprreq>
     </thing>
-  <thing id="fPWTakeBlw" name="Take the Blow" description="You are swift in positioning yourself to aid your allies.\n\n{b}Prerequisite:{/b} Armiger’s mark class feature.\n\n{b}Benefit:{/b} When a creature within your reach who is marked by your armiger’s mark targets an ally with a melee or ranged attack, you can expend a use of your armiger’s mark as an immediate action to force the opponent’s attack to target you instead. You are considered the target for all effects of the attack (the creature must make a successful attack roll, you are allowed a save, if any, etc.)." compset="Feat" summary="Spend 2 marks, you are attacked in place of ally" uniqueness="useronce">
+  <thing id="fPWTakeBlw" name="Take the Blow" description="You are swift in positioning yourself to aid your allies.\n\n{b}Prerequisite:{/b} Armiger's mark class feature.\n\n{b}Benefit:{/b} When a creature within your reach who is marked by your armiger's mark targets an ally with a melee or ranged attack, you can expend a use of your armiger's mark as an immediate action to force the opponent's attack to target you instead. You are considered the target for all effects of the attack (the creature must make a successful attack roll, you are allowed a save, if any, etc.)." compset="Feat" summary="Spend 2 marks, you are attacked in place of ally" uniqueness="useronce">
     <usesource source="srcPathOfW"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="abAction" tag="Immediate"/>
@@ -843,7 +839,7 @@ nexteach]]></eval>
         perform eachpick.pushtags[wFtrGroup.?]
       nexteach]]></eval>
     </thing>
-  <thing id="fPWXtrStAr" name="Extra Stalker Art" description="You’ve learned a new way to use your stalker training.\n\n{b}Prerequisites:{/b} 3rd-level stalker, Wis 13.\n\n{b}Benefit:{/b} You may select a new stalker art and add it to your known stalker arts.\n\n{b}Special:{/b} You may select this feat multiple times, selecting a new stalker art each time." compset="Feat" summary="Learn a new Stalker Art" uniqueness="useronce">
+  <thing id="fPWXtrStAr" name="Extra Stalker Art" description="You've learned a new way to use your stalker training.\n\n{b}Prerequisites:{/b} 3rd-level stalker, Wis 13.\n\n{b}Benefit:{/b} You may select a new stalker art and add it to your known stalker arts.\n\n{b}Special:{/b} You may select this feat multiple times, selecting a new stalker art each time." compset="Feat" summary="Learn a new Stalker Art" uniqueness="useronce">
     <fieldval field="reqWis" value="13"/>
     <usesource source="srcPathOfW"/>
     <tag group="Helper" tag="ShowSpec"/>
