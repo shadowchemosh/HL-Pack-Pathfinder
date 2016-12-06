@@ -13,9 +13,9 @@
     var s2Search as string
     s2Search = altpick.tagids[ClsCountAs.?]
     doneif (empty(s2Search) <> 0)
-	s2Search = replace(s2Search,"ClsCountAs","thingid",0)
-	s2Search = replace(s2Search,"cHelp","mHelp",0)
-	]]></procedure>
+  s2Search = replace(s2Search,"ClsCountAs","thingid",0)
+  s2Search = replace(s2Search,"cHelp","mHelp",0)
+  ]]></procedure>
   <procedure id="PWpickSrc" context="pick"><![CDATA[
     ~ This procedure builds the Class Search String to be used by other
     ~ searches for the .setfocus of the Base Class.
@@ -58,7 +58,7 @@
       linkage[table].field[cfgSpent2].value += 1
       ~ Set tags so we display on the In-Play tab for usage as a Stance should always display.
       perform assign[Helper.ShowSpec]
-	  perform assign[User.Activation]
+    perform assign[User.Activation]
 
       ~ If our stance is activated then set Stance Activated tag on hero
       If (field[abilActive].value + field[usrIndex].value <> 0) Then
@@ -66,16 +66,16 @@
         perform linkage[table].assign[PathOfWar.StanceOn]
         perform hero.assign[PathOfWar.StanceOn]
       Endif  
-	  
+    
 
     Endif
-	
-	~ Push our level tag to the discipline object; this is for tracking purposes so that things like the Sleeping Goddess PP bonus can work
-	perform hero.findchild[Simple,tagids[Discipline.?]].setfocus
-	doneif (state.isfocus = 0)
-	perform focus.pushtags[mLevel.?]
-	
-	]]></procedure>
+  
+  ~ Push our level tag to the discipline object; this is for tracking purposes so that things like the Sleeping Goddess PP bonus can work
+  perform hero.findchild[Simple,tagids[Discipline.?]].setfocus
+  doneif (state.isfocus = 0)
+  perform focus.pushtags[mLevel.?]
+  
+  ]]></procedure>
   <procedure id="PWsetupCfg" context="pick"><![CDATA[  
     ~ Set to pull anything that is not a stance
     field[cfgAllow1].text = "PathOfWar.Manuever & (" & tagids[Discipline.?,"|"] & ")"
@@ -191,15 +191,15 @@
       Call PWvalidSrc
 
       ~ Set focus to the Path of War class
-	  perform hero.findchild[PWManList,s2Search].setfocus
+    perform hero.findchild[PWManList,s2Search].setfocus
       ~ If we found no hit get out now!
       doneif (state.isfocus = 0)
       ~ Calculate the array value which is class level minus one as we start at zero
-	  s2X = focus.field[AryLevel].value
-      doneif (s2X < 0)	  
+    s2X = focus.field[AryLevel].value
+      doneif (s2X < 0)    
 
       ~ Validate our level vs the number of Readied manuevers allowed
-	  If (altpick.tagcount[PathOfWar.ManueverOn] > focus.field[cManReady].arrayvalue[s2X]) Then
+    If (altpick.tagcount[PathOfWar.ManueverOn] > focus.field[cManReady].arrayvalue[s2X]) Then
         ValidManOn = 0
       Endif
 
@@ -434,21 +434,21 @@
   </procedure>
   <procedure id="PWsetupMT" context="pick"><![CDATA[
       ~ This procedure is called from the abilities bootstrapped to the Martial Tradition factions, and sets up the discipline trade mechanism
-	  
+    
       ~ Stop if we haven't picked a maneuver list
       doneif (field[usrChosen1].ischosen = 0)
 
-	  ~ Can't trade away the same discipline we're trading for...
-	  field[usrCandid2].text &= " & !" & tagids[Discipline.?, " & !"]
-	  
-	  ~ Limit the tradeaway selection to disciplines gained by the chosen maneuver list
-	  field[usrCandid2].text &= " & ("
-	  field[usrCandid2].text &= field[usrChosen1].chosen.tagids[Discipline.?, " | "]
-	  field[usrCandid2].text &= ")"
-	  
-	  ~ Stop if we haven't picked a discipline to trade
-	  doneif (field[usrChosen2].ischosen = 0)
-			
+    ~ Can't trade away the same discipline we're trading for...
+    field[usrCandid2].text &= " & !" & tagids[Discipline.?, " & !"]
+    
+    ~ Limit the tradeaway selection to disciplines gained by the chosen maneuver list
+    field[usrCandid2].text &= " & ("
+    field[usrCandid2].text &= field[usrChosen1].chosen.tagids[Discipline.?, " | "]
+    field[usrCandid2].text &= ")"
+    
+    ~ Stop if we haven't picked a discipline to trade
+    doneif (field[usrChosen2].ischosen = 0)
+      
       ~ Get the discipline tag from the chosen field, and remove it from the chosen maneuver list
       var remDisc as string
       remDisc = field[usrChosen2].chosen.tagids[Discipline.?]
@@ -456,25 +456,88 @@
 
       ~ Grant access to this tradition's discipline
       perform field[usrChosen1].chosen.pushtags[Discipline.?]
-	  ]]>
+    ]]>
   </procedure>
   
   <procedure id="PWgetILBon" context="pick"><![CDATA[
       ~ This procedure is used by stances that increase a granted bonus at level X and again every Y levels.
-	  var firstIncLv as number
-	  var incEveryLv as number
-	  var incAmt as number
-	  var inc as number
-	  
-	  ~ Start by assuming no increase
-	  inc = 0
-	  
-	  var tmp as number
-	  tmp = field[mIL].value
-	  while (tmp >= firstIncLv)
-	    inc += incAmt
-		tmp -= incEveryLv
-	  loop
-      ]]>
+    var firstIncLv as number
+    var incEveryLv as number
+    var incAmt as number
+    var inc as number
+    
+    ~ Start by assuming no increase
+    inc = 0
+    
+    var tmp as number
+    tmp = field[mIL].value
+    while (tmp >= firstIncLv)
+      inc += incAmt
+    tmp -= incEveryLv
+    loop
+    ]]>
   </procedure>
+
+
+  <!-- Retrieve summary info on a Maneuvers -->
+  <procedure id="PWManSumm" context="info"><![CDATA[
+    ~ OUT: sText - output text
+    var sText as string
+
+    ~ Set text fields
+    var sBreak  as string
+    ~ Default to the HL new line
+    sBreak = "{br}"
+
+    sText = "{b}Discipline:{/b} " & tagnames[Discipline.?] & " (" & tagnames[mType.?] & ")"
+
+    ~ If we have a descriptor tag then add it into the header text
+    If (tagis[mDescript.?] <> 0) Then
+      sText &= " [" & tagnames[mDescript.?] & "]"
+    Endif
+    sText &= sBreak & "{b}Level:{/b} " & tagnames[mLevel.?]
+    sText &= sBreak & "{b}Initiation Action:{/b} " & tagnames[mInitAct.?]
+
+    ~ If we have a range tag then add it into the header text
+    If (tagis[mRange.?] <> 0) Then
+      sText &= sBreak & "{b}Range:{/b} " & tagnames[mRange.?]
+    ~.. If we have a manually entered range text then use it
+    ElseIf ( empty(field[mRange].text) = 0 ) Then
+      sText &= sBreak & "{b}Range:{/b} " & field[mRange].text
+    Endif  
+
+    ~If we have a manually entered area text then use it
+    If ( empty(field[mArea].text) = 0 ) Then
+      sText &= sBreak & "{b}Area:{/b} " & field[mArea].text
+    Endif  
+
+    ~ If we have a target tag then add it into the header text
+    If (tagis[mTarget.?] <> 0) Then
+      sText &= sBreak & "{b}Target:{/b} " & tagnames[mTarget.?]
+    ~.. If we have a manually entered target text then use it
+    ElseIf ( empty(field[mTarget].text) = 0 ) Then
+      sText &= sBreak & "{b}Target:{/b} " & field[mTarget].text
+    Endif  
+
+    ~ If we have a Duration tag then add it into the header text
+    If (tagis[mDuration.?] <> 0) Then
+      sText &= sBreak & "{b}Duration:{/b} " & tagnames[mDuration.?]
+    ~.. If we have a manually entered Duration text then use it
+    ElseIf ( empty(field[mDuration].text) = 0 ) Then
+      sText &= sBreak & "{b}Duration:{/b} " & field[mDuration].text
+    Endif  
+
+    ~ If we have a saving throw tag then add it into the header text
+    If (tagis[mSave.?] <> 0) Then
+      sText &= sBreak & "{b}Saving Throw:{/b} " & tagnames[mSave.?]
+    ~.. If we have a manually entered Saving Throw text then use it
+    ElseIf ( empty(field[mDuration].text) = 0 ) Then
+      sText &= sBreak & "{b}Saving Throw:{/b} " & field[mSave].text
+    Endif
+
+    ~ Combine the Manuever text to after the header
+    sText &= sBreak & sBreak & field[descript].text
+    ]]>
+    </procedure>
+
   </document>
