@@ -120,4 +120,27 @@ November 27, 2014</info_author>
       <before name="PoW Calc IL"/>
       </eval>
     </thing>
+  <thing id="pPWInitAtt" name="Initiator Class Attribute" description="Select this adjustment to change the attribute used to initiate maneuvers." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.PWManList"/>
+    <usesource source="srcPathOfW"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Adjust2nd" tag="Attribute"/>
+    <eval phase="First" priority="49"><![CDATA[      
+      ~ Do nothing if not activated, or if either selection not made &
+      doneif (field[pIsOn].value = 0)
+      doneif (field[pChosen].ischosen = 0)
+      doneif (field[pChosen2].ischosen = 0)
+
+      ~ Remove current attribute
+      perform field[pChosen].chosen.delete[UseAttr.?]
+
+      ~ Get attribute tag chosen and push to the mHelp Pick
+      perform field[pChosen2].chosen.pulltags[UseAttr.?]
+      perform field[pChosen].chosen.pushtags[UseAttr.?]]]>
+      <before name="PoW Init Setup"/>
+      </eval>
+    </thing>
   </document>
