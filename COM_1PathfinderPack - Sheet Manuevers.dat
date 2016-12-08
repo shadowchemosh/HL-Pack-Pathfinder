@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+<!--
+  Created by: Tim Shadow
+        Date: December 5, 2016
+
+  This is a community created sheet.
+-->
+
+  <!-- Generate the text for a Maneuvers title label on the Manuevers printout -->
+  <procedure id="PoWManLbl" scripttype="label"><![CDATA[
+    var level as number
+    var desc as string
+
+    @text &= hero.actorname & " - Level " & level & " " & desc
+    ]]></procedure>
+
+
+  <!-- NOTE: The global variable pwmanout can have the following values:
+
+      0 - output full descriptions
+      1 - output summaries
+  -->
+
+  <!-- Manuever lists -->
+  <portal
+    id="oManTbl"
+    style="outtable">
+    <output_table
+      component="PWManuever"
+      showtemplate="oManPick"
+      showpicks="yes"
+      varyheight="yes"
+      showsortset="SpellOut">
+      <list><![CDATA[
+        PathOfWar.Manuever & !Helper.Obsolete & !Helper.Helper
+        ]]></list>
+      </output_table>
+    </portal>
+
+  <!-- Stances lists -->
+  <portal
+    id="oStanceTbl"
+    style="outtable">
+    <output_table
+      component="PWManuever"
+      showtemplate="oManPick"
+      showpicks="yes"
+      varyheight="yes"
+      showsortset="SpellOut">
+      <list><![CDATA[
+        PathOfWar.Stance & !Helper.Obsolete & !Helper.Helper
+        ]]></list>
+      </output_table>
+    </portal>
+
+
+  <!-- Manuever and Stances Header -->
+  <template
+    id="omHeader"
+    name="Manuever and Stances Display Header"
+    compset="Totals">
+
+    <portal
+      id="text"
+      style="oNormal">
+      <output_label>
+        <labeltext><![CDATA[
+          foreach pick in hero from PWManList
+            @text = splice(@text,eachpick.field[name].text & " " & eachpick.field[cIL].value," / ")
+          nexteach
+
+          @text = splice(hero.actorname,@text,", ") 
+          ~& " " & chr(150) & " Maneuvers"
+          ]]></labeltext>
+        </output_label>
+      </portal>
+
+    <position><![CDATA[
+      perform portal[text].centerhorz
+      height = portal[text].height
+      ]]></position>
+
+    </template>
+
+  <!-- Maneuvers and Stances pick -->
+  <template
+    id="oManPick"
+    name="Output Maneuvers and Stances Table"
+    compset="PWManuever">
+
+    <portal
+      id="mName"
+      style="oSplTitle">
+      <output_label>
+        <labeltext><![CDATA[
+          @text = "{align left}{horz 15}" & tagnames[Ability.?] & " (" & tagnames[ClsCountAs.?] & ")"
+          ]]></labeltext>
+        </output_label>
+      </portal>
+
+    <portal
+      id="mLevel"
+      style="oSplTitle">
+      <output_label>
+        <labeltext><![CDATA[
+          @text =  tagnames[mLevel.?]
+          ]]></labeltext>
+        </output_label>
+      </portal>
+
+    <portal
+      id="mText"
+      style="oSmall">
+      <output_label>
+        <labeltext><![CDATA[
+          ~ TODO: Update this to use the new PWManSumm procedure once 
+          ~       we are not updating the Thing text.
+          @text = field[descript].text
+          ]]></labeltext>
+        </output_label>
+      </portal>
+
+    <portal
+      id="mSummary"
+      style="oSmall">
+      <output_label>
+        <labeltext><![CDATA[
+          @text = field[abSumm].text
+          ]]></labeltext>
+        </output_label>
+      </portal>
+
+    <position><![CDATA[
+      ~ The level portal has centered text, so by adding twice the padding we
+      ~ want, we get a small gap at it's right-hand side, so that the number
+      ~ doesn't bump right against the edge of the grey section.
+      ~ The name accomplishes the same thing with a horz element, but the level
+      ~ seems to be ignoring horz's and spaces at the end of the text
+      portal[mLevel].width += 30
+      portal[mName].width = width - portal[mLevel].width
+
+      perform portal[mLevel].alignedge[right,0]
+
+      if (scenevalue[pwmanout] = 1) then
+        portal[mSummary].width = width
+        perform portal[mSummary].autoheight
+        perform portal[mSummary].alignrel[ttob,mName,10]
+        height = portal[mSummary].bottom + 30
+        portal[mText].visible = 0
+      else
+        portal[mText].width = width
+        perform portal[mText].autoheight
+        perform portal[mText].alignrel[ttob,mName,10]
+        height = portal[mText].bottom + 30
+        portal[mSummary].visible = 0
+        endif
+      ]]></position>
+    </template>
+
+  <layout
+    id="oManeuvers">
+    <portalref portal="oManTbl"/>
+    <portalref portal="oStanceTbl"/>
+    <position><![CDATA[
+      perform portal[oManTbl].autoplace
+      perform portal[oStanceTbl].autoplace
+      ]]></position>
+    </layout>
+
+  <layout
+    id="omHeader">
+    <templateref template="omHeader" thing="Totals" ispick="yes"/>
+    <position><![CDATA[
+      template[omHeader].width = width
+      perform template[omHeader].render
+      height = template[omHeader].bottom
+      ]]></position>
+    </layout>
+
+  <sheet
+    id="shPWManDes"
+    name="Maneuvers Sheet (Description)"
+    spillover="yes">
+    <layoutref layout="oManeuvers" reference="left"/>
+    <layoutref layout="oManeuvers" reference="right"/>
+    <layoutref layout="omHeader"/>
+    <position><![CDATA[
+      ~ Set our global variable to 'output description'
+      scenevalue[pwmanout] = 0
+
+      ~ Setup the gap to be used between the various sections of the character sheet
+      autogap = 40
+      scenevalue[sectiongap] = autogap
+
+      layout[omHeader].width = width
+      perform layout[omHeader].render
+
+      layout[left].top = layout[omHeader].bottom + 40
+      layout[right].top = layout[omHeader].bottom + 40
+
+      ~ Calculate the width of the two columns of the character sheet, leaving a
+      ~ Suitable center gap between them
+      var colwidth as number
+      colwidth = (width - 50) / 2
+
+      ~ Output the layout on the lefthand side with whatever information will fit
+      layout[left].width = colwidth
+      layout[left].height = height - layout[left].top
+      perform layout[left].render
+
+      ~ Output the layout on the righthand side with whatever information will fit
+      layout[right].width = colwidth
+      layout[right].height = height - layout[right].top
+      layout[right].left = width - colwidth
+      perform layout[right].render
+      ]]></position>
+    </sheet>
+
+  <sheet
+    id="shPWManSum"
+    name="Maneuvers Sheet (Summaries)"
+    spillover="yes">
+    <layoutref layout="oManeuvers" reference="left"/>
+    <layoutref layout="oManeuvers" reference="right"/>
+    <layoutref layout="omHeader"/>
+    <position><![CDATA[
+      ~ Set our global variable to 'output summaries'
+      scenevalue[pwmanout] = 1
+
+      ~setup the gap to be used between the various sections of the character sheet
+      autogap = 40
+      scenevalue[sectiongap] = autogap
+
+      layout[omHeader].width = width
+      perform layout[omHeader].render
+
+      layout[left].top = layout[omHeader].bottom + 40
+      layout[right].top = layout[omHeader].bottom + 40
+
+      ~ Calculate the width of the two columns of the character sheet, leaving a
+      ~ suitable center gap between them
+      var colwidth as number
+      colwidth = (width - 50) / 2
+
+      ~ Output the layout on the lefthand side with whatever information will fit
+      layout[left].width = colwidth
+      layout[left].height = height - layout[left].top
+      perform layout[left].render
+
+      ~ Output the layout on the righthand side with whatever information will fit
+      layout[right].width = colwidth
+      layout[right].height = height - layout[right].top
+      layout[right].left = width - colwidth
+      perform layout[right].render
+      ]]></position>
+    </sheet>
+
+  </document>
