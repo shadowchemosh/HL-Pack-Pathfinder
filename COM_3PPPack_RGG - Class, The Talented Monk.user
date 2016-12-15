@@ -11,7 +11,7 @@
     <fieldval field="cSpec2ndSi" value="Monk Talent"/>
     <fieldval field="cBonFtNm" value="Combat Feat"/>
     <fieldval field="cSpec5thSi" value="Fighting Style"/>
-    <arrayval field="cCustTot" index="0" value="3"/>
+    <fieldval field="cSBonFtNm" value="Bonus Feat"/>
     <arrayval field="cCustTot" index="1" value="4"/>
     <arrayval field="cCustTot" index="2" value="5"/>
     <arrayval field="cCustTot" index="3" value="6"/>
@@ -36,8 +36,8 @@
     <arrayval field="cCustScTot" index="17" value="20"/>
     <arrayval field="cCustScTot" index="18" value="21"/>
     <arrayval field="cCustScTot" index="19" value="22"/>
+    <arrayval field="cCustTot" index="0" value="3"/>
     <usesource source="srcMonkTal"/>
-    <tag group="AgeColumn" tag="3"/>
     <tag group="cWill" tag="Good"/>
     <tag group="Classes" tag="RGMonkTal" name="Monk, Talented"/>
     <tag group="cRef" tag="Good"/>
@@ -53,7 +53,6 @@
     <tag group="ClassSkill" tag="skSenseMot"/>
     <tag group="ClassSkill" tag="skStealth"/>
     <tag group="ClassSkill" tag="skSwim"/>
-    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="FtCountAs" tag="Monk"/>
     <tag group="AlgnReq" tag="Lawful"/>
     <tag group="AlterClass" tag="cHelpMnk"/>
@@ -67,30 +66,30 @@
     <tag group="WepProf" tag="wShortswd"/>
     <tag group="WepProf" tag="wSling"/>
     <tag group="WepProf" tag="wSpear"/>
-    <tag group="fCategory" tag="Combat"/>
     <tag group="cAttack" tag="Medium"/>
     <tag group="cFort" tag="Good"/>
-    <tag group="abCategory" tag="RGGMnkEdge" name="Talented Monk Edge"/>
-    <tag group="abCategory" tag="RGGMnkTlnt" name="Talented Monk Talent"/>
     <tag group="ClassSkill" tag="skEscape"/>
     <tag group="ConsClSkil" tag="cskPercept"/>
     <tag group="ConsClSkil" tag="cskAthleti"/>
     <tag group="ConsClSkil" tag="cskAcrobat"/>
+    <tag group="AgeColumn" tag="3"/>
+    <tag group="abCategory" tag="RGGMnkEdge" name="Talented Monk Edge"/>
+    <tag group="abCategory" tag="RGGMnkTlnt" name="Talented Monk Talent"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="Helper" tag="SBonFtNoPr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="fWepMnk"></bootstrap>
-    <eval phase="Render" priority="99999" index="2"><![CDATA[
-      ~ Make Custom List 5 select Fighter Styles
-      field[cCstS5Expr].text = "component.BaseCustSp & abCategory.FtrWepTra"]]></eval>
-    <eval phase="First" priority="50000">      
-      ~ Remove talented monk levels so that we can add Monk 
+    <eval phase="First" priority="50000"><![CDATA[
+      ~ Remove talented monk levels so that we can add Monk
       ~ levels. This way we meet pre-req from feats and abilities
-      ~ correctly.
-      perform hero.delete[Classes.RGMonkTal]</eval>
+      ~ correctly. &
+      perform hero.delete[Classes.RGMonkTal]]]></eval>
     <eval phase="PostLevel" priority="20000" index="3"><![CDATA[
       var nMnkLevel as number
       var nAttacks  as number
       var nBAB      as number
 
-      ~ Because we need our level count multiple times save it once 
+      ~ Because we need our level count multiple times save it once
       ~ in a local variable to save CPU time.
       nMnkLevel += hero.tagcount[Classes.Monk]
 
@@ -108,8 +107,8 @@
       if (nMnkLevel >= 16) then
         nAttacks += 1
       endif
-        
-      ~ Adjust each weapon that is a Talented Monk Specialy Attack Bonus 
+
+      ~ Adjust each weapon that is a Talented Monk Specialy Attack Bonus
       ~ to be FULL BAB and have the correct number of additional attacks.
       foreach pick in hero from BaseWep where "wSpecial.RGTalMnkAB"
         eachpick.field[wAttBAB].value += nBAB
@@ -118,8 +117,37 @@
         eachpick.field[wNumAttTbl].arrayvalue[1] = nAttacks
         eachpick.field[wNumAttTbl].arrayvalue[2] = nAttacks
         eachpick.field[wNumAttTbl].arrayvalue[3] = nAttacks
-        eachpick.field[wNumAttTbl].arrayvalue[5] = nAttacks      
+        eachpick.field[wNumAttTbl].arrayvalue[5] = nAttacks
       nexteach]]></eval>
+    <eval phase="Render" priority="99999" index="2"><![CDATA[
+      ~ Make Custom List 5 select Fighter Styles &
+      field[cCstS5Expr].text = "component.BaseCustSp & abCategory.FtrWepTra"
+
+      ~ If we have secondary bonus feats then adjust expression to use BonusFor.?
+      ~ tags that been "extended" on to all the Feat Things. This was done using
+      ~ the editor tab "General->*Extend Thing".
+      ~ NOTE: For anyone wanting to add additional "feat" choices please use the
+      ~       *Extend Thing tab in your own custom .user file. The Group/Tag you
+      ~       want to use are:
+      ~ group="BonusFor"  tag="RG1Lvl1"  - Monk (Talented) Lvl 1
+      ~ group="BonusFor"  tag="RG1Lvl6"  - Monk (Talented) Lvl 6
+      ~ group="BonusFor"  tag="RG1Lvl10" - Monk (Talented) Lvl 10
+      if (field[cSBonFtMax].value <> 0) then
+        field[cSBonFtExp].text = "!Helper.Helper & component.BaseFeat & (fIncSec.fCustom|BonusFor.RG1Lvl1"
+
+        ~ if we are 6+ we get additional bonus feat choices
+        if (field[cTotalLev].value >= 6) then
+          field[cSBonFtExp].text &= "|BonusFor.RG1Lvl6"
+        endif
+
+        ~ if we are 10+ we get additional bonus feat choices
+        if (field[cTotalLev].value >= 10) then
+          field[cSBonFtExp].text &= "|BonusFor.RG1Lvl10"
+        endif
+
+        ~ End the expression
+        field[cSBonFtExp].text &= ")"
+      endif]]></eval>
     </thing>
   <thing id="cRGMonkTal" name="Monk (Talented)" description="{i}The Genius Guide to the Talented Monk{/i} rewrites the classic monk class to use talents, rather than static class abilities and bonus feats. Rather than require all monks to be masters of unarmed attacks and self- perfection, each monk can have custom-fit class abilities to match a player&apos;s specific concept. This greater flexibility allows the monk to be the default esotericcombat- style- oriented character without limiting it to just one or two styles of fighting. Like a rogue, a talented monk character can pick and choose from a range of similarly-powered abilities appropriate for the monk&apos;s role, without making the class overpowered. The talented monk can still fill the same roles in a party, but can customize his combat style and abilities to fill a much broader range of concepts.\n\n{b}Alignment:{/b} A talented monk may be of any lawful alignment." compset="ClassLevel" maxlimit="20">
     <usesource source="srcMonkTal"/>
@@ -153,8 +181,12 @@
     <tag group="Helper" tag="SpecUp"/>
     <tag group="fCategory" tag="Combat"/>
     <tag group="abCategory" tag="RGGMnkEdge"/>
-    <eval phase="PreLevel" priority="10000">~ Give a bonus Combat Feat
-      linkage[table].field[cBonFtMax].value += 1</eval>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ if we've been disabled, get out now &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Give a bonus Combat Feat
+      linkage[table].field[cBonFtMax].value += 1]]></eval>
     </thing>
   <thing id="cRG1Evasio" name="Evasion" description="The monk can avoid even magical and unusual attacks with great agility. If he makes a successful Reflex saving throw against an attack that normally deals half damage on a successful save, he instead takes no damage. Evasion can be used only if the monk is wearing light armor or no armor. (Monks with the medium armor kata talent are exceptions to this rule.) A helpless monk does not gain the benefit of evasion.\n\nA monk must be at least 2nd level to select this edge." compset="CustomSpec" uniqueness="unique">
     <usesource source="srcMonkTal"/>
@@ -166,7 +198,7 @@
     <bootstrap thing="cEvasion">
       <autotag group="ClSpecWhen" tag="2"/>
       </bootstrap>
-    <eval phase="Final" priority="10000"><![CDATA[      
+    <eval phase="Final" priority="10000"><![CDATA[
       ~ Make sure we are not wearing Medium or Heavy armor unless we
       ~ have the correct Armor Kata's.
       doneif (hero.tagis[Hero.MedArmor] + hero.tagis[Hero.HeavyArmor] - hero.tagis[RG1Monk.MedArmor] - hero.tagis[RG1Monk.HeavyArmor] <= 0)
@@ -252,9 +284,9 @@
 
       perform hero.pushtags[WepProf.?]
 
-      ~ Cycle through and apply the Helper.ExoticProf tag 
-      ~ to all examples of the chosen weapon on the hero. 
-      ~ This is important for the Aldori Dueling Sword 
+      ~ Cycle through and apply the Helper.ExoticProf tag
+      ~ to all examples of the chosen weapon on the hero.
+      ~ This is important for the Aldori Dueling Sword
       ~ specifically, and possibly others. Plus improvised
       ~ weapons can be made as "- Custom Weapon -" meaning
       ~ any weapon can suddenly be a improvised weapon.
@@ -535,7 +567,7 @@
       if (hero.childfound[cOraShigKi].field[trkLeft].value + hero.childfound[cMnkKiPool].field[trkLeft].value = 0) then
         perform assign[Helper.SpcDisable]
       endif
-      
+
       ~ If true neutral then disable ourself
       if (hero.tagis[Alignment.NeutralGE] + hero.tagis[Alignment.NeutralLC] = 2) then
         perform assign[Helper.SpcDisable]
@@ -555,7 +587,7 @@
         perform eachpick.assign[Helper.ClassSkill]
         perform eachpick.assign[SkillOver.aWIS]
         nexteach
-      
+
         perform hero.childfound[skDiplo].assign[Helper.ClassSkill]
         perform hero.childfound[skDiplo].assign[SkillOver.aWIS]
 
@@ -729,7 +761,7 @@
       ~ Set Talented Monk Attack Bonus tag to our Unarmed Strike
       perform hero.childfound[wUnarmed].assign[wSpecial.RGTalMnkAB]</eval>
     <eval phase="PostLevel" priority="20000" index="4"><![CDATA[
-      ~ Because we need our level count multiple times save it once 
+      ~ Because we need our level count multiple times save it once
       ~ in a local variable to save CPU time.
       field[abValue].value += hero.tagcount[Classes.Monk]
 
@@ -747,8 +779,8 @@
       if (field[abValue].value >= 16) then
         field[abValue3].value += 1
       endif
-        
-      ~ Adjust unarmed strike to use full BAB and to have 
+
+      ~ Adjust unarmed strike to use full BAB and to have
       ~ the correct number of additional attacks.
       hero.childfound[wUnarmed].field[wAttBAB].value += field[abValue2].value
       hero.childfound[wUnarmed].field[wRanAttBAB].value += field[abValue2].value
@@ -779,14 +811,7 @@
     <exprreq message="Bastion Stance Talent required."><![CDATA[#hasability[cRG1BasSta] <> 0]]></exprreq>
     <exprreq message="Monk level 8+ required."><![CDATA[#custspeciallevelcount[Monk] >= 8]]></exprreq>
     </thing>
-  <thing id="cRG1BasSta" name="Bastion Stance" compset="CustomSpec" uniqueness="unique">
-    <usesource source="srcMonkTal"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="SpecSource" tag="cHelpRG1"/>
-    <tag group="abCategory" tag="RGGMnkTlnt"/>
-    </thing>
-  <thing id="cRG1Adaman" name="Adamantine Monk" description="[Monk of the Sacred Mountain] The monk has muscles so strong and skin so resilient that he gains DR 1/ - . This DR increases by 1 at 12th level, and by an additional 1 at 16th level. As a swift action, the monk can spend 1 ki point to double his DR until the beginning of his next turn.\n\nA monk must be at least 8th level, have a ki pool, and have the bastion stance talent to select this talent." compset="ClSpecial" summary="Gain DR &amp; can send 1 Ki point to double this DR until the beginning of your next turn.">
+  <thing id="cRG1Adaman" name="Adamantine Monk" description="[Monk of the Sacred Mountain] The monk has muscles so strong and skin so resilient that he gains DR 1/ - . This DR increases by 1 at 12th level, and by an additional 1 at 16th level. As a swift action, the monk can spend 1 ki point to double his DR until the beginning of his next turn.\n\nA monk must be at least 8th level, have a ki pool, and have the bastion stance talent to select this talent." compset="ClSpecial" summary="Gain DR &amp; spend 1 Ki point to 2x this DR until the beginning of your next turn.">
     <fieldval field="actName" value="1 Ki"/>
     <tag group="User" tag="Activation"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -804,7 +829,7 @@
 
       ~ The following should only happen once on the first copy
       doneif (tagis[Helper.FirstCopy] = 0)
-      
+
       ~ If ability is active then double its value
       if (field[abilActive].value = 1) then
         field[abValue].value *= 2
@@ -813,15 +838,15 @@
       #applydr[xDamRd, field[abValue].value]]]></eval>
     </thing>
   <thing id="cRG1AdaSty" name="Adaptive Style" description="Select one manufactured weapon. The monk gains proficiency with the weapon, and may use it with weapon-related edges and talents market with an asterisk*. When making attacks with this weapon he may use his specialty attack bonus, rather than his base attack bonus.\n\nThis talent may be taken more than once. Each time, it applies to a different weapon." compset="CustomSpec">
+    <fieldval field="usrCandid1" value="component.BaseWep &amp; !component.BaseMagicI &amp; !wType.Natural &amp; !wAmmoGroup.? &amp; !Helper.Helper"/>
     <usesource source="srcMonkTal"/>
-    <tag group="Helper" tag="Secondary"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpecSource" tag="cHelpRG1"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="abCategory" tag="RGGMnkTlnt"/>
-    <tag group="fShowWhat" tag="Weapons"/>
     <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="Helper" tag="Secondary"/>
     <eval phase="First" priority="20000"><![CDATA[
       ~ If nothing chosen then get out now!
       doneif (field[usrChosen1].ischosen = 0)
@@ -844,4 +869,264 @@
         perform eachpick.assign[wSpecial.RGTalMnkAB]
       nexteach]]></eval>
     </thing>
+  <thing id="cRG1AnciHH" name="Ancient Healing Hand" description="[Monk of the Healing Hand] The monk can heal another creature&apos;s wounds with a touch. As a full- round action, the monk can spend 2 ki points to heal a number of hit points equal to the monk&apos;s level. He needs at least one hand free to use this ability, and cannot heal himself. If the action is interrupted, monk must make a concentration check (1d20 + monk level + wisdom modifier), against a DC of 15 + damage dealt (or 15 + 1/2 damage dealt for ongoing damage, or DC 2 for non-damaging interruptions) or the subject heals no hit points, and the ki points are lost.\n\nA monk must have a ki pool and be at least 6th level to select this talent." compset="CustomSpec" summary="Heal another spending 2 ki points to heal HP up to your monk lvl." uniqueness="unique">
+    <usesource source="srcMonkTal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="First" priority="20000"><![CDATA[
+      ~ If nothing chosen then get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      var searchexpr as string
+
+      perform field[usrChosen1].chosen.pulltags[WepProf.?]
+      perform hero.pushtags[WepProf.?]
+
+      ~ Cycle through and apply the Helper.ExoticProf tag to all
+      ~ examples of the chosen weapon on the hero. This is important
+      ~ for the Aldori Dueling Sword specifically, and possibly others.
+      ~ In addition add the Talented Weapon Special for Speciality
+      ~ Attack Bonus
+      searchexpr = tagids[WepProf.?,"|"]
+
+      foreach pick in hero from BaseWep where searchexpr
+        perform eachpick.assign[Helper.ExoticProf]
+        perform eachpick.assign[Helper.Proficient]
+        perform eachpick.assign[wSpecial.RGTalMnkAB]
+      nexteach]]></eval>
+    <exprreq message="Ki Pool required."><![CDATA[#hasability[cMnkKiPool] <> 0]]></exprreq>
+    <exprreq message="Monk level 6+ required."><![CDATA[#custspeciallevelcount[Monk] >= 6]]></exprreq>
+    </thing>
+  <thing id="cRG1BasSta" name="Bastion Stance" description="[Monk of the Sacred Mountain] The monk becomes like stone, nearly impossible to move when he stands his ground. If the monk starts and ends his turn in the same space, he cannot be knocked prone or forcibly moved until the start of his next turn, except by mind-affecting or teleportation effects." compset="CustomSpec" summary="If you start &amp; end in the same space you can&apos;t be forcibly moved." uniqueness="unique">
+    <usesource source="srcMonkTal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cRG1Blinds" name="Blindsense" description="The monk&apos;s senses become so alert he gains blindsense with a range of 30 feet. Using non-visual senses the monk notices things he cannot see. He usually does not need to make Perception checks to notice and pinpoint the location of creatures within range of his blindsense ability, provided that he has line of effect to that creature.{br}{br}Any opponent the monk cannot see still has total concealment against him, and the monk still has the normal miss chance when attacking foes that have concealment. Visibility still affects the movement of a creature with blindsense. A creature with blindsense is still denied its Dexterity bonus to Armor Class against attacks from creatures it cannot see." compset="CustomSpec" summary="Gain 30ft Blindsense." uniqueness="unique">
+    <usesource source="srcMonkTal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="rBlindsen">
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    </thing>
+  <thing id="cRG1BonFea" name="Bonus Feat" description="The monk may select a bonus feat. These feats must be taken from the following list:\nAgile Maneuvers, Blind-Fight, Catch Off-Guard, Combat Reflexes, Deflect Arrows, Dodge, Far Shot, Improved Bull Rush, Improved Disarm, Improved Drag, Improved Dirty Trick, Improved Grapple, Improved Initiative, Improved Overrun, Improved Reposition, Improved Steal, Improved Sunder, Improved Trip, Nimble Moves, Point-Blank Shot, Precise Shot, Scorpion Style, Stunning Pin, Throw Anything, and Weapon Finesse.\n\nA monk of 6th level or higher may also select from the following list:\nAcrobatic Steps, Bodyguard, Chokehold, Focused Shot, Gorgon&apos;s Fist, Greater Bull Rush, Greater Dirty Trick, Greater Disarm, Greater Drag, Greater Feint, Greater Grapple, Greater Overrun, Greater Reposition, Greater Steal, Greater Sunder, Greater Trip, Improved Feint, Ki Throw, Manyshot, Mobility, Parting Shot, Point Blank Master, Second Chance, and Sidestep.\n\nA monk of 10th level or higher may also select from the following list: Bull Rush Strike, Disarming Strike, Improved Critical, In Harm&apos;s Way, Medusa&apos;s Wrath, Neckbreaker, Penetrating Strike, Pinning Knockout, Pinpoint Targeting, Repositioning Strike, Shot on the Run, Snatch Arrows, Spring Attack, Sundering Strike, and Tripping Strike.\n\nA monk need not have any of the prerequisites normally required for these feats to select them. It&apos;s important to note that a monk that takes a bonus feat for which he lacks the prerequisites gains only the abilities of that feat, not abilities from all its prerequisite feats. For example, a monk that takes Greater Trip causes targets he trips to provoke attacks of opportunity, but the monk doesn&apos;t gain the ability to use the trip maneuver without provoking attacks of opportunity himself unless he also takes Improved Trip.\n\nThis talent may be taken more than once. Each time, a different bonus feat is gained." compset="CustomSpec" summary="Gain a bonus feat.">
+    <comment><![CDATA[These secondary bonus feats have been "extended" with the BonusFor.? tags. This was done using the editor tab "General->*Extend Thing". NOTE: For anyone wanting to add additional "feat" choices please use the *Extend Thing tab in your own custom .user file. The Group/Tag you want to use are: group="BonusFor"  tag="RG1Lvl1"  - Monk (Talented) Lvl 1; group="BonusFor"  tag="RG1Lvl6"  - Monk (Talented) Lvl 6; group="BonusFor"  tag="RG1Lvl10" - Monk (Talented) Lvl 10]]></comment>
+    <usesource source="srcMonkTal"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ if we've been disabled, get out now &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Give a bonus Feat
+      linkage[table].field[cSBonFtMax].value += 1]]></eval>
+    </thing>
+  <thing id="cRG1BreFre" name="Break Free" description="[Tetori] The monk adds his monk level on combat maneuver or Escape Artist checks made to escape a grapple. If the monk fails a save against an effect that causes him to become entangled, paralyzed, slowed, or staggered, he may spend 1 point from his ki pool as an immediate action to attempt a new save.\n\nA monk must have the graceful grappler edge to select this talent." compset="CustomSpec" summary="1 ki as immediate for new save vs entangled, paralyzed, slowed, or staggered." uniqueness="unique">
+    <usesource source="srcMonkTal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ if we've been disabled, get out now &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #situational[hero.childfound[ManeuvBon],signed(field[xTotalLev].value) & " bonus on CMB checks to escape a grapple.", field[thingname].text]
+      #situational[hero.childfound[skEscape],signed(field[xTotalLev].value) & " bonus to escape a grapple.", field[thingname].text]]]></eval>
+    <exprreq message="Graceful Grappler edge required."><![CDATA[#hasability[cRG1GraGra] <> 0]]></exprreq>
+    </thing>
+  <thing id="cRG1CouGra" name="Counter-Grapple" description="[Tetori] The monk may make an attack of opportunity against a creature attempting to grapple him, even if the creature does not normally provoke attacks of opportunity when grappling (though this ability does not allow the monk to make an attack of opportunity against a creature with the Greater Grapple feat). He may use counter-grapple even if his attacker has concealment or total concealment. If the monk is 8th level or higher he may do this even if he is flat-footed or if his attacker has exceptional reach.\n\nA monk must have the graceful grappler edge to select this talent." compset="CustomSpec" summary="Make an AoO against a creature attempting to grapple you." uniqueness="unique">
+    <usesource source="srcMonkTal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <exprreq message="Graceful Grappler edge required."><![CDATA[#hasability[cRG1GraGra] <> 0]]></exprreq>
+    </thing>
+  <thing id="cRG1DeaStr" name="Deadly Strikes" description="The monk is a master of using his superior body control to deal surprising amounts of damage with weapons. The monk may be able to replace its base damage dice, depending on the weapon and the monk&apos;s level.{br}{br}Deadly strikes depends on the monk to easily adapt his own superior body control through weapon blows, and thus is easier to use with more basic weapons. When using a weapon that only threatens a critical hit on a natural 20 and that has only a x2 crit multiple (including unarmed attacks), the monk compares the die listed on Deadly Strikes Table 1 for a monk of his level and size to the weapon&apos;s base damage die. If the table&apos;s die is superior, the monk uses it instead of the weapon&apos;s normal damage die whenever the monk deals damage with that weapon.{br}{br}For example, Kethrie is a 4th level small monk who has taken the fighting style edge with the unarmed weapon group.{br}{br}Normally an unarmed attack for a small character deals 1d2, and has a threat range of 20 and a x2 crit multiplier. However looking at Deadly Strikes Table 1, a small 4th level monk has base damage of 1d6 listed. Thus whenever Kethrie deals unarmed damage, she uses 1d6 instead of 1d2.{br}{br}When using more complex weapons (which are often more effective as weapons, but more difficult to improve with the monk&apos;s superior control of his own movements), deadly strikes aren&apos;t quite as effective. Instead of the die values on Deadly Strikes Table 1, the monk checks the dice listed on Deadly Strikes Table 2." compset="CustomSpec" summary="You replace a weapons base dmg dice, depending on the weapon and level." uniqueness="unique">
+    <usesource source="srcMonkTal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="9500"><![CDATA[
+      ~ If we're disabled, do nothing &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      var curdicenum as number
+      var curdicesiz as number
+      var curwepavg as number
+      var dotpos as number
+      var wepdamage as string
+
+      ~ NOTE: I am using wBite which is a duplicate of wMain already setup
+      ~       in one of the community .1st files. This allows me to set
+      ~       wMain damage as table 1 and wBite as table 2 damage.
+
+      ~ Calculate our table average dice damage
+      if (field[xTotalLev].value >= 20) then
+        ~ Medium Table 1 get 2d10 at this level. Avg = 11
+        field[abValue].value += 11
+        perform assign[wMain.2d10]
+        ~ Medium Table 2 get 2d8 at this level. Avg = 9
+        field[abValue2].value += 9
+        perform assign[wBite.2d8]
+
+      elseif (field[xTotalLev].value >= 16) then
+        ~ Medium Table 1 get 2d8 at this level. Avg = 9
+        field[abValue].value += 9
+        perform assign[wMain.2d8]
+        ~ Medium Table 2 get 2d6 at this level. Avg = 7
+        field[abValue2].value += 7
+        perform assign[wBite.2d6]
+
+      elseif (field[xTotalLev].value >= 12) then
+        ~ Medium Table 1 get 2d6 at this level. Avg = 7
+        field[abValue].value += 7
+        perform assign[wMain.2d6]
+        ~ Medium Table 2 get 1d10 at this level. Avg = 5.5
+        field[abValue2].value += 5.5
+        perform assign[wBite.1d10]
+
+      elseif (field[xTotalLev].value >= 8) then
+        ~ Medium Table 1 get 1d10 at this level. Avg = 5.5
+        field[abValue].value += 5.5
+        perform assign[wMain.1d10]
+        ~ Medium Table 2 get 1d8 at this level. Avg = 4.5
+        field[abValue2].value += 4.5
+        perform assign[wBite.1d8]
+
+      elseif (field[xTotalLev].value >= 4) then
+        ~ Medium Table 1 get 1d8 at this level. Avg = 4.5
+        field[abValue].value += 4.5
+        perform assign[wMain.1d8]
+        ~ Medium Table 2 get 1d6 at this level. Avg = 3.5
+        field[abValue2].value += 3.5
+        perform assign[wBite.1d6]
+
+      else
+        ~ Medium Table 1 get 1d6 at this level. Avg = 3.5
+        field[abValue].value += 3.5
+        perform assign[wMain.1d6]
+        ~ Medium Table 2 get 1d4 at this level. Avg = 2.5
+        field[abValue2].value += 2.5
+        perform assign[wBite.1d4]
+      endif
+
+      ~ Loop through all weapons on the hero
+      foreach pick in hero from BaseWep
+
+        ~ Set the weapon damage and call current weapon average
+        ~ procedure which returns curwepavg average weapon
+        ~ damage.
+        wepdamage = eachpick.tagnames[wMain.?,", "]
+        call CurWepAvg
+
+        ~ Are we a simple weapon using Table 1?
+        if (eachpick.tagexpr[wCritMin.20 & wCritMult.2] <> 0) then
+
+          ~ If table 1 average damage dice is higher than replace
+          ~ this weapon with the table 1 damage dice setup as wMain
+          if (field[abValue].value > curwepavg) then
+            perform eachpick.delete[wMain.?]
+            perform eachpick.pushtags[wMain.?]
+          endif
+
+        ~..We are not a simple weapon so use Table 2
+        else
+          ~ If table 2 average damage dice is higher than replace
+          ~ this weapon with the table 1 damage dice setup as wMain
+          if (field[abValue2].value > curwepavg) then
+            perform eachpick.delete[wMain.?]
+            perform eachpick.pushtags[wBite.?,wMain]
+          endif
+        endif
+      nexteach
+      ]]></eval>
+    </thing>
+  <extthing thing="fComRef" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fDefArrow" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fDodge" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fFarShot" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpBull" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpDirTri" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpDis" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpDrag" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpGrapp" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpInit" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpOver" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpReposi" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpSteal" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpTrip" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fNimbMove" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fPointBlnk" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fPrecShot" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fScorStyle" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fStunnPin" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fThrowAny" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fWepFin" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fAcroStep" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fBodyguard" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fChokehold" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fFocShot" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGorgonFis" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatBRus" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatTric" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatDis" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatDrag" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatFein" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatGrap" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatOver" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatRepo" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatStea" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatSun" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fGreatTrip" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fImpFeint" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fKiThrow" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fManyshot" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fMobility" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fPartShot" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fPointBMas" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fSecChance" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fSidestep" group="BonusFor" tag="RG1Lvl6"/>
+  <extthing thing="fBullRuStr" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fDisarmStr" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fImpCrit" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fInHarmWay" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fMedWrath" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fNeckbreak" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fPenStrike" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fPinniKnoc" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fPinTarget" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fRepoStr" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fShotRun" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fSnatchArr" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fSpringAtt" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fSunderStr" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fTripStr" group="BonusFor" tag="RG1Lvl10"/>
+  <extthing thing="fAgileMan" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fBlindFgt" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fCatchOff" group="BonusFor" tag="RG1Lvl1"/>
   </document>
