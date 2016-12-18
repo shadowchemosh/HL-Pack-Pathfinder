@@ -551,6 +551,13 @@
     <bootstrap thing="cMnkKiPool">
       <autotag group="ClSpecWhen" tag="1"/>
       </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, just get out now &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ We have multiple abilities that can give a Ki Pool
+      ~ so use a universal tag.
+      perform hero.assign[RG1Monk.KiPool]]]></eval>
     </thing>
   <thing id="cRG1KiStAl" name="Ki Strike, Alignment" description="For a monk of at least 10th level, his attacks are also treated as chaotic, evil, good or lawful weapons for the purpose of overcoming damage reduction. (The monk chooses one of these four when he reaches 10th level, and it must match his alignment. True Neutral monks to not gain this ability.)" compset="ClSpecial" summary="If you have ki remaining, unarmed strikes count as alignment to overcome DR.">
     <tag group="AbReplace" tag="cMnkKiPool" name="Ki Pool" abbrev="Ki Pool"/>
@@ -807,7 +814,7 @@
     <bootstrap thing="cRG1Adaman">
       <autotag group="ClSpecWhen" tag="16"/>
       </bootstrap>
-    <exprreq message="Ki Pool edge required."><![CDATA[#hasability[cRG1KiPool] <> 0]]></exprreq>
+    <exprreq message="Ki Pool edge required."><![CDATA[hero.tagis[RG1Monk.KiPool] <> 0]]></exprreq>
     <exprreq message="Bastion Stance Talent required."><![CDATA[#hasability[cRG1BasSta] <> 0]]></exprreq>
     <exprreq message="Monk level 8+ required."><![CDATA[#custspeciallevelcount[Monk] >= 8]]></exprreq>
     </thing>
@@ -1063,14 +1070,115 @@
             perform eachpick.pushtags[wBite.?,wMain]
           endif
         endif
-      nexteach
-      ]]></eval>
+      nexteach]]></eval>
     </thing>
-  <extthing thing="fComRef" group="BonusFor" tag="RG1Lvl1"/>
-  <extthing thing="fDefArrow" group="BonusFor" tag="RG1Lvl1"/>
-  <extthing thing="fDodge" group="BonusFor" tag="RG1Lvl1"/>
-  <extthing thing="fFarShot" group="BonusFor" tag="RG1Lvl1"/>
-  <extthing thing="fImpBull" group="BonusFor" tag="RG1Lvl1"/>
+  <thing id="cRG1DevGua" name="Devoted Guardian" description="[Sohei] The monk can always act in a surprise round even if he does not notice his enemies, though he remains flat- footed until he acts. The monk gains a bonus on initiative rolls equal to 1/2 his monk level." compset="CustomSpec" summary="Gain a bonus on initiative rolls equal to 1/2 your monk level." uniqueness="unique">
+    <usesource source="srcMonkTal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Calcaulte half our level
+      field[abValue].value += round(field[xTotalLev].value/2,0,-1)
+
+      ~ Give bonus to initiative
+      hero.child[Initiative].field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cRG1DrunKi" name="Drunken Ki" description="[Drunken Master] The monk can drink a tankard of ale or strong alcohol and gain one temporary ki point. The act of drinking is a standard action that does not provoke attacks of opportunity. The monk can have a maximum number of drunken ki points equal to half his level (minimum 1). These drunken 10 ki points last for 1 hour or until spent, whichever is shorter. As long as he has at least 1 drunken ki point, the monk can spend 1 ki point as a swift action to move 5 feet without provoking attacks of opportunity. A monk may take this talent without having the ki pool edge, and may then take talents that require a ki pool. A monk with this talent may be of chaotic alignment without losing the ability to gain new monk levels." compset="CustomSpec" summary="Spend 1 ki point as swift action to move 5ft without provoking an AoO." uniqueness="unique">
+    <usesource source="srcMonkTal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ChargeCalc" tag="LevelDiv2"/>
+    <tag group="ChargeCalc" tag="FinalMin1"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're disabled, just get out now &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ We have multiple abilities that can give a Ki Pool
+      ~ so use a universal tag.
+      perform hero.assign[RG1Monk.KiPool]
+
+      ~ We can now have a chaotic alignment
+      perform linkage[table].delete[AlgnReq.Lawful]]]></eval>
+    </thing>
+  <thing id="cRG1DruStr" name="Drunken Strength" description="[Drunken Master] The monk can spend 1 point of ki as a swift action to inflict 1d6 extra points of damage on a single successful melee attack. The monk can choose to apply the damage after the attack roll is made. The monk must have at least 1 drunken ki point to use this ability. This talent may be taken more than once, but not more often than once per five full monk levels. Each time it is taken, it allows the monk to spend one addition ki point to add one additional d6 of damage to a single successful melee attack roll. \n\nA monk must be at least 5th level and have the drunken ki talent to take this talent." compset="CustomSpec" summary="1 ki as swift action to give +1d6 dmg on a single successful melee attack.">
+    <usesource source="srcMonkTal"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="abRG1DrStr"></bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, just get out now &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Increase die damage by 1
+      #value[abRG1DrStr] += 1]]></eval>
+    <exprreq message="Drunken ki talent required."><![CDATA[#hasability[cRG1DrunKi] <> 0]]></exprreq>
+    <exprreq message="5th level monk required."><![CDATA[hero.tagcount[Classes.Monk] >= 5]]></exprreq>
+    <prereq message="??">
+      <validate><![CDATA[
+        var allowed as number
+        allowed = round(hero.tagcount[Classes.Monk]/5,0,-1)     
+
+        ~ if we're a pick, then there must be complevel/5 
+        ~ or fewer copies of
+        ~ this ability
+        if (@ispick <> 0) then
+          validif (tagcount[HasAbility.cRG1DruStr] <= allowed)
+
+        ~ otherwise, look for fewer, since we're adding this
+        else
+          validif (tagcount[HasAbility.cRG1DruStr] < allowed)
+        endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability at this level."]]></validate>
+      </prereq>
+    </thing>
+  <thing id="abRG1DrStr" name="Drunken Strength" description="[Drunken Master] The monk can spend 1 point of ki as a swift action to inflict 1d6 extra points of damage on a single successful melee attack. The monk can choose to apply the damage after the attack roll is made. The monk must have at least 1 drunken ki point to use this ability. This talent may be taken more than once, but not more often than once per five full monk levels. Each time it is taken, it allows the monk to spend one addition ki point to add one additional d6 of damage to a single successful melee attack roll." compset="Ability" summary="1 ki as swift action to give +1d6 dmg on a single successful melee attack." uniqueness="unique">
+    <fieldval field="actName" value="1 Ki Point"/>
+    <fieldval field="abValue2" value="6"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abAction" tag="Swift"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, just get out now &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we're not activated, just get out now &
+      doneif (field[abilActive].value = 0)
+
+      foreach pick in hero from BaseWep where "wCategory.Melee"
+        #extradamage[eachpick,signed(field[abValue].value) & "d" & field[abValue2].value,field[name].text]
+      nexteach]]></eval>
+    </thing>
+  <thing id="cRG1EleFis" name="Elemental Fist" description="[Monk of the Four Winds] The monk receives Elemental Fist as a bonus feat, even if he does not meet the prerequisites. A monk may attempt an elemental fist a number of times per day equal to his monk level, plus one more time per day for every four levels he has in classes other than monk." compset="CustomSpec" summary="Gain Elemental Fist as a bonus feat.">
+    <usesource source="srcMonkTal"/>
+    <tag group="SpecSource" tag="cHelpRG1"/>
+    <tag group="abCategory" tag="RGGMnkTlnt"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="fElemFist">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    </thing>
   <extthing thing="fImpDirTri" group="BonusFor" tag="RG1Lvl1"/>
   <extthing thing="fImpDis" group="BonusFor" tag="RG1Lvl1"/>
   <extthing thing="fImpDrag" group="BonusFor" tag="RG1Lvl1"/>
@@ -1129,4 +1237,9 @@
   <extthing thing="fAgileMan" group="BonusFor" tag="RG1Lvl1"/>
   <extthing thing="fBlindFgt" group="BonusFor" tag="RG1Lvl1"/>
   <extthing thing="fCatchOff" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fComRef" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fDefArrow" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fDodge" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fFarShot" group="BonusFor" tag="RG1Lvl1"/>
+  <extthing thing="fImpBull" group="BonusFor" tag="RG1Lvl1"/>
   </document>

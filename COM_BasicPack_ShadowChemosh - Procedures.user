@@ -11,11 +11,11 @@
     7/13/2014 Tim Shadow
     1) Fixed error that the leopard was throwing about darkvision.
     2) Fixed natural weapon damage that was not always being set.
-    
+
     ]]>
     </info_history>
  </fileinfo>
- 
+
 <!-- =================================================================== -->
 <!--                          Remove Armor                               -->
 <!-- =================================================================== -->
@@ -56,7 +56,7 @@
     trustme
     ~ Find all Magic Rings and Magic Wonderous items and unequip them
     foreach pick in hero where "component.BaseWonder|component.BaseRing"
-      eachpick.field[gIsEquip].value = 0  
+      eachpick.field[gIsEquip].value = 0
     nexteach
     ]]>
   </procedure>
@@ -147,10 +147,10 @@
 
     ~ Calc to hit
     S2Att = v_wAttack + #value[fPowerAtt]
-    
+
     ~ Text with brackets ie [FF +6]
     v_Bracket  = " [FF " & signed(S2Att) & "]"
-    
+
     ~ Text without brackets
     v_Hit = signed(S2Att)
     ]]>
@@ -170,10 +170,10 @@
         done
       Endif
     Endif
-     ~ Procedure is used to correctly set the natural attack damage based on the 
+     ~ Procedure is used to correctly set the natural attack damage based on the
      ~ Bestiary Table: Natural Attacks by Size.
      If (field[pAdjust].value <> 0) Then
-      ~ If starting from 1d6 die size    
+      ~ If starting from 1d6 die size
       If (field[pChosen].chosen.tagis[wMain.1d6_5] <> 0) Then
         perform field[pChosen].chosen.delete[wMain.?]
         If (field[pAdjust].value = 1) Then
@@ -219,7 +219,7 @@
   </procedure>
 
   <!-- =================================================================== -->
-    <!-- 
+    <!--
     Set the Custom Name and Custom Text adjustments logic into this single
     procedure. We need to allow for using the Duration field or the Source
     field for setting the name so that we are backwards compatable.
@@ -256,7 +256,7 @@
 
       ~ Duration field has text and Source does not so use it
       ElseIf (S2Type = 2) Then
-        field[pChosen].chosen.field[livename].text = field[pDuration].text      
+        field[pChosen].chosen.field[livename].text = field[pDuration].text
       Endif
 
     ~ The tag AdjShadow.Text means we are appending to the live name value
@@ -268,14 +268,14 @@
 
       ~ Duration field has text and Source does not so use it
       ElseIf (S2Type = 2) Then
-        field[pChosen].chosen.field[livename].text &= field[pDuration].text      
+        field[pChosen].chosen.field[livename].text &= field[pDuration].text
       Endif
     Endif
     ]]>
   </procedure>
 
   <!-- =================================================================== -->
-  <!-- All the PFS Adjustments do the same logic for setting the name.     -->  
+  <!-- All the PFS Adjustments do the same logic for setting the name.     -->
   <!-- Combined all the logic here.                                        -->
   <!-- Timing: Render/99999999                                             -->
   <!-- =================================================================== -->
@@ -292,10 +292,10 @@
     ~ If we're in output mode change to a standard naming format for these PFS adjustments.
     doneif (state.isoutput = 0)
 
-    ~ Append source text    
+    ~ Append source text
     if (S2Type = 1) then
       field[livename].text = "PFS Boon" & field[pSource].text
-      
+
     ~..Append duration text
     elseif (S2Type = 2) then
       field[livename].text = "PFS Boon" & field[pDuration].text
@@ -305,7 +305,7 @@
 
 
 <!-- =================================================================== -->
-   <!-- 
+   <!--
    Calculate the concentration value of a specific class. Do this using
    soft-coded parms so that we can easily support the APG and UM classes.
    Plus this should allow others to easily add new concentration skills
@@ -326,8 +326,8 @@
 
     ~ If we are a racial Concentration skill then get the race field
     if (compare(S2_Class,"Race") = 0) then
-      field[skTotal].value = hero.findchild[BaseRace].field[rSpConcen].value      
-    
+      field[skTotal].value = hero.findchild[BaseRace].field[rSpConcen].value
+
     ~..Get the passed in "Cass" concentration value
     else
       ~ append the thingid.? group to the tag id.
@@ -337,7 +337,7 @@
     endif
 
     ~ Add in all the different "bonus" and "penalty" fields
-    field[skTotal].value += field[Bonus].value + field[Penalty].value + field[BonAlch].value + field[ModCirc].value + field[BonComp].value + field[PenComp].value + field[BonEnhance].value + field[BonInsight].value + field[BonLuck].value + field[PenLuck].value + field[BonMorale].value + field[PenMorale].value + field[BonProfane].value + field[PenProfane].value + field[BonSacred].value + field[PenSacred].value + field[BonTrait].value + field[PenTrait].value    
+    field[skTotal].value += field[Bonus].value + field[Penalty].value + field[BonAlch].value + field[ModCirc].value + field[BonComp].value + field[PenComp].value + field[BonEnhance].value + field[BonInsight].value + field[BonLuck].value + field[PenLuck].value + field[BonMorale].value + field[PenMorale].value + field[BonProfane].value + field[PenProfane].value + field[BonSacred].value + field[PenSacred].value + field[BonTrait].value + field[PenTrait].value
 
     ~ --------------------------------------------
     ~ Situational Feats
@@ -345,63 +345,63 @@
 
     ~ If we have the combat casting feat add a situational note
     If (hero.tagis[HasFeat.fComCast] <> 0) Then
-      #situational[this,"+4 bonus when casting defensivley or grappled.","Combat Casting"]    
+      #situational[this,"+4 bonus when casting defensivley or grappled.","Combat Casting"]
     Endif
 
     ~ If we have the Dimensional Agility feat add a situational note
     If (hero.tagcountstr["HasFeat.fDimenAgil"] <> 0) Then
-      #situational[this,"+4 bonus when casting teleportation spells.","Dimensional Agility"]    
+      #situational[this,"+4 bonus when casting teleportation spells.","Dimensional Agility"]
     Endif
 
     ~ If we have the Shielded Caster feat add a situational note
     If (hero.tagcountstr["HasFeat.fShieldCas"] <> 0) Then
-      #situational[this,"+4 compentence bonus when adjacent to an ally.","Shielded Caster"]    
+      #situational[this,"+4 compentence bonus when adjacent to an ally.","Shielded Caster"]
     Endif
 
     ~ If we have the Unusual Origin (Changeling) feat add a situational note
     If (hero.tagcountstr["HasFeat.fUnOrigCha"] <> 0) Then
-      #situational[this,"+2 bonus when within 30ft of two other changelings.","Unusual Origin (Changeling)"]    
+      #situational[this,"+2 bonus when within 30ft of two other changelings.","Unusual Origin (Changeling)"]
     Endif
 
     ~ If we have the Warrior Priest feat add a situational note
     If (hero.tagcountstr["HasFeat.fWarriPrie"] <> 0) Then
-      #situational[this,"+2 bonus when casting defensivley or grappled.","Warrior Priest"]    
+      #situational[this,"+2 bonus when casting defensivley or grappled.","Warrior Priest"]
     Endif
-    
+
     ~ If we have the Grappled Caster feat add a situational note
     If (hero.tagcountstr["HasFeat.fGrapCaste"] <> 0) Then
-      #situational[this,"+4 bonus when grappled which stacks with Combat Casting bonus.","Grappled Caster"]    
+      #situational[this,"+4 bonus when grappled which stacks with Combat Casting bonus.","Grappled Caster"]
     Endif
 
 
     ~ If we have the Focused Eidolon feat add a situational note
     If (hero.tagcountstr["HasFeat.fFocusEido"] <> 0) Then
-      #situational[this,"+4 bonus when adjacent to your eidolon.","Focused Eidolon"]    
+      #situational[this,"+4 bonus when adjacent to your eidolon.","Focused Eidolon"]
     Endif
 
     ~ If we have the Mage of the Wild feat add a situational note
     If (hero.tagcountstr["HasFeat.fMageWild"] <> 0) Then
-      #situational[this,"+2 bonus when you are in a terrain type you have selected the Attuned to the Wild feat for.","Mage of the Wild"]    
+      #situational[this,"+2 bonus when you are in a terrain type you have selected the Attuned to the Wild feat for.","Mage of the Wild"]
     Endif
 
     ~ If we have the Meditative Concentration feat add a situational note
     If (hero.tagcountstr["HasFeat.fMedConcen"] <> 0) Then
-      #situational[this,"+4 bonus after you perform combat meditation.","Meditative Concentration"]    
+      #situational[this,"+4 bonus after you perform combat meditation.","Meditative Concentration"]
     Endif
 
     ~ If we have the Perfect Center feat add a situational note
     If (hero.tagcountstr["HasFeat.fPerCenter"] <> 0) Then
-      #situational[this,"You can take 10 even if it is not normally allowed due to strenuous circumstances.","Perfect Center"]    
+      #situational[this,"You can take 10 even if it is not normally allowed due to strenuous circumstances.","Perfect Center"]
     Endif
-    
+
     ~ If we have the Uncanny Concentration feat add a situational note
     If (hero.tagcountstr["HasFeat.fUncanConc"] <> 0) Then
-      #situational[this,"You do not need to make concentration checks when affected by vigorous or violent motion or by violent weather.","Uncanny Concentration"]    
+      #situational[this,"You do not need to make concentration checks when affected by vigorous or violent motion or by violent weather.","Uncanny Concentration"]
     Endif
 
     ~ If we have the Waterway Caster feat add a situational note
     If (hero.tagcountstr["HasFeat.fWaterCast"] <> 0) Then
-      #situational[this,"+4 bonus when casting spells underwater. Automatically succeed while subjected to vigorouis or violent motion while swimming or on a ship.","Waterway Caster"]    
+      #situational[this,"+4 bonus when casting spells underwater. Automatically succeed while subjected to vigorouis or violent motion while swimming or on a ship.","Waterway Caster"]
     Endif
 
     ~ --------------------------------------------
@@ -410,34 +410,34 @@
 
     ~ If we have the Battlefield Caster trait add a situational note
     If (hero.tagcountstr["HasTrait.trBattle"] <> 0) Then
-      #situational[this,"+1 trait bonus when casting defensively.","Battlefield Caster"]    
+      #situational[this,"+1 trait bonus when casting defensively.","Battlefield Caster"]
     Endif
 
     ~ If we have the Kuthite Caster trait add a situational note
     If (hero.tagcountstr["HasTrait.trKuthCast"] <> 0) Then
-      #situational[this,"+4 trait bonus when casting spells with the darkness, pain, or shadow descriptors.","Kuthite Caster"]    
+      #situational[this,"+4 trait bonus when casting spells with the darkness, pain, or shadow descriptors.","Kuthite Caster"]
     Endif
 
     ~ If we have the Kwanlai Believer trait add a situational note
     If (hero.tagcountstr["HasTrait.trKwanlaiB"] <> 0) Then
-      #situational[this,"+2 trait bonus when casting divine spells.","Kwanlai Believer"]    
+      #situational[this,"+2 trait bonus when casting divine spells.","Kwanlai Believer"]
     Endif
 
     ~ If we have the Quantium University Graduate trait add a situational note
     If (hero.tagcountstr["HasTrait.trQuUnGrad"] <> 0) Then
-      #situational[this,"+2 trait bonus when casting arcane spells.","Quantium University Graduate"]    
+      #situational[this,"+2 trait bonus when casting arcane spells.","Quantium University Graduate"]
     Endif
 
     ~ If we have the Scion of the Shory trait add a situational note
     If (hero.tagcountstr["HasTrait.trScionSho"] <> 0) Then
-      #situational[this,"+2 bonus when casting flight spells such as {i}levitate, fly{/i} or {i}overland flight{/i}.","Scion of the Shory"]    
-    Endif    
+      #situational[this,"+2 bonus when casting flight spells such as {i}levitate, fly{/i} or {i}overland flight{/i}.","Scion of the Shory"]
+    Endif
 
     ~ If we have the Shipboard Caster trait add a situational note
     If (hero.tagcountstr["HasTrait.trShipCast"] <> 0) Then
-      #situational[this,"+3 bonus when on a ship or other water-going vessel.","Shipboard Caster"]    
+      #situational[this,"+3 bonus when on a ship or other water-going vessel.","Shipboard Caster"]
     Endif
-    
+
     ~ --------------------------------------------
     ~ Situational ARTs
     ~ --------------------------------------------
@@ -470,7 +470,7 @@
   </procedure>
 
 <!-- =================================================================== -->
-   <!-- 
+   <!--
    Calculate the Caster Level vs Spell Resistance.
    Timing: Final/50000
    -->
@@ -478,7 +478,7 @@
   <procedure id="S2CalcClSr" context="pick"><![CDATA[
     ~ We are not a real skill so we don't want to have an ability
     ~ linked to us.
-    perform delete[SkillAbil.?] 
+    perform delete[SkillAbil.?]
 
     ~ --------------------------------------------
     ~ Situational Racial Specials
@@ -489,23 +489,23 @@
     ~ --------------------------------------------
     ~ If we have the Allied Spellcaster feat add a situational note
     If (hero.tagcountstr["HasFeat.fAllSpellc"] <> 0) Then
-      #situational[this,"+4 bonus whenever you are adjacent to an ally who also has this feat.","Allied Spellcaster"]    
+      #situational[this,"+4 bonus whenever you are adjacent to an ally who also has this feat.","Allied Spellcaster"]
     Endif
     ~ If we have the Ancient Draconic feat add a situational note
     If (hero.tagcountstr["HasFeat.fAncientDr"] <> 0) Then
-      #situational[this,"+1 bonus when casting arcane spells that have a verbal component.","Ancient Draconic"]    
+      #situational[this,"+1 bonus when casting arcane spells that have a verbal component.","Ancient Draconic"]
     Endif
     ~ If we have the Demon Hunter feat add a situational note
     If (hero.tagcountstr["HasFeat.fDemonHunt"] <> 0) Then
-      #situational[this,"+2 morale bonus against creatures with the demon subtype you recognize as demons.","Demon Hunter"]    
+      #situational[this,"+2 morale bonus against creatures with the demon subtype you recognize as demons.","Demon Hunter"]
     Endif
     ~ If we have the Diviner's Delving feat add a situational note
     If (hero.tagcountstr["HasFeat.fDivDelve"] <> 0) Then
-      #situational[this,"+2 bonus with divinations to overcome SR or effects that impede divination (for example {i}nondetection{/i}).","Diviner's Delving"]    
+      #situational[this,"+2 bonus with divinations to overcome SR or effects that impede divination (for example {i}nondetection{/i}).","Diviner's Delving"]
     Endif
     ~ If we have the Giant-Bane Caster feat add a situational note
     If (hero.tagcountstr["HasFeat.fGiantBane"] <> 0) Then
-      #situational[this,"+1/2 favored enemy bonus against giants.","Giant-Bane Caster"]    
+      #situational[this,"+1/2 favored enemy bonus against giants.","Giant-Bane Caster"]
     Endif
 
     ~ --------------------------------------------
@@ -513,34 +513,34 @@
     ~ --------------------------------------------
     ~ If we have the Dedicated Defender trait add a situational note
     If (hero.tagcountstr["HasTrait.trDediDefe"] <> 0) Then
-      #situational[this,"+1 trait bonus while you are adjacent to a dying or disabled ally.","Dedicated Defender"]    
+      #situational[this,"+1 trait bonus while you are adjacent to a dying or disabled ally.","Dedicated Defender"]
     Endif
     ~ If we have the Earthbound trait add a situational note
     If (hero.tagcountstr["HasTrait.trDediDefe"] <> 0) Then
-      #situational[this,"+2 trait bonus vs creatures with the air subtype.","Earthbound"]    
+      #situational[this,"+2 trait bonus vs creatures with the air subtype.","Earthbound"]
     Endif
     ~ If we have the Insistent Benefactor trait add a situational note
     If (hero.tagcountstr["HasTrait.trInsisBen"] <> 0) Then
-      #situational[this,"+2 trait bonus when you cast a harmless spell..","Insistent Benefactor"]    
+      #situational[this,"+2 trait bonus when you cast a harmless spell..","Insistent Benefactor"]
     Endif
     ~ If we have the Magic's Might trait give a +1 trait bonus
     If (hero.tagcountstr["HasTrait.trMagMight"] <> 0) Then
-      #applybonus[BonTrait,this,1]    
+      #applybonus[BonTrait,this,1]
     Endif
     ~ If we have the Riftwarden Orphan trait add a situational note
     If (hero.tagcountstr["HasTrait.trRiftMage"] <> 0) Then
-      #situational[this,"+4 trait bonus to penetrate a demon's spell resistance.","Riftwarden Orphan"]    
+      #situational[this,"+4 trait bonus to penetrate a demon's spell resistance.","Riftwarden Orphan"]
     Endif
     ~ If we have the Triaxian Dragonslayer trait add a situational note
     If (hero.tagcountstr["HasTrait.trTriaxDra"] <> 0) Then
-      #situational[this,"+1 trait bonus vs dragon's spell resistance.","Triaxian Dragonslayer"]    
+      #situational[this,"+1 trait bonus vs dragon's spell resistance.","Triaxian Dragonslayer"]
     Endif
     ]]>
   </procedure>
 
 
 <!-- =================================================================== -->
-<!-- 
+<!--
      This procedure calculates the correct cost and pages of a spellbook
      based on CORE book rules.
 -->
@@ -611,7 +611,7 @@
     field[gWeight].value += S2Weight
     ~ Set the item weight
     field[gearWeight].value += S2Weight
-    
+
     ~ Set the desc with info
     field[DescAppend].text = "{B}Cost:{/B} " & digitgroup(Cost) & "gp" & "{br}" & "{B}Pages:{/B} " & Pages
     ]]>
@@ -663,7 +663,7 @@
     trustme
     ~ Find all Magic Rings and Magic Wonderous items and unequip them
     foreach pick in hero where "component.BaseWonder|component.BaseRing"
-      eachpick.field[gIsEquip].value = 0  
+      eachpick.field[gIsEquip].value = 0
     nexteach
     ]]>
   </procedure>
@@ -675,7 +675,7 @@
   -->
 <!-- =================================================================== -->
   <procedure id="SCPolySet" context="pick"><![CDATA[
-    ~ Set the livename 
+    ~ Set the livename
     ~ If nothing's been chosen, get out now
     If (field[pChosen].ischosen <> 0) Then
       field[livename].text = field[name].text & ": " & field[pChosen].chosen.field[name].text
@@ -688,7 +688,7 @@
 
     ~ Set the active tag on the hero so other mechanics run correctly.
     perform hero.assign[PolyAdjust.Active]
-    
+
     perform field[pChosen].chosen.pulltags[PolyAdjust.?]
     perform field[pChosen].chosen.pulltags[PolySpell.?]
     perform field[pChosen].chosen.pulltags[PolyCreTy.?]
@@ -750,7 +750,7 @@
   <procedure id="SCPolyWeb" context="pick"><![CDATA[
     ~ If no web tag then just get out now
     doneif (tagis[PolyAdjust.Web] <> 1)
-      
+
     ~set our focus to the Web Racial Special
     perform hero.child[raS2Web].setfocus
     doneif (state.isfocus = 0)
@@ -787,7 +787,7 @@
     doneif (tagis[PolyAdjust.Poison] <> 1)
     ~ If the poison Polymorph Racial Special not live get out now!
     doneif (hero.childlives[raS2Poison] <> 1)
-    
+
     ~ Pull all poison tags
     perform field[pChosen].chosen.pulltags[PoisDamMod.?]
     perform field[pChosen].chosen.pulltags[PoisDamTyp.?]
@@ -795,8 +795,8 @@
     perform field[pChosen].chosen.pulltags[PoisonCat.?]
     perform field[pChosen].chosen.pulltags[PoisOnset.?]
     perform field[pChosen].chosen.pulltags[PoisLasts.?]
-    perform field[pChosen].chosen.pulltags[Target.?]    
-    
+    perform field[pChosen].chosen.pulltags[Target.?]
+
     ~set our focus to the Polymorph Adjustment Posion Racial Special
     perform hero.child[raS2Poison].setfocus
     doneif (state.isfocus = 0)
@@ -816,7 +816,7 @@
     perform focus.pushtags[PoisonCat.?]
     perform focus.pushtags[PoisOnset.?]
     perform focus.pushtags[PoisLasts.?]
-    perform focus.pushtags[Target.?]    
+    perform focus.pushtags[Target.?]
 
     ]]>
   </procedure>
@@ -830,10 +830,10 @@
 
     ~ Set the new base speed here
     hero.child[Speed].field[tSpeed].value = field[pChosen].chosen.field[phSpeed].value
-    
+
     ~ If we have no special movement speeds then get out now!
-    doneif (field[pChosen].chosen.field[phBurrow].value + field[pChosen].chosen.field[phClimb].value + field[pChosen].chosen.field[phFly].value + field[pChosen].chosen.field[phSwim].value = 0) 
-    
+    doneif (field[pChosen].chosen.field[phBurrow].value + field[pChosen].chosen.field[phClimb].value + field[pChosen].chosen.field[phFly].value + field[pChosen].chosen.field[phSwim].value = 0)
+
     ~ Set the correct maximum movement based on the type of Polymorph Spell.
     ~ Beast Shape 1
     If (tagis[PolyAdjust.Beast1] <> 0) Then
@@ -896,26 +896,26 @@
 
 
     ~sizetarget is our incoming variable - the tSize that the character will be set to
-    var sizetarget as number 
+    var sizetarget as number
     ~sizemod is our outgoing variable - the modifier to the existing tSize
     ~that's needed in order to get to that target size
     var sizemod as number
 
     ~ If we have four legs we get a bonus vs Trip attacks
-    If (tagis[PolyLegs.4Legs] <> 0) Then   
+    If (tagis[PolyLegs.4Legs] <> 0) Then
       ~ Bonus to Trip CMD cause of four legs
       hero.child[manTrip].field[manCMD].value += 4
       perform hero.findchild[BaseRace].assign[Helper.Quadruped]
     ~ If we have six legs we get a bonus vs Trip attacks
-    ElseIf (tagis[PolyLegs.6Legs] <> 0) Then   
+    ElseIf (tagis[PolyLegs.6Legs] <> 0) Then
       ~ Bonus to Trip CMD cause of four legs
       hero.child[manTrip].field[manCMD].value += 6
       perform hero.findchild[BaseRace].assign[Helper.Quadruped]
     ~..If we have no legs we are immune to trips
-    ElseIf (tagis[PolyLegs.0Legs] <> 0) Then   
+    ElseIf (tagis[PolyLegs.0Legs] <> 0) Then
       perform hero.assign[Helper.Snaky]
     ~..If we have fins then set our base speed to zero
-    ElseIf (tagis[PolyLegs.Fins] <> 0) Then   
+    ElseIf (tagis[PolyLegs.Fins] <> 0) Then
       hero.child[Speed].field[tSpeed].value = 0
     Endif
 
@@ -929,7 +929,7 @@
         ~ Adjust Dexterity
         hero.child[aDEX].field[Bonus].value += 4
         ~ Adjust natural armor class
-        hero.child[mNatural].field[Bonus].value += 1         
+        hero.child[mNatural].field[Bonus].value += 1
       ~ Tiny
       ElseIf (tagis[RaceSize.Tiny12] <> 0) Then
         ~ Adjust Strength
@@ -937,13 +937,13 @@
         ~ Adjust Dexterity
         hero.child[aDEX].field[Bonus].value += 4
         ~ Adjust natural armor class
-        hero.child[mNatural].field[Bonus].value += 1         
+        hero.child[mNatural].field[Bonus].value += 1
       ~ Small
       ElseIf (tagis[RaceSize.Small11] <> 0) Then
         ~ Adjust Dexterity
         hero.child[aDEX].field[Bonus].value += 2
         ~ Adjust natural armor class
-        hero.child[mNatural].field[Bonus].value += 1         
+        hero.child[mNatural].field[Bonus].value += 1
       ~ Medium
       ElseIf (tagis[RaceSize.Medium0] <> 0) Then
         ~ Adjust Strength
@@ -983,7 +983,7 @@
         ~ Adjust Dexterity
         hero.child[aDEX].field[Bonus].value += 4
         ~ Adjust natural armor class
-        hero.child[mNatural].field[Bonus].value += 2         
+        hero.child[mNatural].field[Bonus].value += 2
       ~ Medium
       ElseIf (tagis[RaceSize.Medium0] <> 0) Then
         ~ Adjust Strength
@@ -1005,7 +1005,7 @@
 
     var sValue as string
     var nValue as number
-    
+
     ~ Set the correct value for our Poly Adjustment Natural Attacks
     foreach pick in hero from BaseNatWep where "PolyAdjust.Weapon"
       ~ We need to push Polymorph Damage Tags to the right natural attack
@@ -1101,9 +1101,9 @@
     ~smaller than fine (-4)
     sizetarget = maximum(sizetarget, -4)
     sizetarget = minimum(sizetarget, 4)
-   
+
     ~calculate the modifier we need
-    sizemod = sizetarget - herofield[tSize].value 
+    sizemod = sizetarget - herofield[tSize].value
 
     ~if, at this point, sizemod = 0, then there's no change to apply, and we'll
     ~just get out now
@@ -1117,7 +1117,7 @@
       foreach pick in hero from MyGear where "!wCategory.Unarmed & !Helper.GearNoSize"
         eachpick.field[gSizeMod].value += sizemod
       nexteach
-     
+
       var i as number
 
       ~ change the size of our natural weapons
@@ -1143,6 +1143,25 @@
     Call SCPolyWeb
     ~ Setup any jet affects
     Call SCPolyJet
+    ]]>
+  </procedure>
+
+  <procedure id="S2AltFocus" scripttype="validate"><![CDATA[
+    ~ This procedure correctly sets the focus pointer to the
+    ~ thing or pick. This makes validation logic easier.
+    ~ ===How to use this Procedure===
+    ~ call S2AltFocus
+    ~ doneif (state.isfocus = 0)
+    ~ validif (focus.tagis[HasAbility.XXXXX] = 1)
+
+    ~ if we're a Pick set focus to the Pick
+    if (@ispick <> 0) then
+      perform altpick.setfocus
+
+    ~..else we are Thing so set focus to the Thing
+    else
+      perform altthing.setfocus
+    endif
     ]]>
   </procedure>
 
