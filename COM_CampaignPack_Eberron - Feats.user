@@ -2,8 +2,7 @@
 <document signature="Hero Lab Data">
   <loadonce key="COM_CampaignPack_Eberron - Feats"/>
   <fileinfo>
-    <info_author>
-      Tim Shadow
+    <info_author>Tim Shadow
       Email: ShadowChemosh@yahoo.com</info_author>
     <info_history><![CDATA[
       v1.5 - May 28, 2012
@@ -38,8 +37,7 @@
 
       v1.0 - 4/22/2011
       -Changed the unique ID of the Changeling race to NOT clash with the official version name.]]></info_history>
-    <info_todo>
-      VERMIN COMPANION feat not done.
+    <info_todo>VERMIN COMPANION feat not done.
       TOTEM COMPANION feat not done.</info_todo>
     </fileinfo>
   <thing id="fShftBeEli" name="Beasthide Elite" description="Your shifter trait improves.\n\n{b}Prerequisite:{/b} Shifter with the beasthide trait.\n\n{b}Benefit:{/b} While shifting, your natural armor bonus increases to +4.\n\n{b}Normal:{/b} Without this feat, a beasthide shifter has a natural armor bonus of +2 while shifting." compset="Feat" summary="While shifting, your natural armor bonus increases to +4." uniqueness="useronce">
@@ -1516,7 +1514,7 @@
     <tag group="Helper" tag="ShowSpec"/>
     <exprreq message="Any item creation feat required."><![CDATA[hero.tagcount[fCategory.ItemCreate] > 0]]></exprreq>
     </thing>
-  <thing id="fS2MithFlu" name="Mithral Fluidity" description="Your movements are smoother and more fluid than those of other warforged.\n\n{b}Prerequisites:{/b} Warforged race, Mithral Body.\n\n{b}Benefi ts{/b}: The maximum Dexterity bonus a warforged with the Mithral Body can apply to Armor Class is increased by 1. In addition, the armor check penalties to skills are reduced by 1.\n\n{b}Special:{/b} This feat can be taken multiple times. However, armor check penalties cannot be reduced to less than +0." compset="Feat" summary="Your Mithral Body has a Max Dex improved by 1 and the ACP reduced by 1.">
+  <thing id="fS2MithFlu" name="Mithral Fluidity" description="Your movements are smoother and more fluid than those of other warforged.\n\n{b}Prerequisites:{/b} Warforged race, Mithral Body.\n\n{b}Benefit{/b}: The maximum Dexterity bonus a warforged with the Mithral Body can apply to Armor Class is increased by 1. In addition, the armor check penalties to skills are reduced by 1.\n\n{b}Special:{/b} This feat can be taken multiple times. However, armor check penalties cannot be reduced to less than +0." compset="Feat" summary="Your Mithral Body has a Max Dex improved by 1 and the ACP reduced by 1.">
     <usesource source="S2Eberron"/>
     <tag group="fCategory" tag="Warforged" name="Warforged"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -2609,20 +2607,27 @@
       </bootstrap>
     </thing>
   <thing id="fS2Negotia" name="Negotiator" description="You are good at gauging and swaying attitudes.\n\n{b}Benefit{/b}: You get a +2 bonus on all Diplomacy checks and Sense Motive checks. If you have 10 or more ranks in one of these skills, the bonus increases to +4 for that skill." compset="Feat" summary="You get a +2 bonus on all Diplomacy checks and Sense Motive checks." uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="2"/>
     <usesource source="S2Eberron"/>
     <eval phase="PostLevel" priority="15000"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
 
-      #skillbonus[skDiplo] += 2
       if (#skillranks[skDiplo] >= 10) then
-         #skillbonus[skDiplo] += 2
+         field[abValue].value += 2
       endif
 
-      #skillbonus[skSenseMot] += 2
       if (#skillranks[skSenseMot] >= 10) then
-         #skillbonus[skSenseMot] += 2
-      endif]]>
+         field[abValue2].value += 2
+      endif
+
+      #skillbonus[skDiplo] += field[abValue].value
+      #skillbonus[skSenseMot] += field[abValue2].value
+
+      ~ Set tag so skills know we came from a +2 bonus feat
+      perform hero.childfound[skDiplo].assign[Helper.SklBonFt]
+      perform hero.childfound[skSenseMot].assign[Helper.SklBonFt]]]>
       <after name="Suppress Innate Skills"/>
       </eval>
     </thing>
