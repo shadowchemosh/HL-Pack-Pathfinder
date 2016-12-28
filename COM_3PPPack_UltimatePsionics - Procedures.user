@@ -22,7 +22,7 @@
       July 12, 2012
       -HaveSpell and CntMartWea are meant to be used in a "Pre-Req" script only.
       -Added the new procedure "HaveSpell" to test if a character has access to a specific spell ID.
-      -Added the new procedure "CntMartWea" to count the number of martial weapon proficiencies a character has. 
+      -Added the new procedure "CntMartWea" to count the number of martial weapon proficiencies a character has.
       ]]>
     </info_history>
   </fileinfo>
@@ -70,18 +70,18 @@
     If (root.field[usrIndex].value = 0) Then
       lvl = 3
     ~..If the Path Ability is Secondary then set us to level 11
-    else 
+    else
       lvl = 11
     endif
-  
+
     ~ If we have levels in the Awakened Blade PrC, those levels count for these abilities
     lvl -= hero.childfound[cPWP6PthWr].root.field[cTotalLev].value
-    
+
     ~ If we come out less then level 1 then force us to be level 1 ability
     if (lvl < 1) then
       lvl = 1
     endif
-    
+
     ~ Added safe guard of making sure Pick lives before using it. Sometimes with bootstrapps
     ~ childfound will not always work corretly. So it never hurts to "make" sure so we don't
     ~ toss errors at gamers and I get nasty support emails. =)
@@ -208,7 +208,7 @@
   </procedure>
 
   <procedure id="NameMindBl" context="pick"><![CDATA[
-    ~ Name Mind Blade - As we are running custom after a Item Power is 
+    ~ Name Mind Blade - As we are running custom after a Item Power is
     ~                   added to a the mind blade the name gets chopped.
     ~                   So we reset it here.
     ~ Should run at Render/99999999 and run on the "Weapon, Magic" pick
@@ -218,14 +218,14 @@
        ~ Reset the live name as it gets destroyed
        field[livename].text &= " " & tagnames[MindBlade.?]
     Endif
-    
+
     ~ Remove Tracker
     perform delete[User.Tracker]
     ]]>
   </procedure>
 
   <procedure id="SetMindBl" context="pick"><![CDATA[
-    ~ Setup Mind Blade - As we are running custom after a Item Power is 
+    ~ Setup Mind Blade - As we are running custom after a Item Power is
     ~                    added to a the mind blade the name gets chopped.
     ~                    So we reset it here.
     ~ Should run at Pre-Level/10000 and run on the "Weapon, Magic" pick
@@ -234,7 +234,7 @@
     ~ the damage of the mind blade.
     if (hero.tagis[Hero.PowerBuild] = 1) then
       perform assign[Helper.DamageUp]
-    endif  
+    endif
 
     ~ If we use undersized weapons then decrease
     ~ the damage of the mind blade.
@@ -260,9 +260,16 @@
     var classcheck as string
     var levels as number
 
+    ~ Are we a Pick or a Thing? Either way set our focus.
+    if (@ispick <> 0) then
+      perform altpick.setfocus
+    else
+      perform altthing.setfocus
+    endif
+
     ~ First add the levels of the class we specified. Plus new LW logic for comparing all the new
     ~ PreReq and Class Specials count as logic.
-    levels += hero.tagcountstr["Classes." & classcheck] + hero.tagcountstr["CSCountAs." & classcheck] + altthing.intersect[PreReqPos1,PreReqPos1,countsource] - altthing.intersect[PreReqNeg1,PreReqNeg1,countsource] + altthing.intersect[abCategory,PreReqCaP1,countsource] - altthing.intersect[abCategory,PreReqCaN1,countsource]
+    levels += hero.tagcountstr["Classes." & classcheck] + hero.tagcountstr["CSCountAs." & classcheck] + focus.intersect[PreReqPos1,PreReqPos1,countsource] - focus.intersect[PreReqNeg1,PreReqNeg1,countsource] + focus.intersect[abCategory,PreReqCaP1,countsource] - focus.intersect[abCategory,PreReqCaN1,countsource]
 
     ~ Next check for any other class levels allowed by archetypes or PrC's
     ~---------------------------------------------------------------------
@@ -273,6 +280,12 @@
       ~ Soul Archer
       levels += #levelcount[PUSoulArc]
 
+      ~ If we are a Blade Skill then we could have up to 4 extra levels from the
+      ~ Fighter's Blade feat.
+      if (focus.tagis[abCategory.PUBladeSk] = 1) then
+        levels += hero.tagcount[BladeSkill.ExtraLevel]
+      endif
+
     endif
 
     ~ Aegis
@@ -281,9 +294,9 @@
       ~ Metaforg PrC
       levels += #levelcount[PUMetafrg]
 
-      ~ As Aegis doesn't account for xExtraLev, if we have the Student of the 
+      ~ As Aegis doesn't account for xExtraLev, if we have the Student of the
       ~ Astral Suit feat, calculate our Aegis level as being 4 higher (not to
-      ~ exceede total character level). This needs to run after taking any 
+      ~ exceede total character level). This needs to run after taking any
       ~ Metaforge levels into account.
       if (#hasfeat[fPUStdntAS] = 1) then
         levels += 4
@@ -292,6 +305,9 @@
         endif
       endif
     endif
+
+    ~ Remove focus
+    perform state.clearfocus
     ]]>
   </procedure>
 
@@ -304,9 +320,9 @@
     ~ abValue  = Static Bonus if focused
     ~ abValue2 = Number of dice xd6
     ~ abValue3 = Dice size 2dx
-    
+
     var sSearch as string
-    
+
     ~ If we are not active or psionic focus get out now!
     doneif (hero.tagis[Hero.PsiFocus] + field[abilActive].value = 0)
 
@@ -345,10 +361,10 @@
 
   <procedure id="PUSetAegCP" context="pick"><![CDATA[
     ~ Adds four effective class levels worth of customization points
-    ~ Aegis hard codes the customization points per level in a script that 
-    ~ runs at PostLevels 600, storing the bonus reconfigure points in 
-    ~ field abValue2. And Metaforge runs it's calcs at 610. So we need to 
-    ~ run after those and alter CPs by determining how many pseudo-levels 
+    ~ Aegis hard codes the customization points per level in a script that
+    ~ runs at PostLevels 600, storing the bonus reconfigure points in
+    ~ field abValue2. And Metaforge runs it's calcs at 610. So we need to
+    ~ run after those and alter CPs by determining how many pseudo-levels
     ~ to add and then how much TO add.
 
     var V_CurrLvl as number
@@ -442,8 +458,8 @@
       PUNewCP = 26
     endif
 
-    ~ Set configurable points on Aegis Helper in abValue2 field by adding 
-    ~ the difference. 
+    ~ Set configurable points on Aegis Helper in abValue2 field by adding
+    ~ the difference.
     ~   field abValue contains the # of times tracker for the first copy
     ~   field abValue2 contains the bonus reconfigure points
     ~   field abValue3 contains the bonus uses
