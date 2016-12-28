@@ -365,7 +365,7 @@
       doneif (tagis[Helper.ShowSpec] = 0)
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.SpcDisable] <> 0)
-      
+
       ~ Change Warleader's action from Standard to Move
       perform hero.childfound[cPW1Warlea].delete[abAction.Standard]
       perform hero.childfound[cPW1Warlea].delete[abAction.Move]]]></eval>
@@ -439,7 +439,7 @@
       doneif (tagis[Helper.ShowSpec] = 0)
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.SpcDisable] <> 0)
-      
+
       ~ Change Warleader's action from Move to Swift
       perform hero.childfound[cPW1Warlea].delete[abAction.Move]
       perform hero.childfound[cPW1Warlea].delete[abAction.Swift]]]></eval>
@@ -668,13 +668,13 @@
       </bootstrap>
     </thing>
   <thing id="cPW2KiPool" name="Ki Pool" description="At 1st level, a stalker gains a pool of ki points, supernatural energy he can use to accomplish amazing feats. The number of points in the stalker&apos;s ki pool is equal to 1/2 her stalker level + his Wisdom modifier (minimum of 1).\n\nAt 1st level, the stalker may spend 1 point of ki to grant himself a +4 insight bonus to a single Perception or Sense Motive check as an immediate action, as he uses his ki to feel out the vibrations of others and their hidden motives.\n\nAt 5th level, the stalker may use his deadly strikes in conjunction with his combat insight to &quot;read&quot; his opponent&apos;s defenses and deliver devastating blows beyond his foe&apos;s guard. The stalker spends one point of ki as a swift action to read his target opponent, and may apply his deadly strike to all martial strikes initiated by the stalker for a number of rounds equal to his Wisdom modifier against this target. If the stalker scores a successful critical hit against the target while this ability is active, then he activates deadly strike as normal.\n\nAt 7th level, the stalker may spend 1 point from his ki pool to gain a +4 insight bonus on a saving throw as an immediate action.\n\nAt 9th level, the stalker can delve into his subconscious in battle and remember key lessons from his training. The stalker envisions potential scenarios where martial abilities he has not readied come into play and gains a momentary burst of martial insight. A number of times per day equal to his Wisdom modifier, the stalker can spend one ki point as a swift action and trade one readied maneuver for another maneuver known of the same level or lower. The new maneuver is immediately readied and accessible for use. The character may initiate this maneuver and recover it as if he had prepared at the beginning of the day (or when ever the stalker readied his maneuvers last) until the end of the combat encounter.\n\nThe ki pool is replenished each day after 8 hours of rest and meditation; these hours do not need to be consecutive. If the stalker possesses levels in another class that grants points to a ki pool, stalker levels stack with the levels of that class to determine the total number of ki points in the combined pool, but only one ability score modifier is added to the total. The choice of which score to use is made when the second class ability is gained, and once made, the choice is set. The stalker can now use ki points from this pool to power the abilities of every class he possesses that grants a ki pool." compset="ClSpecial" summary="You have a ki pool equal to 1/2 your stalker level + your WIS modifier.">
-    <tag group="abAction" tag="None" name="No action" abbrev="None"/>
-    <tag group="abDuration" tag="Constant" name="Constant" abbrev="cons"/>
-    <tag group="abRange" tag="Personal" name="Personal" abbrev="pers"/>
-    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
-    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="abDuration" tag="Constant"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="AbilType" tag="Super"/>
     <tag group="User" tag="Tracker"/>
     <tag group="UseAttr" tag="aWIS"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="aaKiPool"></bootstrap>
     <eval phase="PostLevel" priority="9000"><![CDATA[
       ~ only run the rest for the first copy
@@ -683,20 +683,20 @@
       doneif (tagis[Helper.ShowSpec] = 0)
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.SpcDisable] <> 0)
-      
+
       ~ Meet core Ki Pool pre-reqs
       perform hero.assign[Ability.cMnkKiPool]
 
       ~ our maximum uses is 1/2 our stalker level + WIS bonus
       field[abValue].value = round(field[xAllLev].value/2, 0, -1)
-      
+
       ~ If we find the CORE Ki Pool ability then set its attribute to be Wisdom
       ~ and include our classes half-level bonus to the tracker max.
       If (hero.haschild[BaseClSpec,"thingid.cMnkKiPool & Helper.ShowSpec"] <> 0) Then
         ~ Increase base Ki Pool by half-stalker level
         #trkmax[cMnkKiPool] += field[abValue].value
-        ~ Let the Monk Ki Pool know we use Wisdom
-        perform hero.child[cMnkKiPool].assign[UseAttr.aWIS]
+        ~ Let the Monk Ki Pool know which ability score to use
+        perform hero.child[cMnkKiPool].pushtags[UseAttr.?]
         ~ Let the our Post-Attribute script know we should NOT run
         field[abValue5].value += 1
         ~ Prevent the Stalker Ki Pool from displaying on the In-Play tab
@@ -719,31 +719,24 @@
         field[abValue].value += 2
       Endif
 
-      ~ Set our uses per day to be 1/2 stalker level plus Wisdom
-      field[trkMax].value += field[abValue].value + hero.child[aWIS].field[aBonus].value]]></eval>
+      ~ Set our uses per day to be 1/2 stalker level plus ability score
+      field[trkMax].value += field[abValue].value + hero.findchild[BaseAttr,tagids[UseAttr.?]].field[aModBonus].value]]></eval>
     </thing>
-  <thing id="cPW2DeadSt" name="Deadly Strike" description="The stalker is capable of maximizing his deadliness whenever he lands a critical blow upon his opponent, opening his target up for future punishment as the stalker becomes attuned to his prey. The stalker&apos;s deadly strike activates whenever the stalker scores a successful critical hit against a target, and is active against that target for a number of rounds equal to his Wisdom modifier. Deadly strike inflicts extra damage, to only this target creature, on all of the stalker&apos;s attacks. This extra damage is 1d6 at 1st level, and increases by 1d6 for every four stalker levels thereafter. When the stalker scores a critical hit, this extra damage is not multiplied, it is simply added to the damage. If the stalker scores a successful critical hit during the time his deadly strike is active, the duration of this ability is extended by one round (no more than one extension can be made per round). Ranged attacks can count as deadly strikes only if the target is within 30-ft.. Deadly strike is more effective with weapons with higher critical multipliers, such as scythes and battle axes. Weapons with a x3 critical multiplier inflict damage with deadly strikes using a d8 instead of a d6, and weapons with a critical multiplier of x4 use d10&apos;s. Damage multipliers higher than x4 use d10&apos;s for deadly strikes damage.\n\nDeadly strike may not be used with weapons that inflict non-lethal damage. The stalker must be able to see the target well enough to pick out a vital spot and must be able to reach such a spot. Creatures immune to critical hits or precision damage cannot be targeted by a deadly strike. A stalker cannot deadly strike while attacking a creature who has concealment." compset="ClSpecial" summary="Attacks deal extra damage for WIS rounds after successful crit">
-    <tag group="LvNameApp" tag="DieCntVal" name="&quot;field[abValue].value&quot; dY" abbrev="&quot;field[abValue].value&quot; dY"/>
-    <tag group="LvNameApp" tag="DieSiz6" name="Xd6" abbrev="Xd6"/>
-    <tag group="LvNameApp" tag="SignDieCnt" name="Sign die count" abbrev="Sign die count"/>
-    <tag group="SbNameApp" tag="DieCntVal" name="&quot;field[abValue].value&quot; dY" abbrev="&quot;field[abValue].value&quot; dY"/>
-    <tag group="SbNameApp" tag="DieSiz6" name="Xd6" abbrev="Xd6"/>
-    <tag group="SbNameApp" tag="SignDieCnt" name="Sign die count" abbrev="Sign die count"/>
-    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+  <thing id="cPW2DeadSt" name="Deadly Strike" description="The stalker is capable of maximizing his deadliness whenever he lands a critical blow upon his opponent, opening his target up for future punishment as the stalker becomes attuned to his prey. The stalker&apos;s deadly strike activates whenever the stalker scores a successful critical hit against a target, and is active against that target for a number of rounds equal to his Wisdom modifier. Deadly strike inflicts extra damage, to only this target creature, on all of the stalker&apos;s attacks. This extra damage is 1d6 at 1st level, and increases by 1d6 for every four stalker levels thereafter. When the stalker scores a critical hit, this extra damage is not multiplied, it is simply added to the damage. If the stalker scores a successful critical hit during the time his deadly strike is active, the duration of this ability is extended by one round (no more than one extension can be made per round). Ranged attacks can count as deadly strikes only if the target is within 30-ft.. Deadly strike is more effective with weapons with higher critical multipliers, such as scythes and battle axes. Weapons with a x3 critical multiplier inflict damage with deadly strikes using a d8 instead of a d6, and weapons with a critical multiplier of x4 use d10&apos;s. Damage multipliers higher than x4 use d10&apos;s for deadly strikes damage.\n\nDeadly strike may not be used with weapons that inflict non-lethal damage. The stalker must be able to see the target well enough to pick out a vital spot and must be able to reach such a spot. Creatures immune to critical hits or precision damage cannot be targeted by a deadly strike. A stalker cannot deadly strike while attacking a creature who has concealment." compset="ClSpecial" summary="Attacks deal extra damage after successful crit">
+    <tag group="LvNameApp" tag="DieCntVal"/>
+    <tag group="LvNameApp" tag="DieSiz6"/>
+    <tag group="LvNameApp" tag="SignDieCnt"/>
+    <tag group="SbNameApp" tag="DieCntVal"/>
+    <tag group="SbNameApp" tag="DieSiz6"/>
+    <tag group="SbNameApp" tag="SignDieCnt"/>
+    <tag group="SpecType" tag="Attack"/>
     <tag group="User" tag="Activation"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="abAction" tag="None"/>
     <tag group="abDuration" tag="Round"/>
-    <tag group="Helper" tag="UseOwnLev" name="UseOwnLev" abbrev="UseOwnLev"/>
+    <tag group="Helper" tag="UseOwnLev"/>
+    <tag group="UseAttr" tag="aWIS"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostAttr" priority="10000"><![CDATA[
-      ~ If we're not shown, just get out now
-      doneif (tagis[Helper.ShowSpec] = 0)
-      ~ If we're disabled, just get out now
-      doneif (tagis[Helper.SpcDisable] <> 0)
-
-      ~ Set duration = WIS mod + 1
-      field[abDuration].value = 1 + #attrmod[aWIS]]]></eval>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
       ~ Build list name
       field[listname].text = field[thingname].text & " " & signed(field[xIndex].value) & "d6"
@@ -755,34 +748,47 @@
 
       field[abValue].value += field[xCount].value
 
-      ~ Set the Summary text that only appears on the Specials Tab
-      field[abSumm].text = "Attacks deal +" & field[abValue].value & "d6 damage for " & field[abDuration].value & " rounds after successful crit"
-
       ~ only run the rest for the first copy
       doneif (tagis[Helper.FirstCopy] = 0)
 
-      ~ Find all Rogue talents we have and set Sneak Attack Dice 
+      ~ Find all Rogue talents we have and set Sneak Attack Dice
       ~ equal to this ability instead.
       foreach pick in hero from BaseCustSp where "SpecSource.cHelpRog & CustTaken.cHelpPW2"
         eachpick.field[abValue].value += field[abValue].value
       nexteach]]></eval>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      ~ If we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Archetypes can change our ability score so
+      ~ use the Use Attribute tag to find the ability score.
+      ~ Set duration = Ability Score mod + 1
+      field[abDuration].value = 1 + hero.findchild[BaseAttr,tagids[UseAttr.?]].field[aModBonus].value
+
+      ~ Set the Summary text that only appears on the Specials Tab
+      field[abSumm].text = "Attacks deal +" & field[abValue].value & "d6 damage for " & field[abDuration].value & " rounds after successful crit"
+      ]]></eval>
     </thing>
-  <thing id="cPW2CmbtI1" name="Combat Insight (WIS to Init/Ref save)" description="At 2nd level, the stalker&apos;s combat sense opens his third eye, granting him defensive reflexes that protect him in combat. The stalker may add his Wisdom modifier to his initiative score and to Reflex saving throws as an insight bonus." compset="ClSpecial">
+  <thing id="cPW2CmbtI1" name="Combat Insight" description="At 2nd level, the stalker&apos;s combat sense opens his third eye, granting him defensive reflexes that protect him in combat. The stalker may add his Wisdom modifier to his initiative score and to Reflex saving throws as an insight bonus." compset="ClSpecial">
     <tag group="AbilType" tag="Super"/>
+    <tag group="UseAttr" tag="aWIS"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] = 0)
       ~ If we're disabled, just get out now
       doneif (tagis[Helper.SpcDisable] <> 0)
-      
-      ~ Set bonus equal to our Wisdom
-      field[abValue].value += #attrmod[aWIS]
+
+      ~ Archetypes can change our ability score so
+      ~ use the Use Attribute tag to find the ability score.
+      field[abValue].value += hero.findchild[BaseAttr,tagids[UseAttr.?]].field[aModBonus].value
 
       ~ Give bonus to Initiative and Ref saves
       #applybonus[BonInsight, hero.child[Initiative], field[abValue].value]
       #applybonus[BonInsight, hero.child[svRef], field[abValue].value]
-      field[livename].text = "Combat Insight " & signed(field[abValue].value)
+      field[livename].text = "Combat Insight (" & signed(field[abValue].value) &  " to Init/Ref save)"
       field[abSumm].text = signed(field[abValue].value) & " to Initiative & Ref Saves."]]></eval>
     </thing>
   <thing id="cPW2CbtPcg" name="Combat Precognition" description="The stalker designates his combat senses towards his opponents and gains momentary flashes of insight into how to defend himself against them. Spending one point of ki as an immediate action forces opponents who attack the stalker to roll their attack rolls twice and take the worse of the two results due to the stalker&apos;s precognitive abilities. This art has a duration of 1 + the stalker&apos;s Wisdom modifier in rounds." compset="CustomSpec" summary="Spend 1 ki, enemies must roll twice to attack and take worse roll for 1 + WIS rnds" uniqueness="unique">
@@ -834,10 +840,10 @@
       If (field[abilActive].value = 1) Then
         field[abValue].value += 20
       Endif
-    
+
       ~ Set speed increase
       #enhancementbonus[hero.child[Speed], field[abValue].value]
-      ~ Set wisdom bonus     
+      ~ Set wisdom bonus
       field[abValue2].value = #attrmod[aWIS]
       ~ Give bonus to acrobatics
       #skillbonus[skAcrobat] += field[abValue2].value]]>
@@ -1014,8 +1020,8 @@
       nexteach
       ~ Push all proficency tags to the hero
       perform hero.pushtags[WepProf.?]
-      
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
+
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
       ~ the chosen exotic weapon on the hero. This is important for the Aldori
       ~ Dueling Sword specifically, and possibly others.
       var searchexpr as string
@@ -1036,8 +1042,8 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[
       ~ If we've been Disabled, get out now
-      doneif (tagis[Helper.SpcDisable] <> 0)    
-    
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
       field[abDuration].value = 1 + #attrmod[aWIS]]]></eval>
     <exprreq message="Not available to Vigilante archetype"><![CDATA[#hasarchetype[arPWViglnt] <> 1]]></exprreq>
     </thing>
@@ -1113,9 +1119,10 @@
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="cPW2CmbtI3" name="Combat Insight (Critical Focus)" description="At 8th level, the killer&apos;s instinct in the stalker is honed to a razor&apos;s fine edge, allowing him to add his Wisdom modifier as a competence bonus to confirm critical hits. This ability counts as if the character possessed the Critical Focus feat, and for the purposes of taking critical feats that the character qualifies for. The character may not select the Critical Focus feat once he has this ability, and should he have it before he gains this ability, he loses the Critical Focus feat and may select a critical feat in its place.\n\n{B}NOTE:{/b} Taking this Stalker Art will disable the Critical Focus feat&apos;s, but does not remove the feat if present, or prevent you from taking it. It&apos;s up to you to make sure you don&apos;t add Critical Focus to a character with this ability, and to replace it if it&apos;s already present as per the rules text" compset="ClSpecial" summary="+WIS to confirm crits, counts as Critical Focus feat">
+  <thing id="cPW2CmbtI3" name="Combat Insight (Critical Focus)" description="At 8th level, the killer&apos;s instinct in the stalker is honed to a razor&apos;s fine edge, allowing him to add his Wisdom modifier as a competence bonus to confirm critical hits. This ability counts as if the character possessed the Critical Focus feat, and for the purposes of taking critical feats that the character qualifies for. The character may not select the Critical Focus feat once he has this ability, and should he have it before he gains this ability, he loses the Critical Focus feat and may select a critical feat in its place.\n\n{B}NOTE:{/b} This ability will disable the Critical Focus feat, but does not remove the feat if present, or prevent you from taking it. It&apos;s up to you to make sure you don&apos;t add Critical Focus to a character with this ability, and to replace it if it&apos;s already present as per the rules text" compset="ClSpecial" summary="Bonus to confirm crits, counts as Critical Focus feat">
     <tag group="abAction" tag="None"/>
     <tag group="AbilType" tag="Super"/>
+    <tag group="UseAttr" tag="aWIS"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[
       ~ If we're not shown, just get out now
@@ -1123,9 +1130,13 @@
       ~ If we're disabled, just get out now
       doneif (tagis[Helper.SpcDisable] <> 0)
 
-      field[abValue].value = #attrmod[aWIS]
+      ~ Archetypes can change our ability score so
+      ~ use the Use Attribute tag to find the ability score.
+      field[abValue].value += hero.findchild[BaseAttr,tagids[UseAttr.?]].field[aModBonus].value
+      field[abText].text = signed(field[abValue].value) & " competence bonus to confirm critical hits."
 
-      #situational[hero.childfound[Attack],signed(field[abValue].value) & " competence bonus to confirm critical hits",field[thingname].text]
+      #situational[hero.childfound[Attack], field[abText].text ,field[thingname].text]
+      field[abSumm].text = field[abText].text
 
       ~ Set HasFeat.fCritFoc onto hero to let other feats know we have
       ~ something that is counted like Critical Focus
@@ -1134,7 +1145,7 @@
       ~ If Critical Focus feat is found then disable it
       If (hero.childlives[fCritFoc] = 1) Then
         perform hero.child[fCritFoc].assign[Helper.FtDisable]
-        ~ Give a bonus general feat that should be used to take 
+        ~ Give a bonus general feat that should be used to take
         ~ another critical feat in its place.
         #resmax[resFeat] += 1
       Endif]]></eval>
@@ -1155,7 +1166,7 @@
     <tag group="abAction" tag="FullRd"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[      
+    <eval phase="PostLevel" priority="10000"><![CDATA[
       ~Set the list name
       field[listname].text = field[thingname].text & " " & field[xIndex].value & tagnames[Usage.?]
 
@@ -1172,7 +1183,7 @@
     <tag group="Helper" tag="MultiCopy"/>
     <tag group="abAction" tag="None"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostAttr" priority="10000"><![CDATA[      
+    <eval phase="PostAttr" priority="10000"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] = 0)
       ~ If we're disabled, just get out now
@@ -1304,7 +1315,7 @@
       field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
       field[abSumm].text = "+" & field[abValue].value  & " dodge bonus to your AC."
 
-      ~ If we are medium, heavy encumbered or have a shield equipped 
+      ~ If we are medium, heavy encumbered or have a shield equipped
       ~ then don't give dodge bonus
       if (hero.tagis[Encumbered.Medium] + hero.tagis[Encumbered.Heavy] + hero.tagis[Hero.EquipShld] = 0) Then
          ~ Give dodge bonus to AC
@@ -1933,7 +1944,7 @@ endif]]></eval>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Hide" tag="Statblock"/>
     <tag group="Helper" tag="SpecUp"/>
-    <eval phase="PostLevel" priority="10000">~ The configurable for Battle Templar starts out with only 
+    <eval phase="PostLevel" priority="10000">~ The configurable for Battle Templar starts out with only
       ~ Golden Lion, but the user may choose two more disciplines
       if (field[usrChosen1].ischosen = 1) then
         perform field[usrChosen1].chosen.pulltags[Discipline.?]
@@ -1974,7 +1985,7 @@ endif]]></eval>
 
       ~ Stop if no maneuver list has been chosen
       doneif (field[usrChosen1].ischosen <> 1)
-     
+
       ~ Find the PrC configurable
       perform hero.findchild[Configure, root.tagids[ClsCountAs.?]].setfocus
       doneif (state.isfocus = 0)
@@ -2049,7 +2060,7 @@ endif]]></eval>
       levDiv = 1
       call PWOrdKtLev
       hero.childfound[cPW3Aegis].field[xTotalLev].value += levAdd
-      
+
       ~ Oracle Curses are handled in the pre-levels script]]></eval>
     <eval phase="PreLevel" priority="11000" index="3"><![CDATA[      ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
@@ -2077,7 +2088,7 @@ endif]]></eval>
     <tag group="AbilType" tag="Super"/>
     <tag group="abAction" tag="Swift"/>
     <tag group="abRange" tag="Feet"/>
-    <eval phase="Final" priority="50000"><![CDATA[      
+    <eval phase="Final" priority="50000"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
       ~ if we've been disabled, get out now
@@ -2537,9 +2548,9 @@ nexteach]]></validate>
       var doubleLev as number
       lev = field[xTotalLev].value
       halfLev = round(lev/2,0,-1)
-      doubleLev = lev * 2      
-      
-      ~ Barbarian Rage 
+      doubleLev = lev * 2
+
+      ~ Barbarian Rage
       #trkmax[cBbnRage] += doubleLev
 
       ~ Bardic Performance
@@ -3552,7 +3563,7 @@ Array 9 = Stances</comment>
 
       ~ Cold Resistance
       #applydr[xDamRsCold,field[abValue].value]
-      
+
       ~ Damage Reduction
       #applydr[xDamRdSil,field[abValue2].value]
 
