@@ -14,7 +14,7 @@
     <eval phase="First" priority="20000"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
-     
+
       ~ Give a bonus/penalty to the Flanking Condition
       #value2[pstFlankin] += field[pAdjust].value
 
@@ -38,8 +38,8 @@
       field[abValue].value += field[pAdjust].value
 
       ~ Give bonus to Attack, Saves, and all Skills
-      #applybonus[BonMorale,hero.child[Attack],field[abValue].value]    
-      #applybonus[BonMorale,hero.child[svAll],field[abValue].value]    
+      #applybonus[BonMorale,hero.child[Attack],field[abValue].value]
+      #applybonus[BonMorale,hero.child[svAll],field[abValue].value]
       #applybonus[BonMorale,hero.child[AllSkills],field[abValue].value]
 
       ~ If we're not chosen, get out now
@@ -174,7 +174,7 @@
     <eval phase="PostLevel" priority="15000"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
-      
+
       ~ If something is chosen then use it to set the SA dice
       If (field[pChosen].ischosen <> 0) then
         ~ Set the number of sneak attack dice into our helper Thing
@@ -183,7 +183,7 @@
         ~ which is too late.
         #value[abS2SneakA] += field[pChosen].chosen.field[abValue].value + field[pChosen].chosen.field[xCount].value
       Endif
-      
+
       ~ Increase/decrease the number of sneak attack dice by the counter
       #value[abS2SneakA] += field[pAdjust].value]]></eval>
     </thing>
@@ -236,8 +236,8 @@
       endif
 
       var sneakatt as number
-      call NumSnkDice 
-      field[abValue].value += sneakatt 
+      call NumSnkDice
+      field[abValue].value += sneakatt
 
       ~ If we are NOT active get out now
       doneif (field[abilActive].value = 0)
@@ -290,8 +290,25 @@
       ~ Display extra damage on the chosen weapon
       #extradamage[field[pChosen].chosen,"+4d6 vs. " & field[pSource].text,field[name].text]]]></eval>
     </thing>
+  <thing id="pS2OvrHan" name="Fighter: Overhand Chop/Backswing" description="At 3rd level, when a two-handed fighter makes a single attack (with the attack action or a charge) with a two-handed weapon, he adds double his Strength bonus on damage rolls.\n\nAt 7th level, when a two-handed fighter makes a full-attack with a two-handed weapon, he adds double his Strength bonus on damage rolls for all attacks after the first.\n\n{B}Note:{/b} This adjustment places an activation on the &quot;In-Play&quot; tab instead of leaving it here as an adjustment.\n\n{b}Selection Choices:{/b} If you select &apos;iPad&apos; I display the extra strength damage as a seperate value allowing the iPad to roll the damage correctly. Plus you will be able to easily subtract the value out if you need to. If you select &apos;Desktop&apos; I add the damage directly into the damage value. In addition for Backswing you will be shown two damage values representing your 1st attack and all other Iter attack damage values." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="abS2OvrHan"></bootstrap>
+    <eval phase="Render" priority="6000" index="4"><![CDATA[
+      ~ Set new array of values
+      field[pModeTable].arraytext[0] = "iPad"
+      field[pModeTable].arraytext[1] = "Desktop"
+
+      ~ Reset the name to remove Mythic stuff
+      field[livename].text = field[thingname].text]]></eval>
+    </thing>
   <thing id="abS2OvrHan" name="Overhand Chop/Backswing" description="At 3rd level, when a two-handed fighter makes a single attack (with the attack action or a charge) with a two-handed weapon, he adds double his Strength bonus on damage rolls.\n\nAt 7th level, when a two-handed fighter makes a full-attack with a two-handed weapon, he adds double his Strength bonus on damage rolls for all attacks after the first." compset="Ability" summary="Double Str bonus with two-handed weapons.">
-    <fieldval field="actName" value="2x Str Bonus"/>
+    <fieldval field="actName" value="Overhand Chop"/>
+    <fieldval field="actName2" value="Backswing"/>
+    <fieldval field="abText5" value="(wCategory.Melee &amp; wClass.TwoHanded) | (wCategory.Melee &amp; wClass.OneHanded &amp; Hero.MainHand &amp; Hero.OffHand)"/>
     <usesource source="srcS2Adjus"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="ShowSpec"/>
@@ -300,16 +317,8 @@
     <tag group="User" tag="NoAutoName"/>
     <tag group="abAction" tag="None"/>
     <tag group="abRange" tag="Personal"/>
-    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="User" tag="Activation"/>
-    <eval phase="PostAttr" priority="10" index="2"><![CDATA[
-      ~ If we're not enabled, get out now
-      doneif (field[abilActive].value = 0)
-      ~ If we don't have a positive bonus get out now!
-      doneif (#attrmod[aSTR] <= 0)
-
-      ~ Calculate the difference to get 2x Str bonus
-      hero.child[Damage].field[tDamTwo].value +=  (#attrmod[aSTR] * 2) - (round(#attrmod[aSTR]/2,0,-1) + #attrmod[aSTR])]]></eval>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First"><![CDATA[
       ~ If we're in output mode hide so that two Ability
       ~ specials do not display.
@@ -317,14 +326,86 @@
         perform assign[Hide.Special]
         done
       endif]]></eval>
-    </thing>
-  <thing id="pS2OvrHan" name="Fighter: Overhand Chop/Backswing" description="At 3rd level, when a two-handed fighter makes a single attack (with the attack action or a charge) with a two-handed weapon, he adds double his Strength bonus on damage rolls.\n\nAt 7th level, when a two-handed fighter makes a full-attack with a two-handed weapon, he adds double his Strength bonus on damage rolls for all attacks after the first.\n\n{B}Note:{/b} This adjustment places an activation on the &quot;In-Play&quot; tab instead of leaving it here as an adjustment. This is much more helpful." compset="InPlay">
-    <usesource source="srcS2Adjus"/>
-    <tag group="Helper" tag="NoIncr"/>
-    <tag group="Helper" tag="AdjConfer"/>
-    <tag group="Helper" tag="CoreCampOK"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <bootstrap thing="abS2OvrHan"></bootstrap>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ Set the choice from the adjustment into value 5
+      field[abValue5].value = root.field[pMode].value]]></eval>
+    <eval phase="Final" priority="10000" index="3"><![CDATA[
+      ~ If Overhand Chop not enabled, get out now!
+      doneif (field[abilActive].value = 0)
+
+      ~ Disable Backswing
+      perform assign[Helper.ChgDisab2]
+
+      ~ If we don't have a positive bonus get out now!
+      doneif (#attrmod[aSTR] <= 0)
+
+      ~ Calculate the difference to get 2x Str bonus
+      ~hero.child[Damage].field[tDamTwo].value +=  (#attrmod[aSTR] * 2) - (round(#attrmod[aSTR]/2,0,-1) + #attrmod[aSTR])
+      field[abValue].value += (#attrmod[aSTR] * 2) - (round(#attrmod[aSTR]/2,0,-1) + #attrmod[aSTR])
+
+      ~ Loop though all melee two-handed weapons or any one handed weapons
+      ~ being used in two hands.
+      foreach pick in hero from BaseWep where field[abText5].text
+        ~ Force to show a single attack
+        perform eachpick.assign[Helper.SingleAtt]
+        field[abValue].value = (eachpick.field[wDamAttr].value * 2) - (round(eachpick.field[wDamAttr].value/2,0,-1) + eachpick.field[wDamAttr].value)
+
+        ~ If in iPad mode then show the attribute damage as extra damage
+        if (field[abValue5].value = 0) then
+          #extradamage[eachpick," plus " & field[abValue].value & " overhand", field[name].text]
+
+        ~ Else on desktop/printing just add the damage
+        else
+          eachpick.field[wDamMelee].value += field[abValue].value
+        endif
+      nexteach]]></eval>
+    <eval phase="Final" priority="400000" index="4"><![CDATA[
+      ~ If Backswing not enabled, get out now!
+      doneif (field[abilAct2].value = 0)
+
+      ~ Disable overhand chop
+      perform assign[Helper.ChgDisab1]
+
+      var s15xDmg as string
+      var s2xDmg as string
+      var nDmg as number
+      var nDmgBonus as number
+      var nHeroDmg as number
+
+      ~ Calculate the total hero melee damage bonus weapons are suppose to get
+      nHeroDmg += hero.child[Damage].field[tDamTwo].value + hero.child[Damage].field[tDamBonus].value
+
+      ~ Loop though all melee two-handed weapons or any one handed weapons
+      ~ being used in two hands.
+      foreach pick in hero from BaseWep where field[abText5].text
+
+        ~ If in iPad mode then show the attribute damage as extra damage
+        if (field[abValue5].value = 0) then
+          field[abValue].value = (eachpick.field[wDamAttr].value * 2) - (round(eachpick.field[wDamAttr].value/2,0,-1) + eachpick.field[wDamAttr].value)
+          #extradamage[eachpick," plus " & field[abValue].value & " backswing", field[name].text]
+
+        ~ Else on desktop/printing just add the damage
+        else
+          ~ Calculate the damage bonus of this weapon
+          nDmgBonus = eachpick.field[dmmBonAlch].value + eachpick.field[dmmBonComp].value + eachpick.field[dmmBonEnh].value + eachpick.field[dmmBonIns].value + eachpick.field[dmmBonIns].value + eachpick.field[dmmBonLuck].value + eachpick.field[dmmBonMora].value + eachpick.field[dmmBonProf].value + eachpick.field[dmmBonSacr].value + eachpick.field[dmmBonTrt].value + eachpick.field[dmmBonus].value + eachpick.field[dmmModCirc].value + eachpick.field[dmmPenComp].value + eachpick.field[dmmPenLuck].value + eachpick.field[dmmPenMora].value + eachpick.field[dmmPenProf].value + eachpick.field[dmmPenSacr].value + eachpick.field[dmmPenTrt].value + eachpick.field[dmmPenalty].value + eachpick.field[dmmRacial].value + nHeroDmg
+
+          ~ Generate normal 1.5x Str damage
+          nDmg = round(eachpick.field[wDamAttr].value * 1.5, 0, -1) + nDmgBonus
+          s15xDmg = eachpick.field[wMMainDNum].value & "d" & eachpick.field[wMMainDSiz].value & signed(nDmg)
+
+          ~ Generate Backswing 2x Str damage
+          nDmg = (eachpick.field[wDamAttr].value * 2) + nDmgBonus
+          s2xDmg = eachpick.field[wMMainDNum].value & "d" & eachpick.field[wMMainDSiz].value & signed(nDmg)
+
+          ~ Set initial damage value
+          eachpick.field[wFixDamage].text = s15xDmg & "/" & s2xDmg
+        endif
+      nexteach]]></eval>
     </thing>
   <thing id="pS2ImBeMu" name="Alchemist: Improved Beastform Mutagen" description="At 6th level, a beastmorph&apos;s mutagen grants him additional abilities and options. The alchemist gains his choice of two of the abilities listed in the {i}beast shape I{/} spell, which persist as long as the mutagen. He may select two different abilities each time he creates a mutagen." compset="InPlay">
     <fieldval field="pCandExpr" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.1"/>
@@ -524,7 +605,7 @@
 
       ~ Bonus to magus concentration
       hero.childfound[cHelpMag].field[cConcCheck].value += field[actUser].value * -1
-      
+
       perform hero.findchild[BaseClSpec,"HasAbility.cMagSplCom & ClSpecWhen.1"].setfocus
       doneif (state.isfocus = 0)
 
@@ -555,7 +636,7 @@
 
       ~ If not duel wielding with a touch attack weapon then get out!
       doneif (Hands + Touch <> 2)
-      
+
       ~ Make us act like we have two-weapon fighting
       foreach pick in hero from BaseWep where "Hero.MainHand | Hero.OffHand"
          If (eachpick.tagis[Hero.MainHand] <> 0) Then
@@ -577,8 +658,8 @@
        var IntBonus as number
        IntBonus = field[actUser].value * -1
 
-       ~ If our Intelligence bonus is greater or equal to the 
-       ~ penalty taken then we are valid. 
+       ~ If our Intelligence bonus is greater or equal to the
+       ~ penalty taken then we are valid.
        validif (#attrmod[aINT] >= IntBonus)]]></evalrule>
     </thing>
   </document>
