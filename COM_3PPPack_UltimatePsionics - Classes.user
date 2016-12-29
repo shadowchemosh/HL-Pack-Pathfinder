@@ -15721,12 +15721,32 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
     <tag group="abAction" tag="None"/>
     </thing>
   <thing id="cPUBMBitF" name="Back into the Fray" description="A battle medic of 6th level has learned to channel additional healing energy when it is most needed. When manifesting a power of the Healing subdiscipline on a member of his collective, and the target is below 50% of its total hit points, the battle medic can expend his psionic focus to treat that power as if affected by the Empower Power feat. This ability replaces coordinate." compset="ClSpecial"></thing>
-  <thing id="cPUFrcPart" name="Forced Participant" description="A 1st level commander gains the Unwilling Participant* feat as a bonus feat. At 5th level and every 4 levels thereafter, the DC to resist being unwillingly added to the collective is increased by 1. \nThis ability replaces coordinated strike." compset="ClSpecial" summary="Any creature in the collective against their will makes a save against an effect from over the collective, they suffer a -2 penalty on the save to resist the effect.">
+  <thing id="cPUFrcPart" name="Forced Participant" description="A 1st level commander gains the Unwilling Participant* feat as a bonus feat. At 5th level and every 4 levels thereafter, the DC to resist being unwillingly added to the collective is increased by 1. \n\nThis ability replaces coordinated strike." compset="ClSpecial" summary="Any creature in the collective against their will makes a save against an effect from over the collective, they suffer a -2 penalty on the save to resist the effect.">
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="SpecUp"/>
     <bootstrap thing="fPUUnwillP">
       <containerreq phase="First" priority="500"><![CDATA[
-      count:Classes.Vitalist>= 2 & !AbReplace.cPUUnwPart]]></containerreq>
+      count:Classes.Tactician >= 1 & !AbReplace.cPUFrcPart]]></containerreq>
+      <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      var nList as number
+      nList = field[xIndex].value -1
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & signed(nList)
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xCount].value-1
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      #dc[fPUUnwillP] += field[abValue].value]]></eval>
     </thing>
   <thing id="cPUIssOrdr" name="Issue Order" description="A commander of 4th level can, as a swift action, direct one member of his collective to  take an action that requires either a standard or move  action. On that member’s next turn, they must perform that command unless they make a successful Will saving throw at the same DC as that of the commander’s Unwilling Participant* DC. This ability replaces the strategy normally gained at 4th level, but functions like a strategy, including using the same pool of 3 + the tactican’s Charisma modifier limited uses per day." compset="CustomSpec" uniqueness="unique">
     <usesource source="pPsiUn" parent="pDscar" name="DSP - Ultimate Psionics"/>
@@ -15734,9 +15754,26 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
     </thing>
   <thing id="arPUComm" name="Commander" description="For some tacticians, it is not enough to direct their allies and coordinate battle tactics, they need to ensure that the members of their collective are doing exactly as told. These commanders can force individuals into their collective and force members within the collective to take actions by using telepathic force, rather than diplomatic measures." compset="ClassVary" uniqueness="unique">
     <arrayval field="cvBonFtMod" index="11" value="-1"/>
+    <arrayval field="cvCustTot" index="3" value="-1"/>
+    <tag group="AbReplace" tag="cPUCoorStr"/>
     <tag group="ClVaryName" tag="AppParen"/>
     <bootstrap thing="cPUThrall">
       <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cPUFrcPart">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cPUFrcPart">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cPUFrcPart">
+      <autotag group="ClSpecWhen" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="cPUFrcPart">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cPUIssuOrd">
+      <autotag group="ClSpecWhen" tag="4"/>
       </bootstrap>
     <bootstrap thing="cPUFrcPart">
       <autotag group="ClSpecWhen" tag="1"/>
@@ -16921,5 +16958,9 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
     <eval phase="Final" priority="1000"><![CDATA[
       ~ Give access to Telepath Powers
       linkage[table].field[cPsiExpr].text &= "|psiClass.cPsiTelepa"]]></eval>
+    </thing>
+  <thing id="cPUIssuOrd" name="Issue Order" description="A commander of 4th level can, as a swift action, direct one member of his collective to take an action that requires either a standard or move action. On that member’s next turn, they must perform that command unless they make a successful Will saving throw at the same DC as that of the commander’s Unwilling Participant* DC. This ability replaces the strategy normally gained at 4th level, but functions like a strategy, including using the same pool of 3 + the tactican’s Charisma modifier limited uses per day." compset="ClSpecial" summary="As a swift action, direct 1 member your collective to take an action.">
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   </document>
