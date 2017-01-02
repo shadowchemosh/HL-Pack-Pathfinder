@@ -10808,7 +10808,7 @@ field[cfgMax1].value = hero.childfound[cPUAegHelp].field[abValue2].value</eval>
     <tag group="AbilType" tag="Super"/>
     <tag group="SpecType" tag="Defense"/>
     <bootstrap thing="cfgPUTranB"></bootstrap>
-    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+    <eval phase="PostLevel" priority="10000" index="1"><![CDATA[
       ~ Set the list name
       field[listname].text = field[thingname].text & " " & signed(field[xIndex].value)
 
@@ -10824,6 +10824,15 @@ field[cfgMax1].value = hero.childfound[cPUAegHelp].field[abValue2].value</eval>
       doneif (tagis[Helper.FirstCopy] = 0)
 
       hero.child[ArmorClass].field[tACNatural].value += field[abValue].value]]></eval>
+    <eval phase="First" priority="500" index="2"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      ~ Being transformed is the same as wearing our Astral Suite
+      ~ so set tag on hero.
+      perform hero.assign[Custom.WearAstS]]]></eval>
     </thing>
   <thing id="arPUAberra" name="Aberrant" description="Using ectoplasm is the way a typical aegis protects and enhances the physical body. Others have discovered that by directly altering the body, they can achieve similar results, although they might have a more grisly appearance. These aberrants often have misshapen or twisted forms, yet they are equally deadly." compset="ClassVary" uniqueness="unique">
     <fieldval field="srcPageNum" value="261"/>
@@ -11245,16 +11254,27 @@ hero.child[xBurrow].field[abValue].value = maximum(hero.child[xBurrow].field[abV
     <usesource source="pPsiUn"/>
     <tag group="AllowRCust" tag="cfgPUTranB"/>
     <tag group="CustomCost" tag="2"/>
-    <eval phase="First" priority="1000"><![CDATA[~ If we're not wearling the Astral Suit, get out now
-doneif (hero.tagcount[Custom.WearAstS] = 0)
+    <eval phase="First" priority="1000"><![CDATA[
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
 
-perform hero.childfound[wUnarmed].delete[wSpecial.Nonlethal]
+      perform hero.childfound[wUnarmed].setfocus
+      doneif (state.isfocus = 0)
 
-if (compare(field[usrSelect].text,"Slashing") <> 0) then
-  perform hero.childfound[wUnarmed].assign[wType.S]
-elseif (compare(field[usrSelect].text,"Piercing") <> 0) then
-  perform hero.childfound[wUnarmed].assign[wType.P]
-endif]]></eval>
+      ~ Unarmed strikes do lethal damage
+      perform focus.delete[wSpecial.Nonlethal]
+
+      ~ Remove bludgeoning damage type
+      perform focus.delete[wType.?]
+
+      ~ Slashing
+      if (field[usrIndex].value = 0) then
+        perform focus.assign[wType.S]
+
+      ~..Piercing
+      elseif (field[usrIndex].value = 1) then
+        perform focus.assign[wType.P]
+      endif]]></eval>
     </thing>
   <thing id="rcPUaHard2" name="Hardy" description="The aegis gains a +2 enhancement bonus to Constitution while he is wearing his astral suit. This customization can be selected a second time beginning at 5th level, and a third time starting at 10th level. Each subsequent time it is taken, the enhancement bonus to Constitution is increased by +2." compset="RaceCustom">
     <usesource source="pPsiUn"/>
