@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <thing id="r3PDeaGhos" name="Deathless Ghost" description="{i}This spectral figure glides silently through the air, passing through solid objects as if they didn’t exist.{/i}\n\nWhen a soul is created and never is born into a life form they may exists as a deathless ghost. Such beings are sometimes referred to as Mistwalkers and are humanoid beings derived from the Ethereal Plane. The bodiless form of a deathless ghost interacts with the world in a similar way to undead creatures thanks to its nature as an incarnate soul. Some sages believe they were dreamed into existence, but whatever the reason for their existence—they transition to the Material Plane in a slow manner that allows them to begin to interact with solid matter.\n\n{b}Alignment:{/b} Having lacked a purely corporeal form, the deathless ghosts tend towards chaotic, but may be of any alignment." compset="Race">
+    <fieldval field="rDescript" value="This spectral figure glides silently through the air, passing through solid objects as if they didn’t exist."/>
+    <fieldval field="rDEX" value="2"/>
+    <fieldval field="rINT" value="2"/>
+    <fieldval field="srcPageNum" value="4"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="NoScore" tag="aSTR"/>
+    <tag group="Language" tag="lAbyssal"/>
+    <tag group="Language" tag="lAklo"/>
+    <tag group="Language" tag="lCelestial"/>
+    <tag group="Language" tag="lInfernal"/>
+    <tag group="RaceType" tag="Extra"/>
+    <tag group="HasType" tag="tpUndead"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="ra3PKeSens"></bootstrap>
+    <bootstrap thing="ra3PHaunti"></bootstrap>
+    <bootstrap thing="raDarkVis">
+      <assignval field="abValue" value="60"/>
+      </bootstrap>
+    <bootstrap thing="ra3PEctFor"></bootstrap>
+    <bootstrap thing="ra3PGhoBod"></bootstrap>
+    <pickreq thing="c3PDeaGhos"/>
+    </thing>
+  <thing id="ra3PHaunti" name="Haunting" description="Deathless ghosts gain a +4 racial bonus on Stealth checks." compset="RaceSpec" summary="+4 racial bonus on Stealth">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="srcMClUnde"/>
+    <eval phase="PreLevel" priority="4000"><![CDATA[~ If we're disabled, do nothing
+doneif (tagis[Helper.SpcDisable] <> 0)
+
+#racialbonus[skStealth] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="ra3PKeSens" name="Keen Senses" description="Deathless ghosts gain a +4 racial bonus on Perception checks." compset="RaceSpec" summary="+4 racial bonus on Perception">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="srcMClUnde"/>
+    <eval phase="PreLevel" priority="4000"><![CDATA[~ If we're disabled, do nothing
+doneif (tagis[Helper.SpcDisable] <> 0)
+
+#racialbonus[skPercep] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="ra3PEctFor" name="Ectoplasmic Form" description="While a deathless ghost is not truly incorporeal, it shares some qualities with incorporeal creatures. Deathless ghosts have no Strength score, and use their Dexterity score in place of their Strength score for melee attack rolls, damage rolls, combat maneuvers, and any special effect that depends on Strength." compset="RaceSpec" summary="Use Dexterity instead of Strength">
+    <usesource source="srcMClUnde"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ectoplasmic creatures don't have a strength
+      perform hero.child[aSTR].assign[Helper.NoScore]
+
+      ~they use their DEX bonus instead
+      perform hero.child[aSTR].assign[AttrSub.aDEX]
+
+      ~and we do not add strength to our CMD anymore.
+      perform hero.child[aSTR].assign[Helper.NoAddCMD]
+      perform hero.assign[Hero.IgnoreEnc]]]></eval>
+    </thing>
+  <thing id="ra3PGhoBod" name="Ghostly Body" description="A deathless ghost does not gain bonuses to AC from armor or shields unless the armor or shield has the {i}ghost touch{/i} special property. In addition, a deathless ghost has no natural armor bonus to its AC, even if it would otherwise gain one." compset="RaceSpec" summary="No benefit from armor without {i}ghost touch{/i}, and no natural armor bonus to AC">
+    <usesource source="srcMClUnde"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecType" tag="ACCalcNote"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostAttr" priority="1000"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ Set our natural armor bonus to +0 - must be added before PostAttr 5000
+      perform hero.child[mNatural].assign[Helper.NoArmor]]]></eval>
+    </thing>
+  <thing id="cHelpDGh" name="Deathless Ghost" compset="Class" uniqueness="unique">
+    <fieldval field="cHDSides" value="8"/>
+    <fieldval field="cAbbr" value="DGh"/>
+    <fieldval field="cSkills" value="4"/>
+    <fieldval field="srcPageNum" value="4"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="Classes" tag="3PDeaGhos" name="Deathless Ghost"/>
+    <tag group="cAttack" tag="Medium"/>
+    <tag group="cFort" tag="Poor"/>
+    <tag group="ClassSkill" tag="skClimb"/>
+    <tag group="ClassSkill" tag="skDisguise"/>
+    <tag group="ClassSkill" tag="skFly"/>
+    <tag group="ClassSkill" tag="skIntim"/>
+    <tag group="ClassSkill" tag="skKnowArca"/>
+    <tag group="ClassSkill" tag="skKnowRel"/>
+    <tag group="ClassSkill" tag="skPercep"/>
+    <tag group="ClassSkill" tag="skSenseMot"/>
+    <tag group="ClassSkill" tag="skSpellcr"/>
+    <tag group="ClassRole" tag="Special"/>
+    <tag group="cWill" tag="Good"/>
+    <tag group="cRef" tag="Poor"/>
+    <bootstrap thing="cDGh2Cha">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cDGh2Cha">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cDGhChaRes">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cDGhChaRes">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cDGhDeflec">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cDGhEctFor">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cDGhEctFor">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cDGhEctFor">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cDGhEctMov">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cDGhEctMov">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cDGhHaunt">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cDGhIntang">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cDGhCorTo">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    </thing>
+  <thing id="c3PDeaGhos" name="Deathless Ghost" description="When a soul is created and never is born into a life form they may exists as a deathless ghost. Such beings are sometimes referred to as Mistwalkers and are humanoid beings derived from the Ethereal Plane. The bodiless form of a deathless ghost interacts with the world in a similar way to undead creatures thanks to its nature as an incarnate soul. Some sages believe they were dreamed into existence, but whatever the reason for their existence—they transition to the Material Plane in a slow manner that allows them to begin to interact with solid matter.\n\n{b}Starting Wealth:{/b} 5d6 × 10 gp (average 175 gp). In addition, each character begins play with an outfit worth 10 gp or less." compset="ClassLevel" maxlimit="3">
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ClassType" tag="Normal"/>
+    <bootstrap thing="cHelpDGh"></bootstrap>
+    <link linkage="helper" thing="cHelpDGh"/>
+    <pickreq thing="r3PDeaGhos"/>
+    </thing>
+  <thing id="cDGhChaRes" name="Channel Resistance" description="Starting at 1st level, a deathless ghost is is less easily affected by clerics or paladins. It gains channel resistance +2, adding this bonus on saves made to resist the effects of channel energy, including effects that rely on the use of channel energy. This bonus increases to +4 at 3rd level." compset="ClSpecial" summary="Gain a bonus on saves vs. channel energy">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev="Su"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <bootstrap thing="xChanRes">
+      <containerreq phase="First" priority="1000"><![CDATA[count:Classes.3PDeaGhos >= 3]]></containerreq>
+      <assignval field="abValue" value="4"/>
+      </bootstrap>
+    <bootstrap thing="xChanRes">
+      <containerreq phase="First" priority="1000"><![CDATA[count:Classes.3PDeaGhos < 3]]></containerreq>
+      <assignval field="abValue" value="2"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      field[listname].text = "Channel Resistance " & signed(field[xIndex].value * field[abValue].value)]]></eval>
+    </thing>
+  <thing id="cDGhCorTo" name="Corrupting Touch" description="At 1st level, a deathless ghost gains the ability to pass part of its body through another, causing damage to the target. As a standard action, the deathless ghost can make a melee touch attack against another creature. If it hits, it the target must succeed at a Fortitude save (DC 10 + 1/2 the deathless ghost’s Hit Dice + the deathless ghost’s Charisma modifier) or take 1d6 points of damage per Hit Die of the deathless ghost. A successful save halves the damage.\n\nThis damage is not negative energy—it manifests in the form of physical wounds and aches from supernatural aging. Creatures immune to magical aging are immune to this damage, but otherwise the damage bypasses all forms of damage reduction." compset="ClSpecial" summary="Touch others to harm them with supernatural aging">
+    <fieldval field="abValue2" value="6"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="abRange" tag="Touch"/>
+    <tag group="abDuration" tag="Instant"/>
+    <tag group="abSave" tag="FortNeg"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Helper" tag="WeaponSpec"/>
+    <tag group="Helper" tag="SingleAtt"/>
+    <tag group="wCategory" tag="Touch"/>
+    <tag group="wType" tag="Untyped"/>
+    <tag group="IsWeapon" tag="wTouchAtk"/>
+    <tag group="IsWeapon" tag="wTouchAtta"/>
+    <tag group="SbNamePar" tag="IncDC"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SbNamePar" tag="DieCntVal"/>
+    <tag group="SbNamePar" tag="DieSizVal2"/>
+    <tag group="LvNamePar" tag="DieCntVal"/>
+    <tag group="LvNamePar" tag="DieSizVal2"/>
+    <tag group="Helper" tag="NoSelect"/>
+    <tag group="wMain" tag="1d6"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      field[abValue].value += field[xAllLev].value
+      field[wFixDamage].text = field[abValue].value & "d" & field[abValue2].value]]></eval>
+    </thing>
+  <thing id="cDGhEctFor" name="Ectoplasmic Form" description="A deathless ghost’s body is formed of partially-intangible ectoplasm with similar properties to smoke. A deathless ghost must focus strongly to interact with physical objects, and often finds that its form can be easily disrupted by even the most mundane of weapons. As the ghost grows in power, its body grows more and more intangible, until eventually the ghost can phase through objects and ignore the material world around it entirely.\n\nStarting at 1st level, all corporeal attacks and effects suffer a 10% miss chance per class level against the deathless ghost. In addition, the deathless ghost has an equal miss chance when it tries to use its own abilities and attacks against a corporeal target. This miss chance is halved against magical attacks and effects, such as magic weapons, spells, spell-like abilities, and supernatural abilities. Likewise, when the deathless ghost uses such an ability, its miss chance against others is halved. Otherwise, the deathless ghost applies this effect to its equipment and any attended items as well.\n\n{i}Ghost touch{/i} weapons and force effects affect the deathless ghost normally." compset="ClSpecial" summary="Gain a miss chance against non-{i}ghost touch{/i} weapons">
+    <fieldval field="abText" value="%"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="LvNamePar" tag="AppValue"/>
+    <tag group="SbNamePar" tag="AppText"/>
+    <tag group="SbNamePar" tag="AppValue"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="LvNamePar" tag="AppText"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      field[listname].text = "Ectoplasmic Form (" & maximum(0, field[xIndex].value * 10) & " %)"
+
+      field[abValue].value = field[xCount].value * 10]]></eval>
+    </thing>
+  <thing id="cDGhDeflec" name="Deflection" description="Starting at 1st level, a deathless ghost gains a deflection bonus to its AC equal to its Charisma bonus (minimum +1, even if the deathless ghost’s Charisma modifier provides no bonus)." compset="ClSpecial" summary="Gain a deflection bonus to AC equal to Charisma bonus">
+    <usesource source="srcMClUnde"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="SpecType" tag="ACCalcNote"/>
+    <tag group="Helper" tag="ShowStatbl"/>
+    <tag group="SbNameApp" tag="AppValue"/>
+    <tag group="SbNameApp" tag="SignAppVal"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostAttr" priority="10000">
+      field[abValue].value += minimum(1, #attrmod[aCHA])
+
+      hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].field[tACDeflect].value, field[abValue].value)</eval>
+    </thing>
+  <thing id="cDGhEctMov" name="Ectoplasmic Movement" description="Starting at 1st level, a deathless ghost can use its ectoplasmic body to flow around some objects. Its movement is never hindered by difficult terrain.\n\nAt 3rd level, the deathless ghost cannot take fall or take falling damage, and gains the ability to fly at a speed of 30 feet with perfect maneuverability." compset="ClSpecial" summary="Move more efficiently with your ectoplasmic body">
+    <usesource source="srcMClUnde"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="MoveOther"/>
+    <bootstrap thing="xFly">
+      <containerreq phase="First" priority="1000"><![CDATA[Classes.3PDeaGhos >= 3]]></containerreq>
+      <autotag group="Value" tag="30"/>
+      <autotag group="Maneuver" tag="Perfect"/>
+      </bootstrap>
+    <bootstrap thing="xImmFall">
+      <containerreq phase="First" priority="1000"><![CDATA[Classes.3PDeaGhos >= 3]]></containerreq>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      if (field[xIndex].value = 1) then
+         field[listname].text = "Ectoplasmic Movement (difficult terrain)"
+      elseif (field[xIndex].value = 2) then
+         field[listname].text = "Ectoplasmic Movement (flight)"
+      endif]]></eval>
+    </thing>
+  <thing id="cDGhHaunt" name="Haunting" description="At 2nd level, your racial bonus on Stealth checks increases to +8." compset="ClSpecial" summary="+8 racial bonus on Stealth">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      #racialbonus[skStealth] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cDGhIntang" name="Intangibility" description="Starting at 3rd level, a deathless ghost’s ability to reform its ectoplasmic form after being disrupted improves, and it gains a further resilience to attacks. The miss chance from its ectoplasmic form ability increases to 10% per character level, up to a maximum of 100% miss chance at character level 10th." compset="ClSpecial">
+    <usesource source="srcMClUnde"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecType" tag="Defense"/>
+    <eval phase="PostLevel" priority="11000">
+      field[abValue].value = minimum(100, field[xAllLev].value * 10)
+
+      hero.childfound[cDGhEctFor].field[abValue].value = maximum(hero.childfound[cDGhEctFor].field[abValue].value, field[abValue].value)</eval>
+    </thing>
+  <thing id="cDGh2Cha" name="+2 Charisma" description="You gain +2 Charisma." compset="ClSpecial" summary="+2 to Charisma">
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~ If we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ if we're not the first copy, just get out now
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      hero.child[aCHA].field[aNormMod].value += (field[xCount].value * 2)]]></eval>
+    </thing>
+  <thing id="f3PCerCons" name="Cerebral Consumption" description="By devouring a creature’s brain, you can gain some knowledge of its life and thoughts.\n\n{b}Prerequisites:{/b} Bite attack, undead type, character level 5th.\n\n{b}Benefit:{/b} As a full-round action that provokes attacks of opportunity, you can consume the brain of a creature that has been dead for as long as one minute. You cannot consume the brain of a destroyed undead creature, nor can you consume the brain of a dead elemental or other creature without a physical brain. After consuming a brain, you regain a number of hit points equal to your character level, and gain a +2 competence bonus on skill checks for one hour.\n\nIn addition, you gain access to some of the memories and recent thoughts of the creature whose brain you consumed. You have full knowledge of all the creature’s recent experiences, reaching back a number of hours equal to your Intelligence modifier (minimum 1). This allows you to know names, recognize places, and otherwise act on this new knowledge, but it does not give you any abilities the dead creature had." compset="Feat" summary="You can eat brains to get hp, skill bonuses, and memroies" uniqueness="useronce">
+    <fieldval field="abDuration" value="1"/>
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abDuration" tag="Hour"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="abAction" tag="FullRd"/>
+    <tag group="fCategory" tag="Heritage"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+doneif (tagis[Helper.FtDisable] <> 0)
+doneif (field[abilActive].value = 0)
+
+foreach pick in hero from BaseSkill
+  #applybonus[BonComp, eachpick, field[abValue].value]
+nexteach]]></eval>
+    <exprreq message="Character level 5th required."><![CDATA[#totallevelcount[] >= 5]]></exprreq>
+    <exprreq message="Bite attack required."><![CDATA[tagis[HasNatAtt.wBite] <> 0]]></exprreq>
+    <exprreq message="Undead type required."><![CDATA[#hastype[tpUndead] <> 0]]></exprreq>
+    </thing>
+  <thing id="f3PDraTouc" name="Draining Touch" description="Your touch can sap life and will.\n\n{b}Prerequisites:{/b} Character level 5th, deathless ghost level 3rd.\n\n{b}Benefit:{/b} You gain the ability to reach into a creature and tear at its vital essence. As a standard action, you can make a touch attack against an adjacent creature. If you hit, you drain 1d4 points from a single ability score of your choice, and you are healed 5 points of damage. You cannot combine this attack with your corrupting touch ability. This is a supernatural ability." compset="Feat" summary="You can make a touch attack to deal ability damage and heal" uniqueness="useronce">
+    <usesource source="srcMClUnde"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="abRange" tag="Touch"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Character level 5th required."><![CDATA[#totallevelcount[] >= 5]]></exprreq>
+    <exprreq message="Deathless ghost level 3rd required."><![CDATA[#levelcount[3PDeaGhos] >= 3]]></exprreq>
+    </thing>
+  <thing id="f3PFriMoan" name="Frightful Moan" description="You can emit a moan that panics others.\n\n{b}Prerequisites:{/b} Character level 7th, deathless ghost level 3rd.\n\n{b}Benefits:{/b} You can emit a frightful moan as a standard action. All living creatures within a 30-foot spread must succeed on a Will save (DC 10 + 1/2 your character level + your Charisma modifier) or become panicked for 2d4 rounds. This is a supernatural sonic mind-affecting fear effect. A creature that successfully saves against your moan cannot be affected by it for 24 hours." compset="Feat" summary="You can make a moan that panics others" uniqueness="useronce">
+    <fieldval field="abRange" value="30"/>
+    <fieldval field="abDuration" value="2"/>
+    <fieldval field="abDuraDiSz" value="4"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abDuration" tag="Round"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="SbNamePar" tag="IncDC"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SbNamePar" tag="IncDurati"/>
+    <tag group="SbNamePar" tag="IncRange"/>
+    <tag group="LvNamePar" tag="IncDurati"/>
+    <tag group="LvNamePar" tag="IncRange"/>
+    <exprreq message="Character level 7th required."><![CDATA[#totallevelcount[] >= 7]]></exprreq>
+    <exprreq message="Deathless ghost level 3rd required."><![CDATA[#levelcount[3PDeaGhos] >= 3]]></exprreq>
+    </thing>
+  <thing id="f3PIncorpa" name="Incorporeality" description="You have complete control over your ghostly body, allowing you to pass through the corporeal world at will.\n\n{b}Prerequisites:{/b} Character level 9th, deathless ghost level 3rd.\n\n{b}Benefit:{/b} You gain the incorporeal subtype." compset="Feat" summary="You gain the incoproreal subtype" uniqueness="useronce">
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <bootstrap thing="stIncorpor"></bootstrap>
+    <exprreq message="Deathless ghost level 3rd required."><![CDATA[#levelcount[3PDeaGhos] >= 3]]></exprreq>
+    <exprreq message="Character level 9th required."><![CDATA[#totallevelcount[] >= 7]]></exprreq>
+    </thing>
+  <thing id="f3PMalevol" name="Malevolence" description="You have the ability to possess others, entering and taking control of their bodies.\n\n{b}Prerequisites:{/b} Incorporeal subtype, deathless ghost level 3rd.\n\n{b}Benefit:{/b} Once per round, you can merge your body with a creature on the same plane. This ability is similar to a {i}magic jar{/i} spell with a caster level equal to your character level, except that it does not require a receptacle. To use this ability, you must be adjacent to the target. The target can resist the attack with a successful Will save (DC 15 + your Charisma modifier). A creature that successfully saves is immune to your malevolence for 24 hours." compset="Feat" uniqueness="useronce">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="SbNamePar" tag="IncDC"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Usage" tag="Round"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SpInfo" tag="spMagiJar4"/>
+    <tag group="abRange" tag="AdjSquare"/>
+    <pickreq thing="stIncorpor"/>
+    <exprreq message="Deathless ghost level 3rd required."><![CDATA[#levelcount[3PDeaGhos] >= 3]]></exprreq>
+    </thing>
+  <thing id="f3POldDust" name="Old as Dust" description="You have been dead for so long you have become quite difficult to kill.\n\n{b}Prerequisites:{/b} Warren Digger, must have been a ghoul for at least 500 years.\n\n{b}Benefit:{/b} When you are reduced to 0 hit points, you are not destroyed—you cannot be killed unless your body is completely destroyed with fire or doused in holy water, or you take damage from a {I}cure{/i} spell or channeled positive energy after you’ve been reduced to 0 hit points. Any time you are reduced to 0 hit points, you become helpless until you regain any amount of hit points, or until the or until the following midnight, at which time you regain 1 hit point per character level and are no longer helpless." compset="Feat" summary="You can&apos;t be killed without special means" uniqueness="useronce">
+    <usesource source="srcMClUnde"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <pickreq thing="f3PWarDigg"/>
+    </thing>
+  <thing id="f3PPolterg" name="Poltergeist" description="You can use your powers to grasp with a supernatural force.\n\n{b}Prerequisites:{/b} Deathless ghost level 1st.\n\n{b}Benefit:{/b} You gain the ability to use telekinesis with a caster level equal to your character level as a supernatural ability once every 1d4 rounds." compset="Feat" summary="You can use {i}telekinesis{/i} every 1d4 rounds" uniqueness="useronce">
+    <fieldval field="trkMax" value="1"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Usage" tag="CB1d4Rnds"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SbNamePar" tag="IncUses"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="SpInfo" tag="spTelekin4"/>
+    <exprreq message="Deathless ghost level 1st required."><![CDATA[#levelcount[3PDeaGhos] >= 1]]></exprreq>
+    </thing>
+  <thing id="f3PRejuven" name="Rejuvenation" description="A deathless ghost, unlike the spirit of a formerly-living being, normally does not have the ability to reconstitute itself when completely destroyed. You have overcome that weakness, and now there are few things that can truly obliterate your existence.\n\n{b}Prerequisites:{/b} Character level 15th, deathless ghost level 3rd.\n\n{b}Benefits:{/b} When you are destroyed, you reform at the location you consider &quot;home&quot; in 2d4 days. The only way to permanently destroy you is to cast a {i}banishment{/i} spell or similar effect on your ectoplasmic remains within one round of your destruction." compset="Feat" summary="You reform after being destroyed" uniqueness="useronce">
+    <usesource source="srcMClUnde"/>
+    <tag group="SpInfo" tag="spBanishm5"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Deathless ghost level 3rd required."><![CDATA[#levelcount[3PDeaGhos] >= 3]]></exprreq>
+    <exprreq message="Character level 15th required."><![CDATA[#totallevelcount[] >= 7]]></exprreq>
+    </thing>
+  <thing id="f3PSelTang" name="Selective Tangibility" description="You can grasp objects and interact with the world as if you were a corporeal being.\n\n{b}Prerequisites:{/b} Ectoplasmic form or incorporeal subtype.\n\n{b}Benefits:{/b} You can interact with objects as if you were corporeal, allowing you to use normal weapon strikes without miss chance against corporeal beings, affect objects normally, and otherwise act as if you were not incorporeal. This feat does not allow you to benefit from armor without the {i}ghost touch{/i} special property.\n\n{b}Normal:{/b} An incorporeal creature cannot interact with normal corporeal objects." compset="Feat" summary="You can use objects as if you were corporeal" uniqueness="useronce">
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Ectoplasmic form or incorporeal subtype required."><![CDATA[#hasability[cDGhEctFor] + #hassubtype[stIncorpor] <> 0]]></exprreq>
+    </thing>
+  <thing id="f3PUnnResi" name="Unnatural Resilience" description="Your unnatural nature infuses your body, letting you resist assaults against it in unusual ways.\n\n{b}Prerequisites:{/b} Aberration, fey, ooze, outsider or undead type.\n\n{b}Benefits:{/b} Choose Intelligence or Charisma. You use the chosen ability score in place of Constitution as a modifier on your Fortitude saves." compset="Feat" summary="You use Intelligence or Charisma on Fortitude saves" uniqueness="useronce">
+    <fieldval field="usrCandid1" value="thingid.aSTR | thingid.aDEX"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="fCategory" tag="Heritage"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      perform hero.childfound[svFort].assign[SaveOver.aCHA]]]></eval>
+    <exprreq message="Aberration, fey, ooze, outsider or undead type required."><![CDATA[#hastype[tpAberr] + #hastype[tpFey] + #hastype[tpOoze] + #hastype[tpOutsider] + #hastype[tpUndead] <> 0]]></exprreq>
+    </thing>
+  <thing id="f3PWarDigg" name="Warren Digger" description="After years spent digging up graves, you are able to move through dirt almost as easily as a fish through water.\n\n{b}Prerequisites:{/b} Ghoul class level 1st.\n\n{b}Benefits:{/b} You gain a burrow speed of 10 feet through earth, sand, or soil.\n\n{b}Special:{/b} You may take this feat multiple times. Each time you take it, add 10 feet to your burrow speed, up to a maximum of your base land speed." compset="Feat" summary="You gain a burrow speed through earth, sand, or soil">
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <bootstrap thing="xBurrow">
+      <autotag group="Value" tag="10"/>
+      </bootstrap>
+    <eval phase="Final" priority="11000">      
+      field[abValue].value += hero.tagcount[HasFeat.f3PWarDigg] * 10
+      #value[xBurrow] = maximum(field[abValue].value, #value[xBurrow])</eval>
+    <exprreq message="Ghoul level 1st required."><![CDATA[#levelcount[3PGhoul] >= 1]]></exprreq>
+    <prereq message="You can gain this feat multiple times. Each time you take it, add 10 feet to your burrow speed, up to a maximum of your base land speed.">
+      <validate><![CDATA[
+        var allowed as number
+        allowed = round(hero.child[Speed].field[tSpeed].value/10,0,-1)
+
+        ~ If we're a pick, then there must be base speed/3 or fewer copies of
+        ~ this ability
+        if (@ispick <> 0) then
+          validif (hero.tagcount[HasAbility.f3PWarDigg] <= allowed)
+
+        ~otherwise, look for fewer, since we're adding this
+        else
+          validif (hero.tagcount[HasAbility.f3PWarDigg] < allowed)
+          endif
+
+        @message = "Your burrow speed may not exceed your base land speed."]]></validate>
+      </prereq>
+    </thing>
+  <thing id="r3PGhoul" name="Ghoul" description="{i}This humanoid creature has long, sharp teeth, and its pallid flesh is stretched tightly over its starved frame.{/i}\n\nGhouls are undead that haunt graveyards and eat corpses. Ghouls lurk on the edges of civilization (in or near cemeteries or in city sewers) where they can find ample supplies of their favorite food. Though they prefer rotting bodies and often bury their victims for a while to improve their taste, they eat fresh kills if they are hungry enough. Though most surface ghouls live primitively, rumors speak of ghoul cities deep underground led by priests who worship ancient cruel gods or strange demon lords of hunger. These &quot;civilized&quot; ghouls are no less horrific in their eating habits, and in fact the concept of a well laid ghoul banquet table is perhaps even more horrifying than the concept of taking a meal fresh from the coffin.\n\nA typical ghoul is an average human height and weight.\n\n{b}Alignment:{/b} Most ghouls tend towards evil, as they seek out flesh of the living to consume." compset="Race">
+    <fieldval field="rDescript" value="This humanoid creature has long, sharp teeth, and its pallid flesh is stretched tightly over its starved frame."/>
+    <fieldval field="rSTR" value="2"/>
+    <fieldval field="rINT" value="2"/>
+    <fieldval field="srcPageNum" value="6"/>
+    <fieldval field="rEnviron" value="Any land"/>
+    <fieldval field="rOrgan" value="Solitary, gang (2-4), or pack (7-12)"/>
+    <fieldval field="rTreasure" value="Standard"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="RaceType" tag="Extra"/>
+    <tag group="HasType" tag="tpUndead"/>
+    <tag group="Language" tag="lGnoll"/>
+    <tag group="Language" tag="lOrc"/>
+    <tag group="Language" tag="lAbyssal"/>
+    <tag group="Language" tag="lDraconic"/>
+    <tag group="Language" tag="lGnome"/>
+    <tag group="Language" tag="lHalfling"/>
+    <tag group="Language" tag="lInfernal"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="RaceSize" tag="Medium0"/>
+    <tag group="RaceRole" tag="Combat"/>
+    <bootstrap thing="raDarkVis">
+      <assignval field="abValue" value="60"/>
+      </bootstrap>
+    <pickreq thing="c3PGhoul"/>
+    </thing>
+  <thing id="cHelpGhl" name="Ghoul" compset="Class" uniqueness="unique">
+    <fieldval field="cHDSides" value="10"/>
+    <fieldval field="cAbbr" value="Ghl"/>
+    <fieldval field="cSkills" value="4"/>
+    <fieldval field="srcPageNum" value="6"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="Classes" tag="3PGhoul" name="Ghoul"/>
+    <tag group="cAttack" tag="Medium"/>
+    <tag group="cFort" tag="Poor"/>
+    <tag group="ClassSkill" tag="skAcrobat"/>
+    <tag group="ClassSkill" tag="skClimb"/>
+    <tag group="ClassSkill" tag="skDisguise"/>
+    <tag group="ClassSkill" tag="skFly"/>
+    <tag group="ClassSkill" tag="skIntim"/>
+    <tag group="ClassSkill" tag="skKnowArca"/>
+    <tag group="ClassSkill" tag="skKnowRel"/>
+    <tag group="ClassSkill" tag="skPercep"/>
+    <tag group="ClassSkill" tag="skSenseMot"/>
+    <tag group="ClassSkill" tag="skSpellcr"/>
+    <tag group="ClassSkill" tag="skStealth"/>
+    <tag group="ClassRole" tag="Combat"/>
+    <tag group="cWill" tag="Good"/>
+    <tag group="cRef" tag="Poor"/>
+    <bootstrap thing="cGhl4Cha">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cGhl4Wis">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cGhlNatArm">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cGhlBite">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cGhlClaws">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cGhlChaRes">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cGhlClaws">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cGhlDiseas">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cGhlParaly">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="fSimple"></bootstrap>
+    <bootstrap thing="cGhl2Dex">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cGhl2Dex">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    </thing>
+  <thing id="c3PGhoul" name="Ghoul" description="Ghouls are undead that haunt graveyards and eat corpses. Ghouls lurk on the edges of civilization (in or near cemeteries or in city sewers) where they can find ample supplies of their favorite food. Though they prefer rotting bodies and often bury their victims for a while to improve their taste, they eat fresh kills if they are hungry enough. Though most surface ghouls live primitively, rumors speak of ghoul cities deep underground led by priests who worship ancient cruel gods or strange demon lords of hunger. These &quot;civilized&quot; ghouls are no less horrific in their eating habits, and in fact the concept of a well laid ghoul banquet table is perhaps even more horrifying than the concept of taking a meal fresh from the coffin.\n\n{b}Starting Wealth:{/b} 5d6 × 10 gp (average 175 gp). In addition, each character begins play with an outfit worth 10 gp or less." compset="ClassLevel" maxlimit="2">
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ClassType" tag="Normal"/>
+    <bootstrap thing="cHelpGhl"></bootstrap>
+    <link linkage="helper" thing="cHelpGhl"/>
+    <pickreq thing="r3PGhoul"/>
+    </thing>
+  <thing id="cGhlChaRes" name="Channel Resistance" description="Starting at 2nd level, a ghoul is is less easily affected by clerics or paladins. It gains channel resistance +2, adding this bonus on saves made to resist the effects of channel energy, including effects that rely on the use of channel energy." compset="ClSpecial" summary="Gain a bonus on saves vs. channel energy">
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev="Su"/>
+    <bootstrap thing="xChanRes">
+      <assignval field="abValue" value="2"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      field[abValue].value = field[xCount].value * 2
+      field[listname].text = "Channel Resistance " & signed(field[abValue].value)]]></eval>
+    </thing>
+  <thing id="cGhlParaly" name="Paralysis" description="Starting at 2nd level, a ghoul’s bite and claw attacks paralyze creatures they strike. Any creature hit by one of these attacks must succeed at a Fortitude save (DC 10 + 1/2 the ghoul’s Hit Dice + the ghoul’s Charisma modifier) or become paralyzed for 1d4+1 rounds. Elves are immune to this effect." compset="ClSpecial" summary="Your bite and claws can paralyze enemies">
+    <fieldval field="abDuration" value="1"/>
+    <fieldval field="abDuraDiSz" value="4"/>
+    <fieldval field="abDuraDiBn" value="1"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abSave" tag="FortNeg"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="abDuration" tag="Round"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="SbNamePar" tag="IncDurati"/>
+    <tag group="LvNamePar" tag="IncDurati"/>
+    <tag group="SbNamePar" tag="IncDC"/>
+    <bootstrap thing="raParalysi">
+      <autotag group="Target" tag="wBite"/>
+      <autotag group="Target" tag="wClaw"/>
+      <autotag group="abDuration" tag="Round"/>
+      <autotag group="Helper" tag="SpecUp"/>
+      <assignval field="abDuraDiSz" value="4"/>
+      <assignval field="abDuraDiBn" value="1"/>
+      <assignval field="abDuration" value="1"/>
+      </bootstrap>
+    </thing>
+  <thing id="cGhlDiseas" name="Disease" description="Starting at 2nd level, a ghoul’s bite begins to carry ghoul fever." compset="ClSpecial" summary="Your bite can inflict ghoul fever">
+    <usesource source="srcMClUnde"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="DescInfo" tag="xDisGhoulF"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="SbNamePar" tag="IncDC"/>
+    <tag group="abSave" tag="FortNeg"/>
+    <bootstrap thing="hzGhoulFev">
+      <autotag group="Target" tag="wBite"/>
+      <autotag group="Helper" tag="SpecUp"/>
+      </bootstrap>
+    </thing>
+  <thing id="cGhlNatArm" name="Natural Armor" description="At 1st level, a ghoul gains a +2 natural armor bonus to its AC from its deadened flesh." compset="ClSpecial" summary="+2 natural armor bonus to your AC">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev="Ex"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="SbNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="SbNameApp" tag="SignAppVal"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      hero.child[mNatural].field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cGhlClaws" name="Claws" description="At 1st level, a ghoul gains 2 claw attacks. These are primary attacks that deal 1d4 points of damage plus the ghoul’s Strength modifier. At 2nd level, the damage die of these claws increases to 1d6." compset="ClSpecial" summary="You gain two claw attacks">
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="wClaw">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.3PGhoul >= 2]]></containerreq>
+      <autotag group="wMain" tag="1d6"/>
+      <autotag group="Helper" tag="NatPrimary"/>
+      <autotag group="Helper" tag="NatSizeDmg"/>
+      </bootstrap>
+    <bootstrap thing="wClaw">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.3PGhoul < 2]]></containerreq>
+      <autotag group="wMain" tag="1d4"/>
+      <autotag group="Helper" tag="NatPrimary"/>
+      <autotag group="Helper" tag="NatSizeDmg"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      if (field[xIndex].value < 2) then
+          field[listname].text = "Claws (1d4)"
+      else 
+          field[listname].text = "Claws (1d6)"
+      endif]]></eval>
+    </thing>
+  <thing id="cGhlBite" name="Bite" description="At 1st level, a ghoul gains a bite attack. This is a primary attack that deals 1d6 points of damage plus the ghoul’s Strength modifier." compset="ClSpecial" summary="You gain a bite attack">
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6"/>
+      <autotag group="Helper" tag="NatPrimary"/>
+      <autotag group="Helper" tag="NatSizeDmg"/>
+      </bootstrap>
+    </thing>
+  <thing id="cGhl2Dex" name="+2 Dexterity" description="You gain +2 Dexterity." compset="ClSpecial" summary="+2 to Dexterity">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      doneif (tagis[Helper.ShowSpec] = 0)
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ if we're not the first copy, just get out now
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      hero.child[aDEX].field[aNormMod].value += (field[xCount].value * field[abValue].value)]]></eval>
+    </thing>
+  <thing id="cGhl4Wis" name="+4 Wisdom" description="You gain +4 Wisdom." compset="ClSpecial" summary="+4 to Wisdom">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      doneif (tagis[Helper.ShowSpec] = 0)
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ if we're not the first copy, just get out now
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      hero.child[aWIS].field[aNormMod].value += (field[xCount].value * field[abValue].value)]]></eval>
+    </thing>
+  <thing id="cGhl4Cha" name="+4 Charisma" description="You gain +4 Charisma." compset="ClSpecial" summary="+4 to Charisma">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="srcMClUnde"/>
+    <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <eval phase="First" index="2"></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      doneif (tagis[Helper.ShowSpec] = 0)
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ if we're not the first copy, just get out now
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      hero.child[aCHA].field[aNormMod].value += (field[xCount].value * field[abValue].value)]]></eval>
+    </thing>
+  </document>
