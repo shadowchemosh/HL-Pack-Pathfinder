@@ -363,17 +363,19 @@
       hero.child[svRef].field[Bonus].value += field[abValue].value]]></eval>
     </thing>
   <thing id="cfg3PMedic" name="Medic Maneuvers" compset="Configure" uniqueness="unique">
-    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <usesource source="srcDPthMed"/>
     <tag group="Helper" tag="NoPathSoc"/>
-    <prereq message="You have activated more stances than allowed.">
-      <validate>var ValidStaOn as number
-        Call ValidStaOn
-        @valid = ValidStaOn</validate>
-      </prereq>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <bootstrap thing="mHelpMdc"></bootstrap>
     <prereq message="You have too many Manuevers Readied.">
       <validate>var ValidManOn as number
         Call ValidManOn
         @valid = ValidManOn</validate>
+      </prereq>
+    <prereq message="You have activated more stances than allowed.">
+      <validate>var ValidStaOn as number
+        Call ValidStaOn
+        @valid = ValidStaOn</validate>
       </prereq>
     </thing>
   <thing id="cMdcImpTre" name="Improved Treatment" description="Starting at 2nd level, when the medic treats deadly wounds, the creature she treats recovers hit points and ability score damage as if it had rested for a full day and she no longer needs a healer’s kit to perform these actions. At 6th level, the medic can treat deadly wounds or provide long term care to a number of creatures equal to her initiation modifier at the same time. In addition, when the medic treats a creature’s deadly wounds it recovers hit points as if it had rested for a full day with long term care. At 11th level, when the medic treat deadly wounds, the creature recovers hit point and ability damage as if it had rested for 3 days." compset="ClSpecial" summary="More benefits when you treat deadly wounds">
@@ -510,8 +512,7 @@
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="abDuration" tag="Minute"/>
     <tag group="abAction" tag="None"/>
-    <eval phase="PostLevel" priority="10000">
-      field[abValue].value += hero.child[aWIS].field[aModBonus].value
+    <eval phase="PostLevel" priority="10000">field[abValue].value += hero.child[aWIS].field[aModBonus].value
       field[abValue].value += hero.child[skHeal].field[Bonus].value</eval>
     </thing>
   <thing id="f3PGungTec" name="Gungnir Technique" description="Having trained with numerous demon and ghost hunters you know how to pierce a spirit without harming the host.\n\n{b}Prerequisites:{/b} Two Piercing Thunder maneuvers known, two Silver Crane maneuvers known.\n\n{b}Benefits:{/b} While you maintain a Silver Crane stance, polearms and spears you wield can affect incorporeal creatures as if they possessed the {i}ghost touch{/i} weapon special ability, and you can attack possessing creatures. Whenever you hit a possessed creature with such a weapon, you can choose for your attack to affect the possessing entity rather than the target." compset="Feat" summary="In a Silver Crane stance, you can attack incorporeal and possessing creatures" uniqueness="useronce">
@@ -979,8 +980,7 @@
     <tag group="SbNamePar" tag="AppValue"/>
     <tag group="LvNamePar" tag="AppText"/>
     <tag group="LvNamePar" tag="AppValue"/>
-    <eval phase="PostLevel" priority="10000">      
-      field[abValue].value += field[xTotalLev].value</eval>
+    <eval phase="PostLevel" priority="10000">field[abValue].value += field[xTotalLev].value</eval>
     </thing>
   <thing id="cMdcWinMer" name="Wings of Mercy" description="At 12th level, the angel of mercy can grow wings to carry her towards those in need of her aid. Growing or retracting these wings is a free action, and the angel of mercy gains a fly speed equal to her movement speed, with good maneuverability. She can only use these wings to fly for 1 minute per class level, but does not have to use them consecutively. However, she must use them in 1 minute increments." compset="ClSpecial" summary="Grow wings for a limited time per day">
     <usesource source="srcDPthMed"/>
@@ -1057,8 +1057,7 @@
     <tag group="SbNameApp" tag="SignAppVal"/>
     <tag group="LvNameApp" tag="AppValue"/>
     <tag group="LvNameApp" tag="SignAppVal"/>
-    <eval phase="PostLevel" priority="11000">    
-      field[abValue].value = hero.childfound[cMdcBloTra].field[abValue].value * 1.5
+    <eval phase="PostLevel" priority="11000">field[abValue].value = hero.childfound[cMdcBloTra].field[abValue].value * 1.5
 
       hero.childfound[cMdcBloTra].field[abValue].value = field[abValue].value</eval>
     </thing>
@@ -1072,8 +1071,7 @@
       <containerreq phase="First" priority="1000"><![CDATA[count:Classes.3PMedic >= 3]]></containerreq>
       <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
-    <eval phase="PostLevel" priority="10000">
-      hero.childfound[fPWGrtUnaS].field[abValue].value = minimum(hero.childfound[fPWGrtUnaS].field[abValue].value, field[xTotalLev].value)</eval>
+    <eval phase="PostLevel" priority="10000">hero.childfound[fPWGrtUnaS].field[abValue].value = minimum(hero.childfound[fPWGrtUnaS].field[abValue].value, field[xTotalLev].value)</eval>
     </thing>
   <thing id="cMdcBloRes" name="Blood Reserve" description="At 1st level, the sanguinist gains the ability to store the vitality of others within her body. Whenever the sanguinist uses her blood transfusion ability to deal additional damage, that extra damage is stored as hit points in her blood reserve. Whenever the sanguinist uses triage to heal an ally, the sanguinist draws those hit points from her blood reserve instead of providing the normal amount of healing from triage. When using triage, the sanguinist can heal a number of hit points up to the total amount currently in her blood reserve, however she may determine the exact amount healed at the time she uses her triage. These hit points are then deducted from the total amount of hit points in the blood reserve.\n\nFor example, if a 1st level sanguinist has 20 hit points in her blood reserve, when she uses triage on an ally, and she heals that ally for 20 hit points, she would reduce her blood reserve to 0. She may instead choose to heal the ally for a lesser amount, such as 10 hit points, leaving the remaining amount in her blood reserve for later use. The blood reserve can only store hit points for up to 24 hours, but it does not have a maximum number of hit points it can store." compset="ClSpecial" summary="Use stored blood to heal allies">
     <fieldval field="actIncrNam" value="Blood Reserve"/>
@@ -1093,8 +1091,7 @@
     <tag group="SbNameApp" tag="SignAppVal"/>
     <tag group="LvNameApp" tag="SignAppVal"/>
     <tag group="LvNameApp" tag="DieSizVal"/>
-    <eval phase="PostLevel" priority="10000">
-      field[abValue].value += hero.child[aWIS].field[aModBonus].value</eval>
+    <eval phase="PostLevel" priority="10000">field[abValue].value += hero.child[aWIS].field[aModBonus].value</eval>
     </thing>
   <thing id="cMdcPaiGai" name="Pain&apos;s Gain" description="The sanguinist knows how to put her instinct to cause harm to good use. Starting at 3rd level, the sanguinist gains a +1 bonus to attack and damage rolls made with natural attacks or unarmed strikes. This bonus increases by +1 at 7th level and every four levels thereafter.\n\n{b}Note: This incorrectly doesn&apos;t add a bonus.{/b}" compset="ClSpecial" summary="Deal more damage with natural attacks and unarmed strikes">
     <tag group="LvNameApp" tag="AppValue"/>
@@ -1121,8 +1118,7 @@
     <tag group="SbNamePar" tag="AppText"/>
     <tag group="SbNamePar" tag="AppValue"/>
     <tag group="SbNamePar" tag="IncDC"/>
-    <eval phase="PostLevel" priority="10000">
-      field[abValue].value += hero.child[aWIS].field[aModBonus].value</eval>
+    <eval phase="PostLevel" priority="10000">field[abValue].value += hero.child[aWIS].field[aModBonus].value</eval>
     </thing>
   <thing id="cMdcMouCom" name="Mounted Combat" description="At 1st level, an ambu-lancer gains Mounted Combat as a bonus feat, even if she does not meet the prerequisites." compset="ClSpecial" summary="Gain the Mounted Combat feat">
     <usesource source="srcDPthMed"/>
