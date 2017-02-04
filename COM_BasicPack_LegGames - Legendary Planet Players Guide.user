@@ -45,7 +45,7 @@
     <bootstrap thing="raX1BuildP"></bootstrap>
     </thing>
   <thing id="rcX1BreWep" name="Breath Weapon" description="Choose one of the following energy types: acid, cold, electricity, or fire. If the creature is an outsider (native), it must have ties to an elemental plane, and it must pick an energy that corresponds to the plane it has ties to (acid [earth], cold [water], electricity [air], or fire [fire]). Then pick either a 15-foot cone or a 20-foot line. Once per day, as a standard action, members of this race can make a supernatural breath weapon attack that deals 1d6 points of the damage type chosen in the area chosen. All creatures within the affected area must make a Reflex saving throw to avoid taking damage. The save DC against this breath weapon is 10 + 1/2 the user’s character level + the user’s Constitution modifier. Those who succeed at the save take no damage from the attack. \n\n{b}Special{/b}: You can take this trait more than once. Each time you do so, the cost of this trait increases by 1 RP. When do, you can augment the breath weapon in the following ways (augmentations marked with an asterisk [*] can be taken more than once).\nExtra Breath*: The member of this race can use its breath weapon an additional time per day.\nIncreased Area: Increase the cone’s size to 30 feet or the line to 50 feet.\nIncreased Damage*: Increase the damage by an additional d6.\nPowerful Breath: The breath weapon deals half damage on a failed saving throw." compset="RaceCustom" uniqueness="useronce">
-    <fieldval field="usrCandid2" value="component.SelectHelp &amp; Selection.S2BreWepB2"/>
+    <fieldval field="usrCandid2" value="component.SelectHelp &amp; PackSelect.BreWepShB2"/>
     <usesource source="srcLegPlAP"/>
     <tag group="AllowRCust" tag="rX1Auttain"/>
     <tag group="fShowWhat" tag="EnergyBase"/>
@@ -72,13 +72,13 @@
       ~ Pull Line or Cone
       perform field[usrChosen2].chosen.pulltags[BreathShp.?]
 
-      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus      
+      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus
       doneif (state.isfocus = 0)
-      
+
       ~ Push Energy Type and Breath Weapon Shape to breath weapon helper
       perform focus.pushtags[BloodEner.?]
       perform focus.pushtags[BreathShp.?]
-      
+
       ~ If cone shape give 15ft if line make us 20ft
       if (tagis[BreathShp.Cone] = 1) then
         focus.field[abRange].value += 15
@@ -94,9 +94,9 @@
     <tag group="CustomCost" tag="1"/>
     <eval phase="First" priority="10000"><![CDATA[
       ~ Set pointer to the breath weapon ability
-      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus      
+      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus
       doneif (state.isfocus = 0)
-      
+
       ~ Give one extra use of breath weapon
       focus.field[trkMax].value += 1]]></eval>
     <exprreq message="Breath Weapon ability required."><![CDATA[#hasability[rcX1BreWep] <> 0]]></exprreq>
@@ -109,9 +109,9 @@
     <tag group="CustomCost" tag="1"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
       ~ Set pointer to the breath weapon ability
-      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus      
+      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus
       doneif (state.isfocus = 0)
-      
+
       ~ Increase cone by 15ft and line by 30ft
       if (focus.tagis[BreathShp.Cone] = 1) then
         focus.field[abRange].value += 15
@@ -128,9 +128,9 @@
     <tag group="CustomCost" tag="1"/>
     <eval phase="First" priority="10000"><![CDATA[
       ~ Set pointer to the breath weapon ability
-      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus      
+      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus
       doneif (state.isfocus = 0)
-      
+
       ~ Give one dice of damage to breath weapon
       focus.field[abValue].value += 1]]></eval>
     <exprreq message="Breath Weapon ability required."><![CDATA[#hasability[rcX1BreWep] <> 0]]></exprreq>
@@ -143,9 +143,9 @@
     <tag group="CustomCost" tag="1"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
       ~ Set pointer to the breath weapon ability
-      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus      
+      perform hero.findchild[RaceAbil,"thingid.xCBBreathW & HasAbility.rcX1BreWep"].setfocus
       doneif (state.isfocus = 0)
-      
+
       ~ Change to half damage on a successful save
       perform focus.delete[SaveEff.Negates]
       perform focus.assign[SaveEff.Half]]]></eval>
@@ -501,7 +501,7 @@
     <eval phase="Final" priority="50000"><![CDATA[
       ~ If we are disabled get out now!
       doneif (tagis[Helper.SpcDisable] = 1)
- 
+
       #racialsituational[hero.child[skStealth],signed(field[abValue].value) & " racial bonus while in forest, jungle, or swamp terrain.", field[name].text]]]></eval>
     </thing>
   <thing id="raX1Sociab" name="Sociable" description="When Chlorvians attempt to change a creature&apos;s attitude with a Diplomacy check and fail by 5 or more, they can try to influence the creature a second time, even if 24 hours have not passed." compset="RaceSpec" summary="Try a 2nd time after a failed Diplomancy check.">
@@ -541,8 +541,8 @@
         endif
       nexteach
 
-      ~ Note that there are a few bloodline powers that depend on 
-      ~ CHA for their uses/day or DC. Those modifications are made 
+      ~ Note that there are a few bloodline powers that depend on
+      ~ CHA for their uses/day or DC. Those modifications are made
       ~ on the individual abilities.]]></eval>
     </thing>
   <thing id="rX1Trethar" name="Tretharri" description="A tretharri’s four arms present their most striking feature, the use of which can create a mesmerizing grace to onlookers. Tall and sleek, they possess....\n\nSee the &quot;Legendary Planet Player&apos;s Guide&quot; for full details." compset="Race">
@@ -593,10 +593,10 @@
   <thing id="raX1Athlet" name="Athletic" description="Tretharri receive a +2 racial bonus on Climb and Swim checks." compset="RaceSpec">
     <fieldval field="abValue" value="2"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="40000"><![CDATA[       
+    <eval phase="PreLevel" priority="40000"><![CDATA[
       ~ If we are disabled get out now!
       doneif (tagis[Helper.SpcDisable] = 1)
-      
+
       ~ Give bonus to Climb & Swim
       #racialbonus[skClimb] += field[abValue].value
       #racialbonus[skSwim] += field[abValue].value]]></eval>
@@ -647,10 +647,10 @@
   <thing id="raX1ZvarrA" name="Agile" description="Zvarr receive a +1 racial bonus on Acrobatics and Fly checks." compset="RaceSpec">
     <fieldval field="abValue" value="1"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="40000"><![CDATA[       
+    <eval phase="PreLevel" priority="40000"><![CDATA[
       ~ If we are disabled get out now!
       doneif (tagis[Helper.SpcDisable] = 1)
-      
+
       ~ Give bonus to Acrobatics & Fly
       #racialbonus[skAcrobat] += field[abValue].value
       #racialbonus[skFly] += field[abValue].value]]></eval>
@@ -660,10 +660,10 @@
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpInfo" tag="spFeatFal1"/>
-    <eval phase="PreLevel" priority="40000"><![CDATA[       
+    <eval phase="PreLevel" priority="40000"><![CDATA[
       ~ If we are disabled get out now!
       doneif (tagis[Helper.SpcDisable] = 1)
-      
+
       ~ Give bonus to Acrobatics & Fly
       #racialbonus[skAcrobat] += field[abValue].value
       #racialbonus[skFly] += field[abValue].value]]></eval>
@@ -1258,7 +1258,7 @@
       #applybonus[BonTrait,hero.childfound[AllKnow],field[abValue].value]
 
       ~ Note: Currently setting a situational note on to AllKnow does
-      ~ not populate down to the children. I am hoping in a future 
+      ~ not populate down to the children. I am hoping in a future
       ~ patch this is fixed. Tim Shadow 9/18/2015
       #situational[hero.childfound[AllKnow],"The base DC to identify creatures from a planet other than your own is treated as if you were from the location or planet spawned it.",field[name].text]]]></eval>
     </thing>
