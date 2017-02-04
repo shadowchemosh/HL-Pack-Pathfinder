@@ -1216,7 +1216,7 @@ Added new natural weapon adjustments:
     <tag group="Adjustment" tag="YourWep"/>
     <tag group="Helper" tag="AdjInfo"/>
     <tag group="OthAdjCat" tag="Race"/>
-    <eval phase="PostAttr" priority="10000" index="1"><![CDATA[
+    <eval phase="PostAttr" priority="10000"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
       ~if nothing's been chosen, get out now
@@ -1267,7 +1267,8 @@ Added new natural weapon adjustments:
       perform field[pChosen].chosen.assign[Helper.SpcDisable]
       ~ Remove the Show Special if found
       perform field[pChosen].chosen.delete[Helper.ShowSpec]]]></eval>
-          <eval phase="PreLevel" priority="11000"><![CDATA[~ Picks on Hero
+    <eval phase="PreLevel" priority="11000"><![CDATA[
+      ~ Picks on Hero &
       field[pUsePicks].value = 1
       ~ Set search expression for CORE spell school
       field[pCandExpr].text = "component.RaceAbil & !thingid.raS2Disabl"]]></eval>
@@ -4762,5 +4763,58 @@ Added new natural weapon adjustments:
       for iX = 1 to field[pAdjust].value
         perform hero.assign[Hero.ImpBalance]
       next]]></eval>
+    </thing>
+  <thing id="pS2SpAdd" name="Spell-Like Ability, Add" description="This adjustment lets you add a spell-like ability to any character/race that will display as a spell-like ability on the Spells tab.  The spell-like ability will have full spell text and usages.\n\n{b}Note:{/b} From the first dropdown select the spell that is to become the spell-like ability. The second dropdown lets you select the usage (ie /day or /month or At-Will).  The counter lets you set the number of uses (2/day, 3/day etc.).  Finally you can type over the &quot;Ability Text&quot; to enter any notes or information you would like to appear on the spell-like ability." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.BaseSpell &amp; !Helper.Helper"/>
+    <fieldval field="pCandExpr2" value="component.SelectHelp &amp; Selection.Usage"/>
+    <fieldval field="pSource" value="Ability Text"/>
+    <fieldval field="pMinimum" value="1"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <tag group="OthAdjCat" tag="Spell"/>
+    <tag group="Adjust2nd" tag="S2Custom"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="pS2GenSp"></bootstrap>
+    <eval phase="PreLevel" priority="11000"><![CDATA[
+      ~ Things on Hero Not Picks &!
+      field[pUsePicks].value = 0]]></eval>
+    </thing>
+  <thing id="pS2GenSp" name="Spell-Like Ability" compset="GenericAb">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ Note this component set will not be visable in the editor. &
+
+      ~ Remove the Ex abiliy type tag
+      perform delete[AbilType.Extra]
+
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ Set the custom description by pulling from the
+      ~ adjustments "Source" field. This way we can work
+      ~ on the Personal tab.
+      field[CustDesc].text = root.field[pSource].text
+
+      ~ If a spell chosen
+      if (root.field[pChosen].ischosen <> 0) then
+        ~ Pull the Spell-Info tag and assign to ourself
+        perform root.field[pChosen].chosen.pulltags[SpInfo.?]
+        ~ Set our name to the selected spell
+        field[livename].text = root.field[pChosen].chosen.field[name].text
+      endif
+
+      ~ If a usage tag selected
+      if (root.field[pChosen2].ischosen <> 0) then
+        ~ Pull the Usage tag and assign to ourself
+        perform root.field[pChosen2].chosen.pulltags[Usage.?]
+        ~ Set number of uses
+        field[trkMax].value += root.field[pAdjust].value
+      endif]]></eval>
     </thing>
   </document>
