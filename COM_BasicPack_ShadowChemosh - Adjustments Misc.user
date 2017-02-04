@@ -1191,22 +1191,24 @@ Added new natural weapon adjustments:
     <tag group="Helper" tag="CoreCampOK"/>
     <tag group="Adjustment" tag="YourWep" name="Current Weapons" abbrev="Current Weapons"/>
     <tag group="OthAdjCat" tag="Equipment"/>
-    <eval phase="First" priority="20000"><![CDATA[~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
+    <eval phase="First" priority="20000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
 
-~ Add to Flurry Ranged Attack bonus
-field[pChosen].chosen.field[wRanFlurry].value += field[pAdjust].value]]></eval>
+      ~ Add to Flurry Ranged Attack bonus
+      field[pChosen].chosen.field[wRanFlurry].value += field[pAdjust].value]]></eval>
     </thing>
   <thing id="pS2wFoBMel" name="Weapon Flurry: Melee Attack Bonus" description="Select this adjustment to change the flurry melee attack bonus of the selected weapon." compset="InPlay">
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="CoreCampOK"/>
     <tag group="Adjustment" tag="YourWep" name="Current Weapons" abbrev="Current Weapons"/>
     <tag group="OthAdjCat" tag="Equipment"/>
-    <eval phase="First" priority="20000"><![CDATA[~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
+    <eval phase="First" priority="20000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
 
-~ Add to Flurry Melee Attack bonus
-field[pChosen].chosen.field[wMelFlurry].value += field[pAdjust].value]]></eval>
+      ~ Add to Flurry Melee Attack bonus
+      field[pChosen].chosen.field[wMelFlurry].value += field[pAdjust].value]]></eval>
     </thing>
   <thing id="pS2wSize" name="Natural Weapon: Size" description="Select this adjustment to be able to adjust the size up/down of your natural attack." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -1214,39 +1216,40 @@ field[pChosen].chosen.field[wMelFlurry].value += field[pAdjust].value]]></eval>
     <tag group="Adjustment" tag="YourWep"/>
     <tag group="Helper" tag="AdjInfo"/>
     <tag group="OthAdjCat" tag="Race"/>
-    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~if nothing's been chosen, get out now
-doneif (field[pChosen].ischosen = 0)
+    <eval phase="PostAttr" priority="10000" index="1"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~if nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
 
-field[pChosen].chosen.field[wDamage].value += field[pAdjust].value]]></eval>
+      field[pChosen].chosen.field[wDamage].value += field[pAdjust].value]]></eval>
     </thing>
   <thing id="pS2wOrder" name="Weapon Order" description="Select this adjustment to change the order of your weapons as they get displayed in HL and on an outputted character sheet.\n\nThe counter (ie Number) sets the Priority of the weapon in the list.  The larger the number the {B}HIGHER{/B} priority in the list the weapon has and will result in the weapon being displayed higher in the list.  By default weapons have a priority of zero so a weapon set with a Priority of one will be first.  This also means two weapons set to priority one will sort themselves alphabetically by name at the top of the list of weapons.\n\nIf you simply had a +2 Longsword you always wanted to be first simply select &quot;+2 Longsword&quot; and leave the counter set to one.  \n\nIn example if you had three weapons {B}WeaponA, WeaponB, and WeaponC{/b} and you wanted WeaponC 1st, WeaponB 2nd, WeaponA 3rd you would set the weapons with following values:\nWeaponC: {B}Priority 3{/B}\nWeaponB: {B}Priority 2{/B}\nWeaponA: {B}Priority 1{/B}" compset="InPlay">
     <fieldval field="pMinimum" value="1"/>
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="CoreCampOK"/>
-    <tag group="Adjustment" tag="YourWep" name="Current Weapons" abbrev="Current Weapons"/>
+    <tag group="Adjustment" tag="YourWep"/>
     <tag group="Helper" tag="AdjNoPlus"/>
     <tag group="OthAdjCat" tag="Equipment"/>
-    <eval phase="Render" priority="99999999"><![CDATA[~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
+    <eval phase="Render" priority="99999999"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
 
-~ Based on the poisition create the number of blank
-~ spaces
-var x as number
-var spaces as string
-For x = 0 to field[pAdjust].value
-  spaces &= " "
-Next
-~ Test to see if we are a Magic Weapon or not as we have to use
-~ different text fields for magic weapons.
-~If (field[pChosen].chosen.tagis[thingid.iMagWeapon] <> 0) then
-If (field[pChosen].chosen.tagis[Helper.CustomItem] <> 0) then
-   field[pChosen].chosen.field[livename].text = spaces & field[pChosen].chosen.field[livename].text
-Else
-   field[pChosen].chosen.field[livename].text = spaces & field[pChosen].chosen.field[thingname].text
-Endif]]></eval>
+      ~ Based on the poisition create the number of blank
+      ~ spaces
+      var x as number
+      var spaces as string
+      For x = 0 to field[pAdjust].value
+        spaces &= " "
+      Next
+      ~ Test to see if we are a Magic Weapon or not as we have to use
+      ~ different text fields for magic weapons.
+      ~If (field[pChosen].chosen.tagis[thingid.iMagWeapon] <> 0) then
+      If (field[pChosen].chosen.tagis[Helper.CustomItem] <> 0) then
+         field[pChosen].chosen.field[livename].text = spaces & field[pChosen].chosen.field[livename].text
+      Else
+         field[pChosen].chosen.field[livename].text = spaces & field[pChosen].chosen.field[thingname].text
+      Endif]]></eval>
     </thing>
   <thing id="pS2raSpeDi" name="Racial Ability, Disable" description="Select this adjustment to be able to disable a single racial special from your race." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -1254,19 +1257,20 @@ Endif]]></eval>
     <tag group="Helper" tag="NoIncr"/>
     <tag group="Adjustment" tag="S2Custom"/>
     <tag group="OthAdjCat" tag="Race"/>
-    <eval phase="First" priority="20000" index="2"><![CDATA[~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+    <eval phase="First" priority="20000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Assign the Disabled Tag
-perform field[pChosen].chosen.assign[Helper.SpcDisable]
-~ Remove the Show Special if found
-perform field[pChosen].chosen.delete[Helper.ShowSpec]]]></eval>
-    <eval phase="PreLevel" priority="11000"><![CDATA[~ Picks on Hero
-field[pUsePicks].value = 1
-~ Set search expression for CORE spell school
-field[pCandExpr].text = "component.RaceAbil & !thingid.raS2Disabl"]]></eval>
+      ~ Assign the Disabled Tag
+      perform field[pChosen].chosen.assign[Helper.SpcDisable]
+      ~ Remove the Show Special if found
+      perform field[pChosen].chosen.delete[Helper.ShowSpec]]]></eval>
+          <eval phase="PreLevel" priority="11000"><![CDATA[~ Picks on Hero
+      field[pUsePicks].value = 1
+      ~ Set search expression for CORE spell school
+      field[pCandExpr].text = "component.RaceAbil & !thingid.raS2Disabl"]]></eval>
     </thing>
   <thing id="raS2Disabl" name="~Racial Ability, Disable" description="This was added by the {b}Racial Ability, Disable{/b} adjustment and allows for selecting a racial ability to disable." compset="RaceSpec">
     <fieldval field="usrCandid1" value="component.RaceAbil &amp; !thingid.raS2Disabl"/>
@@ -1274,13 +1278,13 @@ field[pCandExpr].text = "component.RaceAbil & !thingid.raS2Disabl"]]></eval>
     <tag group="Helper" tag="CoreCampOK"/>
     <tag group="ChooseSrc1" tag="Hero"/>
     <eval phase="First" priority="20000"><![CDATA[
-~ If we have not chosen then get out now
-doneif (field[usrChosen1].ischosen <> 1)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
 
-~ Assign the Disabled Tag
-perform field[usrChosen1].chosen.assign[Helper.SpcDisable]
-~ Remove the Show Special if found
-perform field[usrChosen1].chosen.delete[Helper.ShowSpec]]]></eval>
+      ~ Assign the Disabled Tag
+      perform field[usrChosen1].chosen.assign[Helper.SpcDisable]
+      ~ Remove the Show Special if found
+      perform field[usrChosen1].chosen.delete[Helper.ShowSpec]]]></eval>
     </thing>
   <thing id="pS2wHide" name="Weapon Hide on Print out" description="Select this adjustment to be able to have a weapon not be output to a character sheet.  \n\nAfter adding the adjustment simply select the weapon from the drop down menu.  Once selected this weapon will no longer be ouputed to any character sheet." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -1288,32 +1292,35 @@ perform field[usrChosen1].chosen.delete[Helper.ShowSpec]]]></eval>
     <tag group="Adjustment" tag="YourWep" name="Current Weapons" abbrev="Current Weapons"/>
     <tag group="Helper" tag="NoIncr"/>
     <tag group="OthAdjCat" tag="Equipment"/>
-    <eval phase="First" priority="20000"><![CDATA[~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If we're not chosen, get out now
-doneif (field[pChosen].ischosen = 0)
+    <eval phase="First" priority="20000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If we're not chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
 
-~ Only do this when we are in output mode
-If (state.isoutput <> 0) then
-  perform field[pChosen].chosen.assign[Hide.Weapon]
-Endif]]></eval>
+      ~ Only do this when we are in output mode
+      If (state.isoutput <> 0) then
+        perform field[pChosen].chosen.assign[Hide.Weapon]
+      Endif]]></eval>
     </thing>
-  <thing id="pS2wElemen" name="Weapon Elemental Dmg, Custom" description="Select this adjustment to add custom text damage next to your weapon name. &quot;(Duration)&quot; is the type of damage (ie +1d6 Fire) and &quot;(Source)&quot; is the name of the ability giving this to you (ie Flaming).\n\n{B}Note:{/b} This adjustment will NOT work correctly from the &quot;{b}Personal{/b}&quot; tab as you have to be able to type into the duration field to set the custom text." compset="InPlay">
+  <thing id="pS2wElemen" name="Weapon Elemental Dmg, Custom" description="Select this adjustment to add custom text damage next to your weapon name. This allows for appending text to the damage of a selected weapon by typing into the  &quot;(Duration)&quot; field (ie +1d6 Fire). The &quot;(Source)&quot; is the name of the ability giving this to you (ie Adjustment).\n\n{B}Note:{/b} This adjustment will NOT work correctly from the &quot;{b}Personal{/b}&quot; tab as you have to be able to type into the duration field to set the custom text." compset="InPlay">
     <fieldval field="pDuration" value="+1d6 Elemental"/>
+    <fieldval field="pSource" value="Adjustment"/>
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="CoreCampOK"/>
     <tag group="Adjustment" tag="YourWep"/>
     <tag group="Helper" tag="NoIncr"/>
     <tag group="Helper" tag="AdjInfo"/>
     <tag group="OthAdjCat" tag="Equipment"/>
-    <eval phase="Final" priority="20500"><![CDATA[~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~if nothing's been chosen, get out now
-doneif (field[pChosen].ischosen = 0)
+    <eval phase="Final" priority="20500"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~if nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
 
-~ Here we are pulling the text the user entered from the
-~ Durattion field to set the text.
-#extradamage[field[pChosen].chosen,field[pDuration].text,field[name].text]]]></eval>
+      ~ Here we are pulling the text the user entered from the
+      ~ Durattion field to set the text.
+      #extradamage[field[pChosen].chosen,field[pDuration].text,field[name].text]]]></eval>
     </thing>
   <thing id="pS2SaveSit" name="Saving Throw, Situational" description="Select this adjustment to give your character a situation modifier that you can customize the text for.\n\n1st - Select the saving throw this modifier is meant for.\n2nd - In the {b}(Source){/b} field is where you type in what is giving you this modifier. In example for Fighter&apos;s Bravery class ability type in &quot;Bravery&quot;.\n3rd - In the {B}(Duration){/b} field is where you type in the modifier.  In example &quot;+2 vs Fear&quot;.\n\n{B}Note:{/b} This adjustment will NOT work correctly from the &quot;{b}Personal{/b}&quot; tab as you have to be able to type into the duration field to set the custom text." compset="InPlay">
     <fieldval field="pSource" value="Saving Throw"/>
@@ -1381,39 +1388,39 @@ doneif (field[pChosen].ischosen = 0)
     <tag group="Helper" tag="NoIncr"/>
     <tag group="OthAdjCat" tag="FeatTrait"/>
     <eval phase="Render" priority="99999999"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing's been chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
-~ If no power attack get out now
-doneif (hero.childlives[fRapidShot] <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+      ~ If no power attack get out now
+      doneif (hero.childlives[fRapidShot] <> 1)
 
-var sText as string
-var nHit as number
-var iX as number
-var nTotal as number
+      var sText as string
+      var nHit as number
+      var iX as number
+      var nTotal as number
 
-~ Calc to hit
-nHit   = field[pChosen].chosen.field[wRanAtk].value - 2
-nTotal = field[pChosen].chosen.field[wNumAttTbl].arrayvalue[0]
-sText  = " [RS " & signed(nHit) & "/" & signed(nHit)
-iX = 1
-~ If more than one attack from BAB then build itertive attacks
-If (nTotal > 1) Then
-   while (iX < nTotal)
-     ~ For each loop past 1st add / and subtract 5
-     If (iX > 0) Then
-        sText &= "/"
-        nHit += -5
-     Endif
-     iX += 1
-     sText &= signed(nHit)
-   loop
-Endif
-~ Add Hit letter
-sText &= "H]"
-~ Set the live name of the weapon to include this text
-field[pChosen].chosen.field[livename].text &= sText]]></eval>
+      ~ Calc to hit
+      nHit   = field[pChosen].chosen.field[wRanAtk].value - 2
+      nTotal = field[pChosen].chosen.field[wNumAttTbl].arrayvalue[0]
+      sText  = " [RS " & signed(nHit) & "/" & signed(nHit)
+      iX = 1
+      ~ If more than one attack from BAB then build itertive attacks
+      If (nTotal > 1) Then
+         while (iX < nTotal)
+           ~ For each loop past 1st add / and subtract 5
+           If (iX > 0) Then
+              sText &= "/"
+              nHit += -5
+           Endif
+           iX += 1
+           sText &= signed(nHit)
+         loop
+      Endif
+      ~ Add Hit letter
+      sText &= "H]"
+      ~ Set the live name of the weapon to include this text
+      field[pChosen].chosen.field[livename].text &= sText]]></eval>
     </thing>
   <thing id="pS2DR" name="Damage Reduction, Set" description="Select this adjustment to set the amount and type of DR on a character. This is different from the official adjustment as the selected value will override what ever value is also already set for this DR allowing you to change monsters hardcoded values.\n\n{B}Note:{/B} The list of DR&apos;s avaible only include &quot;or&quot; ones and no &quot;and&quot;.  To have DR 5/Magic and Slashing you would add two adjustments with one for Slashing and one for Magic and set the counter to 5 for both." compset="InPlay">
     <fieldval field="pMinimum" value="0"/>
@@ -1424,16 +1431,16 @@ field[pChosen].chosen.field[livename].text &= sText]]></eval>
     <tag group="OthAdjCat" tag="SpecAbil"/>
     <bootstrap thing="xDamRd"></bootstrap>
     <eval phase="Final" priority="9000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Remove all hardcoded Value tags
-perform field[pChosen].chosen.delete[Value.?]
+      ~ Remove all hardcoded Value tags
+      perform field[pChosen].chosen.delete[Value.?]
 
-~ Set the exact amount of DR
-field[pChosen].chosen.field[abValue].value = field[pAdjust].value]]></eval>
+      ~ Set the exact amount of DR
+      field[pChosen].chosen.field[abValue].value = field[pAdjust].value]]></eval>
     </thing>
   <thing id="pS2ArmorCl" name="Armor Class, Type" description="Select this adjustment to adjust your Armor Class by a specific type of bonus that you select from a drop down list. This adjustment follows the normal Pathfinder stacking rules regarding typed bonuses. So Bonus, Circumstance, Dodge and Natural Armor types will stack with themselves but all others will only apply the greatest value." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -1495,10 +1502,11 @@ field[pChosen].chosen.field[abValue].value = field[pAdjust].value]]></eval>
       ElseIf (field[pChosen].chosen.tagis[AdjustAC.Dodge] <> 0) Then
          hero.child[ArmorClass].field[tACDodge].value += field[pAdjust].value
       Endif]]></eval>
-    <eval phase="PreLevel" priority="11000" index="2"><![CDATA[~ Picks on Hero
-field[pUsePicks].value = 1
-~ Set search expression for CORE spell school
-field[pCandExpr].text = "component.SelectHelp & (AdjustBon.Selector|AdjustAC.Selector) & !AdjustBon.Resist"]]></eval>
+    <eval phase="PreLevel" priority="11000" index="2"><![CDATA[
+      ~ Picks on Hero
+      field[pUsePicks].value = 1
+      ~ Set search expression for CORE spell school
+      field[pCandExpr].text = "component.SelectHelp & (AdjustBon.Selector|AdjustAC.Selector) & !AdjustBon.Resist"]]></eval>
     </thing>
   <thing id="pS2svRefTy" name="Saving Throw (Reflex), Type" description="Select this adjustment to give a specific bonus/penalty type to your Reflex saves. This adjustment follows the normal Pathfinder stacking rules regarding typed bonuses. So Bonus and Circumstance types will stack with themselves but all others will only apply the greatest value." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2186,13 +2194,13 @@ field[pCandExpr].text = "component.SelectHelp & (AdjustBon.Selector|AdjustAC.Sel
     <tag group="MelAttOver" tag="aCHA"/>
     <tag group="OthAdjCat" tag="Equipment"/>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Set Melee Attack optional tag to chosen weapon
-perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
+      ~ Set Melee Attack optional tag to chosen weapon
+      perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
     </thing>
   <thing id="pS2wAttDex" name="Weapon Attack Melee Attribute, Dex" description="Select this adjustment to change the attributed used to calculate attack bonus to be Dexterity instead of Strength." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2202,13 +2210,13 @@ perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
     <tag group="MelAttOver" tag="aDEX"/>
     <tag group="OthAdjCat" tag="Equipment"/>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Set Melee Attack optional tag to chosen weapon
-perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
+      ~ Set Melee Attack optional tag to chosen weapon
+      perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
     </thing>
   <thing id="pS2wAttCon" name="Weapon Attack Melee Attribute, Con" description="Select this adjustment to change the attributed used to calculate attack bonus to be Constitution instead of Strength." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2218,13 +2226,13 @@ perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
     <tag group="MelAttOver" tag="aCON"/>
     <tag group="OthAdjCat" tag="Equipment"/>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Set Melee Attack optional tag to chosen weapon
-perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
+      ~ Set Melee Attack optional tag to chosen weapon
+      perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
     </thing>
   <thing id="pS2wAttInt" name="Weapon Attack Melee Attribute, Int" description="Select this adjustment to change the attributed used to calculate attack bonus to be Intelligence instead of Strength." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2234,13 +2242,13 @@ perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
     <tag group="MelAttOver" tag="aINT"/>
     <tag group="OthAdjCat" tag="Equipment"/>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Set Melee Attack optional tag to chosen weapon
-perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
+      ~ Set Melee Attack optional tag to chosen weapon
+      perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
     </thing>
   <thing id="pS2wAttWis" name="Weapon Attack Melee Attribute, Wis" description="Select this adjustment to change the attributed used to calculate attack bonus to be Wisdom instead of Strength." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2250,13 +2258,13 @@ perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
     <tag group="MelAttOver" tag="aWIS"/>
     <tag group="OthAdjCat" tag="Equipment"/>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Set Melee Attack optional tag to chosen weapon
-perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
+      ~ Set Melee Attack optional tag to chosen weapon
+      perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
     </thing>
   <thing id="pS2wRngStr" name="Weapon Attack Ranged Attribute, Str" description="Select this adjustment to change the attributed used to calculate attack bonus to be Strength instead of Dexterity." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2266,13 +2274,13 @@ perform field[pChosen].chosen.pushtags[MelAttOver.?]]]></eval>
     <tag group="RanAttOver" tag="aSTR"/>
     <tag group="OthAdjCat" tag="Equipment"/>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Set Ranged Attack optional tag to chosen weapon
-perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
+      ~ Set Ranged Attack optional tag to chosen weapon
+      perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
     </thing>
   <thing id="pS2wRngCon" name="Weapon Attack Ranged Attribute, Con" description="Select this adjustment to change the attributed used to calculate attack bonus to be Constitution instead of Dexterity." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2282,13 +2290,13 @@ perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
     <tag group="RanAttOver" tag="aCON"/>
     <tag group="OthAdjCat" tag="Equipment"/>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Set Ranged Attack optional tag to chosen weapon
-perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
+      ~ Set Ranged Attack optional tag to chosen weapon
+      perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
     </thing>
   <thing id="pS2wRngInt" name="Weapon Attack Ranged Attribute, Int" description="Select this adjustment to change the attributed used to calculate attack bonus to be Intelligence instead of Dexterity." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2298,13 +2306,13 @@ perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
     <tag group="RanAttOver" tag="aINT"/>
     <tag group="OthAdjCat" tag="Equipment"/>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Set Ranged Attack optional tag to chosen weapon
-perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
+      ~ Set Ranged Attack optional tag to chosen weapon
+      perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
     </thing>
   <thing id="pS2wRngWis" name="Weapon Attack Ranged Attribute, Wis" description="Select this adjustment to change the attributed used to calculate attack bonus to be Wisdom instead of Dexterity." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2314,13 +2322,13 @@ perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
     <tag group="RanAttOver" tag="aWIS"/>
     <tag group="OthAdjCat" tag="Equipment"/>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Set Ranged Attack optional tag to chosen weapon
-perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
+      ~ Set Ranged Attack optional tag to chosen weapon
+      perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
     </thing>
   <thing id="pS2wRngCha" name="Weapon Attack Ranged Attribute, Cha" description="Select this adjustment to change the attributed used to calculate attack bonus to be Charisma instead of Dexterity." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2330,13 +2338,13 @@ perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
     <tag group="RanAttOver" tag="aCHA"/>
     <tag group="OthAdjCat" tag="Equipment"/>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~ If nothing chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Set Ranged Attack optional tag to chosen weapon
-perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
+      ~ Set Ranged Attack optional tag to chosen weapon
+      perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
     </thing>
   <thing id="pS2raDarkV" name="Racial Ability, Darkvision" description="Use this adjustment to add darkvision to your character.  You can use the counter to set the distance of the darkvision." compset="InPlay">
     <fieldval field="pMinimum" value="1"/>
@@ -2348,10 +2356,10 @@ perform field[pChosen].chosen.pushtags[RanAttOver.?]]]></eval>
       <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
       </bootstrap>
     <eval phase="PreLevel" priority="25000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
 
-#value[raDarkVis] += field[pAdjust].value]]></eval>
+      #value[raDarkVis] += field[pAdjust].value]]></eval>
     </thing>
   <thing id="pS2raLowLi" name="Racial Ability, Low-Light Vision" description="Use this adjustment to add low-light vision to your character." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -2424,16 +2432,17 @@ doneif (field[pIsOn].value = 0)
     <tag group="Adjustment" tag="S2Custom"/>
     <tag group="AdjShadow" tag="Name"/>
     <tag group="OthAdjCat" tag="Spell"/>
-    <eval phase="Render" priority="99999999" index="2"><![CDATA[~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~if nothing's been chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+    <eval phase="Render" priority="99999999" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~if nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Based on the AdjShadow.? tag on this adjustment we will
-~ either append or overwrite. We now use either Source or
-~ Duration. This allows the adjustment to be used on the
-~ Personal tab also.
-call S2SetName]]></eval>
+      ~ Based on the AdjShadow.? tag on this adjustment we will
+      ~ either append or overwrite. We now use either Source or
+      ~ Duration. This allows the adjustment to be used on the
+      ~ Personal tab also.
+      call S2SetName]]></eval>
     </thing>
   <thing id="pS2SpCusto" name="Custom Text: Spell" description="Append text to the name of your spell using the (Source) or (Duration) field. Use this to add any other related info you would like to see with when you print a character or use on the iPad." compset="InPlay">
     <fieldval field="pCandExpr" value="component.BaseSpell"/>
@@ -2444,16 +2453,17 @@ call S2SetName]]></eval>
     <tag group="Adjustment" tag="S2Custom"/>
     <tag group="AdjShadow" tag="Text"/>
     <tag group="OthAdjCat" tag="Spell"/>
-    <eval phase="Render" priority="99999999" index="2"><![CDATA[~ If we're not enabled, get out now
-doneif (field[pIsOn].value = 0)
-~if nothing's been chosen, get out now
-doneif (field[pChosen].ischosen <> 1)
+    <eval phase="Render" priority="99999999" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~if nothing's been chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
 
-~ Based on the AdjShadow.? tag on this adjustment we will
-~ either append or overwrite. We now use either Source or
-~ Duration. This allows the adjustment to be used on the
-~ Personal tab also.
-call S2SetName]]></eval>
+      ~ Based on the AdjShadow.? tag on this adjustment we will
+      ~ either append or overwrite. We now use either Source or
+      ~ Duration. This allows the adjustment to be used on the
+      ~ Personal tab also.
+      call S2SetName]]></eval>
     </thing>
   <thing id="pS2CarrCap" name="Encumbrance, Carrying Capacity" description="Use this adjustment to change your your Strength score to be treated as higher/lower value than normal when calculating your carrying capacity.  In example if you have a 10 Str and set this counter to +1 you will be treated as if you had a 11 Strength for purposes of carrying capacity." compset="InPlay">
     <usesource source="srcS2Adjus"/>
