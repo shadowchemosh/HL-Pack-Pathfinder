@@ -6436,7 +6436,7 @@ if (hero.childlives[cfgPUAstSu] <> 0) then
       doneif (tagis[Helper.ShowSpec] = 0)
 
       field[abValue].value += field[xCount].value
-      field[CustDesc].text = "+" & field[abValue].value & " bonus to chosen Craft skill."
+      field[CustDesc].text = signed(field[abValue].value) & " bonus to chosen Craft skill."
 
       if (field[usrChosen1].ischosen <> 0) then
         myText = field[usrChosen1].chosen.idstring
@@ -6480,60 +6480,62 @@ if (hero.childlives[cfgPUAstSu] <> 0) then
     <tag group="User" tag="Tracker"/>
     <tag group="Usage" tag="Day"/>
     <tag group="SbNamePar" tag="IncUses"/>
-    <eval phase="Final" priority="10000"><![CDATA[~field abValue contains the # of times tracker for the first copy
-~field abValue2 contains the bonus reconfigure points
-~field abValue3 contains the bonus uses
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~field abValue contains the # of times tracker for the first copy
+      ~field abValue2 contains the bonus reconfigure points
+      ~field abValue3 contains the bonus uses
 
-var myPts as number
-var myUses as number
+      var myPts as number
+      var myUses as number
 
-myPts = #attrbonus[aINT] + field[abValue2].value
+      myPts = #attrbonus[aINT] + field[abValue2].value
 
-if (tagis[Helper.SpcDisable] <> 0) then
-  field[abValue3].value -= 1
-endif
+      if (tagis[Helper.SpcDisable] <> 0) then
+        field[abValue3].value -= 1
+      endif
 
-myUses = field[xIndex].value + field[abValue3].value
+      myUses = field[xIndex].value + field[abValue3].value
 
-field[listname].text = "Reconfigure (" & myPts & " customization points) (" & myUses & "/day)"
+      field[listname].text = "Reconfigure (" & myPts & " customization points) (" & myUses & "/day)"
 
-~These calculations should only happen for the first copy
-doneif (tagis[Helper.FirstCopy] = 0)
+      ~These calculations should only happen for the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
 
-~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
 
-field[abValue].value += field[abValue3].value
-field[abValue].value += field[xCount].value
-field[trkMax].value = field[abValue].value
-field[livename].text = "Reconfigure (" & field[abValue].value & " customization points)"]]></eval>
+      field[abValue].value += field[abValue3].value
+      field[abValue].value += field[xCount].value
+      field[trkMax].value = field[abValue].value
+      field[livename].text = field[thingname].text & " (" & field[abValue].value & " customization points)"]]></eval>
     </thing>
   <thing id="cPUAugSuit" name="Augment Suit" description="An aegis learns how to infuse his astral suit with his psionic power, augmenting the capacity of his suit. Beginning at 4th level, the aegis may spend up to one power point per four class levels to customize his Astral Suit, gaining one temporary customization point for each power point spent. \n\nThis ability, activated as a standard action, lasts for a number of rounds equal to the aegis’ Intelligence modifier.\n\nActivating this ability again, while already in use, immediately causes the previous duration to end. \n\nAn aegis may end the duration as a free action at any time." compset="ClSpecial">
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="User" tag="Tracker"/>
-    <eval phase="Final" priority="10000"><![CDATA[var myPts as number
-var myTimes as number
+    <eval phase="Final" priority="10000"><![CDATA[
+      var myPts as number
+      var myTimes as number
 
-myPts = field[xIndex].value
-myTimes = #attrbonus[aINT]
+      myPts = field[xIndex].value
+      myTimes = #attrbonus[aINT]
 
-field[listname].text = "Augment Suit (" & myPts & ") (" & myTimes & " rounds)"
+      field[listname].text = "Augment Suit (" & myPts & ") (" & myTimes & " rounds)"
 
-~These calculations should only happen for the first copy
-doneif (tagis[Helper.FirstCopy] = 0)
+      ~These calculations should only happen for the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
 
-~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
 
-field[abValue].value += field[xCount].value
-field[trkMax].value = field[abValue].value
-field[livename].text = "Augment Suit (" & myPts & ") (" & myTimes & " rounds)"]]></eval>
+      field[abValue].value += field[xCount].value
+      field[trkMax].value = field[abValue].value
+      field[livename].text = "Augment Suit (" & myPts & ") (" & myTimes & " rounds)"]]></eval>
     </thing>
   <thing id="cPUMastCr" name="Master Craftsman" description="At 5th level, an aegis gains the Master Craftsman feat as a bonus feat. He must still meet the prerequisites of the feat in order to gain its benefits." compset="ClSpecial">
     <usesource source="pPsiUn"/>
     <bootstrap thing="fMasCraft">
-      <containerreq phase="First" priority="500"><![CDATA[      count:Classes.Aegis >= 5 & !AbReplace.cPUMastCr]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 5 & !AbReplace.cPUMastCr]]></containerreq>
       </bootstrap>
     </thing>
   <thing id="cPUCanniSu" name="Cannibalize Suit" description="Starting at 12th level, an aegis learns to convert the psionic energy used to create his suit into healing power. Once per day as a standard action, he can dismiss his astral suit and heal a number of hit points equal to his customization pool. The aegis cannot reform his suit again for one minute after using this ability. Every two levels thereafter, the aegis can use this ability an additional time per day. Additional customization points gained from Augment Suit are not counted for this ability." compset="ClSpecial">
