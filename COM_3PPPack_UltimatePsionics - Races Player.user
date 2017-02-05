@@ -83,7 +83,6 @@
     <fieldval field="rDEX" value="2"/>
     <fieldval field="rCHA" value="2"/>
     <fieldval field="rSpeed" value="20"/>
-    <fieldval field="rAC" value="1"/>
     <fieldval field="rHeightMnF" value="32"/>
     <fieldval field="rHeightMnM" value="32"/>
     <fieldval field="rWeightMnF" value="30"/>
@@ -127,9 +126,10 @@
   <thing id="raChitin" name="Chitin" description="Dromites receive a +1 natural armor bonus and one of the following kinds of energy resistance of their choice at creation: cold 5, electricity 5, fire 5, or sonic 5. This choice is permanent and stacks with any future energy resistance gained through other effects." compset="RaceSpec" summary="Exoskeleton provides natural armor and energy resistance.">
     <fieldval field="abValue" value="5"/>
     <fieldval field="usrCandid1" value="Selection.Energy &amp; (BloodEner.Cold|BloodEner.Elec|BloodEner.Fire|BloodEner.Sonic)"/>
-    <tag group="ProductId" tag="HLCommunit"/>
+    <fieldval field="abValue2" value="1"/>
     <tag group="SpecType" tag="Defense"/>
-    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.SpcDisable] <> 0)
@@ -149,6 +149,11 @@
       elseif (tagis[BloodEner.Sonic] <> 0) then
         #applydr[xDamRsSoni, field[abValue].value]
       endif]]></eval>
+    <eval phase="First" priority="500" index="2"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      root.field[rAC].value += field[abValue2].value]]></eval>
     </thing>
   <thing id="raCompEyes" name="Compound Eyes" description="+2 racial bonus to Perception skill checks." compset="RaceSpec">
     <fieldval field="abValue" value="2"/>
@@ -1767,790 +1772,607 @@ hero.child[svWill].field[Bonus].value += field[abValue].value]]></eval>
       ~ Add in additional allowed languages
       herofield[tLangsSpk].value += #skillranks[skLinguist]]]></eval>
     </thing>
-  <thing id="fcPUElaCry" name="Elan Cryptic" description="Add +1/2 to the damage of the cryptic’s disrupt pattern ability." compset="FavClass">
-    <fieldval field="fcName" value="+1 to Disrupt Pattern damage"/>
+  <thing id="fcPUElaCry" name="Elan Cryptic" description="Add +1/2 to the damage of the cryptic’s disrupt pattern ability." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ Disrupt Pattern dmg"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rElan"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="FavClass" tag="cPUCryptic"/>
-    <tag group="IsRace" tag="rElan"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " damage with Disrupt Pattern."
-
-      hero.childfound[cPUDisPatt].field[abValue2].value += field[abValue].value]]></eval>
+      #value2[cPUDisPatt] += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUElaDrd" name="Elan Dread" description="Add +1/2 to Intimidate checks." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 Intimidate"/>
+  <thing id="fcPUElaDrd" name="Elan Dread" description="Add +1/2 to Intimidate checks." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ Intimidate"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rElan"/>
     <tag group="FavClass" tag="cPUDread"/>
-    <tag group="IsRace" tag="rElan"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " to Intimidate checks."
-
-      hero.childfound[skIntim].field[Bonus].value += bonus]]></eval>
+      hero.childfound[skIntim].field[Bonus].value += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUElaPsi" name="Elan Psion" description="Add a +1/2 bonus on concentration checks when manifesting Psion powers." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 on concentration checks for Tac. powers"/>
+  <thing id="fcPUElaPsi" name="Elan Psion" description="Add a +1/2 bonus on concentration checks when manifesting Psion powers." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ on concentration checks for Tac. powers"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
-    <tag group="FavClass" tag="cPUTactici"/>
     <tag group="IsRace" tag="rPUDuergar"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " on Concentration checks when manifesting Psion powers."]]></eval>
-    </thing>
-  <thing id="fcPUElaRog" name="Elan Rogue" description="Add +1/2 to Disguise checks to appear as a human (or their original race if they have the Failed Transformation or Strong Blooded trait), and to Stealth checks." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 Disguise, Stealth"/>
-    <usesource source="pPsiUn"/>
-    <tag group="FavClass" tag="cRogue"/>
-    <tag group="IsRace" tag="rElan"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " Disguise checks to appear as a human (or their original race if they have the Failed Transformation or Strong Blooded trait),, and to Stealth checks."
-
-      #situational[hero.child[skDisguise], signed(bonus) & " to appear as original race.", field[thingname].text]
-      ~#applybonus[Bonus, hero.child[skStealth], bonus]
-
-      hero.childfound[skStealth].field[Bonus].value += bonus]]></eval>
-    </thing>
-  <thing id="fcPUElaSlk" name="Elan Soulknife" description="Add a +1/2 circumstance bonus on critical hit confirmation rolls with the mind blade. This bonus does not stack with Critical Focus." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 Disguise, Stealth"/>
-    <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rElan"/>
-    <tag group="FavClass" tag="cSoulknife"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " on critical hit confirmation rolls with the mind blade."]]></eval>
-    </thing>
-  <thing id="fcPUElaWld" name="Elan Wilder" description="Add 1/4 power known from the wilder power list. This power must be at least one level below the highest power level the wilder can manifest.\n\n{b}Note{/b}: User will need to add the power known with an adjustment manually." compset="FavClass">
-    <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rDrow" name="Drow" abbrev="Drow"/>
-    <tag group="FavClass" tag="cSorcerer" name="Sorcerer" abbrev="Sorcerer"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value < 4)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/4
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " known Wilder power."]]></eval>
-    </thing>
-  <thing id="fcPUElaWiz" name="Elan Wizard" description="Add +1/3 to the psion’s saving throws versus spells of the transmutation school." compset="FavClass">
-    <fieldval field="fcName" value="+1/3 save vs. mind-affecting effects"/>
-    <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rBlue"/>
-    <tag group="FavClass" tag="cPUPsion"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value < 3)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/3
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " save vs. spells of the transmutation school."
-
-      #situational[hero.child[svAll], signed(bonus) & " save vs. spells of the transmutation school.", field[thingname].text]]]></eval>
-    </thing>
-  <thing id="fcPUForPsW" name="Forgeborn Psychic Warrior" description="Add a +1/2 bonus on concentration checks when manifesting Psychic Warrior powers." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 on concentration checks for Tac. powers"/>
-    <usesource source="pPsiUn"/>
-    <tag group="FavClass" tag="cPUPsiWar"/>
-    <tag group="IsRace" tag="rPUForgeB"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " on Concentration checks when manifesting Psychic Warrior powers."]]></eval>
-    </thing>
-  <thing id="fcPUForTac" name="Forgeborn Tactician" description="Add a +1/2 bonus on concentration checks when manifesting Tactician powers." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 on concentration checks for Tac. powers"/>
-    <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rPUForgeB"/>
     <tag group="FavClass" tag="cPUTactici"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " on Concentration checks when manifesting Psychic Warrior powers."]]></eval>
+      hero.childfound[cHelpPsi].field[cConcCheck].value += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUForRog" name="Forgeborn Rogue" description="Add +1/2 to Disable Device checks." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 Disable Device"/>
+  <thing id="fcPUElaRog" name="Elan Rogue" description="Add a +1 bonus on Disguise checks to appear as a human (or their original race if they have the Failed Transformation or Strong Blooded trait), and a +1/2 bonus on Stealth checks." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ Stealth +1 Disguise"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rPUForgeB"/>
+    <tag group="IsRace" tag="rElan"/>
     <tag group="FavClass" tag="cRogue"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+      ~ Calculate the 2nd FCB Bonus
+      field[abValue2].value += field[fcCount].value
 
-      doneif (field[abValue].value < 2)
+      #situational[hero.child[skDisguise], signed(field[abValue].value) & " bonus to appear as original race.", field[thingname].text]
 
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " Disable Device checks."
-
-      hero.childfound[skDisable].field[Bonus].value += bonus]]></eval>
+      hero.childfound[skStealth].field[Bonus].value += field[abValue2].value]]></eval>
     </thing>
-  <thing id="fcPUForSlk" name="Forgeborn Soulknife" description="Add +1/2 to CMB when attempting a disarm or sunder." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 CMB to Disarm, Sunder"/>
+  <thing id="fcPUElaSlk" name="Elan Soulknife" description="Add a +1/2 circumstance bonus on critical hit confirmation rolls with the mind blade. This bonus does not stack with Critical Focus." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ Disguise, Stealth"/>
+    <fieldval field="abValue5" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="FavClass" tag="cSoulknife"/>
+    <tag group="IsRace" tag="rElan"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      #situational[hero.child[Attack], signed(field[abValue].value) & " bonus to confirm critical hits. Does not stack with Critical Focus.", field[thingname].text]]]></eval>
+    </thing>
+  <thing id="fcPUElaWld" name="Elan Wilder" description="Add 1/4 power known from the wilder power list. This power must be at least one level below the highest power level the wilder can manifest.\n\n{b}Note{/b}: This will increase the number of powers known on the Wilder tab. It will be up to the gamer to make sure they add a power of the correct level." compset="FavClass" uniqueness="useronce">
+    <fieldval field="fcName" value="+¼ Power Known"/>
+    <fieldval field="abValue5" value="4"/>
+    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="IsRace" tag="rElan"/>
+    <tag group="FavClass" tag="cWilder"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      hero.childfound[cHelpWld].field[cPsiPowMax].value += field[abValue].value</eval>
+    </thing>
+  <thing id="fcPUElaWiz" name="Elan Wizard" description="Add +1/3 to the psion’s saving throws versus spells of the transmutation school." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1/3 vs transmutation"/>
+    <fieldval field="abValue5" value="3"/>
+    <usesource source="pPsiUn"/>
+    <tag group="FavClass" tag="cPUPsion"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="IsRace" tag="rBlue"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      #situational[hero.child[svAll], signed(field[abValue].value) & " bonus vs. spells of the transmutation school.", field[thingname].text]]]></eval>
+    </thing>
+  <thing id="fcPUForPsW" name="Forgeborn Psychic Warrior" description="Add a +1/2 bonus on concentration checks when manifesting Psychic Warrior powers." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ on concentration checks for Tac. powers"/>
+    <fieldval field="abValue5" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rPUForgeB"/>
+    <tag group="FavClass" tag="cPUPsiWar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      hero.childfound[cHelpPWa].field[cConcCheck].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUForTac" name="Forgeborn Tactician" description="Add a +1/2 bonus on concentration checks when manifesting Tactician powers." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ on concentration checks for Tac. powers"/>
+    <fieldval field="abValue5" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="FavClass" tag="cPUTactici"/>
+    <tag group="IsRace" tag="rPUForgeB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      hero.childfound[cHelpPU4].field[cConcCheck].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUForRog" name="Forgeborn Rogue" description="Add +1/2 to Disable Device checks." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ Disable Device"/>
+    <fieldval field="abValue5" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="FavClass" tag="cRogue"/>
+    <tag group="IsRace" tag="rPUForgeB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      hero.childfound[skDisable].field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUForSlk" name="Forgeborn Soulknife" description="Add +1/2 to CMB when attempting a disarm or sunder." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ CMB to Disarm, Sunder"/>
     <usesource source="pPsiUn"/>
     <tag group="FavClass" tag="cSoulknife"/>
     <tag group="IsRace" tag="rPUForgeB"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " to CMB when attempting a disarm or sunder."]]></eval>
+      hero.child[manSunder].field[cmdBonus].value += field[abValue].value
+      hero.child[manDisarm].field[cmdBonus].value += field[abValue].value]]></eval>
     </thing>
-  <thing id="fcPUForFtr" name="Forgeborn Fighter" description="Add +1 to CMD against disarm and sunder attempts." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 CMD vs Disarm, Sunder"/>
+  <thing id="fcPUForFtr" name="Forgeborn Fighter" description="Add +1 to CMD against disarm and sunder attempts." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ CMD vs Disarm, Sunder"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
-    <tag group="FavClass" tag="cSoulknife"/>
     <tag group="IsRace" tag="rPUForgeB"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="FavClass" tag="cFighter"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      perform assign[Helper.ShowSpec]
-
-      field[livename].text = signed(field[abValue].value) & " to CMD against disarm and sunder attempts."]]></eval>
+      hero.child[manSunder].field[cmdBonus].value += field[abValue].value
+      hero.child[manDisarm].field[cmdBonus].value += field[abValue].value]]></eval>
     </thing>
-  <thing id="fcPUForAeg" name="Forgeborn Aegis" description="Add 1 to customization points." compset="FavClass">
-    <fieldval field="fcName" value="+1 pt Customization"/>
+  <thing id="fcPUForAeg" name="Forgeborn Aegis" description="Add +1/4 to customization points." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+¼ Customization Pts"/>
+    <fieldval field="abValue5" value="4"/>
     <usesource source="pPsiUn"/>
     <tag group="FavClass" tag="cPUAegis"/>
     <tag group="IsRace" tag="rPUForgeB"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " to customization points"
-
-      hero.childfound[cPUReconfi].field[abValue2].value += field[abValue].value]]></eval>
+      hero.childfound[cfgPUAstSu].field[cfgMax2].value += field[abValue].value]]></eval>
     </thing>
-  <thing id="fcPUForBrb" name="Forgeborn Barbarian" description="Add 1 to number of rage rounds per day." compset="FavClass">
+  <thing id="fcPUForBrb" name="Forgeborn Barbarian" description="Add 1 to the total number of rage rounds per day." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1 round rage"/>
+    <fieldval field="abValue5" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rPUForgeB"/>
     <tag group="FavClass" tag="cBarbarian"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " number of Rage rounds/day."
+    <tag group="FavClass" tag="cBarbarUnc"/>
+    <tag group="IsRace" tag="rPUForgeB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
       #trkmax[cBbnRage] += field[abValue].value]]></eval>
     </thing>
-  <thing id="fcPUForCry" name="Forgeborn Cryptic" description="Add +1/4 to the damage reduction gained from altered defense." compset="FavClass">
-    <fieldval field="fcName" value="+1/4 DR for Altered Defense"/>
+  <thing id="fcPUForCry" name="Forgeborn Cryptic" description="Add +1/4 to the damage reduction gained from altered defense." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+¼ DR for Altered Defense"/>
+    <fieldval field="abValue5" value="4"/>
     <usesource source="pPsiUn"/>
     <tag group="FavClass" tag="cPUCryptic"/>
     <tag group="IsRace" tag="rPUForgeB"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 4)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/4
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = "+" & field[abValue].value & " DR for Altered Defense."
-
-      hero.childfound[cPUAltDef].field[abValue].value += field[abValue].value]]></eval>
+      #value[cPUAltDef] += field[abValue].value]]></eval>
     </thing>
-  <thing id="fcPUForDrd" name="Forgeborn Dread" description="Add +1/2 to Intimidate checks." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 Intimidate"/>
+  <thing id="fcPUForDrd" name="Forgeborn Dread" description="Add +1/2 to Intimidate checks." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ Intimidate"/>
+    <fieldval field="abValue" value="2"/>
     <usesource source="pPsiUn"/>
-    <tag group="FavClass" tag="cPUDread"/>
     <tag group="IsRace" tag="rPUForgeB"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="FavClass" tag="cPUDread"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " to Intimidate checks."
-
-      hero.childfound[skIntim].field[Bonus].value += bonus]]></eval>
+      hero.childfound[skIntim].field[Bonus].value += field[abValue].value]]></eval>
     </thing>
-  <thing id="fcPUForPld" name="Forgeborn Paladin" description="Add +1 to saves against negative energy effects." compset="FavClass">
+  <thing id="fcPUForPld" name="Forgeborn Paladin" description="Add +1 to saves against negative energy effects." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1 vs negative energy"/>
+    <fieldval field="abValue5" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rDromite"/>
     <tag group="FavClass" tag="cWilder"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      perform assign[Helper.ShowSpec]
-
-      field[livename].text = signed(field[abValue].value) & " save against negative energy effects."
+    <tag group="IsRace" tag="rDromite"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
       #situational[hero.child[svAll], signed(field[abValue].value) & " save against negative energy effects.", field[thingname].text]]]></eval>
     </thing>
-  <thing id="fcPUBluAeg" name="Blue Aegis" description="Add 1 to the hit points restored using astral repair." compset="FavClass">
-    <fieldval field="fcName" value="+1 pt Astral Repair"/>
+  <thing id="fcPUBluAeg" name="Blue Aegis" description="Add 1 to the hit points restored using astral repair." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1 hp astral repair"/>
+    <fieldval field="abValue5" value="1"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rBlue"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="FavClass" tag="cPUAegis"/>
-    <tag group="IsRace" tag="rBlue"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " to pts restored w/astral repair"
-
-      hero.childfound[cPUAstrRep].field[abValue].value += field[abValue].value]]></eval>
+      #value[cPUAstrRep] += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUBluCry" name="Blue Cryptic" description="Add 1 to Craft checks." compset="FavClass">
-    <fieldval field="fcName" value="+1 to Craft checks"/>
+  <thing id="fcPUBluCry" name="Blue Cryptic" description="Add +1 to Craft checks for a single Craft skill (alchemy, armor, etc.)" compset="FavClass" uniqueness="useronce">
+    <fieldval field="fcName" value="+1 to craft skill"/>
+    <fieldval field="abValue5" value="1"/>
+    <fieldval field="usrCandid1" value="component.BaseSkill &amp; Helper.SkCatCraft"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rBlue"/>
     <tag group="FavClass" tag="cPUCryptic"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " to Craft checks."
-
-      #applybonus[Bonus, hero.child[AllCraft], field[abValue].value]]]></eval>
-    </thing>
-  <thing id="fcPUBluMar" name="Blue Marksman" description="Add 1 to the number of times per day the marksman can use the Wind Reader class feature." compset="FavClass">
-    <fieldval field="fcName" value="+1 use/day of Wind Reader"/>
-    <usesource source="pPsiUn"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
     <tag group="IsRace" tag="rBlue"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      field[usrChosen1].chosen.field[Bonus].value += field[abValue].value</eval>
+    </thing>
+  <thing id="fcPUBluMar" name="Blue Marksman" description="Add 1 to the number of times per day the marksman can use the Wind Reader class feature." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1 uses to Wind Reader"/>
+    <fieldval field="abValue5" value="1"/>
+    <usesource source="pPsiUn"/>
     <tag group="FavClass" tag="cPUMarksma"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="IsRace" tag="rBlue"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " to Wind Reader uses."
-
-      hero.childfound[cPUMrkWnd].field[trkMax].value += field[abValue].value]]></eval>
+      hero.childfound[cPUMrkWnd].field[trkMax].value += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUBluPsi" name="Blue Psion" description="Add +1/3 to the psion’s saving throws versus mind-affecting effects." compset="FavClass">
+  <thing id="fcPUBluPsi" name="Blue Psion" description="Add +1/3 to the psion’s saving throws versus mind-affecting effects." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1/3 save vs. mind-affecting effects"/>
     <usesource source="pPsiUn"/>
     <tag group="IsRace" tag="rBlue"/>
     <tag group="FavClass" tag="cPUPsion"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 3)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/3
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " save vs. mind-affecting effects."
-
-      #situational[hero.child[svAll], signed(bonus) & " save vs. mind-affecting effects.", field[thingname].text]]]></eval>
+      #situational[hero.child[svAll], signed(field[abValue].value) & " bonus vs. mind-affecting effects.", field[thingname].text]]]></eval>
     </thing>
-  <thing id="fcPUBluPsW" name="Blue Psychic Warrior" description="Add +1 to the psychic warrior’s CMD when resisting a grapple or trip." compset="FavClass">
-    <fieldval field="fcName" value="+1 CMD to resist Grapple/Trip"/>
+  <thing id="fcPUBluPsW" name="Blue Psychic Warrior" description="Add +1 to the psychic warrior’s CMD when resisting a grapple or trip." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1 CMD vs Grapple/Trip"/>
+    <fieldval field="abValue5" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rBlue"/>
     <tag group="FavClass" tag="cPUPsiWar"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="IsRace" tag="rBlue"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-
-      field[livename].text = signed(field[abValue].value) & " CMD when resisting a grapple or trip."
-
-      hero.childfound[manGrapple].field[manCMD].value += field[abValue].value
-      hero.childfound[manTrip].field[manCMD].value += field[abValue].value]]></eval>
+      hero.child[manGrapple].field[cmdBonus].value += field[abValue].value
+      hero.child[manTrip].field[cmdBonus].value += field[abValue].value]]></eval>
     </thing>
-  <thing id="fcPUBluRan" name="Blue Ranger" description="Add +1/3 dodge bonus to Armor Class against the blue’s favored enemies." compset="FavClass">
+  <thing id="fcPUBluRan" name="Blue Ranger" description="Add +1/3 dodge bonus to Armor Class against the blue’s favored enemies." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1/3 AC vs. Favored Enemies"/>
+    <fieldval field="abValue5" value="3"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rBlue"/>
     <tag group="FavClass" tag="cRanger"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value < 3)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/3
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " dodge bonus to Armor Class against favored enemies."
-
-      #situational[hero.child[ArmorClass], signed(bonus) & " dodge bonus to Armor Class against favored enemies.", field[thingname].text]]]></eval>
-    </thing>
-  <thing id="fcPUBluRog" name="Blue Rogue" description="Add +1/2 to Bluff checks to feint and to Stealth checks." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 feint, Stealth"/>
-    <usesource source="pPsiUn"/>
     <tag group="IsRace" tag="rBlue"/>
-    <tag group="FavClass" tag="cRogue"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " Bluff checks to feint, and to Stealth checks."
-
-      #situational[hero.child[skBluff], signed(bonus) & " to feint.", field[thingname].text]
-      ~#applybonus[Bonus, hero.child[skStealth], bonus]
-
-      hero.childfound[skStealth].field[Bonus].value += bonus]]></eval>
+      #situational[hero.child[ArmorClass], signed(field[abValue].value) & " dodge bonus to Armor Class against favored enemies.", field[thingname].text]]]></eval>
     </thing>
-  <thing id="fcPUBluTac" name="Blue Tactician" description="Add +1/3 to the tactician&apos;s saving throws versus mind-affecting effects." compset="FavClass">
+  <thing id="fcPUBluRog" name="Blue Rogue" description="Add +1/2 to Bluff checks to feint and to Stealth checks." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ to feint &amp; stealth"/>
+    <fieldval field="abValue5" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="FavClass" tag="cRogue"/>
+    <tag group="IsRace" tag="rBlue"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      #situational[hero.child[skBluff], signed(field[abValue].value) & " bonus to feint.", field[thingname].text]
+
+      hero.childfound[skStealth].field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUBluTac" name="Blue Tactician" description="Add +1/3 to the tactician&apos;s saving throws versus mind-affecting effects." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1/3 save vs. mind-affecting effects"/>
+    <fieldval field="abValue5" value="3"/>
     <usesource source="pPsiUn"/>
+    <tag group="FavClass" tag="cPUTactici"/>
     <tag group="IsRace" tag="rBlue"/>
-    <tag group="FavClass" tag="cPUTactici"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 3)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/3
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " save vs. mind-affecting effects."
-
-      #situational[hero.child[svAll], signed(bonus) & " save vs. mind-affecting effects.", field[thingname].text]]]></eval>
+      #situational[hero.child[svAll], signed(field[abValue].value) & " bonus vs. mind-affecting effects.", field[thingname].text]]]></eval>
     </thing>
-  <thing id="fcPUDueAeg" name="Duergar Aegis" description="Increase the astral suit’s damage reduction by +1/4." compset="FavClass">
-    <fieldval field="fcName" value="+1/4 pt Astral Suit DR"/>
+  <thing id="fcPUDueAeg" name="Duergar Aegis" description="Increase the astral suit’s damage reduction by +1/4." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+¼ pt Astral Suit DR"/>
+    <fieldval field="abValue5" value="4"/>
     <usesource source="pPsiUn"/>
-    <tag group="FavClass" tag="cPUAegis"/>
     <tag group="IsRace" tag="rPUDuergar"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="FavClass" tag="cPUAegis"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 4)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/4
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " DR of Astral Suit."
-
-      hero.childfound[cPUAegDR].field[abValue2].value += bonus]]></eval>
+      #value2[cPUAegDR] += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUDueCry" name="Duergar Cryptic" description="Treat the duergar’s level as 1 higher for the purposes of altered defense." compset="FavClass">
+  <thing id="fcPUDueCry" name="Duergar Cryptic" description="Treat the duergar’s level as 1 higher for the purposes of altered defense." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1 level for Altered Defense"/>
+    <fieldval field="abValue5" value="1"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rPUDuergar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="FavClass" tag="cPUCryptic"/>
-    <tag group="IsRace" tag="rPUDuergar"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " level for Altered Defense."
-
-      hero.childfound[cPUAltDef].field[abValue2].value += field[abValue].value]]></eval>
+      #value2[cPUAltDef] += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUDueDrd" name="Duergar Dread" description="Add 1 to the duergar’s daily uses of terrors." compset="FavClass">
-    <fieldval field="fcName" value="+1 use/day of Terrors"/>
+  <thing id="fcPUDueDrd" name="Duergar Dread" description="Add +1/2 to the duergar’s daily uses of terrors." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ use of Terrors"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rPUDuergar"/>
     <tag group="FavClass" tag="cPUDread"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="IsRace" tag="rPUDuergar"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-
-      field[livename].text = "+" & field[abValue].value & " uses/day for Terrors."
-
-      ~hero.childfound[cPUAltDef].field[abValue2].value += field[abValue].value]]></eval>
+      #trkmax[cPUTerrors] += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUDueFtr" name="Duergar Fighter" description="Add +1/3 to attack rolls to confirm critical hits." compset="FavClass">
-    <fieldval field="fcName" value="+1/3 to roll to confirm Crits"/>
+  <thing id="fcPUDueFtr" name="Duergar Fighter" description="Add +1/3 to attack rolls to confirm critical hits." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1/3 to confirm Crits"/>
+    <fieldval field="abValue5" value="3"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rPUDuergar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="FavClass" tag="cFighter"/>
-    <tag group="IsRace" tag="rPUDuergar"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 3)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/3
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " on attack rolls to confirm critical hits."
-
-      #situational[hero.child[Attack], signed(bonus) & " on attack rolls to confirm critical hits.", field[thingname].text]]]></eval>
+      #situational[hero.child[Attack], signed(field[abValue].value) & " bonus to confirm critical hits.", field[thingname].text]]]></eval>
     </thing>
-  <thing id="fcPUDuePsW" name="Duergar Psychic Warrior" description="Gain 1/3 additional daily usage of the duergar’s daily expansion psi-like ability." compset="FavClass">
-    <fieldval field="fcName" value="+1/3 use/day of Expansion"/>
+  <thing id="fcPUDuePsW" name="Duergar Psychic Warrior" description="Gain 1/3 additional daily usage of the duergar’s daily expansion psi-like ability." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1/3 use of Expansion"/>
+    <fieldval field="abValue5" value="3"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rPUDuergar"/>
     <tag group="FavClass" tag="cPUPsiWar"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="IsRace" tag="rPUDuergar"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 3)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/3
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " use/day of expansion psi-like ability."
-
-      hero.childfound[puExpand1].field[trkMax].value += bonus]]></eval>
+      #trkmax[puExpand1] += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUDueRog" name="Duergar Rogue" description="Add +1/2 to Bluff checks to feint and to Intimidate checks." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 feint, Intimidate"/>
+  <thing id="fcPUDueRog" name="Duergar Rogue" description="Add a +1/2 bonus on Bluff checks to feint and Intimidate checks." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ to feint &amp; Intimidate"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rPUDuergar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="FavClass" tag="cRogue"/>
-    <tag group="IsRace" tag="rPUDuergar"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 2)
+      #situational[hero.child[skBluff], signed(field[abValue].value) & " bonus to feint.", field[thingname].text]
 
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " Bluff checks to feint, and to Intimidate checks."
-
-      #situational[hero.child[skBluff], signed(bonus) & " to feint.", field[thingname].text]
-
-      hero.childfound[skIntim].field[Bonus].value += bonus]]></eval>
+      hero.childfound[skIntim].field[Bonus].value += field[abValue].value]]></eval>
     </thing>
-  <thing id="fcPUDuePsi" name="Duergar Psion" description="Add a +1 bonus to one Craft skill of the psion’s choice." compset="FavClass">
-    <fieldval field="fcName" value="+1 to Craft checks of choice"/>
+  <thing id="fcPUDuePsi" name="Duergar Psion" description="Add a +1 bonus to one Craft skill of the psion’s choice." compset="FavClass" uniqueness="useronce">
+    <fieldval field="fcName" value="+1 to Craft Skill"/>
+    <fieldval field="abValue5" value="1"/>
+    <fieldval field="usrCandid1" value="component.BaseSkill &amp; Helper.SkCatCraft"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rPUDuergar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="FavClass" tag="cPUPsion"/>
-    <tag group="IsRace" tag="rPUDuergar"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " to Craft checks."
-
-      #applybonus[Bonus, hero.child[AllCraft], field[abValue].value]]]></eval>
+      field[usrChosen1].chosen.field[Bonus].value += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUDueTac" name="Duergar Tactician" description="Add a +1/2 bonus on concentration checks when manifesting tactician powers." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 on concentration checks for Tac. powers"/>
+  <thing id="fcPUDueTac" name="Duergar Tactician" description="Add a +1/2 bonus on concentration checks when manifesting tactician powers." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ on concentration"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rPUDuergar"/>
     <tag group="FavClass" tag="cPUTactici"/>
-    <tag group="IsRace" tag="rPUDuergar"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " on Concentration checks when manifesting Tactician powers."
-
-      #situational[hero.child[svAll], signed(bonus) & " save vs. mind-affecting effects.", field[thingname].text]]]></eval>
+      hero.childfound[cHelpPU2].field[cConcCheck].value += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUDueVit" name="Duergar Vitalist" description="Treat the vitalist’s level as +1/2 higher when using the Transfer Wounds ability." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 level higher for Transfer Wounds"/>
+  <thing id="fcPUDueVit" name="Duergar Vitalist" description="Treat the vitalist’s level as +1/2 higher when using the transfer wounds ability." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ lvl to Transfer Wounds"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rPUDuergar"/>
     <tag group="FavClass" tag="cPUVitalis"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="IsRace" tag="rPUDuergar"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " level higher for Transfer Wounds ability."]]></eval>
+      hero.childfound[cPUVitTraW].field[xExtraLev].value += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUDroAeg" name="Dromite Aegis" description="Add +1/4 to the dromite’s armor bonus from his astral suit.\n\n{b}Note: {/b}AC bonus will need to be added manually." compset="FavClass">
-    <comment>Need to Script AC Addition.</comment>
-    <fieldval field="fcName" value="+1/4 pt Astral Suit AC"/>
+  <thing id="fcPUDroAeg" name="Dromite Aegis" description="Add +1/4 to the dromite’s armor bonus from his astral suit." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+¼ pt Astral Suit AC"/>
+    <fieldval field="abValue5" value="4"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rDromite"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="FavClass" tag="cPUAegis"/>
-    <tag group="IsRace" tag="rDromite"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <eval phase="PostLevel" priority="30000"><![CDATA[
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 4)
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
 
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/4
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " AC of Astral Suit."]]></eval>
+      ~ Increase astral suite AC value
+      foreach pick in hero from BaseArmor where "EquipType.Armor & Custom.AstArmor"
+        eachpick.field[arAC].value += field[abValue].value
+      nexteach]]></eval>
     </thing>
-  <thing id="fcPUDroCry" name="Dromite Cryptic" description="Add +1/2 to Disable Device checks the cryptic makes against traps." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 Disable Traps"/>
+  <thing id="fcPUDroCry" name="Dromite Cryptic" description="Add +1/2 to Disable Device checks the cryptic makes against traps." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ Disable Traps"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rDromite"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="FavClass" tag="cPUCryptic"/>
-    <tag group="IsRace" tag="rDromite"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " Disable Device checks against traps."
-
-      #situational[hero.child[skDisable], signed(bonus) & " against traps.", field[thingname].text]]]></eval>
+      #situational[hero.child[skDisable], signed(field[abValue].value) & " bonus vs traps.", field[thingname].text]]]></eval>
     </thing>
-  <thing id="fcPUDroPsi" name="Dromite Psion" description="Add +1 to the dromite’s energy resistance from its chitin racial ability to a maximum +10, after which the dromite may choose a different energy type to gain the +1 energy resistance." compset="FavClass">
-    <fieldval field="fcName" value="+1 to Chitin ER"/>
+  <thing id="fcPUDroPsi" name="Dromite Psion" description="Add +1 to the dromite’s energy resistance from its chitin racial ability to a maximum +10, after which the dromite may choose a different energy type to gain the +1 energy resistance.\n\n{b}Note:{/b} After you get to +10 click the &quot;Customize Favored Class Option&quot; and add second &quot;Dromite Pison&quot; ability to track the 2nd energy type." compset="FavClass">
+    <fieldval field="fcName" value="+1 to Chitin Eng Rest"/>
+    <fieldval field="abValue5" value="1"/>
+    <fieldval field="usrCandid1" value="component.Ability &amp; (Ability.xDamRsElec|Ability.xDamRsCold|Ability.xDamRs|Ability.xDamRsFire|Ability.xDamRsSoni)"/>
     <usesource source="pPsiUn"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="IsRace" tag="rDromite"/>
     <tag group="FavClass" tag="cPUPsion"/>
-    <tag group="IsRace" tag="rDromite"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <eval phase="PostLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
-
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " to Chitin ER."
-
-      hero.childfound[raChitin].field[abValue2].value += field[abValue].value]]></eval>
+      field[usrChosen1].chosen.field[abAdd].value += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUDroTac" name="Dromite Tactician" description="Add +1/2 to the maximum number of creatures allowed in the tactician’s collective." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 creatures in Collective"/>
+  <thing id="fcPUDroTac" name="Dromite Tactician" description="Add +1/2 to the maximum number of creatures allowed in the tactician’s collective." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ creatures in Collective"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rDromite"/>
     <tag group="FavClass" tag="cPUTactici"/>
-    <tag group="IsRace" tag="rDromite"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " creatures allowed in Collective."
-
-      hero.childfound[cPUTacColl].field[abValue].value += bonus]]></eval>
+      #value[cPUTacColl] += field[abValue].value</eval>
     </thing>
-  <thing id="fcPUDroVit" name="Dromite Vitalist" description="Add +1/2 to the maximum number of creatures allowed in the vitalist&apos;s collective." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 creatures in Collective"/>
+  <thing id="fcPUDroVit" name="Dromite Vitalist" description="Add +1/2 to the maximum number of creatures allowed in the vitalist&apos;s collective." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ creatures in Collective"/>
+    <fieldval field="abValue5" value="2"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rDromite"/>
     <tag group="FavClass" tag="cPUVitalis"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value < 2)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      bonus = field[abValue].value/2
-      bonus = round(bonus,0,-1)
-
-      field[livename].text = signed(bonus) & " creatures allowed in Collective."
-
-      hero.childfound[cPUVitColl].field[abValue].value += bonus]]></eval>
-    </thing>
-  <thing id="fcPUDroWld" name="Dromite Wilder" description="Add +1/3 to the wilder’s saving throws against effects with a type matching the wilder’s energy resistance gained from the chitin racial trait." compset="FavClass">
-    <fieldval field="fcName" value="+1/2 creatures in Collective"/>
-    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="IsRace" tag="rDromite"/>
+    <eval phase="PostLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      #value[cPUVitColl] += field[abValue].value</eval>
+    </thing>
+  <thing id="fcPUDroWld" name="Dromite Wilder" description="Add +1/3 to the wilder’s saving throws against effects with a type matching the wilder’s energy resistance gained from the chitin racial trait." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1/3 creatures in Collective"/>
+    <fieldval field="abValue5" value="3"/>
+    <usesource source="pPsiUn"/>
     <tag group="FavClass" tag="cWilder"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
-
-      doneif (field[abValue].value < 3)
-
-      perform assign[Helper.ShowSpec]
-
-      var bonus as number
-      var type as string
-
-      bonus = field[abValue].value/3
-      bonus = round(bonus,0,-1)
+    <tag group="IsRace" tag="rDromite"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
       ~ Get the energy name
-      type = hero.childfound[raChitin].tagnames[BloodEner.?]
+      field[abText].text = hero.childfound[raChitin].tagnames[BloodEner.?]
 
-      field[livename].text = signed(bonus) & " save against " & type & " effects."
-
-      #situational[hero.child[svAll], signed(bonus) & " save against " & type & " effects.", field[thingname].text]]]></eval>
+      #situational[hero.child[svAll], signed(field[abValue].value) & " bonus vs " & field[abText].text & " energy effects.", field[thingname].text]]]></eval>
     </thing>
-  <thing id="fcPUElaAlA" name="Elan Alchemist (Acid)" description="Gain energy resistance 1 against acid, cold, electricity, or fire. Each time the alchemist selects this reward, increase her resistance to one of these energy types by 1 (maximum 10 for any one type)." compset="FavClass">
+  <thing id="fcPUElaAlA" name="Elan Alchemist (Acid)" description="Gain energy resistance 1 against acid, cold, electricity, or fire. Each time the alchemist selects this reward, increase her resistance to one of these energy types by 1 (maximum 10 for any one type)." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1 to Acid ER"/>
+    <fieldval field="abValue5" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="IsRace" tag="rElan"/>
     <tag group="FavClass" tag="cAlchemist"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="IsRace" tag="rElan"/>
     <bootstrap thing="xDamRsAcid"></bootstrap>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
+      ~ Maximum bonus is 10
+      field[abValue].value = minimum(field[abValue].value,10)
 
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " to Acid ER."
-
-      #applyresist[xDamRsAcid,field[abValue].value]]]></eval>
+      #applyresist[xDamRsAcid,field[abValue].value]</eval>
     </thing>
-  <thing id="fcPUElaAlC" name="Elan Alchemist (Cold)" description="Gain energy resistance 1 against acid, cold, electricity, or fire. Each time the alchemist selects this reward, increase her resistance to one of these energy types by 1 (maximum 10 for any one type)." compset="FavClass">
+  <thing id="fcPUElaAlC" name="Elan Alchemist (Cold)" description="Gain energy resistance 1 against acid, cold, electricity, or fire. Each time the alchemist selects this reward, increase her resistance to one of these energy types by 1 (maximum 10 for any one type)." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1 to Cold ER"/>
+    <fieldval field="abValue5" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="FavClass" tag="cAlchemist"/>
     <tag group="IsRace" tag="rElan"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="FavClass" tag="cAlchemist"/>
     <bootstrap thing="xDamRsCold"></bootstrap>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
+      ~ Maximum bonus is 10
+      field[abValue].value = minimum(field[abValue].value,10)
 
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " to Cold ER."
-
-      #applyresist[xDamRsCold,field[abValue].value]]]></eval>
+      #applyresist[xDamRsCold,field[abValue].value]</eval>
     </thing>
-  <thing id="fcPUElaAlE" name="Elan Alchemist (Electricity)" description="Gain energy resistance 1 against acid, cold, electricity, or fire. Each time the alchemist selects this reward, increase her resistance to one of these energy types by 1 (maximum 10 for any one type)." compset="FavClass">
+  <thing id="fcPUElaAlE" name="Elan Alchemist (Electricity)" description="Gain energy resistance 1 against acid, cold, electricity, or fire. Each time the alchemist selects this reward, increase her resistance to one of these energy types by 1 (maximum 10 for any one type)." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1 to Electricity ER"/>
+    <fieldval field="abValue5" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="FavClass" tag="cAlchemist"/>
     <tag group="IsRace" tag="rElan"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="FavClass" tag="cAlchemist"/>
     <bootstrap thing="xDamRsElec"></bootstrap>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      field[abValue].value += field[fcCount].value
+    <eval phase="PreLevel" priority="10000">
+      ~ Calculate the FCB Bonus
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
 
-      doneif (field[abValue].value = 0)
+      ~ Maximum bonus is 10
+      field[abValue].value = minimum(field[abValue].value,10)
 
-      perform assign[Helper.ShowSpec]
-      field[livename].text = "+" & field[abValue].value & " to Electricity ER."
-
-      #applyresist[xDamRsElec,field[abValue].value]]]></eval>
+      #applyresist[xDamRsElec,field[abValue].value]</eval>
     </thing>
-  <thing id="fcPUElaAlF" name="Elan Alchemist (Fire)" description="Gain energy resistance 1 against acid, cold, electricity, or fire. Each time the alchemist selects this reward, increase her resistance to one of these energy types by 1 (maximum 10 for any one type)." compset="FavClass">
+  <thing id="fcPUElaAlF" name="Elan Alchemist (Fire)" description="Gain energy resistance 1 against acid, cold, electricity, or fire. Each time the alchemist selects this reward, increase her resistance to one of these energy types by 1 (maximum 10 for any one type)." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1 to Fire ER"/>
+    <fieldval field="abValue5" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="FavClass" tag="cAlchemist"/>
     <tag group="IsRace" tag="rElan"/>
+    <tag group="FavClass" tag="cAlchemist"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="xDamRsFire"></bootstrap>
     <eval phase="PostLevel" priority="10000"><![CDATA[
       field[abValue].value += field[fcCount].value

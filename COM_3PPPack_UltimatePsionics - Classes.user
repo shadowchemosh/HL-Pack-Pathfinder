@@ -6390,9 +6390,16 @@ perform forward[WepProf.?]]]></eval>
     </thing>
   <thing id="cPUAstrRep" name="Astral Repair" description="An aegis is capable of repairing mundane items, restoring 2 hit points of damage to the touched item as a standard action usable at will. If the object has the broken condition, this condition is removed if the object is restored to at least half its original hit points. All of the pieces of an object must be present for this ability to function. This ability has no effect on objects that have been warped or otherwise transmuted, but it can still repair damage done to such items." compset="ClSpecial">
     <fieldval field="abValue" value="2"/>
-    <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="PsiLike"/>
-    <eval phase="Final" priority="1000"><![CDATA[field[abSumm].text = "Restore  " & field[abValue].value & " HP to damaged object touched."]]></eval>
+    <eval phase="Final" priority="1000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[livename].text = field[name].text & "(" & field[abValue].value & " HP)"
+
+      field[abSumm].text = "Restore  " & field[abValue].value & " HP to damaged object touched."]]></eval>
     </thing>
   <thing id="cPUAstSuit" name="Form Astral Suit" description="Every aegis learns to draw forth ectoplasm and form an astral suit around their form. The aegis can select from three different types when forming his astral suit – skin, armor, or juggernaut. An aegis is always considered to be proficient with his astral suit, even if he does not have the appropriate armor proficiency. The amount of time forming this astral suit takes depends on the type of suit being formed. Different astral suit forms grant different free customizations. These free customizations never count against the aegis’s total number of customization points spent on his astral suit.\n\nThe aegis chooses the appearance of his astral suit, although its shape must reflect the selections the aegis has chosen: astral skin would cover the aegis like a psychoactive skin, astral juggernaut would appear to cover the aegis like plate armor, etc.\n\nAn astral suit can be dismissed as a free action.\n\nAn astral suit does not function in areas where psionics do not work, such as a null psionics field. Dismiss ectoplasm can be used against an astral suit; treat the manifester level as the aegis’s class level, although the aegis can simply form his astral suit again on his next turn." compset="ClSpecial">
     <fieldval field="actName" value="Wearing Astral Suit"/>
@@ -8426,12 +8433,13 @@ else
     <tag group="Helper" tag="Secondary"/>
     <tag group="CustomCost" tag="1"/>
     <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <eval phase="PostLevel" priority="3000"><![CDATA[~ If we're not wearing the Astral Suit, get out now
-doneif (hero.tagcount[Custom.WearAstS] = 0)
+    <eval phase="PostLevel" priority="3000"><![CDATA[
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
 
-foreach pick in hero from BaseArmor where "EquipType.Armor & Custom.AstArmor"
-  eachpick.field[arArmorChk].value += 1
-  nexteach]]></eval>
+      foreach pick in hero from BaseArmor where "EquipType.Armor & Custom.AstArmor"
+        eachpick.field[arArmorChk].value += 1
+      nexteach]]></eval>
     </thing>
   <thing id="rcPUaHardS" name="Hardened Strikes" description="The aegis is considered to be armed even when unarmed, does not provoke attacks of opportunity when making unarmed strikes, and his unarmed strikes deal lethal damage. In addition, the aegis&apos;s unarmed strikes can deal slashing or piercing damage, chosen at the time the customization is selected, instead of bludgeoning damage." compset="RaceCustom" uniqueness="useronce">
     <arrayval field="usrArray" index="0" value="Slashing"/>
@@ -9797,30 +9805,32 @@ perform hero.child[cPUVitKnac].pushtags[psiClass.?]</eval>
   <thing id="cPUVitKnac" name="Knacks" description="Vitalists of all forms learn to manipulate the energy of body and mind in minor ways. A vitalist gains two talents from the vitalist power list, as well as one talent from his method power list.\n\n{b}Note:{/b} After selecting your Method&apos;s talent power from the drop down you must still add the power on the class tab.  This is needed to correctly get the power onto your character and have it calculate all the values correctly. Until you add this power you will get a validation error." compset="ClSpecial">
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ChooseSrc1" tag="Thing"/>
-    <eval phase="Final" priority="1000"><![CDATA[~ If not Psi Class tag then get out now!
-doneif (tagcount[psiClass.?] = 0)
+    <eval phase="Final" priority="1000"><![CDATA[
+      ~ If not Psi Class tag then get out now!
+      doneif (tagcount[psiClass.?] = 0)
 
-~ Set the custom expression
-field[usrCandid1].text = "component.BasePower &  (" & tagids[psiClass.?] & ")"
+      ~ Set the custom expression
+      field[usrCandid1].text = "component.BasePower &  (" & tagids[psiClass.?] & ")"
 
-~ If nothing chosen get out now
-doneif (field[usrChosen1].ischosen <> 1)
+      ~ If nothing chosen get out now
+      doneif (field[usrChosen1].ischosen <> 1)
 
-~ Add extra spell levels appropriately
-root.field[cKnowMax].arrayvalue[0] += 1
+      ~ Add extra spell levels appropriately
+      root.field[cKnowMax].arrayvalue[0] += 1
 
-~ Give access to Selected Power
-root.field[cPsiExpr].text &= "|" & field[usrChosen1].chosen.tagids[thingid.?]]]></eval>
+      ~ Give access to Selected Power
+      root.field[cPsiExpr].text &= "|" & field[usrChosen1].chosen.tagids[thingid.?]]]></eval>
     <prereq message="You must choose your new power from your class tab.">
-      <validate><![CDATA[~ Valid if we are not a pick
-validif (@ispick = 0)
-~ If nothing chosen then we are valid
-validif (altpick.field[usrChosen1].ischosen <> 1)
+      <validate><![CDATA[
+        ~ Valid if we are not a pick
+        validif (@ispick = 0)
+        ~ If nothing chosen then we are valid
+        validif (altpick.field[usrChosen1].ischosen <> 1)
 
-~ See if we can find the power live on hero
-perform hero.findchild[BasePower,altpick.field[usrChosen1].chosen.tagids[thingid.?]].setfocus
-~ We are valid if we got a hit
-validif (state.isfocus <> 0)]]></validate>
+        ~ See if we can find the power live on hero
+        perform hero.findchild[BasePower,altpick.field[usrChosen1].chosen.tagids[thingid.?]].setfocus
+        ~ We are valid if we got a hit
+        validif (state.isfocus <> 0)]]></validate>
       </prereq>
     </thing>
   <thing id="cPUVitMedP" name="Medic Powers" description="The vitalist gains special uses of some of his powers that are unavailable to other characters.{br}{br}The following powers gain the Network descriptor when manifested by a vitalist: all powers of the Healing subdiscipline, {i}animal affinity{/i}, {i}biofeedback{/i}, {i}body of iron{/i}, {i}endorphin surge*{/i}, {i}expansion{/i}, {i}oak body{/i}, {i}physical acceleration*{/i}, {i}sustenance{/i}, {i}suspend life{/i}, {i}timeless body{/i}, and {i}vigor.{/i}" compset="ClSpecial">
@@ -9828,29 +9838,24 @@ validif (state.isfocus <> 0)]]></validate>
     <tag group="Helper" tag="SpecUp"/>
     </thing>
   <thing id="cPUVitTraW" name="Transfer Wounds" description="All vitalists learn how to transfer wounds with but a touch. As a standard action that does not provoke attacks of opportunity, a vitalist may touch a target and heal it for 1d6 points of damage.{br}{br}The vitalist suffers the same number of points of nonlethal damage (up to the amount the target is actually healed) At 4th level and every 3 levels thereafter, the damage healed to the target and non-lethal damage taken by the vitalist increases by 1d6. A vitalist may use this ability a number of times per day equal to 3 + his Wisdom modifier. A vitalist may not use this ability upon himself." compset="ClSpecial">
-    <usesource source="pPsiUn"/>
+    <fieldval field="abValue2" value="6"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="User" tag="Tracker"/>
     <tag group="ChargeCalc" tag="AttrUses3"/>
     <tag group="ChargeAttr" tag="aWIS"/>
     <tag group="Usage" tag="Day"/>
     <tag group="abAction" tag="Standard"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[var myCnt as number
-var myTimes as number
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " (" & field[xIndex].value & "d" & field[abValue2].value & ")"
 
-myCnt = field[xIndex].value
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-field[listname].text = "Transfer Wounds (" & myCnt & "d6)"
-
-~These calculations should only happen for the first copy
-doneif (tagis[Helper.FirstCopy] = 0)
-
-~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
-
-field[abValue].value += field[xCount].value
-
-field[CustDesc].text = "Transfer Wounds (" & field[abValue].value & "d6)"]]></eval>
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " (" & field[abValue].value & "d" & field[abValue2].value & ")"]]></eval>
     </thing>
   <thing id="cPUGuTouch" name="Guardian&apos;s Touch" description="A guardian vitalist of 2nd level who utilizes transfer wounds grants the target a number of temporary hit points equal to his class level. These temporary hit points last a number of rounds equal to the vitalist&apos;s Wisdom modifier (minimum 1) and do not stack with any other temporary hit points." compset="ClSpecial">
     <usesource source="pPsiUn"/>
