@@ -4817,4 +4817,63 @@ Added new natural weapon adjustments:
         field[trkMax].value += root.field[pAdjust].value
       endif]]></eval>
     </thing>
+  <thing id="pS2ClsSW01" name="Class, Starting Wealth (Bonus)" description="Select this adjustment to be able to change your class&apos; starting wealth bonus gold.  Starting wealth can be given a bonus amount of gold that is added in &quot;after&quot; the dice are rolled." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="First" priority="150" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      perform hero.findchild[BaseClLev,"fieldval:cIndex = 1"].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ Increase/Decrease Starting Wealth bonusvalue
+      focus.linkage[helper].field[cSCRBonus].value = field[pAdjust].value]]></eval>
+    </thing>
+  <thing id="pS2ClsStrW" name="Class, Starting Wealth" description="Select this adjustment to be able to change your starting wealth dice and multiplier.  The first drop down lets you select the &quot;number of dice&quot;. The second drop down lets you select the &quot;dice size&quot; and finally the counter lets you set the multiplier value.\n\nIn example if you select 02, d12, and counter set to 15 your character wealth would be 2d12x15." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.SelectHelp &amp; PackSelect.Numbers"/>
+    <fieldval field="pCandExpr2" value="component.SelectHelp &amp; PackSelect.DiceSize"/>
+    <fieldval field="pMinimum" value="1"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Adjust2nd" tag="S2Custom"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
+    <eval phase="First" priority="150"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+      doneif (field[pChosen2].ischosen <> 1)
+
+      perform hero.findchild[BaseClLev,"fieldval:cIndex = 1"].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ Increase/Decrease Starting Wealth multipler value
+      focus.linkage[helper].field[cSCRMult].value = field[pAdjust].value
+
+      ~ Increase/Decrease number of dice of Starting Wealth
+      focus.linkage[helper].field[cSCRNumDce].value = field[pChosen].chosen.tagvalue[Value.?]
+
+      ~ Set Starting Wealth dice size (ie d4,d6,d8)
+      focus.linkage[helper].field[cSCRDceSiz].value = field[pChosen2].chosen.tagvalue[Value.?]]]></eval>
+    </thing>
+  <thing id="pS2ClsSW02" name="Class, Starting Wealth (Hide)" description="Select this adjustment to be able to force hide the &quot;Starting Wealth&quot; section of the Classes tab. This can be helpful for DM&apos;s that have set a specific amount of starting wealth in a template .por file to give to his players.  You can set the amount of gp on the classes tab, click accept, and then turn on this adjustment.  Now the &quot;Starting Wealth&quot; section is hidden." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      perform hero.assign[Hero.StartCshFr]]]>
+      <before name="gMoney automatically overrides own starting cash fields"/>
+      </eval>
+    </thing>
   </document>
