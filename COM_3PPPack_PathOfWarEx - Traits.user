@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <thing id="trPWAgiDan" name="Agile Dancer" description="You can make Perform (dance) checks in place of Acrobatics checks, and can use the higher of your Dexterity or Charisma modifiers when making Perform (dance) checks." compset="Trait" summary="Use Perform (dance) in place of Acrobatics, with Dex or Cha" uniqueness="useronce">
+    <usesource source="srcPOWEx"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="trCategory" tag="Social"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="Final" priority="35000"><![CDATA[
+    doneif (tagis[Helper.SpcDisable] <> 0)
+
+    ~retrieve the value of Perform (dance)
+    field[abValue].value += hero.childfound[skPerfDanc].field[skTotal].value
+
+    ~if our perform skill's value is greater than Acrobatics
+    if (hero.childfound[skAcrobat].field[skTotal].value < field[abValue].value) then
+        ~note that it's been replaced by another skill
+        perform hero.childfound[skAcrobat].assign[SklCalcAs.skPerfDanc]
+
+        ~it now has ranks
+        if (hero.childfound[skAcrobat].tagis[Helper.HasRanks] = 0) then
+          perform hero.childfound[skAcrobat].assign[Helper.HasRanks]
+        endif
+
+        ~and is usable
+        perform hero.childfound[skAcrobat].delete[Helper.NotUsable]
+
+        ~replace the value
+        hero.childfound[skAcrobat].field[skTotal].value = maximum(hero.childfound[skAcrobat].field[skTotal].value, field[abValue].value)
+    endif]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      doneif (tagis[Helper.SpcDisable] <> 0)
+ 
+      ~ Allow Dex to be used for Perform (dance) if higher
+      perform hero.childfound[skPerfDanc].assign[SkillOpt.aDEX]]]></eval>
+    </thing>
+  <thing id="trPWComTra" name="Combat Training" description="You learn one 1st-level maneuver (strike, boost, or counter) from any one discipline of your choice. If you are not a member of an initiating class, you can ready this maneuver by spending ten minutes practicing it, and can recover it by taking a standard action to focus. Your initiation modifier for this maneuver is the key ability of its discipline’s associated skill (for example, a discipline with Acrobatics as its associated skill would make Dexterity your initiation modifier). If you can already initiate other maneuvers or later gain the ability to, the maneuver granted by this trait is added to your list of maneuvers known, and you can recover it as normal for your class. You cannot exchange this maneuver for another maneuver as you level up, nor does it add its discipline to your list of available disciplines.\n\n{b}Note: This trait isn&apos;t currently implemented.{/b}" compset="Trait" summary="Gain a 1st-level maneuver of your choice" uniqueness="useronce">
+    <usesource source="srcPOWEx"/>
+    <tag group="trCategory" tag="Combat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  <thing id="trPWPraIni" name="Practiced Initiator" description="Pick an initiating class—your initiator level in that class gains a +2 trait bonus as long as this bonus does not raise your initiator level above your current Hit Dice." compset="Trait" uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="trCategory" tag="Combat"/>
+    <tag group="fShowWhat" tag="Classes"/>
+    <eval phase="PostLevel"><![CDATA[    ~ Do nothing if selection not made or ability disabled
+    doneif (field[usrChosen1].ischosen = 0)
+    doneif (tagis[Helper.SpcDisable] <> 0)
+
+    ~ Increase/decrease IL level, but only to a max of character level
+    field[usrChosen1].chosen.field[cIL].value += field[abValue].value
+    field[usrChosen1].chosen.field[cIL].value = maximum(field[usrChosen1].chosen.field[cIL].value, #totallevelcount[])]]></eval>
+    </thing>
+  <thing id="trPRUnoMet" name="Unorthodox Method" description="You trade one of your class’s available disciplines for a different discipline of your choice. You gain the new discipline’s skill as a class skill.\n\n{b}Note: This trait isn&apos;t currently implemented.{/b}" compset="Trait" uniqueness="useronce">
+    <usesource source="srcPOWEx"/>
+    <tag group="trCategory" tag="Regional"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  </document>
