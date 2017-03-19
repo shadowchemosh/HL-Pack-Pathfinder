@@ -19,33 +19,43 @@
     <tag group="wCritMult" tag="2"/>
     <tag group="EquipType" tag="Metal"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="First" priority="5000">~ Force this weapon to be Masterwork
+    <eval phase="First" priority="5000"><![CDATA[
+      ~ Force this weapon to be Masterwork &
       If (container.ishero = 0) then
         container.child[gCustMagic].field[gMasterFor].value = 1
-      Endif</eval>
+      Endif]]></eval>
     </thing>
-  <thing id="iS2ClaBlad" name="Claw Blades" description="These subtle blades can only be used by catfolk with the cat’s claws racial trait. Bought in a set of five, they fit over the wearer’s claws on one hand. The blades grant the wearer a +1 enhancement bonus on claw attack rolls with that hand and change the weapon type from a natural weapon to a light slashing weapon. Catfolk with the cat’s claws racial trait are proficient with this weapon. The claw blades can be enhanced like a masterwork weapon for the normal costs. The listed cost of the item is for one set of five claws for one hand." compset="MagicWep" buytemplate="BuyMoney" xactspecial="2">
+  <thing id="iS2ClaBlad" name="Claw Blades" description="These subtle blades can only be used by catfolk with the cat’s claws racial trait. Bought in a set of five, they fit over the wearer’s claws on one hand. The blades grant the wearer a +1 enhancement bonus on claw attack rolls with that hand and change the weapon type from a natural weapon to a light slashing weapon. Catfolk with the cat’s claws racial trait are proficient with this weapon. The claw blades can be enhanced like a masterwork weapon for the normal costs. The listed cost of the item is for one set of five claws for one hand." compset="MagicWep" buytemplate="BuyGeneral" xactspecial="2">
     <comment>Copying this item to make anything other than the weapon stats for a Claw Blade is not recommended. There are settings that cannot be changed in the editor, which will be carried along with your copy.</comment>
     <usesource source="ARG"/>
     <usesource source="srcS2Gear"/>
-    <tag group="Helper" tag="NoSelect" name="NoSelect" abbrev="NoSelect"/>
-    <tag group="Helper" tag="Shadow" name="Shadow" abbrev="Shadow"/>
-    <tag group="Helper" tag="CustomItem" name="CustomItem" abbrev="CustomItem"/>
+    <tag group="Helper" tag="NoSelect"/>
+    <tag group="Helper" tag="Shadow"/>
+    <tag group="Helper" tag="CustomItem"/>
     <tag group="Helper" tag="MatForceMs"/>
-    <tag group="Helper" tag="Helper" name="Helper" abbrev="Helper"/>
+    <tag group="Helper" tag="Helper"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="5000">call iMagWeapon
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ Setup Magic Weapon Stuff &
+      call iMagWeapon
+      ~ Remove MW cost
+      field[gCost].value += -300]]></eval>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[
+      var bonus as number
+      ~ Count number of Damage Up tags
+      bonus += hero.childfound[wClaw].tagcount[Helper.DamageUp]
 
-      field[gCost].value += -300</eval>
-    <eval phase="Render" priority="99999999" index="2"><![CDATA[
+      ~ Increase Claw Blade damage based on Claw Damage increases &
+      field[wDamage].value += bonus
+      field[wRanDamage].value += bonus]]></eval>
+    <eval phase="Render" priority="99999999" index="3"><![CDATA[
       ~ This fixes an issue with the name getting messed up because of the
       ~ bootstrap and magical powers.
-      field[livename].text &= " Claw Blades"]]></eval>
-    <eval phase="PostAttr" priority="10000" index="3">var bonus as number
-      bonus += hero.childfound[wClaw].tagcount[Helper.DamageUp]
-      ~ Increase Claw Blade damage based on Claw Damage increases
-      field[wDamage].value += bonus
-      field[wRanDamage].value += bonus</eval>
+      ~field[livename].text &= " Claw Blades"
+
+      ~ Correct the magic weapons name & text which
+      ~ is lost when any item power is added.
+      Call X1MagName]]></eval>
     <child entity="gMagWeapon">
       <tag group="Helper" tag="NoSelChild" name="NoSelChild" abbrev="NoSelChild"/>
       <bootstrap thing="wS2ClaBlad">
@@ -53,7 +63,7 @@
         </bootstrap>
       </child>
     </thing>
-  <thing id="gS2ClaBlad" name="Claw Blades" description="These subtle blades can only be used by catfolk with the cat’s claws racial trait. Bought in a set of five, they fit over the wearer’s claws on one hand. The blades grant the wearer a +1 enhancement bonus on claw attack rolls with that hand and change the weapon type from a natural weapon to a light slashing weapon. Catfolk with the cat’s claws racial trait are proficient with this weapon. The claw blades can be enhanced like a masterwork weapon for the normal costs. The listed cost of the item is for one set of five claws for one hand.\n\n{B}Note:{/b} Once purchased a Custom weapon will appear on the {b}Gear{/b} tab that will allow you to enhance by clicking on the Wrench/Hammer icon.\n\n{b}Paizo Books:{/b} Advanced Race Guide" compset="Gear">
+  <thing id="gS2ClaBlad" name="Claw Blades" description="These subtle blades can only be used by catfolk with the cat’s claws racial trait. Bought in a set of five, they fit over the wearer’s claws on one hand. The blades grant the wearer a +1 enhancement bonus on claw attack rolls with that hand and change the weapon type from a natural weapon to a light slashing weapon. Catfolk with the cat’s claws racial trait are proficient with this weapon. The claw blades can be enhanced like a masterwork weapon for the normal costs. The listed cost of the item is for one set of five claws for one hand.\n\n{B}Note:{/b} Once purchased a Custom weapon will appear on the {b}Weapon{/b} tab that will allow you to enhance by clicking on the Wrench/Hammer icon.\n\n{b}Paizo Books:{/b} Advanced Race Guide" compset="Gear">
     <fieldval field="gCost" value="305"/>
     <fieldval field="gWeight" value="2"/>
     <usesource source="srcS2Gear"/>
@@ -66,7 +76,7 @@
       </bootstrap>
     <exprreq message="Cat claws required."><![CDATA[hero.childlives[wClaw] <> 0]]></exprreq>
     </thing>
-  <thing id="iS2ArmRazo" name="Armor Razors" description="Armor razors deal extra slashing damage (see &quot;spiked armor&quot; on Table: Weapons) on a successful grapple attack. The razors count as a martial weapon. If you are not proficient with them, you take a -4 penalty on grapple checks when you try to use them. You can also make a regular melee attack (or off-hand attack) with the razors, and they count as a light weapon in this case. (You can&apos;t also make an attack with armor razors if you have already made an attack with another off-hand weapon, and vice versa.) An enhancement bonus to a suit of armor does not improve the razors&apos; effectiveness, but the razors can be made into magic weapons in their own right." compset="MagicWep" buytemplate="BuyMoney" xactspecial="2">
+  <thing id="iS2ArmRazo" name="Armor Razors" description="Armor razors deal extra slashing damage (see &quot;spiked armor&quot; on Table: Weapons) on a successful grapple attack. The razors count as a martial weapon. If you are not proficient with them, you take a -4 penalty on grapple checks when you try to use them. You can also make a regular melee attack (or off-hand attack) with the razors, and they count as a light weapon in this case. (You can&apos;t also make an attack with armor razors if you have already made an attack with another off-hand weapon, and vice versa.) An enhancement bonus to a suit of armor does not improve the razors&apos; effectiveness, but the razors can be made into magic weapons in their own right." compset="MagicWep" buytemplate="BuyGeneral" xactspecial="2">
     <comment>Copying this item to make anything other than the weapon stats for a magic weapon is not recommended. There are settings that cannot be changed in the editor, which will be carried along with your copy.</comment>
     <usesource source="srcS2Gear"/>
     <tag group="Helper" tag="CustomItem"/>
@@ -79,7 +89,7 @@
       ~ Manually call HL Gizmo setup for magic & weapons
       call iMagWeapon]]></eval>
     <eval phase="Render" priority="99999999" index="2"><![CDATA[
-      ~ Correct the armor razor's name & text which 
+      ~ Correct the armor razor's name & text which
       ~ is lost when any item power is added.
       Call X1MagName]]></eval>
     <child entity="gMagWeapon">
@@ -298,7 +308,7 @@
     <tag group="wClass" tag="OneHanded"/>
     <tag group="Helper" tag="SingleAtt"/>
     <eval phase="Final" priority="11000"><![CDATA[
-      ~ Remove any extra high tags as we can't ever 
+      ~ Remove any extra high tags as we can't ever
       ~ more than a single attack.
       perform delete[Helper.ExtraHigh]]]></eval>
     </thing>
@@ -376,8 +386,8 @@
     <tag group="User" tag="Activation"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-      ~ If not active get out now!    
-      doneif (field[abilActive].value = 0) 
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
 
       if (parent.tagis[component.BaseWep] <> 0) then
         #extradamage[parent," plus 2d6 vs. " & field[iCustSpec].text,field[thingname].text]
@@ -391,12 +401,12 @@
     <eval phase="Final" priority="50000" index="2">
       ~ Only proceed if we are a type of ammunition like arrows/bolts
       doneif (parent.tagis[wCategory.Ammunition] = 0)
-    
+
       ~ We want to always show the activation button as this is really
       ~ useful for arrows/bolts. So even if not equipped show us.
       perform delete[Helper.SpcDisable]
       perform delete[Hide.Activation]</eval>
-    <eval phase="Render" priority="10000" index="3"><![CDATA[    
+    <eval phase="Render" priority="10000" index="3"><![CDATA[
       ~ Correct set the statblock name for printing
       if (field[iCustSpec].isempty = 0) then
         field[sbName].text = lowercase(field[iCustSpec].text & "-" & field[thingname].text)
