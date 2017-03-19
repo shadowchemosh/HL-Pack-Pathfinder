@@ -676,9 +676,9 @@
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
 
-      field[abSumm].text = "Focus ranged attacks deal " & signed(field[abValue].value) & " dmg. Expend focus to do " & signed(field[abValue2].value) & "d6."
+      field[abSumm].text = "Focus ranged attacks deal " & signed(field[abValue].value) & " dmg. Expend focus to do " & signed(field[abValue2].value) & "d6" & signed(field[abValue3].value)
 
-      field[livename].text = field[name].text & " " & signed(field[abValue].value) & " / " & signed(field[abValue2].value) & "d6"]]></eval>
+      field[livename].text = field[name].text & " " & signed(field[abValue].value) & " / " & signed(field[abValue2].value) & "d6" & signed(field[abValue3].value)]]></eval>
     <eval phase="PostAttr" priority="10000" index="2"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
@@ -1402,8 +1402,12 @@ validif (hero.tagcount[Hero.Manifester] >= 3)]]></validate>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Psionic"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostLevel" priority="1000">hero.childfound[cfgPUAstSu].field[cfgLeft2].value += 1
-hero.childfound[cfgPUAstSu].field[cfgMax2].value += 1</eval>
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~hero.childfound[cfgPUAstSu].field[cfgLeft2].value += 1
+      hero.childfound[cfgPUAstSu].field[cfgMax2].value += 1]]></eval>
     <exprreq message="Astral Suit class feature required."><![CDATA[#hasability[cPUAstSuit] <> 0]]></exprreq>
     </thing>
   <thing id="fPUExDisTy" name="Extra Disruption Type" description="You can have more active creature types with your disrupt pattern.\n\n{b}Prerequisite:{/b} Disrupt pattern class feature.\n\n{b}Benefit:{/b} When you gain psionic focus, you can select one additional creature type as your active type." compset="Feat" summary="When you gain psionic focus, you can select one additional creature type as your active type." uniqueness="useronce">
@@ -2699,8 +2703,10 @@ validif (hero.tagcount[Hero.Manifester] >= 3)]]></validate>
       </prereq>
     </thing>
   <thing id="fPUExMaPwr" name="Expanded Martial Power" description="You are able to use a wider selection of powers while making attacks.\n\n{b}Prerequisites:{/b} Martial power class feature\n\n{b}Benefit:{/b} To use this feat, you must expend your psionic focus. When using the martial power ability, you can manifest any power you know, provided it is at least one lever lower than the highest level power you can manifest.\n\n{b}Normal:{/b} When using martial power, you may only manifest path powers.\n\n{b}Special:{/b} You may still manifest path powers with martial power without expending psionic focus." compset="Feat" uniqueness="useronce">
-    <tag group="Helper" tag="ShowSpec"/>
+    <usesource source="pPsiUn"/>
     <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <exprreq message="Martial power class feature required."><![CDATA[#hasability[cPWaMarPow] <> 0]]></exprreq>
     </thing>
   <thing id="fPUExpaCol" name="Expansive Collective" description="The power of your collective is unaffected by your other dabblings.\n\n{b}Prerequisites:{/b} Collective class feature, spirit of many class feature\n\n{b}Benefit:{/b} When calculating the range and number of creatures which may be joined to your collective, use your total Hit Dice instead of your class level" compset="Feat" uniqueness="useronce">

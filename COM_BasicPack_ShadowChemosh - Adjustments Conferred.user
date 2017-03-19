@@ -580,7 +580,7 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="abS2SplCom"></bootstrap>
     </thing>
-  <thing id="abS2SplCom" name="Spell Combat" description="At 1st level, a magus learns to cast spells and wield his weapons at the same time. This functions much like two-weapon fighting, but the off-hand weapon is a spell that is being cast. To use this ability, the magus must have one hand free (even if the spell being cast does not have somatic components), while wielding a light or one-handed melee weapon in the other hand. As a full-round action, he can make all of his attacks with his melee weapon at a -2 penalty and can also cast any spell from the magus spell list with a casting time of 1 standard action (any attack roll made as part of this spell also takes this penalty). If he casts this spell defensively, he can decide to take an additional penalty on his attack rolls, up to his Intelligence bonus, and add the same amount as a circumstance bonus on his concentration check. If the check fails, the spell is wasted, but the attacks still take the penalty. A magus can choose to cast the spell first or make the weapon attacks first, but if he has more than one attack, he cannot cast the spell between weapon attacks.\n\nAt 8th level, the magus&apos;s ability to cast spells and make melee attacks improves. When using the spell combat ability, the magus receives a +2 circumstance bonus on concentration checks, in addition to any bonus granted by taking an additional penalty on the attack roll.\n\nAt 14th level, the magus gains the ability to seamlessly cast spells and make melee attacks. Whenever he uses the spell combat ability, his concentration check bonus equals double the amount of the attack penalty taken.\n\n{b}Note:{/b} Use the counter to set the penalty to your attack roll you are taking." compset="Ability">
+  <thing id="abS2SplCom" name="Spell Combat" description="At 1st level, a magus learns to cast spells and wield his weapons at the same time. This functions much like two-weapon fighting, but the off-hand weapon is a spell that is being cast. To use this ability, the magus must have one hand free (even if the spell being cast does not have somatic components), while wielding a light or one-handed melee weapon in the other hand. As a full-round action, he can make all of his attacks with his melee weapon at a -2 penalty and can also cast any spell from the magus spell list with a casting time of 1 standard action (any attack roll made as part of this spell also takes this penalty). If he casts this spell defensively, he can decide to take an additional penalty on his attack rolls, up to his Intelligence bonus, and add the same amount as a circumstance bonus on his concentration check. If the check fails, the spell is wasted, but the attacks still take the penalty. A magus can choose to cast the spell first or make the weapon attacks first, but if he has more than one attack, he cannot cast the spell between weapon attacks.\n\nAt 8th level, the magus&apos;s ability to cast spells and make melee attacks improves. When using the spell combat ability, the magus receives a +2 circumstance bonus on concentration checks, in addition to any bonus granted by taking an additional penalty on the attack roll.\n\nAt 14th level, the magus gains the ability to seamlessly cast spells and make melee attacks. Whenever he uses the spell combat ability, his concentration check bonus equals double the amount of the attack penalty taken.\n\n{b}Note:{/b} This ability is meant to work with a one-handed weapon and &quot;Touch Attack&quot; or &quot;Ranged Touch Attack&quot; weapon as your off-hand. These touch attack weapons are added on the &quot;Weapons&quot; tab. In addition another adjustment called &quot;Touch Attack, Damage&quot; can be used to change the touch attack weapons damage from &quot;As Spell&quot; to whatever you wish. This is very helpful for those on the iPad that wish to roll the damage.\n\n{b}Counter:{/b} Use the counter to set any additional penalty to your attack roll you are taking which will apply a bonus to your concentration check." compset="Ability">
     <fieldval field="actUserMin" value="-20"/>
     <fieldval field="actUserMax" value="0"/>
     <fieldval field="actName" value="Activate"/>
@@ -622,7 +622,7 @@
         ~ Double the penalty bonus
         hero.childfound[cHelpMag].field[cConcCheck].value += field[actUser].value * -1
       Endif]]></eval>
-    <eval phase="PostAttr" priority="10000" index="3"><![CDATA[
+    <eval phase="PostAttr" priority="9000" index="3"><![CDATA[
       ~ Make sure we don't have two-weapon fighting already
       doneif (hero.tagis[Hero.TwoWep] = 1)
 
@@ -639,15 +639,20 @@
       ~ If not duel wielding with a touch attack weapon then get out!
       doneif (Hands + Touch <> 2)
 
+      ~ Remove the Off-Hand tag so that Dervish Dance works.
+      ~ Spellcombat with a "Spell" is not an off-hand weapon.
+      perform hero.delete[Hero.EquipOff]
+
       ~ Make us act like we have two-weapon fighting
       foreach pick in hero from BaseWep where "Hero.MainHand | Hero.OffHand"
-         If (eachpick.tagis[Hero.MainHand] <> 0) Then
-             eachpick.field[wAttMelee].value += 2
-         Endif
-         If (eachpick.tagis[Hero.OffHand] <> 0) Then
-             eachpick.field[wAttMelee].value += 6
-             eachpick.field[wAttRanged].value += 6
-         Endif
+        ~ Add the Fake Two-Weapon fighting tag to the main hand weapon
+        ~ and the off-hand Touch Attack weapon.
+        If (eachpick.tagis[Hero.MainHand] <> 0) Then
+          perform eachpick.assign[Helper.FakeTwoWep]
+        Endif
+        If (eachpick.tagexpr[Hero.OffHand & PackHelper.Touch] <> 0) Then
+          perform eachpick.assign[Helper.FakeTwoWep]
+       Endif
       nexteach]]></eval>
     <eval phase="First" index="4"><![CDATA[
       ~ If we're in output mode hide so that two Ability

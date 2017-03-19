@@ -9,7 +9,7 @@
     </fileinfo>
   <thing id="mechS2PU" name="Ultimate Psionics Mechanic" compset="Mechanics">
     <usesource source="pPsiUn"/>
-    <tag group="wRangeInc"  tag="15" name="15"/>
+    <tag group="wRangeInc"  tag="15"          name="15"/>
     <tag group="psiClass"   tag="PUVitMetGu"  name="Vitalist Method - Guardian"/>
     <tag group="psiClass"   tag="PUVitMetMe"  name="Vitalist Method - Mender"/>
     <tag group="psiClass"   tag="PUVitMetSo"  name="Vitalist Method - Soulthief"/>
@@ -23,6 +23,9 @@
     <tag group="wGroup"     tag="cSknMindBl"  name="Soulknife Mind Blade"/>
     <bootstrap thing="PUPathSk"></bootstrap>
     <bootstrap thing="PUClassFnd"></bootstrap>
+    <bootstrap thing="PU0lvlPowe"></bootstrap>
+    <bootstrap thing="PUFreePowr"></bootstrap>
+
     <bootstrap thing="zPUArtiste"></bootstrap>
     <bootstrap thing="zPUBully"></bootstrap>
     <bootstrap thing="zPUFocused"></bootstrap>
@@ -37,7 +40,18 @@
     <bootstrap thing="zPUSingleM"></bootstrap>
     <bootstrap thing="zPUSneaky"></bootstrap>
     <bootstrap thing="zPUSympath"></bootstrap>
-    <bootstrap thing="PU0lvlPowe"></bootstrap>
+
+    <bootstrap thing="fcPUHumAeg"></bootstrap>
+    <bootstrap thing="fcPUHumCry"></bootstrap>
+    <bootstrap thing="fcPUHumDrd"></bootstrap>
+    <bootstrap thing="fcPUHumMar"></bootstrap>
+    <bootstrap thing="fcPUHumPsi"></bootstrap>
+    <bootstrap thing="fcPUHumPsW"></bootstrap>
+    <bootstrap thing="fcPUHumSlk"></bootstrap>
+    <bootstrap thing="fcPUHumTac"></bootstrap>
+    <bootstrap thing="fcPUHumVit"></bootstrap>
+    <bootstrap thing="fcPUHumWld"></bootstrap>
+
     </thing>
   <thing id="arHdPUPsi" name="Psion" compset="ClassVary" uniqueness="unique" isshowonly="yes">
     <comment><![CDATA[This is a helper object for the "Psion" class header.]]></comment>
@@ -82,20 +96,52 @@
   <thing id="minHdPUPsc" name="Psicrystals" compset="Minion" isshowonly="yes">
     <tag group="gType" tag="PUPsicrsta" name="Psicrystals"/>
     </thing>
-  <thing id="PU0lvlPowe" name="Zero Level Powers" description="This makes all zero level powers cost no power points when Psi-Focused." compset="Simple" uniqueness="unique">
+
+  <thing id="PU0lvlPowe" name="Zero Level Powers"
+    description="This makes all zero level powers cost no power points when Psi-Focused."
+    compset="Simple" uniqueness="unique">
     <usesource source="pPsiUn"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
       ~ If not Psi Focused get out now
       doneif (hero.tagis[Hero.PsiFocus] <> 1)
-      
+
       ~ Find all zero level powers/talents and make cost 0 PP
       foreach pick in hero from BasePower where "sLevel.0 & Helper.Secondary"
         eachpick.field[psiCost].value = 0
       nexteach]]></eval>
     </thing>
+
+  <thing id="PUFreePowr" name="Don't Count Some Powers"
+    description="Pathfinder 13.12 caused bootstrapped powers that are suppose to be free to be counted against a classes total powers/talents known. This"
+    compset="Simple" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Find all free powers/talents and make them not
+      ~ count against a classes total.
+      foreach pick in hero from BasePower where "PackHelper.FreePower"
+        perform hero.findchild[BaseClHelp,eachpick.tagids[SpellType.?]].setfocus
+
+        ~ If no class found get next power
+        if (state.isfocus <> 0) then
+
+          ~ lower count by 1 for a Talent or Power
+          if (eachpick.tagis[Helper.Secondary] = 1) then
+            focus.field[cPsiSPowCu].value += -1
+          else
+            focus.field[cPsiPowCur].value += -1
+          endif
+
+          ~ Clear class pointer
+          perform state.clearfocus
+        endif
+      nexteach
+      ]]></eval>
+    </thing>
+
+
   <thing id="PUPathSk" name="Path Skills Setup" description="This puts the PathSkill.? tags on skills." compset="Simple" uniqueness="unique">
     <usesource source="pPsiUn"/>
-    <eval phase="First" priority="50"><![CDATA[ 
+    <eval phase="First" priority="50"><![CDATA[
       ~ Find all skills on the character and make a new "PathSkill" tag on each one
       foreach pick in hero from BaseSkill
         perform eachpick.pulltags[ClassSkill.?,PathSkill]
@@ -105,11 +151,11 @@
     </thing>
   <thing id="PUClassFnd" name="Psionic Class Found" description="This checks to see if a psionic class has been selected and if found sets the tag Psionics.Class on the hero very early." compset="Simple" uniqueness="unique">
     <usesource source="pPsiUn"/>
-    <eval phase="First"><![CDATA[   
+    <eval phase="First"><![CDATA[
       var psiLevel as number
       var iX       as number
       ~ Find each Psionic Based class and set a Psionics.Class tag on the hero.
-      ~ This lets us know we have taken a Psionic Class. This is needed for 
+      ~ This lets us know we have taken a Psionic Class. This is needed for
       ~ several different bootstrap conditions that need to check very early.
       foreach pick in hero from BaseClHelp
         ~ If we have a psionic attribute then we have to assume we are a psionic class
@@ -125,7 +171,7 @@
 
       ~ Total up Soulknife levels as Psionic levels
       psiLevel += hero.childfound[cHelpSkn].field[cTotalLev].value
-      
+
       ~ Assign the correct number of Psionics.Class tags to the hero
       while (iX < psiLevel)
         iX += 1
@@ -277,7 +323,7 @@
         field[abValue2].value += 2 + iX
         iX += 1
       loop
-      
+
       ~ Increase the Power Point resource
       #resmax[resPowerPt] += field[abValue2].value]]></eval>
     </thing>
