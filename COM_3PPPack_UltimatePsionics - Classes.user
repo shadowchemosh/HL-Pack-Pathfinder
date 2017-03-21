@@ -6048,6 +6048,21 @@ Call PsyWarTrMa</eval>
       <containerreq phase="First" priority="500"><![CDATA[count:Custom.CStyleFin >= 1]]></containerreq>
       <autotag group="ClSpecWhen" tag="3"/>
       </bootstrap>
+    <bootstrap thing="cPUEvArrow">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPUEvArrow">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cPUEvArrow">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cPUEvArrow">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPUEvArrow">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
     <link linkage="psiattr" thing="aWIS"/>
     <eval phase="PreLevel" priority="5000" index="4"><![CDATA[~ Fill in the Tag for a Buckler Here
 foreach pick in hero from BaseArmor where "ShldClass.Buckler"
@@ -10960,12 +10975,9 @@ field[cfgMax1].value = hero.childfound[cPUAegHelp].field[abValue2].value</eval>
     </thing>
   <thing id="cPUIntim" name="Intimidate" description="Beginning at 2nd level, an aberrant gains a +1 bonus to Intimidate checks. At 6th level and every four levels thereafter, this bonus increases by 1. This ability replaces craftsman." compset="ClSpecial">
     <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
-    <tag group="SpecType" tag="DR" name="Damage Reduction" abbrev="Damage Reduction"/>
     <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
     <tag group="ChooseSrc1" tag="Hero"/>
-    <bootstrap thing="xDamRd">
-      <autotag group="SpecSource" tag="cHelpBbn"/>
-      </bootstrap>
+    <tag group="SpecType" tag="Skill"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[field[listname].text = "Intimidate (" & signed(field[xIndex].value) & ")"
 
 ~ If we're not shown, just get out now
@@ -16268,5 +16280,115 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
   <thing id="cPUIssuOrd" name="Issue Order" description="A commander of 4th level can, as a swift action, direct one member of his collective to take an action that requires either a standard or move action. On that member’s next turn, they must perform that command unless they make a successful Will saving throw at the same DC as that of the commander’s Unwilling Participant* DC. This ability replaces the strategy normally gained at 4th level, but functions like a strategy, including using the same pool of 3 + the tactican’s Charisma modifier limited uses per day." compset="ClSpecial" summary="As a swift action, direct 1 member your collective to take an action.">
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="arPUShrd" name="Shroud" description="The best hunter is one who is not seen before taking down her prey. The shroud is just such a hunter, using her psionic prowess to hide from view and track silently." compset="ClassVary" uniqueness="unique">
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AbReplace" tag="cPUMrkWnd"/>
+    <tag group="AbReplace" tag="cPUDisenga"/>
+    <tag group="AbReplace" tag="cPUDefShot"/>
+    <tag group="AbReplace" tag="cPUEvArrow"/>
+    <bootstrap thing="cPUHidHunt">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cPUHidHunt">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cPUHidHunt">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPUHidHunt">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cPUShHideP">
+      <autotag group="ClSpecWhen" tag="7"/>
+      </bootstrap>
+    <bootstrap thing="cPUShUnAss">
+      <autotag group="ClSpecWhen" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="cPUUnseen">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUHidHunt">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpPU3"/>
+    </thing>
+  <thing id="cPUUnseen" name="Unseen" description="A shroud can use her heightened awareness of her surroundings and psionic energy to read the environment and blend in so as to be undetectable. While maintaining psionic focus, she can spend a swift action to become invisible for a umber of rounds equal to her Wisdom modifier. The invisibility ends as soon as the shroud attacks a creature. She can use this ability a number of times per day equal to 3 + her class level. This ability replaces wind reader." compset="ClSpecial">
+    <fieldval field="abRange" value="Personal"/>
+    <fieldval field="actName" value="Unseen"/>
+    <usesource source="pDscar"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abDuration" tag="Round"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="abAction" tag="Swift"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpInfo" tag="spInvisib2"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ChargeCalc" tag="AttrUses3"/>
+    <tag group="ChargeAttr" tag="aWIS"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+~ Duration is equal to the Wisdom modifier in rounds
+~ If Not psionically focused get out now
+      var v_focus as number
+      call PUPsiFocus
+        doneif (v_focus <> 1)
+      field[abDuration].value += #attrbonus[aWIS]]]></eval>
+    </thing>
+  <thing id="cPUHidHunt" name="Hidden Hunter" description="Starting at 2nd level, the shroud gains a bonus +1 bonus to Stealth skill checks. At 6th level and every 4 levels thereafter, this bonus increases by 1. This ability replaces evade arrows." compset="ClSpecial">
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[field[listname].text = "Hidden Hunter (" & signed(field[xIndex].value) & ")"
+
+~ If we're not shown, just get out now
+doneif (tagis[Helper.ShowSpec] = 0)
+
+field[abValue].value += field[xCount].value
+field[CustDesc].text = "+" & field[abValue].value & " bonus to Stealth checks."
+
+hero.childfound[skStealth].field[Bonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cPUShHideP" name="Hide in Plain Sight" description="At 7th level or higher, the shroud can use the Stealth skill even when being observed by expending her psionic focus when making her Stealth skill check.  This ability replaces disengage." compset="ClSpecial" summary="As long as you maintain psionic focus, you can use the Stealth skill to hide, even while being observed.">
+    <tag group="abAction" tag="PUManFocus"/>
+    </thing>
+  <thing id="cPUShUnAss" name="Unseen Assault" description="Starting at 13th level, when the shroud uses her unseen ability, the effect does not end when she attacks a creature. This ability replaces defensive shot." compset="ClSpecial">
+    <fieldval field="abRange" value="Personal"/>
+    <fieldval field="actName" value="Unseen"/>
+    <usesource source="pDscar"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abDuration" tag="Round"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="abAction" tag="Swift"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ChargeCalc" tag="AttrUses3"/>
+    <tag group="ChargeAttr" tag="aWIS"/>
+    <tag group="DescInfo" tag="cPUUnseen"/>
+    <tag group="SpInfo" tag="spInviGre4"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+~ Duration is equal to the Wisdom modifier in rounds
+~ If Not psionically focused get out now
+      var v_focus as number
+      call PUPsiFocus
+        doneif (v_focus <> 1)
+      field[abDuration].value += #attrbonus[aWIS]]]></eval>
+    </thing>
+  <thing id="cPUEvArrow" name="Evade Arrows" description="At 2nd level, a marksman’s familiarity with ranged attacks and her natural intuition alerts her to danger from mundane ranged attacks. She gains a +1 Dodge bonus to Armor Class against ranged attacks (but not ranged touch attacks). At 6th level and every four marksman levels thereafter, this Dodge bonus increases by 1." compset="ClSpecial">
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[field[listname].text = "Evade Arrows (" & signed(field[xIndex].value) & ")"
+
+~ If we're not shown, just get out now
+doneif (tagis[Helper.ShowSpec] = 0)
+
+field[abValue].value += field[xCount].value
+#situational[hero.childfound[ArmorClass],signed(field[abValue].value) & " Dodge bonus to Ranged Attacks.",field[thingname].text]]]></eval>
     </thing>
   </document>
