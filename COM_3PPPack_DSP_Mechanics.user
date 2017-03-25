@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <thing id="mechHPGiBl" name="High Psionics Gifted Blade Mechanic" compset="Mechanics">
+    <usesource source="pPsiHPGB"/>
+    <tag group="Custom" tag="PsiHPGiBl" name="The user&apos;s enabled the free Gifted Blade option and has soulknife levels."/>
+    <bootstrap thing="arPUGiftBl">
+      <containerreq phase="GlobalTest" priority="10050">Custom.PsiHPGiBl</containerreq>
+      </bootstrap>
+    <eval phase="First" priority="10000" index="2"><![CDATA[~ For this rules variant, Gifted Blade is "free"
+~ That is to say, it doesn't replace anything
+perform hero.childfound[arPUGiftBl].delete[AbReplace.cSknPsyStr]
+
+~ We change the name to make it clear this variant is in use
+hero.childfound[arPUGiftBl].field[livename].text = "High Psionics Gifted Blade"]]></eval>
+    <eval phase="GlobalTest" priority="10000"><![CDATA[~ If Soulknife found then apply tag, which triggers archetype bootstrap
+doneif (hero.haschild[BaseClHelp, "thingid.cHelpSkn"] = 0)
+perform hero.assign[Custom.PsiHPGiBl]]]></eval>
+    </thing>
+  </document>
