@@ -1098,23 +1098,27 @@ doneif (hero.tagis[Subtype.stS2Symbio] <> 0)
   <thing id="raS2SKdolg" name="Skills, Dolgaunt" description="A dolgaunt gains a +4 racial bonus on Acrobatics and Climb checks, because its tentacles and the tendrils on its skin help it find purchase on almost any surface." compset="RaceSpec" summary="+4 racial bonus on Acrobatics and Climb checks.">
     <tag group="SpecType" tag="Skill"/>
     <tag group="AbilType" tag="Extra"/>
-    <eval phase="PreLevel" priority="10000">#skillbonus[skAcrobat] += 4
-#skillbonus[skClimb] += 4</eval>
+    <eval phase="PreLevel" priority="10000">
+     ~ Give racial bonus
+     #racialbonus[skAcrobat] += 4
+     #racialbonus[skClimb] += 4</eval>
     </thing>
   <thing id="raS2DuCons" name="Dual Consciousness" description="A dolgrim has two brains coordinating its attacks. In addition to providing a +2 bonus on Will saves, the dual brain enables a dolgrim to make attacks with one off-hand weapon at no penalty." compset="RaceSpec" summary="+2 on Will saves and no off-hand weapon penalties.">
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecType" tag="Defense"/>
-    <eval phase="PreLevel" priority="10000">~ +2 bonus to will saves
-hero.child[svWill].field[Bonus].value += 2
-~ No off-hand penalties
-perform hero.assign[Hero.TwoWepSup]</eval>
+    <eval phase="PreLevel" priority="10000">
+      ~ +2 bonus to will saves
+      hero.child[svWill].field[Bonus].value += 2
+      ~ No off-hand penalties
+      perform hero.assign[Hero.TwoWepSup]</eval>
     </thing>
   <thing id="raS2SKgrim" name="Skills, Dolgrim" description="A dolgrim&apos;s additional arms grant it a +4 racial bonus on Climb checks and grapple checks." compset="RaceSpec" summary="+4 racial bonus on Climb checks and grapple checks.">
     <tag group="SpecType" tag="Skill"/>
     <tag group="AbilType" tag="Extra"/>
-    <eval phase="PreLevel" priority="10000">#skillbonus[skClimb] += 4
-hero.child[manGrapple].field[manBonus].value += 4</eval>
+    <eval phase="PreLevel" priority="10000">
+      #racialbonus[skClimb] += 4
+      hero.child[manGrapple].field[Racial].value += 4</eval>
     </thing>
   <thing id="rS2Dolgrim" name="Dolgrim" description="The dolgrims are a lesser warrior race created by the daelkyr during their invasion of Khorvaire. A dolgrim is essentially two goblins crushed into one creature. The average dolgrim stands 3 1/2 feet tall and weighs 55 pounds - heavier than a goblin of similar size due to the musculature that supports the upper arms. The skin of a dolgrim is oily and white, but warriors often tattoo their skin with garish colors or disturbing images. A dolgrim may tattoo additional faces on its body each time it slays an opponent, in the belief that doing this traps the soul and energy of the fallen foe. Dolgrims typically wear dark leather and drab gray clothes." compset="Race">
     <fieldval field="rSTR" value="5"/>
@@ -1249,7 +1253,8 @@ hero.child[manGrapple].field[manBonus].value += 4</eval>
   <thing id="raS2SKdhag" name="Skills, Dusk Hags" description="Dusk hags are keenly perceptive and gain a +4 racial bonus on Sense Motive checks." compset="RaceSpec" summary="+4 racial bonus on Sense Motive checks.">
     <tag group="SpecType" tag="Skill"/>
     <tag group="AbilType" tag="Extra"/>
-    <eval phase="PreLevel" priority="10000">#skillbonus[skSenseMot] += 4</eval>
+    <eval phase="PreLevel" priority="10000">
+      #racialbonus[skSenseMot] += 4</eval>
     </thing>
   <thing id="rS2HomDeWr" name="Homunculus, Dedicated Wright" compset="Race">
     <fieldval field="rHitDice" value="1"/>
@@ -1487,19 +1492,22 @@ field[abSumm].text = "Your primary natural attacks do +" & field[abValue].value 
     <tag group="HasType" tag="tpHumanoid"/>
     <tag group="Language" tag="lDraconic"/>
     <tag group="Language" tag="lS2Riedran"/>
-    <bootstrap thing="stHuman"></bootstrap>
+    <tag group="ClassSkill" tag="skKnowPlan"/>
     <bootstrap thing="lS2Quor"></bootstrap>
     <bootstrap thing="raS2SKemVe"></bootstrap>
     <bootstrap thing="raS2NatPsi"></bootstrap>
     <bootstrap thing="raHuFeat"></bootstrap>
     <bootstrap thing="raHuSkill"></bootstrap>
+    <bootstrap thing="stHuman"></bootstrap>
     </thing>
-  <thing id="raS2SKemVe" name="Skills, Empty Vessels" description="+2 racial bonus on Bluff, Diplomacy, and Intimidate checks. Empty vessels are masters of social interaction, infl uencing others through their commanding presence and subtle psychic powers." compset="RaceSpec" summary="+2 racial bonus on Bluff, Diplomacy, and Intimidate checks.">
+  <thing id="raS2SKemVe" name="Skills, Empty Vessels" description="+2 racial bonus on Bluff, Diplomacy, and Intimidate checks. Empty vessels are masters of social interaction, influencing others through their commanding presence and subtle psychic powers." compset="RaceSpec" summary="+2 racial bonus on Bluff, Diplomacy, and Intimidate checks.">
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecType" tag="Skill"/>
-    <eval phase="PreLevel" priority="10000">#skillbonus[skBluff] += 2
-#skillbonus[skDiplo] += 2
-#skillbonus[skIntim] += 2</eval>
+    <eval phase="PreLevel" priority="10000">
+      ~ Give racial bonus to skills
+      #racialbonus[skBluff] += 2
+      #racialbonus[skDiplo] += 2
+      #racialbonus[skIntim] += 2</eval>
     </thing>
   <thing id="rS2KarSkel" name="Skeleton, Karrnathi" compset="Race">
     <fieldval field="rHitDice" value="3"/>
@@ -1981,18 +1989,20 @@ doneif (state.isfocus = 0)
     <bootstrap thing="fMultiAtt">
       <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
-    <eval phase="PreLevel" priority="4000">#skillinnate[skBluff]    += 6
-#skillinnate[skDiplo]    += 6
-#skillinnate[skIntim]    += 6
-#skillinnate[skKnowPlan] += 6
-#skillinnate[skPercep]   += 6
-#skillinnate[skSenseMot] += 6
-#skillinnate[skStealth]  += 6</eval>
+    <eval phase="PreLevel" priority="4000">
+      #skillinnate[skBluff]    += 6
+      #skillinnate[skDiplo]    += 6
+      #skillinnate[skIntim]    += 6
+      #skillinnate[skKnowPlan] += 6
+      #skillinnate[skPercep]   += 6
+      #skillinnate[skSenseMot] += 6
+      #skillinnate[skStealth]  += 6</eval>
     </thing>
   <thing id="raS2SKquTs" name="Skills, Tsucora Quori" description="A tsucora has dozens of eyes scattered around its body, and very little escapes its notice. A tsucora gains a +4 racial bonus on Perception checks." compset="RaceSpec" summary="+4 racial bonus on Perception checks.">
     <tag group="SpecType" tag="Skill"/>
     <tag group="AbilType" tag="Extra"/>
-    <eval phase="PreLevel" priority="10000">#skillbonus[skPercep] += 4</eval>
+    <eval phase="PreLevel" priority="10000">
+      #racialbonus[skPercep] += 4</eval>
     </thing>
   <thing id="raS2TerrSt" name="Terrifying Sting" description="A tsucora quori&apos;s stinger conjures up the worst fears of any creature it strikes. The effects of the stinger are identical to a {i}phantasmal killer{/i} spell. On a successful sting attack, the victim must make a Will save. If the Will save succeeds, the victim overcomes her fear and suffers no additional effect. If the Will save fails, the victim must succeed on a Fortitude save or die of fright. Even if the Fortitude save succeeds, the victim still takes 3d6 points of damage. This is a mindaffecting fear effect. The saving throw DC is Charisma based. When it slays a victim with this attack, a tsucora immediately heals 3d6 points of damage as it draws energy from the terror of its slain opponent." compset="RaceSpec">
     <tag group="Helper" tag="ShowSpec"/>
@@ -2019,18 +2029,19 @@ nexteach]]></eval>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="ShowSpec"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-#skillbonus[skBluff] += 4
-#skillbonus[skDisguise] += 4
+      #racialbonus[skBluff] += 4
+      #racialbonus[skDisguise] += 4
 
-~ If change shape +10 to disguise
-If (field[abilActive].value <> 0) Then
-   #skillbonus[skDisguise] += 10
-Endif
-~ If reading a mind +4 to Bluff and Disguise
-If (field[abilAct2].value <> 0) Then
-   #skillbonus[skDisguise] += 4
-   #skillbonus[skBluff]    += 4
-Endif]]></eval>
+      ~ If change shape +10 to disguise
+      If (field[abilActive].value <> 0) Then
+         hero.childfound[skDisguise].field[ModCirc].value += 10
+      Endif
+
+      ~ If reading a mind +4 to Bluff and Disguise
+      If (field[abilAct2].value <> 0) Then
+         #racialbonus[skDisguise] += 4
+         #racialbonus[skBluff]    += 4
+      Endif]]></eval>
     </thing>
   <thing id="rS2RakZaky" name="Rakshasa, Zakya" description="The rakshasa described in the {i}Monster Manual{/i} is but one variety of a fi endish race that dominated Eberron for hundreds of thousands of years in ancient times. Spawned from the blood of Khyber, the Dragon Below, the rakshasa race includes not only the sorcerers of the {i}Monster Manual{/i} and the nearly divine rajahs imprisoned by the couatls at the end of the Age of Demons, but also a race of warriors, the zakyas.{br}{br}A zakya can twist its backwards hands, enabling it to wield weapons normally. Like other rakshasas, a zakya is about the same height and weight as a human." compset="Race">
     <fieldval field="rHitDice" value="7"/>
