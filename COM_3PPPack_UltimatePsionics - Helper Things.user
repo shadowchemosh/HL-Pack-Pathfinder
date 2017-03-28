@@ -8,7 +8,7 @@
     -Changed PUPathSk to not use any string processing logic.</info_history>
     </fileinfo>
   <thing id="mechS2PU" name="Ultimate Psionics Mechanic" compset="Mechanics">
-    <usesource source="pPsiUn"/>
+    <usesource source="pPsionics"/>
     <tag group="wRangeInc"  tag="15"          name="15"/>
     <tag group="psiClass"   tag="PUVitMetGu"  name="Vitalist Method - Guardian"/>
     <tag group="psiClass"   tag="PUVitMetMe"  name="Vitalist Method - Mender"/>
@@ -21,10 +21,13 @@
     <tag group="abCategory" tag="PUBladeSk"   name="Soulknife Blade Skill" abbrev="Blade Skill"/>
     <tag group="abAction"   tag="PUManFocus"  name="Maintain Psionic Focus"/>
     <tag group="wGroup"     tag="cSknMindBl"  name="Soulknife Mind Blade"/>
+    <tag group="abCategory" tag="PUPsiDisc"   name="Psion Discipline" abbrev="Discipline"/>
+
     <bootstrap thing="PUPathSk"></bootstrap>
     <bootstrap thing="PUClassFnd"></bootstrap>
     <bootstrap thing="PU0lvlPowe"></bootstrap>
     <bootstrap thing="PUFreePowr"></bootstrap>
+    <bootstrap thing="PUGiftBlad"></bootstrap>
 
     <bootstrap thing="zPUArtiste"></bootstrap>
     <bootstrap thing="zPUBully"></bootstrap>
@@ -51,50 +54,26 @@
     <bootstrap thing="fcPUHumTac"></bootstrap>
     <bootstrap thing="fcPUHumVit"></bootstrap>
     <bootstrap thing="fcPUHumWld"></bootstrap>
+    </thing>
 
-    </thing>
-  <thing id="arHdPUPsi" name="Psion" compset="ClassVary" uniqueness="unique" isshowonly="yes">
-    <comment><![CDATA[This is a helper object for the "Psion" class header.]]></comment>
-    <link linkage="varies" thing="cHelpPsi"/>
-    </thing>
-  <thing id="arHdPUPWa" name="Psychic Warrior" compset="ClassVary" uniqueness="unique" isshowonly="yes">
-    <comment><![CDATA[This is a helper object for the "Psychic Warrior" class header.]]></comment>
-    <link linkage="varies" thing="cHelpPWa"/>
-    </thing>
-  <thing id="arHdPUSkn" name="Soulknife" compset="ClassVary" uniqueness="unique" isshowonly="yes">
-    <comment><![CDATA[This is a helper object for the "Soulknife" class header.]]></comment>
-    <link linkage="varies" thing="cHelpSkn"/>
-    </thing>
-  <thing id="arHdPUWld" name="Wilder" compset="ClassVary" uniqueness="unique" isshowonly="yes">
-    <comment><![CDATA[This is a helper object for the "Wilder" class header.]]></comment>
-    <link linkage="varies" thing="cHelpWld"/>
-    </thing>
-  <thing id="arHdPUAeg" name="Aegis" compset="ClassVary" uniqueness="unique" isshowonly="yes">
-    <comment><![CDATA[This is a helper object for the "Aegis" class header.]]></comment>
-    <link linkage="varies" thing="cHelpPU0"/>
-    </thing>
-  <thing id="arHdPUCry" name="Cryptic" compset="ClassVary" uniqueness="unique" isshowonly="yes">
-    <comment><![CDATA[This is a helper object for the "Cryptic" class header.]]></comment>
-    <link linkage="varies" thing="cHelpPU1"/>
-    </thing>
-  <thing id="arHdPUDrd" name="Dread" compset="ClassVary" uniqueness="unique" isshowonly="yes">
-    <comment><![CDATA[This is a helper object for the "Dread" class header.]]></comment>
-    <link linkage="varies" thing="cHelpPU2"/>
-    </thing>
-  <thing id="arHdPUMrk" name="Marksman" compset="ClassVary" uniqueness="unique" isshowonly="yes">
-    <comment><![CDATA[This is a helper object for the "Marksman" class header.]]></comment>
-    <link linkage="varies" thing="cHelpPU3"/>
-    </thing>
-  <thing id="arHdPUTac" name="Tactician" compset="ClassVary" uniqueness="unique" isshowonly="yes">
-    <comment><![CDATA[This is a helper object for the "Tactician" class header.]]></comment>
-    <link linkage="varies" thing="cHelpPU4"/>
-    </thing>
-  <thing id="arHdPUVit" name="Vitalist" compset="ClassVary" uniqueness="unique" isshowonly="yes">
-    <comment><![CDATA[This is a helper object for the "Vitalist" class header.]]></comment>
-    <link linkage="varies" thing="cHelpPU5"/>
-    </thing>
-  <thing id="minHdPUPsc" name="Psicrystals" compset="Minion" isshowonly="yes">
-    <tag group="gType" tag="PUPsicrsta" name="Psicrystals"/>
+  <thing id="PUGiftBlad" name="High Psionics Gifted Blade" compset="Simple">
+    <usesource source="srcGiftBla"/>
+    <bootstrap thing="arPUGiftBl">
+      <containerreq phase="GlobalTest" priority="10050">HighPsi.GiftBlade</containerreq>
+      </bootstrap>
+
+    <eval phase="GlobalTest" priority="10000"><![CDATA[
+      ~ If Soulknife found then apply tag, which triggers archetype bootstrap
+      doneif (hero.haschild[BaseClHelp, "thingid.cHelpSkn"] = 0)
+      perform hero.assign[HighPsi.GiftBlade]]]></eval>
+
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ For this rules variant, Gifted Blade is "free"
+      ~ That is to say, it doesn't replace anything
+      perform hero.childfound[arPUGiftBl].delete[AbReplace.cSknPsyStr]
+
+      ~ We change the name to make it clear this variant is in use
+      hero.childfound[arPUGiftBl].field[livename].text = "High Psionics Gifted Blade"]]></eval>
     </thing>
 
   <thing id="PU0lvlPowe" name="Zero Level Powers"
@@ -138,7 +117,6 @@
       ]]></eval>
     </thing>
 
-
   <thing id="PUPathSk" name="Path Skills Setup" description="This puts the PathSkill.? tags on skills." compset="Simple" uniqueness="unique">
     <usesource source="pPsiUn"/>
     <eval phase="First" priority="50"><![CDATA[
@@ -178,6 +156,8 @@
         perform hero.assign[Psionics.Class]
       loop]]></eval>
     </thing>
+
+
   <thing id="zPUArtiste" name="Artiste" description="Psicrystal Personalities helper" compset="Simple">
     <usesource source="pPsiUn"/>
     <tag group="Psicrystal" tag="Personalty" name="Psicrystal Personalty Selector"/>
@@ -308,6 +288,8 @@
     <usesource source="pPsiUn"/>
     <tag group="MindBlade" tag="BoltLong"/>
     </thing>
+
+
   <thing id="abPUPsiTal" name="Psionic Talent" description="This is a helper object for the Psionic Talent feat so that our logic is only done &quot;once&quot; no matter how many times we are added to the hero." compset="Ability" uniqueness="unique">
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
@@ -318,7 +300,7 @@
 
       var iX as number
 
-      ~ Assign the correct number of Psionics.Class tags to the hero
+      ~ Calcaulte the correct number of PP resources
       while (iX < field[abValue].value)
         field[abValue2].value += 2 + iX
         iX += 1
@@ -327,4 +309,51 @@
       ~ Increase the Power Point resource
       #resmax[resPowerPt] += field[abValue2].value]]></eval>
     </thing>
+
+
+  <thing id="arHdPUPsi" name="Psion" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Psion" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPsi"/>
+    </thing>
+  <thing id="arHdPUPWa" name="Psychic Warrior" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Psychic Warrior" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPWa"/>
+    </thing>
+  <thing id="arHdPUSkn" name="Soulknife" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Soulknife" class header.]]></comment>
+    <link linkage="varies" thing="cHelpSkn"/>
+    </thing>
+  <thing id="arHdPUWld" name="Wilder" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Wilder" class header.]]></comment>
+    <link linkage="varies" thing="cHelpWld"/>
+    </thing>
+  <thing id="arHdPUAeg" name="Aegis" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Aegis" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPU0"/>
+    </thing>
+  <thing id="arHdPUCry" name="Cryptic" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Cryptic" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPU1"/>
+    </thing>
+  <thing id="arHdPUDrd" name="Dread" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Dread" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPU2"/>
+    </thing>
+  <thing id="arHdPUMrk" name="Marksman" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Marksman" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPU3"/>
+    </thing>
+  <thing id="arHdPUTac" name="Tactician" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Tactician" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPU4"/>
+    </thing>
+  <thing id="arHdPUVit" name="Vitalist" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Vitalist" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPU5"/>
+    </thing>
+  <thing id="minHdPUPsc" name="Psicrystals" compset="Minion" isshowonly="yes">
+    <tag group="gType" tag="PUPsicrsta" name="Psicrystals"/>
+    </thing>
+
+
   </document>
