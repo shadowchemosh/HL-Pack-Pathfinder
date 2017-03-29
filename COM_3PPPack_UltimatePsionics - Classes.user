@@ -9483,6 +9483,7 @@ foreach pick in hero from BaseWep where "!Helper.NatAttSpec & !wGroup.Natural"
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="Custom" tag="HasCollect" name="Has the Collective Ability"/>
+    <tag group="abCategory" tag="PUPsiCllct" name="Collective" abbrev="Collective"/>
     <eval phase="PostAttr" priority="1000" index="2"><![CDATA[      ~ Set max members from key ability mod
       field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),#attrmod[aWIS])
 
@@ -9851,6 +9852,7 @@ perform hero.child[cPUVitKnac].pushtags[psiClass.?]</eval>
     <fieldval field="abRange" value="100"/>
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Super"/>
+    <tag group="abCategory" tag="PUPsiCllct" name="Collective" abbrev="Collective"/>
     <eval phase="PostAttr" priority="1000" index="2"><![CDATA[      ~ Set max members from key ability mod
       field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),#attrmod[aINT])
 
@@ -14589,6 +14591,25 @@ field[listname].text = "Enhanced Mind Bolt +" & field[xIndex].value]]></eval>
     <fieldval field="abRange" value="100"/>
     <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
     <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="abCategory" tag="PUPsiCllct" name="Collective" abbrev="Collective"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      field[livename].text = field[thingname].text & " (" & field[abValue].value & " members, "
+      if (field[xCount].value = 1) then
+        field[livename].text &= field[abRange].value & " " & tagnames[abRange.?] & ")"
+      elseif (field[xCount].value = 2) then
+        field[livename].text &= "Same Plane)"
+
+      elseif (field[xCount].value = 3) then
+        field[livename].text &= "Anywhere)"
+
+      endif
+      if (field[xIndex].value = 2) then
+        field[listname].text = "Collective Range (unlimited)"
+        field[abSumm].text = "Your collective's range is unlimited within the same plane"
+      elseif (field[xIndex].value = 3) then
+        field[listname].text = "Collective Range (planar)"
+        field[abSumm].text = "Your collective's range now extends across all planes"
+      endif]]></eval>
     <eval phase="PostAttr" priority="2000" index="2"><![CDATA[      ~ Stop now if we're not the first copy
       doneif (tagis[Helper.FirstCopy] = 0)
 
@@ -14633,24 +14654,6 @@ field[listname].text = "Enhanced Mind Bolt +" & field[xIndex].value]]></eval>
       endif
       if (tagvalue[ClSpecWhen.?] = 19) then
         perform tagreplace[ClSpecWhen.19,ClSpecWhen.16]
-      endif]]></eval>
-    <eval phase="Final" priority="10000"><![CDATA[
-      field[livename].text = field[thingname].text & " (" & field[abValue].value & " members, "
-      if (field[xCount].value = 1) then
-        field[livename].text &= field[abRange].value & " " & tagnames[abRange.?] & ")"
-      elseif (field[xCount].value = 2) then
-        field[livename].text &= "Same Plane)"
-
-      elseif (field[xCount].value = 3) then
-        field[livename].text &= "Anywhere)"
-
-      endif
-      if (field[xIndex].value = 2) then
-        field[listname].text = "Collective Range (unlimited)"
-        field[abSumm].text = "Your collective's range is unlimited within the same plane"
-      elseif (field[xIndex].value = 3) then
-        field[listname].text = "Collective Range (planar)"
-        field[abSumm].text = "Your collective's range now extends across all planes"
       endif]]></eval>
     </thing>
   <thing id="arPUNightC" name="Nightmare Constructor" description="Where most dreads use fear as something to manipulate in creatures, nightmare constructors turn fears into reality. These individuals form horrors created from the energy of nightmares and send them into battle. Enemies of nightmare constructors must truly face their deepest fears when confronted by the creatures created from terror.\n\n{b}Telepathic Lash:{/b} The nightmare constructor gains telepathic lash as a talent. This ability replaces talents.\n\n{b}Horror (Su):{/b} A nightmare constructor is able to form a creature created from distilled fears and nightmares. Creating a horror takes one minute of concentration to complete and the horror remains until dismissed by the nightmare constructor.\nThis horror functions as a summoner’s eidolon using the nightmare constructor’s class level as the summoner level, with the following exceptions. A horror is treated as a construct for the purposes of effects related to its type, such as favored enemy. Commanding a horror is the same as commanding an astral construct. A horror disperses if the nightmare constructor is rendered unconscious or dies.\nThe nightmare constructor can allow his horror to use his terrors, but such uses still count against his daily limit. At 3rd level, the nightmare constructor can also allow his horror to utilize his channel terrors ability.\nThis ability replaces devastating touch.\n\n{b}Reinvigorate Horror:{/b} The nightmare constructor is able to channel his own energy to restore the nightmarish form of his horror. As a standard action that provokes attacks of opportunity, the nightmare constructor can touch his horror and restore 5 hit points per power point spent. The nightmare constructor cannot spend more power points on this ability than his manifester level.\n\n{b}Devastating Touch:{/b} At 2nd level, the nightmare constructor’s horror gains the devastating touch ability of a dread, using the nightmare constructor’s class level to determine the total damage dealt. This also allows the nightmare constructor to select terrors that modify\ndevastating touch, but these terrors only apply to the horror’s use of devastating touch. This ability replaces the power known gained at 2nd level.\n\n{b}Fear Surge (Su):{/b} When the horror of a 3rd level or higher nightmare constructor is within 30 ft. of a creature that suffers from the shaken, frightened, or panicked condition, the nightmare constructor gains an additional evolution point to spend on the horror. This evolution point only lasts while there is a creature within 30 ft. of the horror with the shaken, frightened, or panicked condition. This ability replaces channel terror.\n\n{b}Improved Fear Surge:{/b} At 6th level, when the nightmare constructor gains an evolution point from fear surge, he instead gains two evolution points. This ability replaces the terror normally gained at 6th level.\n\n{b}Greater Fear Surge:{/b} A nightmare constructor of 9th level gains three evolution points when his fear surge is activated. This ability replaces the bonus feat normally gained at 9th level.\n\n{b}Horrific Infusion (Su):{/b} Starting at 11th level, the nightmare constructor can merge with his horror as a standard action. The nightmare constructor wears the horror like translucent and undulating armor. The horror mimics all of the nightmare constructor’s movements, and the nightmare constructor perceives through the horror’s senses and speaks through its voice, as the two are now one creature. The nightmare constructor directs all of the horror’s actions while merged. While merged with his horror, the nightmare constructor uses the horror’s Strength, Dexterity, and Constitution, but retains his own Intelligence, Wisdom, and Charisma. The nightmare constructor\ngains the horror’s hit points as temporary hit points. When these hit points reach 0, the horror is killed and sent back to its home plane. The nightmare constructor uses the horror’s base attack bonus, and gains the horror’s armor and natural armor bonuses and modifiers to ability scores. The nightmare constructor also gains access to the horror’s special abilities and the horror’s evolutions. The nightmare\nconstructor is still limited to the horror’s maximum number of natural attacks. The horror has no skills or feats of its own. The horror must be at least the same size as the nightmare constructor. The horror must have limbs for the nightmare constructor to cast spells with somatic components (should the nightmare constructor have spellcasting ability).\nWhile fused, the nightmare constructor loses the benefits of his armor. He counts both as his original type and as a construct for any effect related to type, whichever is worse for the nightmare constructor. Powers such as dismiss ectoplasm work on the horror,\nbut the nightmare constructor is unaffected. Neither the nightmare constructor nor his horror can be targeted separately, as they are fused into one creature. The nightmare constructor and horror cannot take separate actions. While fused with his horror, the nightmare\nconstructor can use all of his own abilities and gear, except for his armor. In all other cases, this ability functions as the normal horror ability. \nThis ability replaces shadow twin.\n\n{b}Empowered in Fear (Su):{/b} At 11th level, the nightmare constructor’s horror is treated as if under the effect of physical acceleration any time it is within 30 ft. of a creature suffering from either the shaken, frightened, or panicked conditions.\nAt 15th level, the horror is also treated as if under the form of doom power when within 30 ft. of a creature suffering from either the shaken, frightened, or panicked conditions. This effect allows the horror to have more natural attacks than its normal eidolon form limit.\nThis ability replaces twin fear." compset="ClassVary" uniqueness="unique">
