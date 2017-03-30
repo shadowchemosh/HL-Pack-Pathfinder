@@ -133,6 +133,126 @@
       perform field[pChosen].chosen.assign[thing.skipprereq]]]></eval>
     </thing>
 
+  <thing id="cPW5Collec" name="Collective" description="A zealot learns to use psionic power to connect willing minds through an internal network that strengthens their psychic bonds. As a standard action, a zealot can join any number of willing targets into his collective (up to his limit, see below). The zealot must have line of sight to each target, each target must have a Wisdom score of at least 1, and all targets must be within Medium range (100 ft. + 10 ft. per class level). The collective can contain up to his Charisma modifier or half his zealot level (minimum 1), whichever is higher, plus the intensity of his zeal. The zealot is always considered a member of his own collective, and does not count against this limit. \n\nThe zealot can choose to remove a member as a free action on his turn, and any member can voluntarily leave the collective as a free action on their turn. Any member whose Wisdom drops to zero or who moves out of range of the collective is automatically removed. If a member enters a null psionics field, the connection to the collective is suppressed until the member leaves the field. A member who leaves the collective for any reason immediately loses any and all benefits they may have gained from being a member. A zealot is aware of the status of his collective and can, roughly, sense the presence of each member, although beyond telling if such a creature is still a member, this has no mechanical benefit until higher levels (see telepathy below).\n\nA zealot can initiate certain maneuvers through his collective. If a zealot maneuver specifies one or more willing targets (or is harmless) and has a range greater than personal, he can initiate this maneuver on a member of his collective regardless of the range of the actual maneuver. All other non-range restrictions still apply. \n\nIf he is capable of manifesting powers, casting spells, or initiating maneuvers from a different class (as is the case for a multiclass zealot), any compatible spell, power, or maneuver with a range greater than touch can also be used through the collective. He may manifest any power with the Network Descriptor this way, regardless of their actual ranges or targets.\n\nIf a member of the collective dies, the member is removed from the collective and the zealot must make a Fortitude save (DC 15) or lose 1 power point for every Hit Die of the fallen member or be sickened for an equal number of rounds.\n\nAt 15th level, a zealot&apos;s collective range is limitless on the same plane as the zealot\n\nAt 19th level, a zealot&apos;s range reaches even across other planes and dimensions." compset="ClSpecial">
+    <comment>DEPRECATED: Use cPUCollect instead</comment>
+    <fieldval field="abRange" value="100"/>
+    <fieldval field="abValue2" value="10"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <eval phase="PostAttr" priority="1000" index="2"><![CDATA[      ~ Set max members from init mod
+      var initMod as number
+      call PWgetIMod
+      field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),initMod)
+      ~ Add zeal value to max members
+      field[abValue].value += #value[cPW5Zeal]
+
+      field[abSumm].text = "You have a collective of up to " & field[abValue].value & " individuals"
+
+      if (field[xCount].value = 1) then
+        field[abRange].value += (field[abValue2].value * field[xTotalLev].value)
+        perform assign[abRange.Feet]
+        field[abSumm].text &= " within " & field[abRange].value & " feet"
+      elseif (field[xCount].value = 2) then
+        field[abRange].value = 0
+        perform delete[abRange.Plane]
+        field[abSumm].text &= " on the same plane"
+      endif]]></eval>
+    <eval phase="Final" priority="10000"><![CDATA[      field[livename].text = field[thingname].text & " (" & field[abValue].value & " members, "
+      if (field[xCount].value = 1) then
+        field[livename].text &= field[abRange].value & " " & tagnames[abRange.?] & ")"
+      elseif (field[xCount].value = 2) then
+        field[livename].text &= "Same Plane)"
+
+      elseif (field[xCount].value = 3) then
+        field[livename].text &= "Anywhere)"
+
+      endif
+      if (field[xIndex].value = 2) then
+        field[listname].text = "Collective Range (unlimited)"
+        field[abSumm].text = "Your collective's range is unlimited within the same plane"
+      elseif (field[xIndex].value = 3) then
+        field[listname].text = "Collective Range (planar)"
+        field[abSumm].text = "Your collective's range now extends across all planes"
+      endif]]></eval>
+    </thing>
+  <thing id="cPUVitColl" name="Collective" description="A vitalist learns to use psionic power to connect willing minds through an internal network that strengthens their psychic bonds. As a standard action, a vitalist can join any number of willing targets into his collective equal (up to his limit, see below) . The vitalist must have line of sight to each target, each target must have a Wisdom score of at least 1, and all targets must be within Medium range (100 ft. + 10 ft. per class level).{br}{br}The collective can contain up to his key ability modifier or half his vitalist level, whichever is higher. The vitalist is always considered a member of his own collective, and does not count against this limit.{br}{br}The vitalist can choose to remove a member as a free action on his turn, and any member can voluntarily leave the collective as a free action on their turn. Any member whose Wisdom drops to zero or who moves out of range of the collective (100 ft. + 10 ft. per class level) is automatically removed. If a member enters a null psionics field, the connection to the collective is suppressed until that member leaves the field. A member who leaves the collective for any reason immediately loses any and all benefits they may have gained from being a member. A vitalist is aware of the status of his collective and can, roughly, sense the presence of each member, although beyond telling if such a creature is still a member, this has no mechanical benefit until higher levels (see telepathy and health sense, below).{br}{br}A vitalist can manifest certain powers through his collective. If a vitalist power specifies one or more willing targets (or is harmless) and has a range greater than personal, he can manifest this power on a member of his collective regardless of the range of the actual power. All other non-range restrictions still apply. He may also manifest any power with the Network descriptor this way, regardless of their actual ranges or targets. If he is capable of manifesting powers or casting spells from a different class (as is the case for a multiclass vitalist), any compatible spell or power with a range greater than touch can also be used through the collective.{br}{br}If a member of the collective dies, the member is removed from the collective and the vitalist must make a Fortitude save (DC 15) or lose 1 power point for every Hit Die of the fallen member and be sickened for an equal number of rounds.{br}{br}At 15th level, a vitalist&apos;s collective range is limitless on the same plane as the vitalist.{br}{br}At 19th level, a vitalist&apos;s collective reaches even across to other planes and dimensions." compset="ClSpecial">
+    <comment>DEPRECATED: Use cPUCollect instead</comment>
+    <fieldval field="abValue2" value="10"/>
+    <fieldval field="abRange" value="100"/>
+    <usesource source="pPsiUn"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="PostAttr" priority="1000" index="2"><![CDATA[      ~ Set max members from key ability mod
+      field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),#attrmod[aWIS])
+
+      field[abSumm].text = "You have a collective of up to " & field[abValue].value & " individuals"
+
+      if (field[xCount].value = 1) then
+        field[abRange].value += (field[abValue2].value * field[xTotalLev].value)
+        perform assign[abRange.Feet]
+        field[abSumm].text &= " within " & field[abRange].value & " feet"
+      elseif (field[xCount].value = 2) then
+        field[abRange].value = 0
+        perform delete[abRange.Plane]
+        field[abSumm].text &= " on the same plane"
+      endif]]></eval>
+    <eval phase="Final" priority="10000"><![CDATA[      field[livename].text = field[thingname].text & " (" & field[abValue].value & " members, "
+      if (field[xCount].value = 1) then
+        field[livename].text &= field[abRange].value & " " & tagnames[abRange.?] & ")"
+      elseif (field[xCount].value = 2) then
+        field[livename].text &= "Same Plane)"
+
+      elseif (field[xCount].value = 3) then
+        field[livename].text &= "Anywhere)"
+
+      endif
+      if (field[xIndex].value = 2) then
+        field[listname].text = "Collective Range (unlimited)"
+        field[abSumm].text = "Your collective's range is unlimited within the same plane"
+      elseif (field[xIndex].value = 3) then
+        field[listname].text = "Collective Range (planar)"
+        field[abSumm].text = "Your collective's range now extends across all planes"
+      endif]]></eval>
+    </thing>
+  <thing id="cPUTacColl" name="Collective" description="A tactician learns to use psionic power to connect willing minds through an internal network that strengthens their psychic bonds. As a standard action, a tactician can join any number of willing targets into his collective equal (up to his limit, see below) . The tactician must have line of sight to each target, each target must have a Wisdom score of at least 1, and all targets must be within Medium range (100 ft. + 10 ft. per class level). The collective can contain up to his key ability modifier or half his tactician level, whichever is higher. The tactician is always considered a member of his own collective, and does not count against this limit.\n\nThe tactician can choose to remove a member as a free action on his turn, and any member can voluntarily leave the collective as a free action on their turn. Any member whose Wisdom drops to zero or who moves out of range of the collective is automatically removed. If a member enters a null psionics field, the connection to the collective is suppressed until that member leaves the field. A member who leaves the collective for any reason immediately loses any and all benefits they may have gained from being a member. A tactician is aware of the status of his collective and can, roughly, sense the presence of each member, although beyond telling if such a creature is still a member, this has no mechanical benefit until higher levels (see telepathy below).\n\nA tactician can manifest certain powers through his collective. If a tactician power specifies one or more willing targets (or is harmless) and has a range greater than personal, he can manifest this power on a member of his collective regardless of the range of the actual power.\n\nAll other non-range restrictions still apply. He may also manifest any power with the Network descriptor this way, regardless of their actual ranges or targets. If he is capable of manifesting powers or casting spells from a different class (as is the case for a multiclass tactician), any compatible spell or power with a range greater than touch can also be used through the collective.{br}{br}If a member of the collective dies, the member is removed from the collective and the tactician must make a Fortitude save (DC 15) or lose 1 power point for every Hit Die of the fallen member and be sickened for an equal number of rounds.{br}{br}At 15th level, a tactician&apos;s collective range is limitless on the same plane as the tactician.{br}{br}At 19th level, a tactician&apos;s collective reaches even across to other planes and dimensions." compset="ClSpecial">
+    <comment>DEPRECATED: Use cPUCollect instead</comment>
+    <fieldval field="abValue2" value="10"/>
+    <fieldval field="abRange" value="100"/>
+    <usesource source="pPsiUn"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="PostAttr" priority="1000" index="2"><![CDATA[      ~ Set max members from key ability mod
+      field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),#attrmod[aINT])
+
+      field[abSumm].text = "You have a collective of up to " & field[abValue].value & " individuals"
+
+      if (field[xCount].value = 1) then
+        field[abRange].value += (field[abValue2].value * field[xTotalLev].value)
+        perform assign[abRange.Feet]
+        field[abSumm].text &= " within " & field[abRange].value & " feet"
+      elseif (field[xCount].value = 2) then
+        field[abRange].value = 0
+        perform delete[abRange.Plane]
+        field[abSumm].text &= " on the same plane"
+      endif]]></eval>
+    <eval phase="Final" priority="10000"><![CDATA[      field[livename].text = field[thingname].text & " (" & field[abValue].value & " members, "
+      if (field[xCount].value = 1) then
+        field[livename].text &= field[abRange].value & " " & tagnames[abRange.?] & ")"
+      elseif (field[xCount].value = 2) then
+        field[livename].text &= "Same Plane)"
+
+      elseif (field[xCount].value = 3) then
+        field[livename].text &= "Anywhere)"
+
+      endif
+      if (field[xIndex].value = 2) then
+        field[listname].text = "Collective Range (unlimited)"
+        field[abSumm].text = "Your collective's range is unlimited within the same plane"
+      elseif (field[xIndex].value = 3) then
+        field[listname].text = "Collective Range (planar)"
+        field[abSumm].text = "Your collective's range now extends across all planes"
+      endif]]></eval>
+    </thing>
+
+
 
   <hidden id="puCreaSnd1"/>
   <hidden id="fPWAglDncr"/>
