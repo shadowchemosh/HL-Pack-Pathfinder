@@ -2430,7 +2430,7 @@ field[livename].text = "Sequestration  (" & MyCount & ")"]]></eval>
   <thing id="cEffRechg" name="Efficient Recharge" description="Beginning at 4th level, a metamind learns how to tap into the psionic nature of his own psicrystal to more efficiently recharge the power points stored within his cognizance psicrystal. Once per day, he may recharge the cognizance psicrystal, but only pays half the power point cost (rounded up). He may use this ability an additional time per day at 8th level." compset="ClSpecial" summary="Recharge cognizance psicrystal for half the PP cost.">
     <tag group="Usage" tag="Day" name="/day" abbrev="/day"/>
     <tag group="User" tag="Tracker" name="Modern Action Points" abbrev="Modern Action Points"/>
-    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="AbilType" tag="Super"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[
       field[listname].text = "Efficient Recharge (" & field[xIndex].value & "/day)"
 
@@ -9492,45 +9492,6 @@ foreach pick in hero from BaseWep where "!Helper.NatAttSpec & !wGroup.Natural"
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="SpecUp"/>
     </thing>
-  <thing id="cPUVitColl" name="Collective" description="A vitalist learns to use psionic power to connect willing minds through an internal network that strengthens their psychic bonds. As a standard action, a vitalist can join any number of willing targets into his collective equal (up to his limit, see below) . The vitalist must have line of sight to each target, each target must have a Wisdom score of at least 1, and all targets must be within Medium range (100 ft. + 10 ft. per class level).{br}{br}The collective can contain up to his key ability modifier or half his vitalist level, whichever is higher. The vitalist is always considered a member of his own collective, and does not count against this limit.{br}{br}The vitalist can choose to remove a member as a free action on his turn, and any member can voluntarily leave the collective as a free action on their turn. Any member whose Wisdom drops to zero or who moves out of range of the collective (100 ft. + 10 ft. per class level) is automatically removed. If a member enters a null psionics field, the connection to the collective is suppressed until that member leaves the field. A member who leaves the collective for any reason immediately loses any and all benefits they may have gained from being a member. A vitalist is aware of the status of his collective and can, roughly, sense the presence of each member, although beyond telling if such a creature is still a member, this has no mechanical benefit until higher levels (see telepathy and health sense, below).{br}{br}A vitalist can manifest certain powers through his collective. If a vitalist power specifies one or more willing targets (or is harmless) and has a range greater than personal, he can manifest this power on a member of his collective regardless of the range of the actual power. All other non-range restrictions still apply. He may also manifest any power with the Network descriptor this way, regardless of their actual ranges or targets. If he is capable of manifesting powers or casting spells from a different class (as is the case for a multiclass vitalist), any compatible spell or power with a range greater than touch can also be used through the collective.{br}{br}If a member of the collective dies, the member is removed from the collective and the vitalist must make a Fortitude save (DC 15) or lose 1 power point for every Hit Die of the fallen member and be sickened for an equal number of rounds.{br}{br}At 15th level, a vitalist&apos;s collective range is limitless on the same plane as the vitalist.{br}{br}At 19th level, a vitalist&apos;s collective reaches even across to other planes and dimensions." compset="ClSpecial">
-    <comment>DEPRECATED: Use cPUCollect instead</comment>
-    <fieldval field="abValue2" value="10"/>
-    <fieldval field="abRange" value="100"/>
-    <usesource source="pPsiUn"/>
-    <tag group="AbilType" tag="Super"/>
-    <tag group="Custom" tag="HasCollect" name="Has the Collective Ability"/>
-    <eval phase="PostAttr" priority="1000" index="2"><![CDATA[      ~ Set max members from key ability mod
-      field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),#attrmod[aWIS])
-
-      field[abSumm].text = "You have a collective of up to " & field[abValue].value & " individuals"
-
-      if (field[xCount].value = 1) then
-        field[abRange].value += (field[abValue2].value * field[xTotalLev].value)
-        perform assign[abRange.Feet]
-        field[abSumm].text &= " within " & field[abRange].value & " feet"
-      elseif (field[xCount].value = 2) then
-        field[abRange].value = 0
-        perform delete[abRange.Plane]
-        field[abSumm].text &= " on the same plane"
-      endif]]></eval>
-    <eval phase="Final" priority="10000"><![CDATA[      field[livename].text = field[thingname].text & " (" & field[abValue].value & " members, "
-      if (field[xCount].value = 1) then
-        field[livename].text &= field[abRange].value & " " & tagnames[abRange.?] & ")"
-      elseif (field[xCount].value = 2) then
-        field[livename].text &= "Same Plane)"
-
-      elseif (field[xCount].value = 3) then
-        field[livename].text &= "Anywhere)"
-
-      endif
-      if (field[xIndex].value = 2) then
-        field[listname].text = "Collective Range (unlimited)"
-        field[abSumm].text = "Your collective's range is unlimited within the same plane"
-      elseif (field[xIndex].value = 3) then
-        field[listname].text = "Collective Range (planar)"
-        field[abSumm].text = "Your collective's range now extends across all planes"
-      endif]]></eval>
-    </thing>
   <thing id="cPUCoorStr" name="Coordinated Strike" description="The tactician is able to direct his allies to coordinating their attacks upon a single target to devastating effect. As a swift action, the tactician can declare one target within his line of sight as the primary foe. All members of the tactician&apos;s collective, including the tactician himself gain a +1 insight bonus to attacks against the primary foe until the beginning of the tactician&apos;s next turn. At 5th level and every four levels thereafter, this bonus increases by 1.{br}{br}This ability may be used a number of times per day equal to 3 + the tacticians Intelligence modifier." compset="ClSpecial">
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Super"/>
@@ -9861,44 +9822,6 @@ perform hero.child[cPUVitKnac].pushtags[psiClass.?]</eval>
 ~ class special so the gamer can select their bonus talent.
 perform hero.child[cPUVitKnac].pushtags[psiClass.?]</eval>
     </thing>
-  <thing id="cPUTacColl" name="Collective" description="A tactician learns to use psionic power to connect willing minds through an internal network that strengthens their psychic bonds. As a standard action, a tactician can join any number of willing targets into his collective equal (up to his limit, see below) . The tactician must have line of sight to each target, each target must have a Wisdom score of at least 1, and all targets must be within Medium range (100 ft. + 10 ft. per class level). The collective can contain up to his key ability modifier or half his tactician level, whichever is higher. The tactician is always considered a member of his own collective, and does not count against this limit.\n\nThe tactician can choose to remove a member as a free action on his turn, and any member can voluntarily leave the collective as a free action on their turn. Any member whose Wisdom drops to zero or who moves out of range of the collective is automatically removed. If a member enters a null psionics field, the connection to the collective is suppressed until that member leaves the field. A member who leaves the collective for any reason immediately loses any and all benefits they may have gained from being a member. A tactician is aware of the status of his collective and can, roughly, sense the presence of each member, although beyond telling if such a creature is still a member, this has no mechanical benefit until higher levels (see telepathy below).\n\nA tactician can manifest certain powers through his collective. If a tactician power specifies one or more willing targets (or is harmless) and has a range greater than personal, he can manifest this power on a member of his collective regardless of the range of the actual power.\n\nAll other non-range restrictions still apply. He may also manifest any power with the Network descriptor this way, regardless of their actual ranges or targets. If he is capable of manifesting powers or casting spells from a different class (as is the case for a multiclass tactician), any compatible spell or power with a range greater than touch can also be used through the collective.{br}{br}If a member of the collective dies, the member is removed from the collective and the tactician must make a Fortitude save (DC 15) or lose 1 power point for every Hit Die of the fallen member and be sickened for an equal number of rounds.{br}{br}At 15th level, a tactician&apos;s collective range is limitless on the same plane as the tactician.{br}{br}At 19th level, a tactician&apos;s collective reaches even across to other planes and dimensions." compset="ClSpecial">
-    <comment>DEPRECATED: Use cPUCollect instead</comment>
-    <fieldval field="abValue2" value="10"/>
-    <fieldval field="abRange" value="100"/>
-    <usesource source="pPsiUn"/>
-    <tag group="AbilType" tag="Super"/>
-    <eval phase="PostAttr" priority="1000" index="2"><![CDATA[      ~ Set max members from key ability mod
-      field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),#attrmod[aINT])
-
-      field[abSumm].text = "You have a collective of up to " & field[abValue].value & " individuals"
-
-      if (field[xCount].value = 1) then
-        field[abRange].value += (field[abValue2].value * field[xTotalLev].value)
-        perform assign[abRange.Feet]
-        field[abSumm].text &= " within " & field[abRange].value & " feet"
-      elseif (field[xCount].value = 2) then
-        field[abRange].value = 0
-        perform delete[abRange.Plane]
-        field[abSumm].text &= " on the same plane"
-      endif]]></eval>
-    <eval phase="Final" priority="10000"><![CDATA[      field[livename].text = field[thingname].text & " (" & field[abValue].value & " members, "
-      if (field[xCount].value = 1) then
-        field[livename].text &= field[abRange].value & " " & tagnames[abRange.?] & ")"
-      elseif (field[xCount].value = 2) then
-        field[livename].text &= "Same Plane)"
-
-      elseif (field[xCount].value = 3) then
-        field[livename].text &= "Anywhere)"
-
-      endif
-      if (field[xIndex].value = 2) then
-        field[listname].text = "Collective Range (unlimited)"
-        field[abSumm].text = "Your collective's range is unlimited within the same plane"
-      elseif (field[xIndex].value = 3) then
-        field[listname].text = "Collective Range (planar)"
-        field[abSumm].text = "Your collective's range now extends across all planes"
-      endif]]></eval>
-    </thing>
   <thing id="cPUVitColH" name="Collective Healing" description="Whenever a willing member of the vitalist&apos;s collective could regain lost hit points or ability damage, the vitalist may choose to redirect any or all of that healing to one or more other willing members of the collective as a free action. This can transfer instantaneous healing (such as a {i}body adjustment{/i} power), healing from ongoing healing effects, such as fast healing, and even hit points gained from rest (in which case, a member of the collective would rest for a period of time as normal, and the amount of hit points {i}A vitalist joins his allies into a collective so he can share healing energy{/i} {b}Psionics Expanded{/b} 59 and ability damage healed would go to another).{br}{br}In any case, the original recipient of the healing effect chooses whether to allow the diverted healing, and does not gain the benefits of any healing he grants to another.{br}{br}The type of healing (positive energy, negative energy, construct repair, etc.) is unchanged from the original source for determining who or what can be healed.{br}{br}{i}Example: Darius the soulknife is a willing member of Jorus the vitalist&apos;s collective. He drinks a potion of cure light wounds that would normally heal him for 6 hit points, but Jorus decides to redirect 4 of those points to himself. Darius agrees and, as a result, Darius is healed for 2 hit points, and Jorus is healed for 4. If there were more members in Jorus&apos;s collective, Jorus could spread the healing from that potion out even more as long as the sum of hit points healed was no greater than 6.{br}{br}{/i}A vitalist may even heal wounds through collective healing if at full health. This may only be used with healing effects such as potions, powers, or other such effects. Healing from long term care or natural healing cannot be transferred in this way." compset="ClSpecial">
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Super"/>
@@ -9976,7 +9899,7 @@ perform hero.child[cPUVitKnac].pushtags[psiClass.?]</eval>
     </thing>
   <thing id="cPUHealthS" name="Health Sense" description="Beginning at 2nd level, a vitalist may take a swift action to gauge the relative health level of collective members, determining the amount of damage, in hit points, that an ally has taken. In addition, the vitalist may make a Heal check as a standard action, with a DC of 15, to determine if any of the members of his collective are afflicted by a disease or poison.{br}{br}Starting at 7th level, the vitalist can make a Heal check over his collective to stabilize a dying target or treat a wound from a caltrop, {i}spike growth{/i}, {i}spike stones{/i}, or similar.{br}{br}This ability improves at 12th level, and the vitalist may make a Heal check over his collective to treat a poisoned creature.{br}{br}At 17th level, the vitalist is able to treat diseases in the same fashion, making a Heal check over his collective.{br}{br}When treating a target over a collective, the DC of the Heal check is the same as if the vitalist was treating the target normally." compset="ClSpecial">
     <usesource source="pPsiUn"/>
-    <tag group="Custom" tag="HasCollect" name="Has the Collective Ability"/>
+
     <eval phase="Final" priority="10000"><![CDATA[if (field[xIndex].value = 1) then
   field[listname].text = "Health Sense (Identify)"
 elseif (field[xIndex].value = 2) then
@@ -9993,7 +9916,7 @@ elseif (field[xIndex].value = 4) then
     </thing>
   <thing id="cPUStealHT" name="Steal Health" description="At 3rd level, a vitalist has learned to siphon the health of a creature and use it for his own needs or the needs of his collective. As a touch attack, the vitalist may deal a number of hit points in damage to the target equal to his vitalist level + his Wisdom modifier and heal an equal amount of damage. The vitalist may share any healing from this effect over his collective, even if he himself would not be eligible for the healing.{br}{br}A vitalist may not heal more hit points than the touched creature had prior to using this ability.{br}{br}This ability may only be used on creatures with a Constitution score and may not be used against creatures in the vitalist&apos;s collective. A vitalist may use this ability on creatures with a total number of hit dice less than half his vitalist level, but he gains no healing from it.{br}{br}{i}For example, Jorus is a level 3 vitalist with a Wisdom of 16 and 15 hit points. Jorus has suffered 3 hit points of damage and uses Steal Health on a nearby 2 hit dice orc, dealing 6 hit points of damage (3 from his levels in vitalist, 3 from his Wisdom modifier). Although Jorus may only heal himself for 3 hit points, he may distribute the other 3 hit points over the collective to other members as needed. If Jorus was level 6, he would have dealt 9 points of damage, but would not have received any healing because the orc&apos;s total number of hit dice was too low.{br}{br}{/i}At 7th level, a vitalist is able to use steal health as a ranged touch attack with a range of 30 feet." compset="ClSpecial">
     <usesource source="pPsiUn"/>
-    <tag group="Custom" tag="HasCollect" name="Has the Collective Ability"/>
+
     <tag group="AbilType" tag="Super"/>
     <eval phase="Final" priority="10000"><![CDATA[if (field[xIndex].value = 1) then
   field[listname].text = "Steal Health (Touch)"
@@ -10065,7 +9988,7 @@ elseif (field[xIndex].value = 2) then
     </thing>
   <thing id="cPUStealLi" name="Steal Life" description="Beginning at 14th level, a vitalist can not only steal the health of a target, but steal their life itself. By making a successful melee touch attack and expending psionic focus, the vitalist can force the target to make a Fortitude save (DC 10 + half class level + Wisdom modifier) or die. A successful save negates this effect. Targets with more than 140 hit points are unaffected by this ability.{br}{br}If the target fails the save, the vitalist is able to channel the stolen life force through his collective, healing any number of the members of his collective for a combined total of 5 hit points per hit die the original target had.{br}{br}This ability may only be used on creatures with a Constitution score and may not be used against creatures in the vitalist&apos;s collective.{br}{br}{i}For example, Jorus is a level 14 vitalist and he uses steal life on a thought slayer, which has 11 hit dice.{br}{br}The thought slayer fails the Fortitude save, so Jorus can heal up to 55 hit points over his collective, divided among the members as he sees fit.{br}{br}{/i}A vitalist must wait 10 minutes after using this ability before he can attempt to use it again.{br}{br}This is considered a death effect." compset="ClSpecial">
     <usesource source="pPsiUn"/>
-    <tag group="Custom" tag="HasCollect" name="Has the Collective Ability"/>
+
     <tag group="AbilType" tag="Super"/>
     </thing>
   <thing id="cPUGuMaste" name="Master Guardian" description="A guardian of 20th level can, as a full-round action and by expending his psionic focus, give one member of the collective a psionic bubble of protection. This protective bubble grants DR 6/-, PR 27, resistance 20 against any attack that deals acid, cold, electricity, fire, or sonic damage, and a +6 deflection bonus to AC. This protective bubble lasts for one minute.{br}{br}The guardian can use this ability once every 10 minutes." compset="ClSpecial">
@@ -14619,8 +14542,26 @@ field[listname].text = "Enhanced Mind Bolt +" & field[xIndex].value]]></eval>
     <comment>abValue = Max members</comment>
     <fieldval field="abValue2" value="10"/>
     <fieldval field="abRange" value="100"/>
-    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
-    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      field[livename].text = field[thingname].text & " (" & field[abValue].value & " members, "
+      if (field[xCount].value = 1) then
+        field[livename].text &= field[abRange].value & " " & tagnames[abRange.?] & ")"
+      elseif (field[xCount].value = 2) then
+        field[livename].text &= "Same Plane)"
+
+      elseif (field[xCount].value = 3) then
+        field[livename].text &= "Anywhere)"
+
+      endif
+      if (field[xIndex].value = 2) then
+        field[listname].text = "Collective Range (unlimited)"
+        field[abSumm].text = "Your collective's range is unlimited within the same plane"
+      elseif (field[xIndex].value = 3) then
+        field[listname].text = "Collective Range (planar)"
+        field[abSumm].text = "Your collective's range now extends across all planes"
+      endif]]></eval>
     <eval phase="PostAttr" priority="2000" index="2"><![CDATA[      ~ Stop now if we're not the first copy
       doneif (tagis[Helper.FirstCopy] = 0)
 
@@ -14665,24 +14606,6 @@ field[listname].text = "Enhanced Mind Bolt +" & field[xIndex].value]]></eval>
       endif
       if (tagvalue[ClSpecWhen.?] = 19) then
         perform tagreplace[ClSpecWhen.19,ClSpecWhen.16]
-      endif]]></eval>
-    <eval phase="Final" priority="10000"><![CDATA[
-      field[livename].text = field[thingname].text & " (" & field[abValue].value & " members, "
-      if (field[xCount].value = 1) then
-        field[livename].text &= field[abRange].value & " " & tagnames[abRange.?] & ")"
-      elseif (field[xCount].value = 2) then
-        field[livename].text &= "Same Plane)"
-
-      elseif (field[xCount].value = 3) then
-        field[livename].text &= "Anywhere)"
-
-      endif
-      if (field[xIndex].value = 2) then
-        field[listname].text = "Collective Range (unlimited)"
-        field[abSumm].text = "Your collective's range is unlimited within the same plane"
-      elseif (field[xIndex].value = 3) then
-        field[listname].text = "Collective Range (planar)"
-        field[abSumm].text = "Your collective's range now extends across all planes"
       endif]]></eval>
     </thing>
   <thing id="arPUNightC" name="Nightmare Constructor" description="Where most dreads use fear as something to manipulate in creatures, nightmare constructors turn fears into reality. These individuals form horrors created from the energy of nightmares and send them into battle. Enemies of nightmare constructors must truly face their deepest fears when confronted by the creatures created from terror.\n\n{b}Telepathic Lash:{/b} The nightmare constructor gains telepathic lash as a talent. This ability replaces talents.\n\n{b}Horror (Su):{/b} A nightmare constructor is able to form a creature created from distilled fears and nightmares. Creating a horror takes one minute of concentration to complete and the horror remains until dismissed by the nightmare constructor.\nThis horror functions as a summoner’s eidolon using the nightmare constructor’s class level as the summoner level, with the following exceptions. A horror is treated as a construct for the purposes of effects related to its type, such as favored enemy. Commanding a horror is the same as commanding an astral construct. A horror disperses if the nightmare constructor is rendered unconscious or dies.\nThe nightmare constructor can allow his horror to use his terrors, but such uses still count against his daily limit. At 3rd level, the nightmare constructor can also allow his horror to utilize his channel terrors ability.\nThis ability replaces devastating touch.\n\n{b}Reinvigorate Horror:{/b} The nightmare constructor is able to channel his own energy to restore the nightmarish form of his horror. As a standard action that provokes attacks of opportunity, the nightmare constructor can touch his horror and restore 5 hit points per power point spent. The nightmare constructor cannot spend more power points on this ability than his manifester level.\n\n{b}Devastating Touch:{/b} At 2nd level, the nightmare constructor’s horror gains the devastating touch ability of a dread, using the nightmare constructor’s class level to determine the total damage dealt. This also allows the nightmare constructor to select terrors that modify\ndevastating touch, but these terrors only apply to the horror’s use of devastating touch. This ability replaces the power known gained at 2nd level.\n\n{b}Fear Surge (Su):{/b} When the horror of a 3rd level or higher nightmare constructor is within 30 ft. of a creature that suffers from the shaken, frightened, or panicked condition, the nightmare constructor gains an additional evolution point to spend on the horror. This evolution point only lasts while there is a creature within 30 ft. of the horror with the shaken, frightened, or panicked condition. This ability replaces channel terror.\n\n{b}Improved Fear Surge:{/b} At 6th level, when the nightmare constructor gains an evolution point from fear surge, he instead gains two evolution points. This ability replaces the terror normally gained at 6th level.\n\n{b}Greater Fear Surge:{/b} A nightmare constructor of 9th level gains three evolution points when his fear surge is activated. This ability replaces the bonus feat normally gained at 9th level.\n\n{b}Horrific Infusion (Su):{/b} Starting at 11th level, the nightmare constructor can merge with his horror as a standard action. The nightmare constructor wears the horror like translucent and undulating armor. The horror mimics all of the nightmare constructor’s movements, and the nightmare constructor perceives through the horror’s senses and speaks through its voice, as the two are now one creature. The nightmare constructor directs all of the horror’s actions while merged. While merged with his horror, the nightmare constructor uses the horror’s Strength, Dexterity, and Constitution, but retains his own Intelligence, Wisdom, and Charisma. The nightmare constructor\ngains the horror’s hit points as temporary hit points. When these hit points reach 0, the horror is killed and sent back to its home plane. The nightmare constructor uses the horror’s base attack bonus, and gains the horror’s armor and natural armor bonuses and modifiers to ability scores. The nightmare constructor also gains access to the horror’s special abilities and the horror’s evolutions. The nightmare\nconstructor is still limited to the horror’s maximum number of natural attacks. The horror has no skills or feats of its own. The horror must be at least the same size as the nightmare constructor. The horror must have limbs for the nightmare constructor to cast spells with somatic components (should the nightmare constructor have spellcasting ability).\nWhile fused, the nightmare constructor loses the benefits of his armor. He counts both as his original type and as a construct for any effect related to type, whichever is worse for the nightmare constructor. Powers such as dismiss ectoplasm work on the horror,\nbut the nightmare constructor is unaffected. Neither the nightmare constructor nor his horror can be targeted separately, as they are fused into one creature. The nightmare constructor and horror cannot take separate actions. While fused with his horror, the nightmare\nconstructor can use all of his own abilities and gear, except for his armor. In all other cases, this ability functions as the normal horror ability. \nThis ability replaces shadow twin.\n\n{b}Empowered in Fear (Su):{/b} At 11th level, the nightmare constructor’s horror is treated as if under the effect of physical acceleration any time it is within 30 ft. of a creature suffering from either the shaken, frightened, or panicked conditions.\nAt 15th level, the horror is also treated as if under the form of doom power when within 30 ft. of a creature suffering from either the shaken, frightened, or panicked conditions. This effect allows the horror to have more natural attacks than its normal eidolon form limit.\nThis ability replaces twin fear." compset="ClassVary" uniqueness="unique">
@@ -15655,7 +15578,7 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
     <arrayval field="cvBonFtMod" index="18" value="-1"/>
     <arrayval field="cvBonFtMod" index="19" value="-1"/>
     <usesource source="pPsiUn" parent="pDscar" name="DSP - Ultimate Psionics"/>
-    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AbReplace" tag="cSknEnhMB"/>
     <tag group="AbReplace" tag="cSknMindBl"/>
     <tag group="AbReplace" tag="cSknQuiDra"/>
@@ -15964,7 +15887,7 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
     <tag group="SpecType" tag="ArmorClass"/>
     <tag group="ChooseSrc1" tag="Hero" name="All Picks on Hero" abbrev="All Picks on Hero"/>
     <tag group="Helper" tag="ActivMenu" name="ActivMenu" abbrev="ActivMenu"/>
-    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="AbilType" tag="Super"/>
     <eval phase="First" priority="50" name="Add Mind Blade Tags"><![CDATA[
       ~ If we've been Disabled, get out now
       doneif (tagis[Helper.SpcDisable] <> 0)
@@ -16009,7 +15932,7 @@ hero.child[cHelpSkn].field[cPsiExpr].text = "(" & hero.child[cHelpSkn].field[cPs
     <usesource source="pPsiUn"/>
     <tag group="SpecType" tag="ArmorClass"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
+    <tag group="AbilType" tag="Super"/>
     <eval phase="Final" priority="10000"><![CDATA[
       ~ Set the list name
       field[listname].text = field[thingname].text & " " & signed(field[xIndex].value)
