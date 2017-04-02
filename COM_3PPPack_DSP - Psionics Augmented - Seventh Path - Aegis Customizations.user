@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <!--
+
+  The actual customizations
+
+  -->
+  <thing id="rcPsAuGhGu" name="Ghostly Guidance" description="The animist reduces any miss chance he would suffer on attack rolls while he is wearing his astral suit by 5%, to a minimum of 0%. In addition, while he is wearing his astral suit, he gains a +1 bonus on Perception checks. This customization can be taken once for every four levels the animist possesses. Its effects stack." compset="RaceCustom" summary="Reduce miss chance on attacks and get a Perception bonus.">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcPsAuSev"/>
+    <tag group="SpecType" tag="Sense"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
+    <tag group="CustomCost" tag="1" name="1" abbrev="1"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu" name="Astral Suit" abbrev="Astral Suit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="abPsAuGhGu"></bootstrap>
+    <eval phase="PostLevel" priority="50">
+      <![CDATA[
+      ~ Bump up the bootstrapped ability's values
+      ~ This will happen once for each instance of this customization
+      #value[abPsAuGhGu] += field[abValue].value
+      #value2[abPsAuGhGu] += field[abValue].value
+      ]]>
+    </eval>
+    <exprreq message="Animist archetype required.">
+      <![CDATA[#hasarchetype[arPU0Animi] <> 0]]>
+    </exprreq>
+    <prereq message="">
+      <validate>
+        <![CDATA[
+        var allowed as number
+        allowed = round(#levelcount[Aegis]/4,0,-1)
+
+        ~ if we're a pick, then there must be complevel/4 or fewer copies of
+        ~ this ability
+        if (@ispick <> 0) then
+          validif (tagcount[HasAbility.rcPsAuGhGu] <= allowed)
+
+        ~ otherwise, look for fewer, since we're adding this
+        else
+          validif (tagcount[HasAbility.rcPsAuGhGu] < allowed)
+          endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability."
+        ]]>
+      </validate>
+    </prereq>
+  </thing>
+  <thing id="rcPsAuPres" name="Presence" description="The animist gains a +2 enhancement bonus to Charisma while he is wearing his astral suit. This customization can be selected a second time beginning at 5th level, and a third time starting at 10th level. Each subsequent time it is taken, the enhancement bonus to Charisma is increased by +2." compset="RaceCustom" summary="Your Charisma is enhanced.">
+    <usesource source="srcPsAuSev"/>
+    <tag group="CustomCost" tag="2" name="2" abbrev="2"/>
+    <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu" name="Astral Suit" abbrev="Astral Suit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel">
+      <![CDATA[
+      ~ If we're not wearling the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      var Taken as number
+      Taken = hero.tagcount[Ability.rcPsAuPres] * 2
+
+      #enhancementbonus[hero.child[aCHA], Taken]]]>
+    </eval>
+    <exprreq message="Animist archetype required.">
+      <![CDATA[#hasarchetype[arPU0Animi] <> 0]]>
+    </exprreq>
+    <prereq message="">
+      <validate>
+        <![CDATA[
+        var allowed as number
+        allowed = minimum(round(#levelcount[Aegis]/5,0,-1),3)
+
+        ~ if we're a pick, then there must be complevel/5 or fewer copies of
+        ~ this ability
+        if (@ispick <> 0) then
+          validif (tagcount[HasAbility.rcPsAuPres] <= allowed)
+
+        ~ otherwise, look for fewer, since we're adding this
+        else
+          validif (tagcount[HasAbility.rcPsAuPres] < allowed)
+          endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability."
+        ]]>
+      </validate>
+    </prereq>
+  </thing>
+  <thing id="rcPsAuSpEy" name="Spirit Eyes" description="The animist gains a modified version of lifesense while he is wearing his astral suit. He notices and locates living creatures and incorporeal undead within 60 feet, just as if he possessed the blindsight ability. The animist must possess the blindsense and ghostly guidance customizations to take this customization. The animist must be at least 11th level before selecting this customization." compset="RaceCustom" summary="You sense living creatures and incorporeal undead." uniqueness="useronce">
+    <fieldval field="abRange" value="60"/>
+    <usesource source="srcPsAuSev"/>
+    <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
+    <tag group="SpecType" tag="Sense"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu" name="Astral Suit" abbrev="Astral Suit"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="CustomCost" tag="3"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Animist archetype required.">
+      <![CDATA[#hasarchetype[arPU0Animi] <> 0]]>
+    </exprreq>
+    <exprreq message="Blindsense customization required.">
+      <![CDATA[#hasability[rcPUaBlind] <> 0]]>
+    </exprreq>
+    <exprreq message="Ghostly guidance customization required.">
+      <![CDATA[#hasability[rcPsAuGhGu] <> 0]]>
+    </exprreq>
+    <prereq message="Aegis level 11+ required.">
+      <validate>
+        <![CDATA[
+        var classcheck as string
+        var levels as number
+        classcheck = "Aegis"
+        call PUPreReqs
+        validif (levels >= 11)
+        ]]>
+      </validate>
+    </prereq>
+  </thing>
+  <thing id="rcPsAuSpFu" name="Spirit Fury" description="The animist draws the spirits of the fallen to him, gaining their power at the expense of self-control. While he is wearing his astral suit, he may rage for a number of rounds per day equal to 4 + his class level + his Charisma modifier. While raging, the animist gains a +4 morale bonus to Strength and Constitution, as well as a +2 morale bonus on Will saves. In addition, he takes a -2 penalty to Armor Class. The increase to Constitution grants the animist bonus hit points per Hit Dice, but these disappear when the rage ends and are not lost first like temporary hit points. While in rage, an animist cannot use any Charisma-, Dexterity-, or Intelligence-based skills (except Acrobatics, Fly, Intimidate, and Ride) or any ability that requires patience or concentration.\n\nAn animist can enter or end his rage as a free action, and is fatigued after rage for a number of rounds equal to 2 times the number of rounds spent in rage. An animist cannot enter a new rage while fatigued or exhausted.\n\nThis customization can be taken once for every six levels the animist possesses. Each time it is taken after the first, the animist may rage for additional 6 rounds per day, and gains a rage power that they qualify for. For the purpose of qualifying for rage powers, the animist is treated as a barbarian of his class level. If the animist possesses rage powers from another source (such as from levels in the barbarian class), they may not be used while in a spirit fury. The animist must be at least 6th level before selecting this customization." compset="RaceCustom" summary="Gain a rage ability and rage powers.">
+    <fieldval field="abValue" value="6"/>
+    <usesource source="srcPsAuSev"/>
+    <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
+    <tag group="SpecType" tag="Sense"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="CustomCost" tag="1" name="1" abbrev="1"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu" name="Astral Suit" abbrev="Astral Suit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="abPsAuSpFu"></bootstrap>
+    <eval phase="PostLevel" priority="50">
+      <![CDATA[
+      ~ Bump up the bootstrapped ability's values
+      ~ This will happen once for each instance of this customization
+      hero.childfound[abPsAuSpFu].field[trkMax].value += field[abValue].value
+
+      ~ Bump up the configurable's number of powers
+      ~ This will happen once for each instance of this customization
+      ~ Note that the configurable starts at -1
+      hero.childfound[cfgPsAuSFR].field[cfgMax1].value += 1
+      ]]>
+    </eval>
+    <exprreq message="Animist archetype required.">
+      <![CDATA[#hasarchetype[arPU0Animi] <> 0]]>
+    </exprreq>
+    <prereq message="">
+      <validate>
+        <![CDATA[
+        var allowed as number
+        allowed = round(#levelcount[Aegis]/5,0,-1)
+
+        ~ if we're a pick, then there must be complevel/5 or fewer copies of
+        ~ this ability
+        if (@ispick <> 0) then
+          validif (tagcount[HasAbility.rcPsAuSpFu] <= allowed)
+
+        ~ otherwise, look for fewer, since we're adding this
+        else
+          validif (tagcount[HasAbility.rcPsAuSpFu] < allowed)
+          endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability."
+        ]]>
+      </validate>
+    </prereq>
+  </thing>
+  <thing id="rcPsAuWaBl" name="Ward of Blood" description="The animist gains a +2 bonus to his Armor Class against incorporeal attacks while he is wearing his astral suit. This customization can be taken once for every five levels the animist possesses. Its effects stack." compset="RaceCustom" summary="Gain an AC bonus against incorporeal attacks.">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="srcPsAuSev"/>
+    <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
+    <tag group="SpecType" tag="Sense"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="CustomCost" tag="1" name="1" abbrev="1"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu" name="Astral Suit" abbrev="Astral Suit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="abPsAuWaBl"></bootstrap>
+    <eval phase="PostLevel" priority="50">
+      <![CDATA[
+      ~ Bump up the bootstrapped ability's values
+      ~ This will happen once for each instance of this customization
+      #value[abPsAuWaBl] += field[abValue].value
+      ]]>
+    </eval>
+    <exprreq message="Animist archetype required.">
+      <![CDATA[#hasarchetype[arPU0Animi] <> 0]]>
+    </exprreq>
+    <prereq message="">
+      <validate>
+        <![CDATA[
+        var allowed as number
+        allowed = round(#levelcount[Aegis]/5,0,-1)
+
+        ~ if we're a pick, then there must be complevel/5 or fewer copies of
+        ~ this ability
+        if (@ispick <> 0) then
+          validif (tagcount[HasAbility.rcPsAuWaBl] <= allowed)
+
+        ~ otherwise, look for fewer, since we're adding this
+        else
+          validif (tagcount[HasAbility.rcPsAuWaBl] < allowed)
+          endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability."
+        ]]>
+      </validate>
+    </prereq>
+  </thing>
+  <!--
+
+  The generic abilities they bootstrap for display/configurable purposes
+
+  -->
+  <thing id="abPsAuGhGu" name="Ghostly Guidance" description="The animist reduces any miss chance he would suffer on attack rolls while he is wearing his astral suit by 5%, to a minimum of 0%. In addition, while he is wearing his astral suit, he gains a +1 bonus on Perception checks. This customization can be taken once for every four levels the animist possesses. Its effects stack." compset="Ability" summary="Reduce miss chance on attacks and get a Perception bonus." uniqueness="unique">
+    <usesource source="srcPsAuSev"/>
+    <tag group="SpecType" tag="Sense"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostLevel">
+      <![CDATA[
+      field[abText].text = maximum(field[abValue].value * 5, 0) & "%"
+
+      field[livename].text = field[name].text & " (" & field[abText].text & ", " & signed(field[abValue2].value) & ")"
+      field[sbName].text = "ghostly guidance (" & field[abText].text & ", " & signed(field[abValue2].value) & ")"
+
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      #applybonus[Bonus, hero.childfound[skPercep], field[abValue2].value]
+      ]]>
+    </eval>
+  </thing>
+  <thing id="abPsAuSpFu" name="Spirit Fury" description="The animist draws the spirits of the fallen to him, gaining their power at the expense of self-control. While he is wearing his astral suit, he may rage for a number of rounds per day equal to 4 + his class level + his Charisma modifier. While raging, the animist gains a +4 morale bonus to Strength and Constitution, as well as a +2 morale bonus on Will saves. In addition, he takes a -2 penalty to Armor Class. The increase to Constitution grants the animist bonus hit points per Hit Dice, but these disappear when the rage ends and are not lost first like temporary hit points. While in rage, an animist cannot use any Charisma-, Dexterity-, or Intelligence-based skills (except Acrobatics, Fly, Intimidate, and Ride) or any ability that requires patience or concentration.\n\nAn animist can enter or end his rage as a free action, and is fatigued after rage for a number of rounds equal to 2 times the number of rounds spent in rage. An animist cannot enter a new rage while fatigued or exhausted.\n\nThis customization can be taken once for every six levels the animist possesses. Each time it is taken after the first, the animist may rage for additional 6 rounds per day, and gains a rage power that they qualify for. For the purpose of qualifying for rage powers, the animist is treated as a barbarian of his class level. If the animist possesses rage powers from another source (such as from levels in the barbarian class), they may not be used while in a spirit fury. The animist must be at least 6th level before selecting this customization." compset="Ability" summary="Gain a rage ability and rage powers." uniqueness="unique">
+    <fieldval field="trkMax" value="-2"/>
+    <fieldval field="abValue" value="4"/>
+    <fieldval field="abValue2" value="2"/>
+    <usesource source="srcPsAuSev"/>
+    <tag group="SbNameApp" tag="SignAppVal"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ChargeCalc" tag="LevelFull"/>
+    <tag group="ChargeCalc" tag="HitDieFull"/>
+    <tag group="ChargeCalc" tag="LevelX1"/>
+    <tag group="ChargeAttr" tag="aCHA"/>
+    <tag group="Usage" tag="DayRound"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SbNameApp" tag="AppValue"/>
+    <bootstrap thing="cfgPsAuSFR"></bootstrap>
+    <eval phase="PostLevel">
+      <![CDATA[
+      ~ If we're not wearling the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      perform assign[User.Activation]
+
+      ~ If not activated, stop again
+      doneif (field[abilActive].value = 0)
+
+      #applybonus[BonMorale, hero.child[aSTR], field[abValue].value]
+      #applybonus[BonMorale, hero.child[aCON], field[abValue].value]
+
+      hero.child[ArmorClass].field[Penalty].value += field[abValue2].value
+      ]]>
+    </eval>
+  </thing>
+  <thing id="abPsAuWaBl" name="Ward of Blood" description="The animist gains a +2 bonus to his Armor Class against incorporeal attacks while he is wearing his astral suit. This customization can be taken once for every five levels the animist possesses. Its effects stack." compset="Ability" summary="Gain an AC bonus against incorporeal attacks." uniqueness="unique">
+    <usesource source="srcPsAuSev"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="SbNameApp" tag="AppValue"/>
+    <tag group="SbNameApp" tag="SignAppVal"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="PostLevel">
+      <![CDATA[
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      #situational[hero.child[ArmorClass], signed(field[abValue].value) & " vs. incorporeal attacks", field[thingname].text]
+      ]]>
+    </eval>
+  </thing>
+  <!--
+
+  Configurables for choosing other abilities with
+
+  -->
+  <thing id="cfgPsAuSFR" name="Spirit Fury Rage Powers" compset="Configure" uniqueness="unique">
+    <fieldval field="cfgObject1" value="Rage Powers"/>
+    <fieldval field="cfgMax1" value="-1"/>
+    <fieldval field="cfgAllow1" value="abCategory.BbnRagePow"/>
+    <usesource source="srcPsAuSev"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="PreReqCaP1" tag="BbnRagePow"/>
+    <eval phase="Level" priority="5000">field[cfgLevel].value += hero.tagcount[Classes.Aegis]</eval>
+  </thing>
+</document>
