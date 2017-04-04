@@ -93,8 +93,25 @@
       ~ Give the linked class access to Discipline Specific Powers. This
       ~ is for for where the Discipline is tagged with specific power.
       linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+
+      ~ Push any Psion Discipline tags to the hero so other Picks
+      ~ can easily test for them.
+      perform hero.pushtags[PUDisc.?]
       ]]></eval>
 
+    <!--
+      This makes sure that only a single discipline is marked as primary.
+    -->
+    <prereq message="Only one Psion Discipline can be marked as primary.">
+      <validate>
+        @valid = 1
+
+        ~ Check for more than one primary discipline
+        If (hero.tagcount[PUDisc.Primary] > 1) Then
+          @valid = 0
+        Endif
+      </validate>
+    </prereq>
 
   </component>
   <!-- ************************************************************************ -->
