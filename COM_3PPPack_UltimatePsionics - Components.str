@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document signature="Hero Lab Structure">
+
+  <!-- ==================================================  -->
+  <!-- Psion Discipline Custom Ability.                    -->
+  <!-- ==================================================  -->
+  <component
+    id="PUDisc"
+    name="Psion Discipline"
+    autocompset="no"
+    hasshortname="no"
+    ispublic="yes">
+
+    <!-- Allows for assigning the Psionic Class tag to Powers -->
+    <identity group="psiClass"/>
+
+    <!-- TAGS -->
+    <tag group="abCategory" tag="PUPsiDisc"/>
+    <tag group="HasAbility" tag="PUPsiDisc"/>
+    <tag group="Ability"    tag="PUPsiDisc"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+
+    <eval index="1" phase="First" priority="50"><![CDATA[
+      ~ We need a hero tag really early that can be tested for
+      perform hero.assign[PUDisc.Added]
+      ]]></eval>
+
+    <eval index="2" phase="First" priority="99"><![CDATA[
+      ~ If Primary then set primary tag
+      If (field[usrIndex].value = 0) Then
+        perform assign[PUDisc.Primary]
+      Else
+        perform assign[PUDisc.Secondary]
+      Endif
+
+      ~ if we have less than two disciplines selected then do nothing!
+      doneif (hero.tagcount[PUDisc.Added] < 2)
+
+      ~ Setup the manual arrays to allow for selecting Primary/Secondary values
+      field[usrArray].arraytext[0] = "Primary"
+      field[usrArray].arraytext[1] = "Secondary"
+
+      ~ Give some helpful text
+      field[DescAppend].text &= "{B}Note:{/b} Because you have multiple disciplines you must select which is the primary and which is secondary. This allows the discipline abilities to display at the correct levels."
+      ]]></eval>
+
+    <eval index="3" phase="First" priority="100"><![CDATA[
+      ~ Only process for Secondary Disciplines
+      doneif (tagis[PUDisc.Secondary] = 0)
+
+      var searchexpr as string
+      var sThingID as string
+
+      ~ Find each discipline class ability that is bootstrapped to us
+      foreach bootstrap in this
+        debug eachthing.idstring
+
+        ~ If this is a different unique id then process it.
+        ~ This prevents looping on the same unique id which
+        ~ can be bootstrapped multiple times.
+        If (compare(sThingID,eachthing.idstring) <> 0) then
+
+          ~ Save unique id and search expression
+          sThingID = eachthing.idstring
+          searchexpr = "thingid." & eachthing.idstring
+
+          ~ loop through a specific bootstrapped class ability
+          foreach pick in hero from BaseClSpec where searchexpr
+
+            ~ Change level 2 ability to level 8 and level 8 to level 15.
+            ~ Hide all other levels as they are not used.
+            If (eachpick.tagis[ClSpecWhen.2] = 1) then
+              perform eachpick.tagreplace[ClSpecWhen.2,ClSpecWhen.10]
+            ElseIf (eachpick.tagis[ClSpecWhen.8] = 1) then
+              perform eachpick.tagreplace[ClSpecWhen.8,ClSpecWhen.15]
+            Else
+              perform eachpick.assign[Hide.Special]
+            Endif
+
+          nexteach
+
+        Endif
+
+      nexteach
+      ]]></eval>
+
+    <!-- Allow access to powers setup against this Psion Discipline -->
+    <eval index="4" phase="Final" priority="1000"><![CDATA[
+      ~ Give the linked class access to Discipline Class Powers
+      ~ This is for where the Power is marked with the psiClass tag.
+      linkage[table].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
+
+      ~ Give the linked class access to Discipline Specific Powers. This
+      ~ is for for where the Discipline is tagged with specific power.
+      linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+      ]]></eval>
+
+
+  </component>
+  <!-- ************************************************************************ -->
+
+  <compset
+    id="PUDisc">
+    <compref component="PUDisc"/>
+    <compref component="AbCatProc"/>
+    <compref component="Ability"/>
+    <compref component="Activated"/>
+    <compref component="ActiveList"/>
+    <compref component="AlignReq"/>
+    <compref component="AttDam"/>
+    <compref component="AttDamMods"/>
+    <compref component="AutoPrereq"/>
+    <compref component="BaseCustSp"/>
+    <compref component="BaseEquip"/>
+    <compref component="BasePolymo"/>
+    <compref component="BaseSpecLv"/>
+    <compref component="Buyable"/>
+    <compref component="ClassIndex"/>
+    <compref component="Custom"/>
+    <compref component="DescInfo"/>
+    <compref component="Domain"/>
+    <compref component="InnateAtt"/>
+    <compref component="Modifiers"/>
+    <compref component="NeedSLASrc"/>
+    <compref component="PathSocRes"/>
+    <compref component="PolyDefRet"/>
+    <compref component="Sellable"/>
+    <compref component="SetName"/>
+    <compref component="SourceAbbr"/>
+    <compref component="SourceFull"/>
+    <compref component="SpecialTab"/>
+    <compref component="StatblName"/>
+    <compref component="Tracker"/>
+    <compref component="UserSelect"/>
+    <compref component="Value"/>
+    <compref component="WepFeatTag"/>
+    <compref component="shortname"/>
+  </compset>
+
+  </document>
