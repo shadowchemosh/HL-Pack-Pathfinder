@@ -4876,4 +4876,35 @@ Added new natural weapon adjustments:
       <before name="gMoney automatically overrides own starting cash fields"/>
       </eval>
     </thing>
+  <thing id="pS2MetaDec" name="Metamagic, Decrease" description="Select this adjustment to lower the amount of a metamagic feat.  In example Quicken metmagic normally increases a spell by +4.  By selecting Quicken from the dropdown and setting the counter -3 then spells will only be increased by +1 instead of +4." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.BaseMetamg"/>
+    <fieldval field="pMinimum" value="-10"/>
+    <fieldval field="pMaximum" value="-1"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="OthAdjCat" tag="Spell"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <eval phase="Attr" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      var iX as number
+      var nAdjust as number
+      nAdjust = field[pAdjust].value * -1
+      ~ Pull the correct number of tags based on the counter
+      while (iX < nAdjust)
+        iX += 1
+        ~ Pull the Reduce Metamagic Cost tag
+        perform field[pChosen].chosen.pulltags[ReduMMCost.?]
+      loop
+
+      ~ Push tag(s) to the hero
+      perform hero.pushtags[ReduMMCost.?]]]></eval>
+    <eval phase="PreLevel" priority="11000" index="2"><![CDATA[
+      ~ Set custom expression to "All Things on Hero"
+      field[pUsePicks].value = 0]]></eval>
+    </thing>
   </document>
