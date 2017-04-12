@@ -85,13 +85,19 @@
 
     <!-- Allow access to powers setup against this Psion Discipline -->
     <eval index="4" phase="Final" priority="1000"><![CDATA[
-      ~ Give the linked class access to Discipline Class Powers
-      ~ This is for where the Power is marked with the psiClass tag.
-      linkage[table].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
+      ~ Make sure we have tags to add so that we don't mess up the expression
+      If (tagis[psiClass.?] = 1) then
+        ~ Give the linked class access to Discipline Class Powers
+        ~ This is for where the Power is marked with the psiClass tag.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
+      Endif
 
-      ~ Give the linked class access to Discipline Specific Powers. This
-      ~ is for for where the Discipline is tagged with specific power.
-      linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+      ~ Make sure we have tags to add so that we don't mess up the expression
+      If (tagis[ClsAllowPs.?] = 1) then
+        ~ Give the linked class access to Discipline Specific Powers. This
+        ~ is for for where the Discipline is tagged with specific power.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+      Endif
 
       ~ Push any Psion Discipline tags to the hero so other Picks
       ~ can easily test for them.
