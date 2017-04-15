@@ -246,7 +246,7 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="CoreCampOK"/>
     </thing>
-  <thing id="wuTorch" name="Torch" description="A torch can be used as improvised weapon that does additional fire damage." compset="Weapon">
+  <thing id="wuTorch" name="Torch" description="If a torch is used in combat, treat it as a one-handed improvised weapon that deals bludgeoning damage equal to that of a gauntlet of its size, plus 1 point of fire damage.{br}{br}{b}Note:{/b} By default this torch is unlit. Please lit the torch to do fire damage from the In-Play tab." compset="Weapon">
     <fieldval field="gSizeCost" value=".01"/>
     <fieldval field="gWeight" value="1"/>
     <usesource source="srcS2Gear"/>
@@ -256,15 +256,62 @@
     <tag group="wCategory" tag="Melee"/>
     <tag group="EquipType" tag="Wood"/>
     <tag group="Helper" tag="NormalOnly"/>
-    <tag group="wMain" tag="1d4_4"/>
+    <tag group="wMain" tag="1d3"/>
     <tag group="wProfReq" tag="ImprovMel"/>
     <tag group="wClass" tag="Light"/>
-    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="wType" tag="B"/>
     <tag group="Helper" tag="Improvised"/>
-    <eval phase="Final" priority="50000"><![CDATA[
-      ~ Show text for the fire damage
-      #extradamage[this," +1d4 fire",field[name].text]]]></eval>
+    <tag group="Helper" tag="AlwaysAvl"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="abS2Torch"></bootstrap>
+    <eval phase="PreLevel" priority="8000"><![CDATA[
+      ~ Feat "Torch Bearer" taken then process here
+      If (#hasfeat[fTrchBeare] = 1) Then
+
+        ~ Make us proficient and increase dmg to
+        ~ 1d6 as light mace.
+        perform assign[Helper.Proficient]
+        perform tagreplace[wMain.1d3,wMain.1d6]
+      Endif
+
+      ~ Feat "Torch Handling" taken then process here
+      If (#hasfeat[fTrchHand] = 1) Then
+
+        ~ Make us a simple weapon
+        perform delete[Helper.Improvised]
+        perform tagreplace[wProfReq.ImprovMel,wProfReq.Simple]
+        field[DescAppend].text &= "{B}Torch Handling{/b} the radius of normal and increased illumination shed by any torch or mundane light source you carry increases by 10 feet."
+      Endif
+      ]]></eval>
+    <eval phase="Final" priority="50000" index="2"><![CDATA[
+      ~ If not active get out now! &
+      doneif (tagis[ShadowEqp.TorchLit] = 0)
+
+      ~ Show text for fire damage based if we have the feat
+      ~ "Burn Burn Burn" or not. Default fire dmg is 1 or
+      ~ 1d4 with feat.
+      If (#hasfeat[fBurnBurn] = 1) then
+        #extradamage[this," plus 1d4 fire",field[name].text]
+      Else
+        #extradamage[this," plus 1 fire",field[name].text]
+      Endif
+      ]]></eval>
+    </thing>
+  <thing id="abS2Torch" name="Torch" description="A torch used in combat is treated as a one-handed improvised weapon that deals bludgeoning damage equal to that of a gauntlet of its size plus 1 point of fire damage." compset="Ability">
+    <fieldval field="actName" value="Lit"/>
+    <usesource source="srcS2Gear"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[trustme
+      ~ It not active get out now! &
+      doneif (field[abilActive].value = 0)
+
+      ~ Mark torch as lit
+      perform root.assign[ShadowEqp.TorchLit]]]></eval>
+    <eval phase="Render" priority="99999999999999999" index="2"><![CDATA[
+      ~ Show the activation option &
+      perform delete[Hide.Activation]
+      perform delete[Hide.ActiveList]]]></eval>
     </thing>
   <thing id="wRock2" name="Rock" description="This is a generic &quot;Rock Weapon&quot; that can be used for many different monsters like giants.\n\n{B}Note:{/b} To change the damage die size go to the &quot;Adjust&quot; tab, then &quot;Other Adjustments&quot; and add &quot;Weapon Size&quot;." compset="Weapon">
     <usesource source="srcS2Gear"/>
@@ -398,8 +445,7 @@
           eachpick.field[Bonus].value += 2
         nexteach
       endif]]></eval>
-    <eval phase="Final" priority="50000" index="2">
-      ~ Only proceed if we are a type of ammunition like arrows/bolts
+    <eval phase="Final" priority="50000" index="2">~ Only proceed if we are a type of ammunition like arrows/bolts
       doneif (parent.tagis[wCategory.Ammunition] = 0)
 
       ~ We want to always show the activation button as this is really
@@ -436,8 +482,7 @@
 
       #situational[hero.child[svFort],"+5 alchemical bonus vs poison.",field[thingname].text]]]></eval>
     </thing>
-  <thing id="gS2WealthC" name="Copper Piece" description="This item allows for an easy method of transfering money between characters. You purchase this wealth at cost and trade it to another character. That character can then sell it for 100% of the cost to add the wealth to the character.\n\n{B}Note:{/b} If the &quot;No Coin Weight&quot; option is checked these items will have zero weight on your character."
-  compset="Gear" summary="Copper pieces for transfer among party members." stacking="merge">
+  <thing id="gS2WealthC" name="Copper Piece" description="This item allows for an easy method of transfering money between characters. You purchase this wealth at cost and trade it to another character. That character can then sell it for 100% of the cost to add the wealth to the character.\n\n{B}Note:{/b} If the &quot;No Coin Weight&quot; option is checked these items will have zero weight on your character." compset="Gear" summary="Copper pieces for transfer among party members." stacking="merge">
     <fieldval field="gWeight" value=".02"/>
     <fieldval field="gCost" value=".01"/>
     <fieldval field="shortname" value="cp"/>
@@ -501,5 +546,4 @@
 
       Call GearZerolb]]></eval>
     </thing>
-
   </document>
