@@ -355,7 +355,35 @@
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="wClass" tag="OneHanded"/>
     <tag group="Helper" tag="SingleAtt"/>
-    <eval phase="Final" priority="11000"><![CDATA[
+    <eval phase="First" priority="10050"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ Pull tags from the adjustment to ourself
+      perform root.pulltags[wClass.?]
+      perform root.pulltags[wCritMin.?]
+      perform root.pulltags[wCritMult.?]
+      perform root.pulltags[wMain.?]
+      perform root.pulltags[wProfReq.?]
+      perform root.pulltags[wCategory.?]
+      perform root.pulltags[IsWeapon.?]
+      ]]></eval>
+    <eval phase="Final" priority="5000" index="2"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ Set the custom damage dice to both melee and ranged
+      field[wFixDamage].text = root.field[pSource].text
+      field[wFixRanDam].text = root.field[pSource].text
+
+      ~ Set the custom Spell name
+      field[livename].text = root.field[pDuration].text
+      ]]></eval>
+    <eval phase="Final" priority="11000" index="4"><![CDATA[
       ~ Remove any extra high tags as we can't ever
       ~ more than a single attack.
       perform delete[Helper.ExtraHigh]]]></eval>
