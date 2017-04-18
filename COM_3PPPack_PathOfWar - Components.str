@@ -28,7 +28,7 @@
       maxlength="0">
       <calculate phase="PostAttr" priority="10000"><![CDATA[
         ~ Calculate our DC as 10 plus Maneuver level plus the Attribute Score we are linked
-        ~ to by the UseAttr.? tag on the configurable. We will also add in the "school of magic" 
+        ~ to by the UseAttr.? tag on the configurable. We will also add in the "school of magic"
         ~ DC bonus. We are using the schools in the same way as LW to give a single place to increase
         ~ all the DC's of a specific Discipline.
         @value = 10 + tagvalue[mLevel.?] + hero.findchild[BaseAttr,linkage[table].tagids[UseAttr.?]].field[aModBonus].value + hero.findchild[SplSchool,"PathOfWar.Discipline & " & tagids[Discipline.?]].field[schDC].value
@@ -85,7 +85,7 @@
       type="user"
       maxlength="100">
     </field>
-  
+
     <!-- mExValue is an "overflow" field for cases where we need more than 5 abValue fields -->
     <field
       id="mExValue"
@@ -107,7 +107,7 @@
       ]]>
     </eval>
 
-    <!-- 
+    <!--
       This gets the class tag from the configurable and places it on the maneuver. This is
       needed to give an easy way to the print sheet to find the class name.
     -->
@@ -131,7 +131,7 @@
       </validate>
     </prereq>
     <!-- This checks after we become a pick that we have a high enough IL to have learned this
-         maneuver. This can NOT be done why we are a Thing as we have no idea which class we 
+         maneuver. This can NOT be done why we are a Thing as we have no idea which class we
          are currently attached to.
     -->
     <prereq message="You do not have a high enough Initiator Level to learn this maneuver.">
@@ -196,15 +196,15 @@
       maxlength="0">
     </field>
 
-    <!-- 
-      These linkages link the class to its configurable. This allows an easy way to setup the 
-      configurable. It also moves all the logic to background scripts instead. Meaning the 
+    <!--
+      These linkages link the class to its configurable. This allows an easy way to setup the
+      configurable. It also moves all the logic to background scripts instead. Meaning the
       proceadure call can be removed from the Configurables.
-    -->    
+    -->
     <linkage linkage="powCfg"/>
     <linkage linkage="powClass"/>
 
-    <!-- 
+    <!--
         This does some initial setup of tags.
     -->
     <eval phase="First" priority="50" index="1" name="PoW Init Setup"><![CDATA[
@@ -235,7 +235,7 @@
       perform linkage[powCfg].assign[PathOfWar.Config]
       ]]></eval>
 
-    <!-- 
+    <!--
         This setups the IL information on the Configurable
     -->
     <eval phase="PostLevel" priority="10" index="2" name="PoW Calc IL"><![CDATA[
@@ -261,17 +261,17 @@
       field[cIL].value += miPrc + round( otherlev/2,0,-1) + linkage[powClass].field[cTotalLev].value
 
       ~ Set the IL onto the associated configurator to save time for later checks
-      linkage[powCfg].field[cfgLevel].value += field[cIL].value  
+      linkage[powCfg].field[cfgLevel].value += field[cIL].value
       ]]></eval>
 
-    <!-- 
+    <!--
         This sets the correct number of Maneuvers Known, Readied, and Stances onto the Configurable based
         upon the class we are linked too.
     -->
     <eval phase="Final" priority="11000" index="3"><![CDATA[
       var level as number
 
-      ~ If we're a normal prestige class, make sure we have chosen an existing maneuver list to work 
+      ~ If we're a normal prestige class, make sure we have chosen an existing maneuver list to work
       ~ from, otherwise don't allow picking any maneuvers yet.
       ~ NOTE: To support special "houserules" from the community we added a new PrCIndMan tag to represent a PrC
       ~       class that does not inherit any of its IL values from another PoW class.
@@ -283,7 +283,7 @@
           done
         endif
       endif
-    
+
       ~ If no disciplines setup then display error and stop!
       ~ But don't display the error if this class has to choose disciplines (like the Pathwalker archetype)
       if (tagcount[Discipline.?] = 0) then
@@ -295,9 +295,9 @@
 
       ~ Set to pull anything that is not a stance
       linkage[powCfg].field[cfgAllow1].text = "PathOfWar.Manuever & (" & tagids[Discipline.?,"|"] & ")"
-      ~ Set to pull all the stances 
+      ~ Set to pull all the stances
       linkage[powCfg].field[cfgAllow2].text = "PathOfWar.Stance & (" & tagids[Discipline.?,"|"] & ")"
-      
+
       ~ Enforce maximum maneuver level, if we have a custom progression
       if (tagis[PathOfWar.CstManProg] <> 0) then
         linkage[powCfg].field[cfgAllow1].text &= " & (mLevel.0"
@@ -309,11 +309,11 @@
         loop
         linkage[powCfg].field[cfgAllow1].text &= ")"
       endif
-    
+
       ~ Calculate the array value which is class level minus one as we start at zero
-      field[AryLevel].value += linkage[powClass].field[cTotalLev].value - 1     
+      field[AryLevel].value += linkage[powClass].field[cTotalLev].value - 1
       level = field[AryLevel].value
-    
+
       ~ Set the configurator's number of manuevers known
       linkage[powCfg].field[cfgMax1].value += field[cManKnown].arrayvalue[level]
 
@@ -324,24 +324,24 @@
       linkage[powCfg].field[livename].text = linkage[powCfg].tagnames[ClsCountAs.?] & " Maneuvers Readied: " & linkage[powCfg].tagcount[PathOfWar.ManueverOn] & " of " & field[cManReady].arrayvalue[level]
       ]]></eval>
 
-    <!-- 
+    <!--
         Push validation tags to the hero.
     -->
     <eval phase="Final" priority="50000" index="4"><![CDATA[
       ~ Push the Discipline tags to the hero so that Maneuvers can
       ~ validate correctly.
-      perform hero.pushtags[Discipline.?]      
+      perform hero.pushtags[Discipline.?]
       ]]></eval>
 
-    
+
   </component>
   <!-- ************************************************************************ -->
 
 
   <!-- ================================================================ -->
-  <!-- This new component allows for combining the Selection helpers & 
+  <!-- This new component allows for combining the Selection helpers &
        magic school components into a single Thing. This makes it much
-       easier for others to make a new custom Disicpline using the 
+       easier for others to make a new custom Disicpline using the
        editor.
     -->
   <!-- ================================================================= -->
@@ -352,7 +352,7 @@
     hasshortname="no"
     ispublic="yes">
 
-    <!-- link to the disciplines skills -->    
+    <!-- link to the disciplines skills -->
     <linkage linkage="powDiscSk1" optional="yes"/>
     <linkage linkage="powDiscSk2" optional="yes"/>
     <linkage linkage="powDiscSk3" optional="yes"/>
@@ -366,13 +366,15 @@
     <tag group="PathOfWar" tag="Discipline"/>
     <tag group="PathOfWar" tag="selDisc"/>
 
-    <!-- 
+    <!--
         This does some initial setup of tags.
     -->
     <eval phase="First" priority="50" index="1"><![CDATA[
       ~ Create a Has Manuever & Has Stance tags from the discipline tag
       perform pulltags[Discipline.?,HasMan]
       perform pulltags[Discipline.?,HasStance]
+      ~ Create Dark Focus tag from the discipline tag
+      perform pulltags[Discipline.?,DarkFocus]
 
       ~ If linkage set then setup tags
       if (islinkage[powDiscSk1] <> 0) then
@@ -410,8 +412,8 @@
       endif
 
       ~ If no skill added tags get out now!
-      doneif (tagis[SkillAdded.?] = 0) 
-           
+      doneif (tagis[SkillAdded.?] = 0)
+
       ~ If we have SkillAdd.? tags then we have to now loop through
       ~ all the skills applying our Discipline tags.
       foreach pick in hero from BaseSkill where tagids[SkillAdded.?,"|"]
@@ -419,7 +421,7 @@
       nexteach
       ]]>
       </eval>
-    
+
   </component>
 
 
@@ -435,7 +437,7 @@
       ~ Setup the names on the selectors
       field[cfgObject1].text = "Maneuvers"
       field[cfgObject2].text = "Stances"
-      
+
       ~ Assign tags that all configurables must have
       perform assign[PathOfWar.StanceUp]
       perform assign[PathOfWar.Config]

@@ -32,7 +32,7 @@
       field[pUsePicks].value = 0
       ~ Set search to daze or prone
       field[pCandExpr].text = "component.BaseSpell"]]></eval>
-    <eval phase="PreLevel" priority="5000" index="2"><![CDATA[     
+    <eval phase="PreLevel" priority="5000" index="2"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
 
@@ -46,11 +46,10 @@
       ~ Set our text to the name of the desc on the spell
       field[abText].text = field[pChosen].chosen.field[CustDesc].text]]></eval>
     </thing>
-  <thing id="pS2SpelWep" name="- Custom Spell Weapon -" description="This adjustment allows you to add a customizable Spell Weapon to your character. This allows you to set the spell name and spell dice to roll so that if you are using the iPad you can have it roll the damage for you.\n\n{B}Note:{/b} Add this spell adjustment and then select the &quot;Spell Weapon&quot; from the drop down box that you want to change the values for. The second drop down lets you set the type of spell as a Area of Effect (AoE), Ranged Touch Attack, or Touch Attack.  Finally set the spells damage dice, defualts to 1d4+1, and then change &quot;Spell Weapon&quot; to be the name of the spell (ie Fireball or Scorching Ray)." compset="InPlay">
+  <thing id="pS2SpelWep" name="- Custom Spell Weapon -" description="This adjustment allows you to add a customizable Spell Weapon to your character. This allows you to set the spell name and spell dice to roll so that if you are using the iPad you can have it roll the damage for you.\n\n{B}Note:{/b} Add this spell adjustment and then select type of spell as a Area of Effect (AoE), Ranged Touch Attack, or Touch Attack.  Finally set the spells damage dice, defualts to 1d4+1, and then change &quot;Spell Weapon&quot; text to be the name of the spell (ie Fireball or Scorching Ray)." compset="InPlay">
     <fieldval field="pSource" value="1d4+1"/>
     <fieldval field="pDuration" value="Spell Weapon"/>
     <fieldval field="pUsePicks" value="1"/>
-    <fieldval field="pCandExpr" value="component.BaseWep &amp; AdjShadow.SpWeapon"/>
     <fieldval field="pCandExpr2" value="component.BaseWep &amp; PackHelper.Touch"/>
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="NoIncr"/>
@@ -58,7 +57,6 @@
     <tag group="Helper" tag="AdjSpell"/>
     <tag group="Helper" tag="AdjPerm"/>
     <tag group="Helper" tag="AdjInfo"/>
-    <tag group="Adjustment" tag="S2Custom"/>
     <tag group="Adjust2nd" tag="S2Custom"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="wS2SpelWep">
@@ -71,7 +69,7 @@
       doneif (field[pChosen2].ischosen <> 1)
       ~ If AoE weapon selected get out now!
       doneif (field[pChosen2].chosen.tagis[thingid.wS2AoE] = 1)
-      
+
       ~ Pull all weapon tags
       perform field[pChosen2].chosen.pulltags[wClass.?]
       perform field[pChosen2].chosen.pulltags[wCritMin.?]
@@ -80,28 +78,7 @@
       perform field[pChosen2].chosen.pulltags[wProfReq.?]
       perform field[pChosen2].chosen.pulltags[wCategory.?]
       perform field[pChosen2].chosen.pulltags[IsWeapon.?]
-
-
-      ~ Push all weapon tags
-      perform field[pChosen].chosen.pushtags[wClass.?]
-      perform field[pChosen].chosen.pushtags[wCritMin.?]
-      perform field[pChosen].chosen.pushtags[wCritMult.?]
-      perform field[pChosen].chosen.pushtags[wMain.?]
-      perform field[pChosen].chosen.pushtags[wProfReq.?]
-      perform field[pChosen].chosen.pushtags[wCategory.?]
-      perform field[pChosen].chosen.pushtags[IsWeapon.?]]]></eval>
-    <eval phase="Final" priority="5000" index="2"><![CDATA[     
-      ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value = 0)
-      ~ If nothing chosen, get out now
-      doneif (field[pChosen].ischosen <> 1)
-
-      ~ Set the custom damage dice to both melee and ranged
-      field[pChosen].chosen.field[wFixDamage].text = field[pSource].text
-      field[pChosen].chosen.field[wFixRanDam].text = field[pSource].text
-      
-      ~ Set the custom Spell name
-      field[pChosen].chosen.field[livename].text = field[pDuration].text]]></eval>
+      ]]></eval>
     </thing>
   <thing id="pS2AwakVer" name="Awaken (Vermin)" description="You awaken a tree or animal to human-like sentience. To succeed, you must make a Will save (DC 10 + the animal&apos;s current HD, or the HD the tree will have once awakened). The awakened animal or tree is friendly toward you. You have no special empathy or connection with a creature you awaken, although it serves you in specific tasks or endeavors if you communicate your desires to it. If you cast {i}awaken{/i} again, any previously awakened creatures remain friendly to you, but they no longer undertake tasks for you unless it is in their best interests.\n\nAn awakened tree has characteristics as if it were an animated object (see the {i}Pathfinder RPG Bestiary{/i}), except that it gains the plant type and its Intelligence, Wisdom, and Charisma scores are each 3d6.\n\nAn awakened plant gains the ability to move its limbs, roots, vines, creepers, and so forth, and it has senses similar to a human&apos;s.\n\nAn awakened animal gets 3d6 Intelligence, +1d3 Charisma, and +2 HD. Its type becomes magical beast (augmented animal). An awakened animal can&apos;t serve as an animal companion, familiar, or special mount.\n\nAn awakened tree or animal can speak one language that you know, plus one additional language that you know per point of Intelligence bonus (if any). This spell does not function on an animal or plant with an Intelligence greater than 2.\n\n{b}Note{/b}: The selector is used to select the amount of Intelligence ADDED by the spell (3d6).\n\n{b}Note{/b}: An additional language slot will be added so that the user can choose which language was gained for free.\n\n{b}Note:{/b} To get the additional Hit Dice to display you have two options. 1) Turn the character into a NPC.  2) Press CTRL-K and turn on &quot;House Rules-&gt;Allow PCs to add Bonus HD&quot;." compset="InPlay" uniqueness="unique">
     <fieldval field="pMinimum" value="3"/>
@@ -124,7 +101,7 @@
 
       ~ Vermin now have a INT. Or at least most gamers think so
       ~ Remove the No Score tag from INT ability pick
-      perform hero.child[aINT].delete[Helper.NoScore]      
+      perform hero.child[aINT].delete[Helper.NoScore]
 
       ~ add the selected amount to our INT
       hero.child[aINT].field[aStartMod].value += field[pAdjust].value]]></eval>
@@ -135,7 +112,7 @@
       ~ we become a magical beast
       perform hero.assign[TypeAndAug.tpMagBeast]
 
-      ~ since vermin won't have any bonus languages, 
+      ~ since vermin won't have any bonus languages,
       ~ but we now get 1 free
       ~ language, add a language slot
       herofield[tLangsSta].value += 1
