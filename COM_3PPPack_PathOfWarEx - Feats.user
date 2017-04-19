@@ -1089,7 +1089,7 @@ Email: mail@theirongolem.com</info_author>
     <exprreq message="Eternal Guardian Oath feat required"><![CDATA[#hasfeat[fPWEGOath] <> 0]]></exprreq>
     <exprreq message="Intimidate 11+ ranks required"><![CDATA[#skillranks[skIntim] >= 11]]></exprreq>
     </thing>
-  <thing id="fPWEFStyle" name="Elemental Flux Style" description="Your understanding of Elemental Energies offers you defense as well as offense.\n\n{b}Prerequisites:{/b} 1 or more Elemental Flux stances, Spellcraft 3 ranks\n\n{b}Benefit:{/b} While this style is active, you gain Energy Resistance equal to ½ your level (min. 1).  This energy resistance is of the same type as your active energy type." compset="Feat" uniqueness="useronce">
+  <thing id="fPWEFStyle" name="Elemental Flux Style" description="You understand the fluid and changing nature of elemental magics\n\n{b}Prerequisites:{/b} 1 or more Elemental Flux stances, Spellcraft 3 ranks\n\n{b}Benefit:{/b} You can change your active element once per round as a free action." compset="Feat" summary="Once per round, change your active element as a free action" uniqueness="useronce">
     <fieldval field="abValue" value="2"/>
     <fieldval field="actName2" value="Target is cursed"/>
     <usesource source="srcPOWEx"/>
@@ -1098,27 +1098,17 @@ Email: mail@theirongolem.com</info_author>
     <tag group="fCategory" tag="Style"/>
     <tag group="fCategory" tag="Combat"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="Render" priority="20000" index="2"><![CDATA[
-      field[livename].text &= " (" & signed(field[abValue].value) & " bleed damage)"]]></eval>
+    <eval phase="Render" priority="20000" index="2"></eval>
     <eval phase="PostLevel" priority="10000"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
 
-      ~ Calculate additional bleed damage
-      field[abValue].value += round(herofield[tTotLevel].value/4,0,-1) * 2
 
       ~if we're not active, we're done
       doneif (field[abilActive].value = 0)
 
       ~ Assign active style tag
-      perform hero.assign[Custom.ActiveStyl]
-
-      ~ If we have a cursed target, add bleed damage
-      if (field[abilAct2].value <> 0) then
-        foreach pick in hero from BaseWep
-          #extradamage[eachpick, signed(field[abValue].value) & " bleed", field[thingname].text]
-        nexteach
-      endif]]></eval>
+      perform hero.assign[Custom.ActiveStyl]]]></eval>
     <evalrule phase="Validation" priority="5000" message="Too many style feats active." summary="Too many style feats active."><![CDATA[validif (hero.tagcount[Custom.ActiveStyl] <= 1 + hero.tagcount[Custom.MaxActStyl])]]></evalrule>
     <exprreq message="Spellcraft 3+ ranks required"><![CDATA[#skillranks[skSpellcr] >= 3]]></exprreq>
     <exprreq message="Must know one or more Elemental Flux stances"><![CDATA[hero.tagcount[HasStance.ElemFlux] > 0]]></exprreq>
