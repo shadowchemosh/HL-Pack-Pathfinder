@@ -27,17 +27,17 @@
     ~ Set our focus to the hero's race
     perform hero.findchild[BaseRace].setfocus
     doneif (state.isfocus = 0)
-    
+
     ~ Only if we have no Racial Custom Specials should we give a value. This way
     ~ we don't stack by accident.
     if (focus.field[rGiveSpec].value = 0) then
       ~ Give one Ethnicity
       focus.field[rGiveSpec].value = 1
-    endif  
-    
+    endif
+
     ~ Set Helper tag and Ethnicity text
     perform focus.assign[Helper.OptCustom]
-    focus.field[rSpecName].text = "Ethnicities"  
+    focus.field[rSpecName].text = "Ethnicities"
     focus.field[rSpecSing].text = "Ethnicity"
     ]]>
   </procedure>
@@ -74,27 +74,10 @@
   </procedure>
 
   <!-- =================================================================== -->
-  <!-- Ultimate Psionics - Psionic Focus Test                              -->
-  <!-- =================================================================== -->
-  <procedure id="PUPsiFocus" context="pick"><![CDATA[
-    ~ Psionic Focus Test
-    ~ This procedure should be called to test for Psionic Focus instead of directly testing
-    ~ the Hero.PsiFocus tag. This is because of unique feats like Persistent Focus that 
-    ~ can cause a specific Pick to be considered Psionic Focus.
-
-    var v_focus as number
-    
-    ~ We want to set our focus variable to be TRUE (1) or FALSE (0). By using
-    ~ minimum we accmplish this.
-    v_focus = minimum(hero.tagis[Hero.PsiFocus] + tagis[Psionics.PsiFocus], 1)
-    ]]>
-  </procedure>
-
-  <!-- =================================================================== -->
   <!-- Correct set the Custom Magic Weapon or Armor name                   -->
   <!-- =================================================================== -->
   <procedure id="X1MagName" context="pick"><![CDATA[
-    ~ Should run at Render/99999999 and run on the "Weapon, Magic" 
+    ~ Should run at Render/99999999 and run on the "Weapon, Magic"
     ~ or "Armor, Magic" pick.
 
     ~ Correct the Weapon or Armor name which
@@ -121,7 +104,7 @@
     ~ Set our focus to the hero's race
     perform hero.findchild[BaseRace].setfocus
     doneif (state.isfocus = 0)
-    
+
     ~ Set new ability scores values here and default the
     ~ attributes not set to zero.
     focus.field[rSTR].value = X1_str
@@ -186,11 +169,11 @@
 
   <procedure id="multTarget" context="pick"><![CDATA[
      ~  this add "plus xxx" to multiple targeting things
-     ~ this is added from the thing's thingname 
+     ~ this is added from the thing's thingname
      ~ if the user wants to add the amount of damage the user
      ~ needs to specify the variable v_damage before calling procedure
      ~ as well as adding the multTarg.IncDam tag to the thing
-     ~ use the field abText if we want text between v_damage and 
+     ~ use the field abText if we want text between v_damage and
      ~ the name
 
     var v_damage as string
@@ -213,10 +196,10 @@
         dam = v_damage & " " & field[abText].text & " " & this.field[shortname].text
       else
         dam = field[abText].text & " " & this.field[shortname].text
-      endif 
+      endif
     else
       dam = this.field[shortname].text
-    endif 
+    endif
 
     ~ add to weapons
     foreach pick in hero from BaseWep where lstTarg
@@ -226,7 +209,7 @@
 
     ~ now add to abilities that act as weapons as well
     lstTarg &= "& Helper.WeaponSpec"
-    foreach pick in hero from Ability where lstTarg 
+    foreach pick in hero from Ability where lstTarg
       #extradamage[eachpick, " plus " & dam,field[thingname].text]
      nexteach
     endif
@@ -245,38 +228,38 @@
     endif
     ]]>
   </procedure>
-  
+
   <procedure id="RemLowLght" context="pick"><![CDATA[
     perform hero.childfound[raLowLight].assign[Helper.SpcDisable]
     perform hero.childfound[raLowLight].assign[Hide.Special]
     ]]>
   </procedure>
-  
+
   <procedure id="RemDarkvis" context="pick"><![CDATA[
     perform hero.childfound[raDarkVis].assign[Helper.SpcDisable]
     perform hero.childfound[raDarkVis].assign[Hide.Special]
     ]]>
   </procedure>
-  
+
   <procedure id="ResLowLght" context="pick"><![CDATA[
     perform hero.childfound[raLowLight].delete[Helper.SpcDisable]
     perform hero.childfound[raLowLight].delete[Hide.Special]
     ]]>
   </procedure>
-  
+
   <procedure id="ResDarkvis" context="pick"><![CDATA[
     perform hero.childfound[raDarkVis].delete[Helper.SpcDisable]
     perform hero.childfound[raDarkVis].delete[Hide.Special]
     ]]>
   </procedure>
-  
+
   <procedure id="overrideDC" context="pick"><![CDATA[
     ~ this manually overrides the auto DC calculation
-    ~ allowing user to specify level independent of the actual 
+    ~ allowing user to specify level independent of the actual
     ~ monster HD/level
-    ~ to use set the variable v_level before procedure to specify 
+    ~ to use set the variable v_level before procedure to specify
     ~ level/HD
-    ~ procedure needs to be called after Final/10000 (when normal DC 
+    ~ procedure needs to be called after Final/10000 (when normal DC
     ~ calculation is called)
 
     var v_level as number
@@ -285,7 +268,7 @@
     doneif (tagis[StandardDC.BAB] <> 0)
 
     ~ adjust DC by subtracting old level factor and adding new one
-    field[abDC].value +=  round(v_level/2,0,-1) - round(hero.tagcount[Hero.HitDice]/2,0,-1)  
+    field[abDC].value +=  round(v_level/2,0,-1) - round(hero.tagcount[Hero.HitDice]/2,0,-1)
 
     ]]>
   </procedure>
@@ -299,8 +282,8 @@
 
     ~ tags
     ~ category
-    ~DiseaseCat.Contact 
-    ~DiseaseCat.Ingested 
+    ~DiseaseCat.Contact
+    ~DiseaseCat.Ingested
     ~DiseaseCat.Inhaled
     ~DiseaseCat.Injury
 
@@ -407,7 +390,7 @@
         catList = replace(catList,", or ",", ",catCnt-2)
           endif
 
-    disDesc &= lowercase(catList)  & ";" 
+    disDesc &= lowercase(catList)  & ";"
 
     ~ add save.
     ~ if save is fixed it is stored in abValue4
@@ -431,11 +414,11 @@
           disDC = 10 + hero.child[aCHA].field[aModBonus].value
         endif
         disDC += round(hero.tagcount[Hero.HitDice]/2,0,-1) + field[abDC].value
-      endif 
+      endif
       disDesc &= " {i}save{/i} " & tagnames[DiseaseSve.?,""]  & " DC " & disDC  & "; "
     else
       disDesc &= " {i}save{/i} " & tagnames[DiseaseSve.?,""]  & " DC " & field[abValue4].value  & "; "
-    endif 
+    endif
 
     ~ add onset
     ~ if we have the override tag use the text from the disOnset variable
@@ -455,7 +438,7 @@
        else
            disDesc &= ";"
        endif
-    endif   
+    endif
 
     ~ add frequency
     ~ if we have the override tag then use the text from the disFreq variable
@@ -474,7 +457,7 @@
     if (tagis[DisSave.Override] <> 0) then
        disDesc &= " {i}cure{/i} " & disSaves & "."
     else
-       disDesc &= " {i}cure{/i} " & field[abValue3].value 
+       disDesc &= " {i}cure{/i} " & field[abValue3].value
        if (field[abValue3].value > 1) then
            disDesc &= " consecutive saves."
        else
