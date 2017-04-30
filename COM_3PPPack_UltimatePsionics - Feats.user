@@ -607,9 +607,12 @@
       ~don't proceed if we're disabled
       doneif (tagis[Helper.FtDisable] <> 0)
 
+      var v_focus as number
+      call PUPsiFocus
+
       if (field[abilActive].value = 1) then
         hero.child[ArmorClass].field[tACDodge].value += field[abValue2].value
-      elseif (hero.tagis[Hero.PsiFocus] + tagis[Psionics.PsiFocus] <> 0) then
+      elseif (v_focus <> 0) then
         hero.child[ArmorClass].field[tACDodge].value += field[abValue].value
       endif]]></eval>
     <exprreq message="Dodge required." iserror="no"><![CDATA[#hasfeat[fDodge] <> 0]]></exprreq>
@@ -806,8 +809,12 @@
 
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
+
+      var v_focus as number
+      call PUPsiFocus
+
       ~ If we are not active or psionic focus get out now!
-      doneif (hero.tagis[Hero.PsiFocus] + tagis[Psionics.PsiFocus] + field[abilActive].value = 0)
+      doneif (v_focus + field[abilActive].value = 0)
 
       ~ If ability active increase speed to 30ft else default to 10ft
       if (field[abilActive].value = 1) then
@@ -2265,13 +2272,16 @@ validif (hero.tagcount[Hero.Manifester] >= 3)]]></validate>
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="trCategory" tag="Psionic" name="Psionic"/>
-    <eval phase="PostLevel" priority="10000">~ If we are not active or psionic focus get out now!
-      doneif (hero.tagis[Hero.PsiFocus] = 0)
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      var v_focus as number
+      call PUPsiFocus
+      ~ If we are not psionic focus get out now!
+      doneif (v_focus = 0)
 
-field[abValue].value += 1
+      field[abValue].value += 1
 
       #applybonus[BonTrait,hero.child[Initiative],field[abValue].value]
-      #applybonus[BonTrait,hero.childfound[skSenseMot],field[abValue].value]</eval>
+      #applybonus[BonTrait,hero.childfound[skSenseMot],field[abValue].value]]]></eval>
     </thing>
   <thing id="trPUPsigif" name="Psigifted" description="You have an affinity for one particular power chosen from ones that you know, and your effective manifester level for that psionic power increases by 1. Once this power is selected it cannot be changed." compset="Trait">
     <fieldval field="usrCandid1" value="component.BasePower"/>

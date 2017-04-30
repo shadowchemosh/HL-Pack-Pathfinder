@@ -11684,15 +11684,17 @@ field[livename].text = "Astral Swarm (" & field[abValue].value & "/day)"]]></eva
     <tag group="SbNameApp" tag="AppValue" name="Append &quot;field[abValue].value&quot;" abbrev="Append &quot;field[abValue].value&quot;"/>
     <tag group="AbilType" tag="Extra"/>
     <eval phase="Render" priority="10000" index="2"><![CDATA[
-field[livename].text &= " " & signed(field[abValue].value)]]></eval>
+      field[livename].text &= " " & signed(field[abValue].value)]]></eval>
     <eval phase="PostLevel" priority="10000"><![CDATA[
-~our bonus is level /2, min 1
-field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),1)
+      ~our bonus is level /2, min 1
+      field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),1)
 
-~Only Apply bonus if focused and Wearing suit.
-doneif (hero.tagcount[Custom.WearAstS] + hero.tagcount[Hero.PsiFocus] <> 2)
+      var v_focus as number
+      call PUPsiFocus
+      ~Only Apply bonus if focused and Wearing suit.
+      doneif (hero.tagcount[Custom.WearAstS] + v_focus <> 2)
 
-#skillbonus[skStealth] += field[abValue].value]]></eval>
+      #skillbonus[skStealth] += field[abValue].value]]></eval>
     </thing>
   <thing id="cPUAegTrap" name="Trapfinding" description="A trailblazer of 5th level adds 1/2 his class level to Perception skill checks made to locate traps and to Disable Device skill checks (minimum +1). A trailblazer can use Disable Device to disarm magic traps.{br}{br}This ability replaces Master Craftsman." compset="ClSpecial" summary="Gain a bonus to find or disable traps, including magical ones.">
     <usesource source="pPsiUn"/>
