@@ -2663,18 +2663,6 @@
     <tag group="Helper" tag="CoreCampOK"/>
     <tag group="Adjustment" tag="S2Custom"/>
     <tag group="OthAdjCat" tag="Equipment"/>
-    <eval phase="Render" priority="99999999" index="2"><![CDATA[
-      ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value = 0)
-      ~ If nothing chosen, get out now
-      doneif (field[pChosen].ischosen <> 1)
-      ~ If bonus is not positive get out now!
-      doneif (field[pAdjust].value <= 0)
-      ~ Add "Plus" wording to Custom Armor and non-magical armor
-      doneif (field[pChosen].chosen.tagis[component.BaseMagicI] - field[pChosen].chosen.tagis[component.Specific] = 1)
-
-      ~ Set the live name
-      field[pChosen].chosen.field[livename].text = signed(field[pChosen].chosen.field[BonEnhance].value) & " " & field[pChosen].chosen.field[name].text]]></eval>
     <eval phase="First" priority="10000"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
@@ -2691,18 +2679,6 @@
     <tag group="Helper" tag="CoreCampOK"/>
     <tag group="Adjustment" tag="S2Custom"/>
     <tag group="OthAdjCat" tag="Equipment"/>
-    <eval phase="Render" priority="99999999" index="2"><![CDATA[
-      ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value = 0)
-      ~ If nothing chosen, get out now
-      doneif (field[pChosen].ischosen <> 1)
-      ~ If bonus is not positive get out now!
-      doneif (field[pAdjust].value <= 0)
-      ~ Add "Plus" wording to Custom Weapon and non-magical Weapons
-      doneif (field[pChosen].chosen.tagis[component.BaseMagicI] - field[pChosen].chosen.tagis[component.Specific] = 1)
-
-      ~ Set the live name
-      field[pChosen].chosen.field[livename].text = signed(field[pChosen].chosen.field[BonEnhance].value) & " " & field[pChosen].chosen.field[name].text]]></eval>
     <eval phase="First" priority="10000"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
@@ -2896,13 +2872,13 @@
         perform field[pChosen].chosen.assign[cAttack.Good]
       Endif]]></eval>
     </thing>
-  <thing id="pS2RaceHD" name="Race, Hit Dice Remove" description="Select this adjustment to be able to remove hit dice from a race.\n\n{b}Note:{/b} At this time you have to adjust the skill points manually and you can&apos;t remove any extra feats individually.  What you can do is check mark the &quot;Customize&quot; option next to the Race on the &quot;Background&quot; tab.  To be able to see &quot;Customize&quot; option you must change the character to be a NPC through the &quot;Configure Hero Window&quot; (ie press CTRL-K)." compset="InPlay">
+  <thing id="pS2RaceHD" name="Race, Hit Dice Remove" description="Select this adjustment to be able to remove hit dice from a race.\n\n{b}Note:{/b} At this time the racial feats can not be removed with this adjustment.  What you can do is check mark the &quot;Customize&quot; option next to the Race on the &quot;Background&quot; tab.  Then select &quot;Customize Racial Feats&quot;.  To be able to see the &quot;Customize&quot; option you must change the character to be a NPC through the &quot;Configure Hero Window&quot; (ie press CTRL-K)." compset="InPlay">
     <fieldval field="pMinimum" value="-99"/>
     <fieldval field="pMaximum" value="0"/>
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="CoreCampOK"/>
     <tag group="OthAdjCat" tag="Race"/>
-    <eval phase="First" index="2"><![CDATA[
+    <eval phase="GlobalTest" priority="1000" index="2"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
 
@@ -2910,10 +2886,18 @@
       perform hero.findchild[BaseRace].setfocus
       doneif (state.isfocus = 0)
 
+      var nHpPerHD as number
+      nHpPerHD = focus.field[rHPStart].value / focus.field[rHitDice].value
+
       ~ Remove Race Hit Dice
       focus.field[rHitDice].value += field[pAdjust].value
+
       ~ Make sure we never go to Negative Hit Dice!
-      focus.field[rHitDice].value = maximum(focus.field[rHitDice].value,0)]]></eval>
+      focus.field[rHitDice].value = maximum(focus.field[rHitDice].value,0)
+
+      ~ Calculate new starting HP based on the new adjusted HD
+      trustme
+      focus.field[cHP].value = round(focus.field[rHitDice].value * nHpPerHD,0,-1)]]></eval>
     </thing>
   <thing id="pS2EqConWt" name="Equipment, Container Weight" description="Use this adjustment to increase/decrease the maximum weight that a container (ie bag of holding) can carry.  You can also use this adjustment to set the max weight for Backpacks that normally do not have a max weight." compset="InPlay">
     <fieldval field="pUsePicks" value="1"/>
