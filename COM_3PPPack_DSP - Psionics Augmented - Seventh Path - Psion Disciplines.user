@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <thing id="cPsiCondui" name="Athanatism (Conduit)" description="A psion who specializes in athanatism is known as a conduit. Where most psions interact with the world by manipulating raw forces, the conduit has learned to interact with the energy of the dead. She understands that spiritual energy is simply another type of energy that can be used just as a kineticist manipulates fire or electricity, or can be shaped like ectoplasm.\n\n{i}Class Skills:{/i} Bluff, Perception, and Sense Motive." compset="PUDisc" summary="You specialize in athanatism, shaping spiritual energy." uniqueness="useronce">
+    <usesource source="srcPUAuSev"/>
+    <tag group="ClassSkill" tag="skPercep" name="Perception" abbrev="Perception"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="SpecSource" tag="cHelpPsi" name="Psion" abbrev="Psion"/>
+    <tag group="ClassSkill" tag="skSenseMot" name="Sense Motive" abbrev="Sense Motive"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassSkill" tag="skBluff" name="Bluff" abbrev="Bluff"/>
+    <tag group="ClsAllowPs" tag="psPUAuBDe2"/>
+    <tag group="ClsAllowPs" tag="psPUAuBrS2"/>
+    <tag group="ClsAllowPs" tag="psPUAuFoS2"/>
+    <tag group="ClsAllowPs" tag="psPUAuGAn1"/>
+    <tag group="ClsAllowPs" tag="psPUAuInD1"/>
+    <tag group="ClsAllowPs" tag="psPUAuSea1"/>
+    <tag group="ClsAllowPs" tag="psPUAuAut6"/>
+    <tag group="ClsAllowPs" tag="psPUAuBFS6"/>
+    <tag group="ClsAllowPs" tag="psPUAuBFl4"/>
+    <tag group="ClsAllowPs" tag="psPUAuDPa6"/>
+    <tag group="ClsAllowPs" tag="psPUAuDbo3"/>
+    <tag group="ClsAllowPs" tag="psPUAuEmB5"/>
+    <tag group="ClsAllowPs" tag="psPUAuExN6"/>
+    <tag group="ClsAllowPs" tag="psPUAuGCo4"/>
+    <tag group="ClsAllowPs" tag="psPUAuHFe5"/>
+    <tag group="ClsAllowPs" tag="psPUAuHTr7"/>
+    <tag group="ClsAllowPs" tag="psPUAuInP4"/>
+    <tag group="ClsAllowPs" tag="psPUAuObP2"/>
+    <tag group="ClsAllowPs" tag="psPUAuOrD5"/>
+    <tag group="ClsAllowPs" tag="psPUAuQRe3"/>
+    <tag group="ClsAllowPs" tag="psPUAuReF3"/>
+    <tag group="ClsAllowPs" tag="psPUAuScD4"/>
+    <tag group="ClsAllowPs" tag="psPUAuBoG9"/>
+    <tag group="ClsAllowPs" tag="psPUAuGAv8"/>
+    <tag group="ClsAllowPs" tag="psPUAuInu8"/>
+    <tag group="ClsAllowPs" tag="psPUAuReV9"/>
+    <tag group="ClsAllowPs" tag="psPUAuSev7"/>
+    <tag group="ClsAllowPs" tag="psPUAuSpC7"/>
+    <bootstrap thing="cPsiStrWor">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPsiSprAff">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPsiPltAur">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPsiHanGra">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    </thing>
+  <thing id="cPsiStrWor" name="Straddling Both Worlds" description="The conduit&apos;s armor (if any) and weapons (if any) are always treated as if they have the {i}ghost touch{/i} special ability. By expending psionic focus, the conduit can become incorporeal for a number of minutes equal to his Intelligence modifier. In addition, the conduit can choose to affect any incorporeal creature as if they were corporeal, for the purpose of his powers or abilities." compset="ClSpecial" summary="You always have {i}ghost touch{/i}, and can become incorporeal.">
+    <fieldval field="actName" value="Incorporeal"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abDuration" tag="Minute"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="SbNamePar" tag="IncDurati"/>
+    <tag group="LvNamePar" tag="IncDurati"/>
+    <bootstrap thing="raIncorpor">
+      <containerreq phase="First" priority="100"><![CDATA[fieldval:abilActive <> 0]]></containerreq>
+      </bootstrap>
+    <eval phase="Final" priority="10000">
+      ~ Default duration is Int mod minutes
+      field[abDuration].value += maximum(0, #attrbonus[aINT])
+
+      ~ Find all gear items and make weapons/armor ghost touch
+      foreach pick in hero from MyGear
+        if (eachpick.tagis[component.BaseWep] = 1) then
+          perform eachpick.assign[Ability.iGhostTch]
+        endif
+
+        if (eachpick.tagis[component.BaseArmor] = 1) then
+          perform eachpick.assign[Ability.iGhostTA]
+        endif
+      nexteach</eval>
+    </thing>
+  <thing id="cPsiSprAff" name="Spirit Affinity" description="At 2nd level, the conduit gains the Negative Energy Affinity feat as a bonus feat. In addition, once per day when meditating for power points, you can commune with your ancestral spirits to exchange one of your powers known from the anathatism discipline for another power from the athanatism discipline of an equal level." compset="ClSpecial" summary="You can change a known athanatism power once per day.">
+    <fieldval field="trkMax" value="1"/>
+    <tag group="Helper" tag="UseOwnLev"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Tracker"/>
+    <bootstrap thing="fPUAuNegEn"></bootstrap>
+    </thing>
+  <thing id="cPsiPltAur" name="Poltergeist Aura" description="Beginning at 8th level, you gain an aura that emanates in a 30-foot radius from you. You can emanate this aura for a number of rounds per day equal to your conduit level and the aura can be activated or deactivated as a free action on your turn. All enemies inside this aura are battered by angry spirits. The affected creatures treat the area within the aura as difficult terrain, can&apos;t make attacks of opportunity while in the aura, and take a penalty to attacks equal to half your Intelligence modifier (minimum -1 penalty). You can expend your psionic focus as a swift action to have the spirits concentrate on one enemy in the aura, making that creature gain the staggered condition in addition to the other penalties unless the target creature succeeds on a Fortitude save (DC 13 plus your Intelligence modifier)." compset="ClSpecial" summary="Your aura inflicts penalties on enemies.">
+    <fieldval field="abRange" value="30"/>
+    <fieldval field="abDC" value="13"/>
+    <fieldval field="abText" value="penalty"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="abAction" tag="Free"/>
+    <tag group="abSave" tag="Fortitude"/>
+    <tag group="LvNamePar" tag="AppText"/>
+    <tag group="LvNamePar" tag="AppValue"/>
+    <tag group="SpecType" tag="Aura"/>
+    <tag group="SbNamePar" tag="AppText"/>
+    <tag group="SbNamePar" tag="AppValue"/>
+    <tag group="SbNamePar" tag="IncDC"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="UseOwnLev"/>
+    <eval phase="Final" priority="10000">
+      ~ Manually adjust nonstandard DC
+      field[abDC].value += #attrbonus[aINT]
+
+      ~ abValue is the penalty based on Int
+      field[abValue].value += -1 * maximum(1, #attrbonus[aINT])</eval>
+    </thing>
+  <thing id="cPsiHanGra" name="Hand of the Grave" description="Once per day beginning at 14th level, you can make a melee touch attack against a creature. You are treated as incorporeal for the purposes of this attack, ignoring natural armor, armor, and shield bonuses to armor class, but are affected by deflection bonuses and force effects. If the attack is successful, the creature the creature dies and its soul becomes a shadow spirit (as the {i}blackest shade{/i} power) for 1 minute per level. This is considered a death effect. At the end of the duration, the soul returns to the body, which is at -1 hit points but stabilized." compset="ClSpecial" summary="Make a touch attack that temporarily kills the target.">
+    <fieldval field="trkMax" value="1"/>
+    <tag group="Helper" tag="UseOwnLev"/>
+    <tag group="abAction" tag="Attack"/>
+    <tag group="abRange" tag="Attack"/>
+    <tag group="LvNamePar" tag="IncDurati"/>
+    <tag group="SbNamePar" tag="IncDurati"/>
+    <tag group="abDuration" tag="Minute"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Usage" tag="Day"/>
+    <eval phase="PostLevel" priority="10000">
+      ~ Default duration of 1 min/level
+      field[abDuration].value += field[xTotalLev].value</eval>
+    </thing>
+  </document>
