@@ -3711,7 +3711,7 @@ abValue2 = Save bonus</comment>
     <tag group="mRange" tag="Personal"/>
     <tag group="mTarget" tag="You"/>
     </thing>
-  <thing id="staPWPhLn1" name="Phalanx Lancer" description="Through heavy conditioning and strength training, as a disciple of the Piercing Thunder you are skilled at using a shield in tandem with a heavy weapon to great effect. You are able to use a normally two-handed weapon in a single hand when using a shield (light, heavy, or tower) in the other hand (or a one-handed weapon as if it were a light weapon). While fighting in this manner, two or more allies (up to your initiation modifier) adjacent to your position with shields may interlock them as a free action and each shield-bearing character improves their shield bonus to AC by +1 for each ally in this position (to a maximum of +5). Additionally, you deal an additional 1d6 points of damage with your weapon or when making a shield bash, and this damage increases by an additional 1d6 points of damage upon reaching your 10th initiator level. Allies linking shields in this manner with you do not need to be in this stance unless they wish to increase the number of allies within the phalanx by their initiator modifier.\n\n{b}Special Note:{/b} If you possess the armament shield class feature (see Zweihander Sentinel warder archetype in {i}Path of War{/i}), its benefits are suspended while you maintain this stance. You must be wielding an actual shield to interlock it with the shields of allies." compset="PWManuever" summary="Use a two-handed weapon with a shield, and lock shields with allies to increase shield AC by +1 each" uniqueness="useronce">
+  <thing id="staPWPhLn1" name="Phalanx Lancer" description="Through heavy conditioning and strength training, you have become adept at using a shield in tandem with a polearm to great effect. While maintain this stance, you can wield a normally two-handed discipline weapon as a one-handed weapon (or a normally one-handed discipline weapon as a light weapon) when using a shield in your off hand. When fighting in this manner, your attacks with discipline weapons and shield bashes deal an additional 1d6 points of damage (+1d6 per ten initiator levels).\n\nIn addition, adjacent allies (up to a maximum number equal to your initiation modifier) wearing shields may interlock their shields with yours as a free action on their turn. Each shield-bearing character improves their shield bonus to AC by +1 for each ally in this position (up to a maximum of +5). Allies linking shields with you in this manner do not need to be in this stance unless they wish to increase the number of allies within the phalanx as well.\n\n{b}Special Note:{/b} If you possess the armament shield class feature (see Zweihander Sentinel warder archetype in {i}Path of War{/i}), its benefits are suspended while you maintain this stance. You must be wielding an actual shield to interlock it with the shields of allies." compset="PWManuever" summary="Use a two-handed weapon with a shield, and lock shields with allies to increase shield AC by +1 each" uniqueness="useronce">
     <fieldval field="abValue" value="1"/>
     <fieldval field="actUserMin" value="0"/>
     <fieldval field="actUserMax" value="5"/>
@@ -3744,8 +3744,12 @@ abValue2 = Save bonus</comment>
       nexteach
       doneif (ShEq = 0)
 
-      ~ Make 2H weapons 1H, and make 1H weapons Light
-      foreach pick in hero from BaseWep where "wClass.TwoHanded | wClass.OneHanded | wCategory.ShieldBash"
+      ~ Make 2H discipline weapons 1H, and make 1H discipline weapons Light
+      ~ Discipline weapons include polearms and spears
+      ~
+      ~ This may require future adjustment if there's a way to add discipline
+      ~ weapons for the purposes of maneuver effects
+      foreach pick in hero from BaseWep where "(wFtrGroup.PoleArms | wFtrGroup.Spears) & (wClass.TwoHanded | wClass.OneHanded)"
         if (eachpick.tagis[wClass.TwoHanded] = 1) then
           perform eachpick.delete[wClass.TwoHanded]
           perform eachpick.assign[wClass.OneHanded]
@@ -3754,10 +3758,8 @@ abValue2 = Save bonus</comment>
           perform eachpick.assign[wClass.Light]
         endif
       nexteach]]></eval>
-    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[      ~ If we're 10th level or higher, add another d6 to shield bashes
-      if (field[mIL].value >= 10) then
-        field[abValue].value += 1
-      endif
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[      ~ For every 10 ILs, add another d6 to discipline weapons and shield bashes
+      field[abValue].value += round(field[mIL].value / 10, 0, -1)
 
       ~ If we're not enabled, get out now
       doneif (field[abilActive].value = 0)
@@ -3769,7 +3771,7 @@ abValue2 = Save bonus</comment>
         endif
       nexteach]]></eval>
     </thing>
-  <thing id="staPWIrPk1" name="Iron Pikeman&apos;s Attitude" description="You have practiced ways to mitigate and circumvent the woes of heavy armor and gear if you carry yourself in the appropriate stance. While in this stance, you gain the benefits of the Endurance feat (without having to meet prerequisites) and you may treat a piece of armor that you’re wearing as one category lower (heavy armor is treated as medium armor and so forth to a minimum of light armor). Finally, you may subtract 1 from the armor’s armor check penalty and increase the maximum Dexterity of the armor by 1; these bonuses increase every three initiator levels after 1st level (maximum of -5 armor check penalty and increase of 5 to maximum Dexterity)." compset="PWManuever" uniqueness="useronce">
+  <thing id="staPWIrPk1" name="Iron Pikeman&apos;s Attitude" description="You have practiced ways to mitigate and circumvent the woes of heavy armor and gear. While you maintain this stance, you gain the benefits of the Endurance feat and you may treat armor you are wearing as one category lower (heavy armor is treated as medium armor, and so forth, to a minimum of light armor). In addition, you reduce the armor check penalty of armor you are wearing by 1 (to a minimum of 0) and increase the maximum Dexterity bonus allowed by your armor by 1. For every 3 initiator levels you possess beyond 1st level, you reduce the armor check penalty and increase the maximum Dexterity bonus by an additional 1 (up to a maximum of a –5 armor check penalty reduction and a +5 increase to maximum Dexterity bonus)." compset="PWManuever" uniqueness="useronce">
     <fieldval field="abValue" value="1"/>
     <fieldval field="usrCandid1" value="component.BaseArmor &amp; EquipType.Armor &amp; Helper.CurrArmor"/>
     <usesource source="srcPOWEx"/>
@@ -3827,7 +3829,7 @@ abValue2 = Save bonus</comment>
       focus.field[arMaxDex].value += field[abValue].value</eval>
     <eval phase="Render" priority="10000" index="3"><![CDATA[field[abSumm].text = "Armor's max DEX and ACP are improved by " & field[abValue].value & " and lightens by one step"]]></eval>
     </thing>
-  <thing id="staPWTwTh3" name="Twin Thunder Stance" description="You have learned how to use normally two-handed weapons in one hand, using the weapon&apos;s’ size and momentum to strike your foes with powerful blows. While you maintain this stance, you can wield normally two-handed weapons as one-handed weapons, and you gain the benefits of the Two-Weapon Fighting feat while using two weapons in either hand (even if you do not meet its prerequisites). If you already possess the Two-Weapon Fighting feat, you may instead wield one or both of weapons as light weapons (reducing the penalties further and making them eligible for use with feats such as Weapon Finesse or Deadly Agility), and you gain the benefits of the Improved Two-Weapon Fighting feat, or the Greater Two-Weapon Fighting if you already possessed Improved Two-Weapon Fighting, even if you do not meet these feats’ prerequisites. You do not need to be wielding multiple weapons to gain the benefits of this stance.\n\n{b}Special Note:{/b} If you possess the armament shield class feature (see Zweihander Sentinel warder archetype in {i}Path of War{/i}) and wielding a two-handed weapon in one hand, the benefits of armament shield will still apply to that weapon. If you are wielding a pair of two-handed weapons, armament shield only applies to one of them, although you can choose which weapon it applies to as a free action at the start of each turn. Note that even if you are wielding more than two weapons, you can only gain extra attacks with a single off hand weapon each turn." compset="PWManuever" summary="Dual-wield 2-hand weapons as if they were 1-hand" uniqueness="useronce">
+  <thing id="staPWTwTh3" name="Twin Thunder Stance" description="You have learned how to use normally two-handed weapons in one hand, using the weapons’ size and momentum to strike your foes with powerful blows. While you maintain this stance, you can wield normally two-handed weapons as one-handed weapons, and you gain the benefits of the Two-Weapon Fighting feat while using two discipline weapons in either hand (even if you do not meet its prerequisites).\n\nIf you already possess the Two-Weapon Fighting feat, you may instead wield one or both of weapons as light weapons (reducing the penalties further and making them eligible for use with feats such as Weapon Finesse or Deadly Agility), and you gain the benefits of the Improved Two-Weapon Fighting feat, or the Greater Two-Weapon Fighting if you already possessed Improved Two-Weapon Fighting, even if you do not meet these feats’ prerequisites. You do not need to be wielding multiple weapons to gain the benefits of this stance.\n\n{b}Special Note:{/b} If you possess the armament shield class feature (see Zweihander Sentinel warder archetype in {i}Path of War{/i}) and wielding a two-handed weapon in one hand, the benefits of armament shield will still apply to that weapon. If you are wielding a pair of two-handed weapons, armament shield only applies to one of them, although you can choose which weapon it applies to as a free action at the start of each turn. Note that even if you are wielding more than two weapons, you can only gain extra attacks with a single off hand weapon each turn." compset="PWManuever" summary="Dual-wield 2-hand weapons as if they were 1-hand" uniqueness="useronce">
     <comment>abValue = 0 if character has TWF without this stance
 abValue2 = 0 if character has ITWF without this stance</comment>
     <fieldval field="mPreReq" value="1"/>
@@ -3902,7 +3904,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
         endif
       nexteach]]></eval>
     </thing>
-  <thing id="staPWSoTB5" name="Stance of the Thunderbrand" description="You tightly concentrate your focus on the battlefield, maximizing the effectiveness of your reach and keeping enemy attacks at bay. While you maintain this stance, you gain a +4 dodge bonus to your AC and your weapon’s reach increases by 5 feet. In addition, any creature you threaten that leaves their square provokes an attack of opportunity from you, even if their movement was a 5-foot step or movement that would not otherwise provoke attacks of opportunity (such as with Spring Attack or a teleportation effect). Your opponents cannot use the Withdraw action to treat its square they start in as no longer threatened by you." compset="PWManuever" summary="+4 dodge AC, increase reach by 5ft, and enemies always provoke AoO when moving" uniqueness="useronce">
+  <thing id="staPWSoTB5" name="Stance of the Thunderbrand" description="You tightly concentrate your focus on the battlefield, maximizing the effectiveness of your reach and keeping enemy attacks at bay. While you maintain this stance, you gain a +4 dodge bonus to your AC and your weapon’s reach increases by 5 feet. In addition, any creature you threaten that leaves their square provokes an attack of opportunity from you, even if their movement was a 5-foot step or movement that would not otherwise provoke attacks of opportunity (such as with the Spring Attack feat or a teleportation effect). Your opponents cannot use the Withdraw action to treat the squares they start in as no longer threatened by you." compset="PWManuever" summary="+4 dodge AC, increase reach by 5ft, and enemies always provoke AoO when moving" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <fieldval field="abValue" value="4"/>
     <fieldval field="abValue2" value="5"/>
@@ -3925,7 +3927,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
       ~ Apply reach increase
       herofield[tReach].value += field[abValue2].value]]></eval>
     </thing>
-  <thing id="staPWDTLS8" name="Deadly Thunder Lancer’s Stance" description="Mastery of the spear and its many styles comes to you as you near the pinnacle of the Piercing Thunder discipline. While you maintain this stance, you add your initiation modifier to confirm critical threats, and Acrobatics checks to jump or tumble. In addition, you gain the benefits of the Spring Attack feat, even if you do not meet its prerequisites. When you use this feat, you can initiate a strike (including a strike that requires a full-round action to initiate) instead of making a normal attack during your movement. If that strike includes a charge, you gain the normal benefits and penalties of the charge combat maneuver, although your movement is not limited to a straight line, you may move through difficult terrain or other obstacles as if you were not charging, and you do not have to end your movement after initiating your strike. This stance may only be used with a discipline weapon." compset="PWManuever" summary="Gain Spring Attack, add init mod to Acrobatics" uniqueness="useronce">
+  <thing id="staPWDTLS8" name="Deadly Thunder Lancer’s Stance" description="Mastery of the spear and its many styles comes to you as you near the pinnacle of the Piercing Thunder discipline. While you maintain this stance, you add your initiation modifier to attack rolls, damage rolls, and Acrobatics checks to jump or tumble. In addition, you gain the benefits of the Spring Attack feat, even if you do not meet its prerequisites. When you use this feat, you can initiate a strike with an initiation action of one standard action or less instead of making a normal attack during your movement. If that strike includes a charge, you gain the normal benefits and penalties of the charge combat maneuver, although your movement is not limited to a straight line, you may move through difficult terrain or other obstacles as if you were not charging, and you do not have to end your movement after initiating your strike." compset="PWManuever" summary="Gain Spring Attack, add init mod to Acrobatics" uniqueness="useronce">
     <fieldval field="mPreReq" value="3"/>
     <fieldval field="abValue" value="4"/>
     <fieldval field="abValue2" value="5"/>
@@ -3950,7 +3952,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
       #situational[hero.childfound[Attack],signed(field[mIM].value) & " to confirm critical hits",field[thingname].text]
       #situational[hero.childfound[skAcrobat],signed(field[mIM].value) & " to jump or tumble",field[thingname].text]]]></eval>
     </thing>
-  <thing id="manPWBrLn1" name="Bronze Lancet Charge" description="You make a thunderous charge and deliver a powerful attack. Make a charge attack that does not provoke attacks of opportunity. This strike deals an additional 1d6 points of damage to the target." compset="PWManuever" summary="Charge with no AoO and +1d6 damage" uniqueness="useronce">
+  <thing id="manPWBrLn1" name="Bronze Lancet Charge" description="You make a thunderous charge and deliver a powerful attack. Make a charge attack that does not provoke attacks of opportunity. If your attack hits, it deals weapon damage as normal plus an additional 1d6 points of damage." compset="PWManuever" summary="Charge with no AoO and +1d6 damage" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="PrcThun"/>
     <tag group="mType" tag="Strike"/>
@@ -3961,18 +3963,18 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mDuration" tag="Instant"/>
     <tag group="PathOfWar" tag="Manuever"/>
     </thing>
-  <thing id="manPWPrSt1" name="Piercing Strike" description="With a powerful spear thrust,you are capable of issuing a potent impaling blow with your weapon, battering defenses aside and striking bloodily at your foe.  Make an attack roll against a foe within your reach and deal an additional 1d6 points of damage. This maneuver may only be made with a piercing weapon or a discipline weapon." compset="PWManuever" summary="Attack deals +1d6 damage" uniqueness="useronce">
+  <thing id="manPWPrSt1" name="Piercing Strike" description="You issue a potent impaling blow with your weapon, battering defenses aside and striking bloodily at your foe. During this strike, your weapon’s reach increases by 5 feet. Make a melee attack roll and compare it to the ACs of up to two creatures within your reach that are adjacent to each other. If the attack roll hits a target, it deals weapon damage as normal. Use the same damage roll for each target." compset="PWManuever" summary="Attack deals +1d6 damage" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="PrcThun"/>
     <tag group="mType" tag="Strike"/>
     <tag group="mLevel" tag="1"/>
     <tag group="mInitAct" tag="Standard1"/>
     <tag group="mRange" tag="Melee"/>
-    <tag group="mTarget" tag="Creature1"/>
     <tag group="mDuration" tag="Instant"/>
     <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="mTarget" tag="Creature2"/>
     </thing>
-  <thing id="manPWTFal2" name="Thunderous Fall" description="Using the principles of Piercing Thunder, you become well suited to using your weapon to either dismount a mounted enemy or trip up an unmounted charging enemy with your superior reach. Make an attack, this attack deals an additional 2d6 damage. If successful, your target is immediately dismounted on a failed Reflex save (DC 12 + initiation modifier)  and lands prone on the ground adjacent to their mount. If unmounted and charging, you may make a free trip attempt with this strike that does not provoke attacks of opportunity with a +2 competence bonus. This maneuver may only be made with a discipline weapon." compset="PWManuever" summary="Attack deals +2d6 damage and can dismount or trip target" uniqueness="useronce">
+  <thing id="manPWTFal2" name="Thunderous Fall" description="Using the principles of Piercing Thunder, you are well-suited to taking advantage of your superior reach to bring your foes to the ground, be they cavalry or infantry. Make a melee attack. If it hits, it deals weapon damage as normal plus an additional 2d6 points of damage, and if the target is riding a mount, they must succeed at a Reflex save (DC 12 + your initiation modifier) or be dismounted, falling prone in a square of your choice adjacent to their mount. If the target is not mounted, you may instead make a trip attempt against them as a free action with a +2 competence bonus to your combat maneuver check. This strike can only be initiated with a discipline weapon." compset="PWManuever" summary="Attack deals +2d6 damage and can dismount or trip target" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="PrcThun"/>
     <tag group="mType" tag="Strike"/>
@@ -3984,7 +3986,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="mSave" tag="RefPart"/>
     </thing>
-  <thing id="manPWAPTh2" name="Armor Piercing Thrust" description="You make a heavy thrust through your opponent’s defenses. Make an attack against your foe’s touch AC, and if successful, this strike deals an additional 2d6 points of damage." compset="PWManuever" summary="Attack deals +2d6 damage and targets touch AC" uniqueness="useronce">
+  <thing id="manPWAPTh2" name="Armor-Piercing Thrust" description="You make a potent attack toward your foe, unleashing a heavy thrust that pierces through their defenses. Make a melee touch attack with a weapon you are wielding. If it hits, it deals weapon damage as normal." compset="PWManuever" summary="Attack deals +2d6 damage and targets touch AC" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="PrcThun"/>
     <tag group="mType" tag="Strike"/>
@@ -3995,7 +3997,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mDuration" tag="Instant"/>
     <tag group="PathOfWar" tag="Manuever"/>
     </thing>
-  <thing id="manPWThTh2" name="Throwing Thunder" description="By rearing back for a powerful throw, you are capable of turning any pole arm into a deadly and dangerous missile. Make a ranged attack, using a discipline weapon you’re wielding as a thrown weapon. The weapon’s range increment increases by 20 feet for this attack, or, if the weapon does not normally have a range increment, it gains a 20 foot range increment for this attack, and you do not take the normal penalty for throwing a nonstandard weapon. If your attack hits, it deals weapon damage as normal plus an additional 2d6 points of damage, and the target must succeed at a Reflex save (DC 12 + initiation modifier) or be knocked prone." compset="PWManuever" summary="Throwing attack adds 20ft to range inc, deals +2d6 dmg, and can knock target prone" uniqueness="useronce">
+  <thing id="manPWThTh2" name="Throwing Thunder" description="By rearing back for a powerful throw, you are capable of turning any pole arm into a deadly and dangerous missile. Make a ranged attack, using a discipline weapon you’re wielding as a thrown weapon. The weapon’s range increment increases by 20 feet for this attack. If the weapon does not normally have a range increment, it instead gains a 20 foot range increment for this attack, and you do not take the normal penalty for throwing a nonstandard weapon. If your attack hits, it deals weapon damage as normal plus an additional 2d6 points of damage, and the target must succeed at a Reflex save (DC 12 + your initiation modifier) or be knocked prone." compset="PWManuever" summary="Throwing attack adds 20ft to range inc, deals +2d6 dmg, and can knock target prone" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="PrcThun"/>
     <tag group="mType" tag="Strike"/>
@@ -4007,7 +4009,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mSave" tag="RefPart"/>
     <tag group="mRange" tag="Ranged"/>
     </thing>
-  <thing id="manPWPTHm3" name="Piercing Thunder Hammer" description="As a seasoned spearman, you know how to leverage your strength properly. By drawing up your strength, you deliver a crushing strike that can bring even the most stable enemies to their knees. Make a melee attack. If it hits, it deals weapon damage as normal plus an additional 2d6 points of damage, and the target must succeed at a Reflex save (DC 13 + initiation modifier) or be knocked prone." compset="PWManuever" summary="Attack deals +2d6 dmg and can knock target prone" uniqueness="useronce">
+  <thing id="manPWPTHm3" name="Piercing Thunder Hammer" description="As a seasoned spearman, you know how to leverage your strength properly. By drawing up your strength, you deliver a crushing strike that can bring even the most stable enemies to their knees. Make a melee attack. If it hits, it deals weapon damage as normal plus an additional 2d6 points of damage, and the target must succeed at a Reflex save (DC 13 + your initiation modifier) or be knocked prone." compset="PWManuever" summary="Attack deals +2d6 dmg and can knock target prone" uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
     <usesource source="srcPOWEx"/>
     <tag group="mType" tag="Strike"/>
@@ -4020,7 +4022,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="Discipline" tag="PrcThun"/>
     <tag group="mRange" tag="Melee"/>
     </thing>
-  <thing id="manPWGrSt3" name="Goring Strike" description="With a mighty thrust with your weapon, you pierce your enemies, delivering a devastating attack to multiple foes within your reach. During this strike, your weapon’s reach increases by 5 feet. When you initiate this maneuver, your strike targets every creature in a line with a range equal to your reach. Make a melee attack and compare it to the AC of each creature within the area. If the attack hits, it deals weapon damage as normal plus an additional 2d6 points of damage, and the target must succeed at a Fortitude save (DC 13 + initiation modifier) or suffer 1d4 points of bleed damage. Use the same damage roll for each creature struck. This maneuver may only be made with a piercing weapon or a discipline weapon." compset="PWManuever" summary="Attack all creatures in a line as long as your reach, with +2d6 dmg and 1d4 bleed (Fort neg.)" uniqueness="useronce">
+  <thing id="manPWGrSt3" name="Goring Strike" description="With a mighty thrust with your weapon, you pierce your enemies, delivering a devastating attack to multiple foes within your reach. During this strike, your weapon’s reach increases by 5 feet. When you initiate this maneuver, your strike targets every creature in a line with a range equal to your reach. Make a melee attack roll and compare it to the AC of each creature within the area. If the attack roll hits a target, it deals weapon damage as normal plus an additional 2d6 points of damage, and the target must succeed at a Fortitude save (DC 13 + your initiation modifier) or suffer 1d4 points of bleed damage. Use the same damage roll for each target. This strike can only be initiated with a discipline weapon or a piercing weapon." compset="PWManuever" summary="Attack all creatures in a line as long as your reach, with +2d6 dmg and 1d4 bleed (Fort neg.)" uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
     <fieldval field="mArea" value="Line (see text)"/>
     <usesource source="srcPOWEx"/>
@@ -4033,6 +4035,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mType" tag="Strike"/>
     <tag group="mTarget" tag="Creat1Plus"/>
     <tag group="mSave" tag="FortPart"/>
+    <tag group="mTarget" tag="SeeDesc"/>
     </thing>
   <thing id="manPWLpSt4" name="Leaping Strike" description="In a daring feat of acrobatics, you leap high into the air and descend with the force of a lightning bolt. Make a melee attack, using an Acrobatics check in place of your attack roll. Any bonuses and penalties that would be applied to a normal attack roll, such as weapon enhancements, spell effects, or the penalties for fighting with two weapons or shooting into melee, are applied to the skill check as well. If your attack hits, it deals weapon damage as normal plus an additional 6d6 points of damage." compset="PWManuever" summary="Leaping attack uses Acro. check for attack roll, does +6d6 damage" uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
@@ -4046,7 +4049,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mRange" tag="Melee"/>
     <tag group="mTarget" tag="Creature1"/>
     </thing>
-  <thing id="manPWILCh4" name="Iron Lancet Charge" description="Your knowledge of how to deliver a powerful charge that delivers bone-shattering force is unparalleled. Make a charge attack that does not provoke attacks of opportunity. If it hits, it deals weapon damage as normal plus an additional 6d6 points of damage, and the target must succeed at a Reflex save (DC 14 + initiation modifier) or be knocked prone." compset="PWManuever" summary="Charge with no AoO and +6d6 damage, can knock target prone" uniqueness="useronce">
+  <thing id="manPWILCh4" name="Iron Lancet Charge" description="Your knowledge of how to deliver a powerful charge that delivers bone-shattering force is unparalleled. Make a charge attack that does not provoke attacks of opportunity. If it hits, it deals weapon damage as normal plus an additional 6d6 points of damage, and the target must succeed at a Reflex save (DC 14 + your initiation modifier) or be knocked prone." compset="PWManuever" summary="Charge with no AoO and +6d6 damage, can knock target prone" uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="4"/>
@@ -4058,7 +4061,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mRange" tag="Melee"/>
     <tag group="mTarget" tag="Creature1"/>
     </thing>
-  <thing id="manPWTwLn4" name="Twisting Lance" description="You sweep your enemies’ legs out from under them with the haft of your weapon before following up with a spinning strike its head. Make a trip attempt with a +4 competence bonus on your CMB roll. This trip attempt does not provoke attacks of opportunity. If you successfully trip your target, you can make a single melee attack against them as a free action. If your attack hits, it deals weapon damage as normal plus an additional 5d6 points of damage." compset="PWManuever" summary="Trip at +4 w/o AoO, success grants free attack with +5d6 damage" uniqueness="useronce">
+  <thing id="manPWTwLn4" name="Twisting Lance" description="You sweep your enemies’ legs out from under them with the haft of your weapon before following up with a spinning strike its head. Make a trip attempt with a +4 competence bonus on your combat maneuver check. This trip attempt does not provoke attacks of opportunity. If you successfully trip your target, you can make a single melee attack against them as a free action. If your attack hits, it deals weapon damage as normal plus an additional 5d6 points of damage." compset="PWManuever" summary="Trip at +4 w/o AoO, success grants free attack with +5d6 damage" uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="4"/>
@@ -4070,7 +4073,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mRange" tag="Melee"/>
     <tag group="mTarget" tag="Creature1"/>
     </thing>
-  <thing id="manPWThCm5" name="Thunderous Comet" description="With an overhand spin, you hurl your polearm at your enemies, decimating their ranks in a whirling path. When you initiate this maneuver, you throw your weapon, creating a 30-ft. line that deals damage to each creature in the area as if you had hit them with an attack with a weapon you are wielding (including damage from magical properties or other bonuses), plus an additional 10d6 points of damage, and knocks them prone. Use the same damage roll for each creature. Creatures caught in the line can make a Reflex saving throw (DC 15 + initiation modifier) to take half damage and not fall prone. After resolving this maneuver, the weapon you threw lands in the furthest square from you at the end of the line. If it is enchanted with a property such as {i}returning{/i} or {i}teleporting{/i}, or you otherwise have the ability to cause thrown weapons to return to you, it does so normally as if you had made an attack with it. This maneuver may only be made with a discipline weapon." compset="PWManuever" summary="Thrown attack deals weapon dmg +10d6 in 30-ft line, can knock targets prone" uniqueness="useronce">
+  <thing id="manPWThCm5" name="Throwing Comet" description="With an overhand spin, you hurl your polearm at your enemies, decimating their ranks in a whirling path. When you initiate this maneuver, you throw your weapon, creating a 30-foot line that deals damage to each creature in the area as if you had hit them with an attack with a weapon you are wielding (including damage from magical properties or other bonuses), plus an additional 8d6 points of damage, and knocks them prone. Use the same damage roll for each creature. Creatures caught in the line can make a Reflex save (DC 15 + your initiation modifier) to take half damage and not fall prone.\n\nAfter resolving this maneuver, the weapon you threw lands in the furthest square from you at the end of the line. If it is enchanted with a property such as returning or teleporting, or you otherwise have the ability to cause thrown weapons to return to you, it does so normally as if you had made an attack with it." compset="PWManuever" summary="Thrown attack deals weapon dmg +10d6 in 30-ft line, can knock targets prone" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <fieldval field="mArea" value="30-ft line"/>
     <usesource source="srcPOWEx"/>
@@ -4084,7 +4087,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mLevel" tag="5"/>
     <tag group="mSave" tag="RefHalf"/>
     </thing>
-  <thing id="manPWMtSp5" name="Meteor Spiral Thrust" description="You put a vicious twist in your thrust, delivering a powerful blow that penetrates armor and body alive. Make a melee attack. If it hits, it deals weapon damage as normal plus an additional 8d6 points of damage, and automatically overcomes damage reduction. In addition, the target must succeed at a Fortitude save (DC 15 + initiation modifier) or be dazed for 1d3 rounds. This maneuver may only be made with a piercing weapon or a discipline weapon." compset="PWManuever" summary="Attack deals +8d6 dmg, ignores DR, can daze target for 1d3 rds" uniqueness="useronce">
+  <thing id="manPWMtSp5" name="Meteor Spiral Thrust" description="You put a vicious twist in your thrust, delivering a powerful blow that penetrates armor and body alive. Make a melee attack. If it hits, it deals weapon damage as normal plus an additional 8d6 points of damage, and automatically overcomes damage reduction. In addition, the target must succeed at a Fortitude save (DC 15 + your initiation modifier) or become nauseated for 1d3 rounds." compset="PWManuever" summary="Attack deals +8d6 dmg, ignores DR, can daze target for 1d3 rds" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Standard1"/>
@@ -4097,7 +4100,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mRange" tag="Melee"/>
     <tag group="mSave" tag="FortPart"/>
     </thing>
-  <thing id="manPWImCm6" name="Impaling Comet Strike" description="You are capable of pressing an incredible assault upon a foe. During this strike, your weapon’s reach increases by 10 feet. When you initiate this maneuver, your strike targets every creature in a line with a range equal to your reach. Make a melee attack and compare it to the AC of each opponent within the area. If the attack hits, it deals weapon damage as normal plus an additional 6d6 points of damage, and automatically overcomes damage reduction. Use the same damage roll for each creature struck." compset="PWManuever" summary="Attack adds 10&apos; to reach, targets all in line equal to reach, does +6d6 dmg and ignores DR" uniqueness="useronce">
+  <thing id="manPWImCm6" name="Impaling Comet Strike" description="You are capable of pressing an incredible assault upon a foe. During this strike, your weapon’s reach increases by 10 feet. When you initiate this maneuver, your strike targets every creature in a line with a range equal to your reach. Make a melee attack roll and compare it to the AC of each opponent within the area. If the attack roll hits a target, it deals weapon damage as normal plus an additional 6d6 points of damage, and automatically overcomes damage reduction. Use the same damage roll for each target. This strike can only be initiated with a discipline weapon or a piercing weapon." compset="PWManuever" summary="Attack adds 10&apos; to reach, targets all in line equal to reach, does +6d6 dmg and ignores DR" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Standard1"/>
@@ -4109,7 +4112,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mRange" tag="Melee"/>
     <tag group="mTarget" tag="Creat1Plus"/>
     </thing>
-  <thing id="manPWGTCh6" name="Glorious Thunder Charge" description="Brandishing his potent weapon  in a glorious display of martial superiority, the disciple charges to battle his foe with determination matched by only the gods themselves. Make a charge attack that does not provoke attacks of opportunity. If it hits, it deals weapon damage as normal plus an additional 8d6 points of damage, and the target must succeed at a Fortitude save (DC 16 + initiation modifier) or be nauseated for 1d3 rounds." compset="PWManuever" summary="Charge with no AoO deals +8d6 dmg, can nauseate target for 1d3 rds" uniqueness="useronce">
+  <thing id="manPWGTCh6" name="Glorious Thunder Charge" description="Brandishing his potent weapon in a glorious display of martial superiority, the disciple charges to battle his foe with determination matched by only the gods themselves. Make a charge attack that does not provoke attacks of opportunity. If it hits, it deals weapon damage as normal plus an additional 8d6 points of damage, and the target must succeed at a Fortitude save (DC 16 + your initiation modifier) or become nauseated for 1d3 rounds." compset="PWManuever" summary="Charge with no AoO deals +8d6 dmg, can nauseate target for 1d3 rds" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Full1"/>
@@ -4122,7 +4125,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mTarget" tag="Creature1"/>
     <tag group="mSave" tag="FortPart"/>
     </thing>
-  <thing id="manPWStLE6" name="Steel Lancer&apos;s Edge" description="You add a burst of speed and force to the end of your charge, striking your foe with a deadly thrust before using the momentum to leap away from their counterattack. Make a charge attack that does not provoke attacks of opportunity. If it hits, it deals weapon damage as normal plus an additional 6d6 points of damage, and automatically overcomes damage reduction. In addition, regardless of whether your attack hit or not, you can make an Acrobatics check to jump as a free action. Movement during this jump does not provoke attacks of opportunity from the target." compset="PWManuever" summary="Charge with no AoO deals +6d6 dmg, ignores DR,  free Acro. check to jump" uniqueness="useronce">
+  <thing id="manPWStLE6" name="Steel Lancer&apos;s Edge" description="You add a burst of speed and force to the end of your charge, striking your foe with a deadly thrust before using the momentum to leap away from their counterattack. Make a charge attack that does not provoke attacks of opportunity. If it hits, it deals weapon damage as normal plus an additional 8d6 points of damage, and automatically overcomes damage reduction. In addition, regardless of whether your attack hit or not, you can make an Acrobatics check to jump as a free action. Movement during this jump does not provoke attacks of opportunity from the target." compset="PWManuever" summary="Charge with no AoO deals +6d6 dmg, ignores DR,  free Acro. check to jump" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Full1"/>
@@ -4134,7 +4137,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mRange" tag="Melee"/>
     <tag group="mTarget" tag="Creature1"/>
     </thing>
-  <thing id="manPWLpTh7" name="Leaping Thunder Crash" description="With a tremendous leap into the air, you come crashing down upon your enemy with the force of the gods themselves. Make a melee attack, using an Acrobatics check in place of your attack roll. Any bonuses and penalties that would be applied to a normal attack roll, such as weapon enhancements, spell effects, or the penalties for fighting with two weapons or shooting into melee, are applied to the skill check as well. If your attack hits, it deals weapon damage as normal plus an additional 35 points of damage, and the target must succeed at a Fortitude save (DC 17 + initiation modifier) or drop any held items, as they had been disarmed." compset="PWManuever" summary="Attack uses Acro. check, deals +35 dmg and can force target to drop held items" uniqueness="useronce">
+  <thing id="manPWLpTh7" name="Leaping Thunder Crash" description="With a tremendous leap into the air, you come crashing down upon your enemy with the force of the gods themselves. Make a melee attack, using an Acrobatics check in place of your attack roll. Any bonuses and penalties that would be applied to a normal attack roll, such as weapon enhancements, spell effects, or the penalties for fighting with two weapons, are applied to the skill check as well. If your attack hits, it deals weapon damage as normal plus an additional 35 points of damage, and the target must succeed at a Fortitude save (DC 17 + your initiation modifier) or drop any held items, as though they had been disarmed." compset="PWManuever" summary="Attack uses Acro. check, deals +35 dmg and can force target to drop held items" uniqueness="useronce">
     <fieldval field="mPreReq" value="3"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Full1"/>
@@ -4147,7 +4150,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mTarget" tag="Creature1"/>
     <tag group="mSave" tag="FortPart"/>
     </thing>
-  <thing id="manPWRttF7" name="Rush to the Fray" description="You charge fearlessly towards a group of foes, heedless of difficulties and deliver a flurry of potent attacks. Make a charge attack that does not provoke attacks of opportunity. During this charge, you ignore difficult terrain (potentially allowing you to charge where you otherwise could not). At the end of your charge, you can give up your regular attacks and instead make one melee attack at your highest base attack bonus against each opponent within reach. If an attack hits, it deals weapon damage as normal plus an additional 5d6 points of damage, or if used for a combat maneuver attempt, you gain a +5 competence bonus on your CMB roll. You must make a separate attack roll against each target." compset="PWManuever" summary="Charge with no AoO, ignore difficult terrain, get one attack at best BAB on each foe in reach with +5d6 dmg" uniqueness="useronce">
+  <thing id="manPWRttF7" name="Rush to the Fray" description="You charge fearlessly towards a group of foes, heedless of difficulties and deliver a flurry of potent attacks. Make a charge attack that does not provoke attacks of opportunity. During this charge, you ignore difficult terrain (potentially allowing you to charge where you otherwise could not). At the end of your charge, you can give up your regular attacks and instead make a melee attack or combat maneuver attempt at your highest base attack bonus against each opponent within reach. If an attack hits, it deals weapon damage as normal plus an additional 5d6 points of damage, or if used for a combat maneuver attempt, you gain a +5 competence bonus on your combat maneuver check. You must make a separate attack roll against each target." compset="PWManuever" summary="Charge with no AoO, ignore difficult terrain, get one attack at best BAB on each foe in reach with +5d6 dmg" uniqueness="useronce">
     <fieldval field="mPreReq" value="3"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Full1"/>
@@ -4159,7 +4162,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mRange" tag="Melee"/>
     <tag group="mTarget" tag="Creat1Plus"/>
     </thing>
-  <thing id="manPWThLB8" name="Thundering Lancer&apos;s Blow" description="By leveling a heavy blow from your powerful weapon, you strike so hard to as to bring your opponent to their knees with this strike. Make a melee attack. If it hits, it deals weapon damage as normal plus an additional 12d6 points of damage, and you can make a bull rush attempt against the target as a free action. This bull rush attempt does not provoke an attack of opportunity, and you gain a bonus on your CMB roll equal to 1/2  your initiator level. If your bull rush attempt is successful, the target is knocked prone at the end of their movement." compset="PWManuever" summary="Attack deals +12d6 dmg, free bull rush on hit knocks target prone" uniqueness="useronce">
+  <thing id="manPWThLB8" name="Thundering Lancer&apos;s Blow" description="By leveling a heavy blow from your powerful weapon, you strike so hard to as to bring your opponent to their knees with this strike. Make a melee attack. If it hits, it deals weapon damage as normal plus an additional 12d6 points of damage, and you can make a bull rush attempt against the target as a free action. This bull rush attempt does not provoke an attack of opportunity, and you gain a bonus on your combat maneuver check equal to 1/2 your initiator level. If your bull rush attempt is successful, the target is knocked prone at the end of their movement." compset="PWManuever" summary="Attack deals +12d6 dmg, free bull rush on hit knocks target prone" uniqueness="useronce">
     <fieldval field="mPreReq" value="3"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Standard1"/>
@@ -4171,7 +4174,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mRange" tag="Melee"/>
     <tag group="mTarget" tag="Creature1"/>
     </thing>
-  <thing id="manPWPCDL9" name="Piercing Charge of the Dread Lancer" description="As a master of the Piercing Thunder discipline, you can make a devastating charge across the battlefield, striking all in your way with razor precision and unstoppable killing force. When you initiate this maneuver, you make a charge attack, moving up to twice your speed in a straight line as normal. Unlike a normal charge attack, you do not designate an opponent, and do not need to end your movement within reach of an enemy. In addition, your movement ignores difficult terrain and intervening creatures, and does not provoke attacks of opportunity. Rather than making an attack at the end of your charge, your strike targets every enemy who was caught in your path; treat your movement as a line-shaped effect for determining who is affected. Each enemy caught within the line takes damage as if you had hit them with an attack with a weapon you are wielding (including damage from magical properties or other bonuses), and must succeed at a Reflex save (DC 19 + initiation modifier) or take an additional 15d6 points of damage. A successful save halves the additional damage, but does not negate the damage from your attack.Use the same damage roll for each creature.  This maneuver may only be made with a discipline weapon." compset="PWManuever" summary="Charge as a line attack, doing weapon dmg +15d6 to all in line" uniqueness="useronce">
+  <thing id="manPWPCDL9" name="Piercing Charge of the Dread Lancer" description="As a master of the Piercing Thunder discipline, you can make a devastating charge across the battlefield, striking all in your way with razor precision and unstoppable killing force. When you initiate this maneuver, you make a charge attack, moving up to twice your speed in a straight line as normal. Unlike a normal charge attack, you do not designate an opponent, and do not need to end your movement within reach of an opponent. In addition, your movement ignores difficult terrain and intervening creatures, and does not provoke attacks of opportunity. Rather than making an attack at the end of your charge, your strike targets every opponent who was caught in your path; treat your movement as a line-shaped effect for determining who is affected. Each opponent caught within the line takes damage as if you had hit them with an attack with a weapon you are wielding (including damage from magical properties or other bonuses), and must succeed at a Reflex save (DC 19 + your initiation modifier) or take an additional 15d6 points of damage. A successful save halves the additional damage, but does not negate the damage from your attack. Use the same damage roll for each creature. This strike can only be initiated with a discipline weapon." compset="PWManuever" summary="Charge as a line attack, doing weapon dmg +15d6 to all in line" uniqueness="useronce">
     <fieldval field="mPreReq" value="4"/>
     <fieldval field="mArea" value="Line (see text)"/>
     <usesource source="srcPOWEx"/>
@@ -4185,7 +4188,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mSave" tag="RefHalf"/>
     <tag group="mSave" tag="SeeText"/>
     </thing>
-  <thing id="manPWOkSh1" name="Oaken Shield" description="You shift your weapon’s haft into a more defensible position, shielding you from assault. By initiating this counter, you may reflexively increase the shield bonus you receive to your armor class by +4 (if you already have a shield bonus to AC, this counter increases it instead of replacing it) to attempt to negate the attack." compset="PWManuever" summary="Gain +4 shield bonus vs incoming attack" uniqueness="useronce">
+  <thing id="manPWOkSh1" name="Oaken Shield" description="You shift your weapon’s haft into a more defensible position, shielding you from assault. You can initiate this counter in response to a melee or ranged attack being made against you. Your shield bonus to your AC against that attack increases by +4 (if you have no shield bonus to AC, your shield bonus increases to +4)." compset="PWManuever" summary="Gain +4 shield bonus vs incoming attack" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="PrcThun"/>
     <tag group="mType" tag="Counter"/>
@@ -4196,7 +4199,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mDuration" tag="Instant"/>
     <tag group="PathOfWar" tag="Manuever"/>
     </thing>
-  <thing id="manPWBrFI2" name="Brace for Impact" description="In the chaos of battle, you know you can truly only trust the weapon in your hand. You may initiate this counter when an opponent makes a charge attack against you. Make an Acrobatics check against your opponent&apos;s attack roll. If successful, your opponent&apos;s attack is negated, and your foe takes damage as if struck by your melee attack. If your weapon has the brace property, this damage is doubled as per the rules for brace weapons. This maneuver may only be made with a piercing weapon or a discipline weapon." compset="PWManuever" summary="Acro. check to negate a charge and damage attacker" uniqueness="useronce">
+  <thing id="manPWBrFI2" name="Brace for Impact" description="In the chaos of battle, you know you can truly only trust the weapon in your hand. You can initiate this counter when an opponent makes a charge attack against you. Make an Acrobatics check, using your opponent’s attack roll as the DC. If you succeed, the attack is negated and that opponent takes damage equal to your initiator level. If your weapon has the brace property, this damage is doubled. If you are not wielding a discipline weapon or a piercing weapon, this counter does no damage to your opponent but can still negate the attack." compset="PWManuever" summary="Acro. check to negate a charge and damage attacker" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="PrcThun"/>
     <tag group="mType" tag="Counter"/>
@@ -4207,7 +4210,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mDuration" tag="Instant"/>
     <tag group="PathOfWar" tag="Manuever"/>
     </thing>
-  <thing id="manPWRepL4" name="Repositioning Leap" description="With a powerful leap and roll, you are able to evade an enemy’s attack and reposition yourself to better defend yourself. Make an Acrobatics check, using the attack roll of your opponent as the DC. If you are successful, the attack is negated, and you may jump away from your position, using your Acrobatics check result to determine the distance moved (this movement does not provoke attacks of opportunity)." compset="PWManuever" summary="Acro. check negates attack and lets you jump away" uniqueness="useronce">
+  <thing id="manPWRepL4" name="Repositioning Leap" description="With a powerful leap and roll, you are able to evade an enemy’s attack and reposition yourself to better defend yourself. Make an Acrobatics check, using your opponent’s attack roll as the DC. If you succeed, the attack is negated, and you may jump away from your position, using your Acrobatics check result to determine the distance moved. This movement does not provoke attacks of opportunity." compset="PWManuever" summary="Acro. check negates attack and lets you jump away" uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
     <usesource source="srcPOWEx"/>
     <tag group="mType" tag="Counter"/>
@@ -4219,7 +4222,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mRange" tag="Melee"/>
     <tag group="mTarget" tag="Creature1"/>
     </thing>
-  <thing id="manPWTwPr5" name="Twisting Parry" description="A champion of combat, the disciple of the Piercing Thunder is capable of using the size and weight of his weapon to buffet an attack aside to strike at another foe. You may initiate this counter in response to a melee or ranged attack being made against you. Make an attack roll with a weapon you are wielding. Use the higher of your AC and your attack roll as your effective AC against the incoming attack. If the attack against you misses, you deflect the attack at another creature you can see within reach or range of the attacker. Treat the attack as if it had been made against that creature, using the attacker’s original attack roll to resolve the attack as normal. If there is no new target available, the attack is simply negated." compset="PWManuever" summary="Opposed attack roll redirects incoming attack to a new target" uniqueness="useronce">
+  <thing id="manPWTwPr5" name="Twisting Parry" description="A champion of combat, the disciple of the Piercing Thunder is capable of using the size and weight of his weapon to buffet an attack aside to strike at another foe. You can initiate this counter in response to a melee or ranged attack being made against you. Make an attack roll with a weapon you are wielding. Use the higher of your AC and your attack roll as your effective AC against the incoming attack. If the attack against you misses, you deflect the attack at another creature you can see within reach or range of the attacker. Treat the attack as if it had been made against that creature, using the attacker’s original attack roll to resolve the attack as normal. If there is no new target available, the attack is simply negated." compset="PWManuever" summary="Opposed attack roll redirects incoming attack to a new target" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
     <tag group="mType" tag="Counter"/>
@@ -4231,7 +4234,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="Discipline" tag="PrcThun"/>
     <tag group="mRange" tag="1attack"/>
     </thing>
-  <thing id="manPWBrtC7" name="Breaking the Charge" description="The disciple of the Piercing Thunder is wise to the ways of combat and when opponents rush by, his lance is always at the ready. You may initiate this counter whenever a charging enemy passes within 10 feet of you (including if you yourself are being charged). Make a melee attack against that creature with a weapon you are wielding, even if its reach would not otherwise allow you to strike the foe. If it hits, it deals weapon damage as normal plus an additional 5d6 points of damage, and the target must succeed at a Reflex save (DC 17 + initiation modifier) or be knocked prone. Regardless of whether or not they succeed at the save, the target’s movement ends, potentially keeping them from making their charge attack. This maneuver may only be made with a discipline weapon." compset="PWManuever" summary="Attack charging foe deals +5d6 dmg and stops their movement, can knock target prone" uniqueness="useronce">
+  <thing id="manPWBrtC7" name="Breaking the Charge" description="The disciple of the Piercing Thunder is wise to the ways of combat and when opponents rush by, his lance is always at the ready. You can initiate this counter whenever a charging opponent passes within 10 feet of you (including if you yourself are being charged). Make a melee attack against that creature with a weapon you are wielding, even if its reach would not otherwise allow you to strike the foe. If it hits, it deals weapon damage as normal plus an additional 5d6 points of damage, and the target must succeed at a Reflex save (DC 17 + your initiation modifier) or be knocked prone. Regardless of whether or not they succeed at the save, the target’s movement ends, potentially keeping them from making their charge attack. This maneuver may only be made with a discipline weapon." compset="PWManuever" summary="Attack charging foe deals +5d6 dmg and stops their movement, can knock target prone" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
     <tag group="mType" tag="Counter"/>
@@ -4244,7 +4247,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mTarget" tag="Creature1"/>
     <tag group="mSave" tag="RefPart"/>
     </thing>
-  <thing id="manPWBLnE1" name="Bronze Lancer&apos;s Edge" description="With practiced skill, you are capable of achieving greater force with your discipline weapons. You initiate this boost as part of the next charge attack you make and this deals an additional 1d6 points of damage." compset="PWManuever" summary="Boost adds +1d6 dmg to charge atack" uniqueness="useronce">
+  <thing id="manPWBLnE1" name="Bronze Lancer&apos;s Edge" description="With practiced skill, you are capable of achieving greater force with your discipline weapons. After initiating this boost, the next charge attack you make this turn deals an additional 1d6 points of damage." compset="PWManuever" summary="Boost adds +1d6 dmg to charge atack" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="1"/>
     <tag group="Discipline" tag="PrcThun"/>
@@ -4255,7 +4258,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mTarget" tag="You"/>
     <tag group="mDuration" tag="Round1"/>
     </thing>
-  <thing id="manPWHsLp2" name="Hastened Leap" description="By using this method, you become capable of a quick burst of speed, launching yourself forward with alacrity towards you foes. As a swift action, you may initiate this boost to move up to 20-ft. or make an Acrobatics check to jump with a +10 competence bonus and as if you had a running start." compset="PWManuever" summary="Move up to 20 ft, or make a jump with +10 to Acro check w/running start" uniqueness="useronce">
+  <thing id="manPWHsLp2" name="Hastened Leap" description="By using this method, you become capable of a quick burst of speed, launching yourself forward with alacrity towards you foes. When you initiate this boost, you can either move up to 20 feet or make an Acrobatics check to jump. If you jump, you are treated as if you had a running start and your check is made with a +10 competence bonus." compset="PWManuever" summary="Move up to 20 ft, or make a jump with +10 to Acro check w/running start" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="2"/>
     <tag group="Discipline" tag="PrcThun"/>
@@ -4266,7 +4269,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mTarget" tag="You"/>
     <tag group="mDuration" tag="Round1"/>
     </thing>
-  <thing id="manPWLtRs6" name="Lightning Rush" description="By digging in his heels and launching off like a speeding comet, the disciple of the Piercing Thunder is capable of  lightning fast sprints for a short period of time. When you initiate this boost, your base land speed increases by 30 feet until the beginning of your next turn. This adjustment is treated as an enhancement bonus. In addition, you can immediately move up to your speed as a free action. This movement does not provoke attacks of opportunity." compset="PWManuever" summary="Move up to your speed as free action, gain 30-ft enh bonus to speed until next turn" uniqueness="useronce">
+  <thing id="manPWLtRs6" name="Lightning Rush" description="By digging in his heels and launching off like a speeding comet, the disciple of the Piercing Thunder is capable of lightning fast sprints for a short period of time. After initiating this boost, your base land speed increases by 30 feet until the start of your next turn. This adjustment is treated as an enhancement bonus. In addition, you can immediately move up to your speed as a free action. This movement does not provoke attacks of opportunity." compset="PWManuever" summary="Move up to your speed as free action, gain 30-ft enh bonus to speed until next turn" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="PrcThun"/>
@@ -4278,7 +4281,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mDuration" tag="Round1"/>
     <tag group="mLevel" tag="6"/>
     </thing>
-  <thing id="manPWIrLE3" name="Iron Lancer&apos;s Edge" description="The disciple urges punishing force from his attacks to devastate his foes. You initiate this boost as part of the next charge attack you make and this deals an additional 3d6 points of damage. The creature struck is staggered for one round." compset="PWManuever" summary="Boosted charge attack deals +3d6 dmg, staggers target for 1 rd" uniqueness="useronce">
+  <thing id="manPWIrLE3" name="Iron Lancer&apos;s Edge" description="The disciple urges punishing force from his attacks to devastate his foes. After initiating this boost, the next charge attack you make this turn deals an additional 3d6 points of damage, and the creature struck is staggered for one round." compset="PWManuever" summary="Boosted charge attack deals +3d6 dmg, staggers target for 1 rd" uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
     <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="PrcThun"/>
@@ -4290,7 +4293,7 @@ abValue2 = 0 if character has ITWF without this stance</comment>
     <tag group="mDuration" tag="Round1"/>
     <tag group="mLevel" tag="3"/>
     </thing>
-  <thing id="manPWAdLE8" name="Adamantine Lancer&apos;s Edge" description="As a master of the Piercing Thunder discipline, you wield your lance with impossible strength and penetrating power, piercing steel as easily as flesh and bone. After initiating this boost, the next charge attack you make this turn deals an additional 8d6 points of damage. In addition, each attack you make during that charge automatically overcomes damage reduction, and any creature struck must succeed at a Fortitude save (DC 18 + initiation modifier) or be dazed for one round." compset="PWManuever" summary="Boosted charge deals +8d6 dmg, ignores DR, can daze target for 1 rd" uniqueness="useronce">
+  <thing id="manPWAdLE8" name="Adamantine Lancer&apos;s Edge" description="As a master of the Piercing Thunder discipline, you wield your lance with impossible strength and penetrating power, piercing steel as easily as flesh and bone. After initiating this boost, the next charge attack you make this turn deals an additional 8d6 points of damage. In addition, each attack you make during that charge automatically overcomes damage reduction, and any creature struck must succeed at a Fortitude save (DC 18 + your initiation modifier) or become dazed for one round." compset="PWManuever" summary="Boosted charge deals +8d6 dmg, ignores DR, can daze target for 1 rd" uniqueness="useronce">
     <fieldval field="mPreReq" value="3"/>
     <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="PrcThun"/>
@@ -4768,7 +4771,27 @@ abValue2 = Init bonus</comment>
     <tag group="mDuration" tag="Instant"/>
     <tag group="PathOfWar" tag="Manuever"/>
     </thing>
-  <thing id="manPWBlDg7" name="Black Dog&apos;s Due" description="You strike a distracted foe, bringing swift death with the edge of your blade. Make a melee attack. If it hits, it deals weapon damage as normal plus an additional 8d6 points of damage, and the target must succeed at a Reflex save (DC 17 + your initiation modifier) or be knocked prone. If the target is flanked (either by you or by other creatures), this strike’s additional damage increases to 12d6." compset="PWManuever" summary="Strike – Your melee attack deals +8d6 damage and may knock the target prone. This strike deals an additional +4d6 damage against flanked creatures." uniqueness="useronce">
+  <thing id="staPWDTLS6" name="Diving Thunderbolt Stance" description="Your movements are light and nimble, allowing you to reach incredible heights and strike with the force of a swooping dragon. While you maintain this stance, you become immune to falling damage, gain a bonus on Acrobatics checks made to jump equal to twice your initiator level, and your vertical jumping distance is not limited by your maximum movement speed. In addition, if you attack your opponent from a higher elevation (including after jumping towards them as a move action), you are considered to be charging that opponent for the purposes of feats and abilities you possess that would provide a beneficial effect." compset="PWManuever" summary="Bonus on Acrobatics, immune to falling, charge from higher elevation" uniqueness="useronce">
+    <fieldval field="mPreReq" value="2"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="PrcThun"/>
+    <tag group="PathOfWar" tag="Stance"/>
+    <tag group="mType" tag="Stance"/>
+    <tag group="mLevel" tag="6"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mDuration" tag="Stance"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="AbilType" tag="Extra"/>
+    <bootstrap thing="xImmFall">
+      <containerreq phase="First" priority="100">fieldVal:abilActive = 1</containerreq>
+      </bootstrap>
+    <eval phase="Final" priority="50000"><![CDATA[      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+      #situational[hero.childfound[skAcrobat],signed(field[mIM].value * 2) & " to jump",field[thingname].text]]]></eval>
+    </thing>
+<thing id="manPWBlDg7" name="Black Dog&apos;s Due" description="You strike a distracted foe, bringing swift death with the edge of your blade. Make a melee attack. If it hits, it deals weapon damage as normal plus an additional 8d6 points of damage, and the target must succeed at a Reflex save (DC 17 + your initiation modifier) or be knocked prone. If the target is flanked (either by you or by other creatures), this strike’s additional damage increases to 12d6." compset="PWManuever" summary="Strike – Your melee attack deals +8d6 damage and may knock the target prone. This strike deals an additional +4d6 damage against flanked creatures." uniqueness="useronce">
     <fieldval field="mPreReq" value="3"/>
     <usesource source="srcPOWEx" parent="pPathOfWar" name="DSP - Path of War Expanded Playtest"/>
     <tag group="mDuration" tag="Instant" name="Instant" abbrev="Instant"/>
@@ -4781,5 +4804,4 @@ abValue2 = Init bonus</comment>
     <tag group="mTarget" tag="Creature1"/>
     <tag group="mSave" tag="RefNeg"/>
     <tag group="AbilType" tag="Super"/>
-    </thing>
   </document>

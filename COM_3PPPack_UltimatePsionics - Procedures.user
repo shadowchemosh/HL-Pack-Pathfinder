@@ -27,6 +27,25 @@
     </info_history>
   </fileinfo>
 
+  <!-- =================================================================== -->
+  <!-- Ultimate Psionics - Psionic Focus Test                              -->
+  <!-- =================================================================== -->
+  <procedure id="PUPsiFocus" context="pick"><![CDATA[
+    ~ Psionic Focus Test
+    ~ This procedure should be called to test for Psionic Focus instead of directly testing
+    ~ the Hero.PsiFocus tag. This is because of unique feats like Persistent Focus that
+    ~ can cause a specific Pick to be considered Psionic Focus.
+    var v_focus as number
+
+    ~ We want to set our focus variable to be TRUE (1) or FALSE (0). By using
+    ~ minimum we accmplish this.
+    ~v_focus = minimum(hero.tagis[Hero.PsiFocus] + tagis[Psionics.PsiFocus], 1)
+    ~ Hero.PsiFocus - Is the LW tag assigned when a gamer turns on Psi Focus on Psionics tab
+    ~ Psionics.PsiFocus - Is a tag from the Persistent Focus feat placing a tag on the Pick itself.
+    ~ MythicPsi.PsiFocus - Turns on Psionic Focus from Mythic abilities.
+    v_focus = minimum(hero.tagis[Hero.PsiFocus] + tagis[Psionics.PsiFocus] + hero.tagis[MythicPsi.PsiFocus], 1)
+    ]]>
+  </procedure>
 
   <procedure id="HavePower" scripttype="validate"><![CDATA[
     ~ This procedure tests if a character has a specific spell and sets the valid field
@@ -146,6 +165,15 @@
 
     ~ Set psicrystal bonus
     nS2Bonus += tagvalue[PsicrysBon.?]
+
+    ~ If we have a Mythic Double Bonus then double the
+    ~ psicrystal bonus value.
+    If (hero.tagis[MythicPsi.PsicrBon2x] = 1) Then
+
+      ~ 2x the bonus but only increase the x value by 1 for each additional
+      ~ tag found. So if 2 tags found we become 3x mulitplier not 4x.
+      nS2Bonus *= 2 + (hero.tagcount[MythicPsi.PsicrBon2x] - 1)
+    Endif
 
     var S2TagID  as string
     var S2Target as string
