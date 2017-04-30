@@ -1442,21 +1442,25 @@
     <tag group="mSave" tag="FortPart"/>
     <tag group="mTarget" tag="Creat1Plus" name="One or more creatures"/>
     </thing>
-  <thing id="manPWEgWS1" name="Ego-Wounding Strike" description="This maneuver takes advantage of the pain of an attack to hinder your foes, telepathically amplifying the pain they feel. As part of this maneuver, you make a single melee or ranged attack against an opponent. If the attack hits, then the foe must make a Will save or be overwhelmed with agonizing pain, taking a -2 penalty on attack rolls, skill checks, and ability checks for 1 round. Every time a creature other than you strikes a creature under the effects of Ego-Wounding Strike, its duration increases by 1 round, to a maximum of your initiator level.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• If you expend psionic focus, your foe does not gain a save against this effect.\n• For every 3 power points you spend, the penalty inflicted by this maneuver increases by 1." compset="PWManuever" summary="Attack inflicts -2 penalty on rolls to target for 1 round, extended if other creatures attack target" uniqueness="useronce">
-    <fieldval field="mDuration" value="One round (see text)"/>
+  <thing id="manPWEgWS1" name="Ego-Wounding Strike" description="You wrap your blade in psionic energy, telepathically amplifying the pain of the blow. Make an attack. If it hits, it deals weapon damage as normal, and the target must succeed at a Will save (DC 11 + your initiation modifier) or take become overwhelmed with agonizing pain, taking a –2 penalty on attack rolls, ability checks, and skill checks for one round. Each time one of your allies successfully hits that creature while it is under the effect of this strike, the duration increases by one round, up to a maximum number of rounds equal to your initiator level.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every 2 power points you spend, the penalty inflicted by this strike increases by –1.\n• If you expend your psionic focus while initiating this strike, your target does not get a saving throw against it." compset="PWManuever" summary="Your attack may inflict a –2 penalty on attack rolls, skill checks, and ability checks." uniqueness="useronce">
+    <fieldval field="mDuration" value="Instantaneous (see text)"/>
+    <fieldval field="mSave" value="Will negates or none (see text)"/>
     <usesource source="srcPOWEx"/>
-    <tag group="mType" tag="Strike"/>
     <tag group="mLevel" tag="1"/>
     <tag group="mInitAct" tag="Standard1"/>
     <tag group="mTarget" tag="Creature1"/>
-    <tag group="mDuration" tag="Round1"/>
+    <tag group="mDuration" tag="Instant"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mRange" tag="MelOrRang"/>
     <tag group="mDescript" tag="MindAffect"/>
+    <tag group="mSave" tag="WillNeg"/>
+    <tag group="mType" tag="Strike"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="staPWBtMn1" name="Battle Mantra" description="In battle the mind awakens, every aspect of it tested to its utmost by the dangers of combat. In this enhanced state of awareness, every second matters, every blow is crucial. Sleeping Goddess adepts can use this enhanced focus to empower their mind. When you strike a foe with a weapon, natural attack, or unarmed strike, all maneuvers you initiate until the end of your next turn are automatically augmented as if you had spent 1 power point on them. You are still limited to spending no more than your initiator level on any given maneuver. At initiator level 5 and every 5 levels thereafter, the automatic augmentation increases by 1." compset="PWManuever" summary="Stance automatically augments maneuvers" uniqueness="useronce">
+  <thing id="staPWBtMn1" name="Battle Mantra" description="In the heat of battle, every second matters and every blow is crucial. Your focus and psionic powers enhance your senses, allowing you to detect subtle movements and mental impressions, reacting to the ever-changing melee before those changes manifest. While you maintain this stance, you gain one of the following benefits. \n\n• You gain a +1 insight bonus to your AC. \n• You gain a +1 insight bonus on all attack rolls. \n• You gain a +2 insight bonus on combat maneuver checks and to your CMD. \n\nOnce per round as a free action, you can turn your attention to another facet of the combat, losing your current bonus and gaining a different benefit from this stance. These bonuses increase by +1 for every four initiator levels you possess.\n\n{b}Note:{/b} To add the effects of this stance, use an appropriate adjustment on the Adjust tab." compset="PWManuever" summary="You gain flexible insight bonuses to aid your combat ability." uniqueness="useronce">
     <fieldval field="abValue" value="1"/>
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="1"/>
@@ -1468,11 +1472,14 @@
     <tag group="mRange" tag="Personal"/>
     <tag group="mTarget" tag="You"/>
     <tag group="mType" tag="Stance"/>
-    <eval phase="PostLevel" priority="10000">~ Calculate additional augment from IL
-      field[abValue].value += round(field[mIL].value/5,0,-1)</eval>
-    <eval phase="Render" priority="50000" index="2"><![CDATA[      field[livename].text &= " (" & field[abValue].value & "pp augment)"]]></eval>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000">      ~ Calculate additional bonus from IL
+      field[abValue].value += round(field[mIL].value/4, 0, -1)</eval>
+    <eval phase="Render" priority="50000" index="2"><![CDATA[      field[livename].text &= " " & signed(field[abValue].value)
+      field[sbName].text &= " " & signed(field[abValue].value)]]></eval>
     </thing>
-  <thing id="manPWBinD9" name="Battle in Dreams" description="At the pinnacle of the Sleeping Goddess discipline, its masters do not do battle in the physical world at all. Instead, they draw their foes into their dreams and attack the very underlying concepts of their being, subverting or maiming the essence of their minds. When you use this maneuver, you create a demiplane of dreaming and transport yourself there along with one foe. The demiplane appears functionally identical to the general area the two of you are located in with strange alterations - blood might appear to rain from the sky, or a titanic tree might appear to hang in the sky. Within the dream, you and your foe have difficulty maintaining your physical forms, taking on metaphorical or symbolic shapes (you and your foe might become warring city-states, or you might turn your foe into a mountain range and yourself into a river wearing the mountain down to dust).\n\nUpon activating this boost, you take one full round of actions; your targeted foe then takes one full round of actions. While {i}battle in dreams{/i} is in effect, creatures outside the dream are invulnerable to creatures within the dream’s attacks and spells; creatures within the dream cannot target such creatures with any attack or spell. During these dream rounds, you gain a +1 circumstance bonus on all attack rolls, damage rolls, ability checks, saving throws, and skill checks for every 6 initiator levels you have, as the dream contorts to always grant you an edge. Neither you nor your opponent may recover maneuvers in the dream.\n\nAt the end of your foe’s dream turn, you each return to your original conditions and locations, and you resume your turn as normal. Resources expended in the dream remain expended in reality (such as maneuvers, spells, and magic items), but otherwise only hit point damage and ability damage either of you does to the other transfers into reality - to outside observers, wounds simply appear out of nowhere. All other actions taken in the dream, such as changing stances, applying helpful and harmful conditions (like a {i}haste{/i} spell or stunning an opponent), healing, or changing the environment (like {i}wall of stone{/i}) revert when the dream rounds end; your foe inherently understands these restrictions.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 6 power points you spend, you gain an additional +1 circumstance bonus on attack rolls, damage rolls, ability checks, saving throws, and skill checks during your dream round.\n• If you spend an additional 15 power points and expend psionic focus, any movement you and your foe make is preserved after the dream ends. In addition, your circumstance bonuses and your foe’s penalties remain until the beginning of your next turn." compset="PWManuever" summary="Create a psychic battlefield to duel an enemy." uniqueness="useronce">
+  <thing id="manPWBinD9" name="DEPRECATED - Battle in Dreams" description="{B}If you see this please remove and re-add the replacement maneuver, Immortal Truths of the Sleeping Goddess, to your character{/b}\n\nAt the pinnacle of the Sleeping Goddess discipline, its masters do not do battle in the physical world at all. Instead, they draw their foes into their dreams and attack the very underlying concepts of their being, subverting or maiming the essence of their minds. When you use this maneuver, you create a demiplane of dreaming and transport yourself there along with one foe. The demiplane appears functionally identical to the general area the two of you are located in with strange alterations - blood might appear to rain from the sky, or a titanic tree might appear to hang in the sky. Within the dream, you and your foe have difficulty maintaining your physical forms, taking on metaphorical or symbolic shapes (you and your foe might become warring city-states, or you might turn your foe into a mountain range and yourself into a river wearing the mountain down to dust).\n\nUpon activating this boost, you take one full round of actions; your targeted foe then takes one full round of actions. While {i}battle in dreams{/i} is in effect, creatures outside the dream are invulnerable to creatures within the dream’s attacks and spells; creatures within the dream cannot target such creatures with any attack or spell. During these dream rounds, you gain a +1 circumstance bonus on all attack rolls, damage rolls, ability checks, saving throws, and skill checks for every 6 initiator levels you have, as the dream contorts to always grant you an edge. Neither you nor your opponent may recover maneuvers in the dream.\n\nAt the end of your foe’s dream turn, you each return to your original conditions and locations, and you resume your turn as normal. Resources expended in the dream remain expended in reality (such as maneuvers, spells, and magic items), but otherwise only hit point damage and ability damage either of you does to the other transfers into reality - to outside observers, wounds simply appear out of nowhere. All other actions taken in the dream, such as changing stances, applying helpful and harmful conditions (like a {i}haste{/i} spell or stunning an opponent), healing, or changing the environment (like {i}wall of stone{/i}) revert when the dream rounds end; your foe inherently understands these restrictions.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 6 power points you spend, you gain an additional +1 circumstance bonus on attack rolls, damage rolls, ability checks, saving throws, and skill checks during your dream round.\n• If you spend an additional 15 power points and expend psionic focus, any movement you and your foe make is preserved after the dream ends. In addition, your circumstance bonuses and your foe’s penalties remain until the beginning of your next turn." compset="PWManuever" summary="Create a psychic battlefield to duel an enemy." uniqueness="useronce">
     <fieldval field="mDuration" value="One round (see text)"/>
     <fieldval field="mPreReq" value="4"/>
     <usesource source="srcPOWEx"/>
@@ -1486,26 +1493,25 @@
     <tag group="mDescript" tag="MindAffect"/>
     <tag group="mType" tag="Boost"/>
     <tag group="mRange" tag="100" name="100 ft"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="staPWCtSB1" name="Call the Soul&apos;s Blade" description="The greatest weapon of the mind a Sleeping Goddess adept can ever wield is that of his own personal ideology. Even neophyte Sleeping Goddess disciples can learn to craft a soul’s blade, a physical incarnation of all that gives the adept’s life meaning, all that he holds right and just. When you enter this stance, a soul’s blade appears in your hands, taking the form of a masterwork melee weapon you are proficient with. A soul’s blade has hardness 10 and 10 hit points and is considered magic for the purpose of overcoming damage reduction. If your soul’s blade leaves your grip or is broken, it dissipates and reforms in your hands at the beginning of your next turn as a free action or as soon as you enter this stance again with a swift action, whichever comes first. You can only have one soul’s blade created at a time.\n\nAt initiator level 4, your soul’s blade gains a +1 enhancement bonus on attack and damage rolls. At level 8 and every 4 initiator levels thereafter, its enhancement modifier increases by +1 (to a maximum of +5 at initiator level 20).\n\n{b}NOTE:{/b} Don&apos;t forget to add a weapon to your character to represent the {i}soul&apos;s blade{/i}. Hero Lab does not automatically add the enhancement bonus to the weapon, so you will need to do that yourself." compset="PWManuever" summary="Create a masterwork or magical weapon from your mind" uniqueness="useronce">
-    <fieldval field="mDuration" value="One round (see text)"/>
+  <thing id="staPWCtSB1" name="Call the Soul&apos;s Blade" description="As an adept of the Sleeping Goddess discipline, your greatest weapon is your personal ideology given form. By focusing on all you view as right and just, you can shape psionic might into a {i}soul&apos;s blade{/i}. When you initiate this boost, a {i}soul&apos;s blade{/i} appears in your hands, taking the form of a masterwork melee weapon you are proficient with. A {i}soul&apos;s blade{/i} created with this boost has hardness 10 and 10 hit points, and is treated as a magic weapon for the purposes of overcoming damage reduction. The blade lasts a number of rounds equal to your initiator level before vanishing. If you throw your {i}soul&apos;s blade{/i} or otherwise relinquish your grip on it (such as by being disarmed), it dissipates after one round. You can have multiple {i}soul&apos;s blades{/i} created at once if you initiate this boost or other boosts that create a {i}soul&apos;s blade{/i} multiple times, although only as many as you can wield.\n\nIf you are currently wielding a mind blade or equivalent weapon (such as a deadly fist&apos;s empowered strikes, a psychic armory&apos;s panoply of blades, or a soulbolt&apos;s mind bolt), you can choose to amplify it instead of this boost&apos;s normal effects. Until the start of your next turn, all such weapons you wield (including those created after initiating this boost) gain the benefit of a weapon special ability equivalent to a +1 enhancement bonus. This ability must be chosen from the list of weapon special abilities you can normally place on your mind blade (see the enhanced mind blade class feature in Chapter 3 of {i}Ultimate Psionics{/i}).\n\n{b}NOTE:{/b} Don&apos;t forget to add a weapon to your character to represent the {i}soul&apos;s blade{/i}. Hero Lab does not automatically add the enhancement bonus to the weapon, so you will need to do that yourself." compset="PWManuever" summary="Create a weapon of ideals or empower your mind blade." uniqueness="useronce">
+    <fieldval field="mDuration" value="1 round/level (see text)"/>
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="1"/>
     <tag group="mInitAct" tag="Swift1"/>
-    <tag group="mDuration" tag="Stance"/>
+    <tag group="mDuration" tag="1rdLevel"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="Discipline" tag="SlpGoddess"/>
-    <tag group="PathOfWar" tag="Stance"/>
     <tag group="mRange" tag="Personal"/>
     <tag group="mTarget" tag="You"/>
-    <tag group="mType" tag="Stance"/>
-    <eval phase="PostLevel" priority="10000">~ Calculate enhancement bonus from IL
-      field[abValue].value += round(field[mIL].value/4,0,-1)</eval>
-    <eval phase="Render" priority="10000" index="2"><![CDATA[      if (field[abValue].value > 0) then
-        field[livename].text &= " (" & signed(field[abValue].value) & " enhancement)"
-      endif]]></eval>
+    <tag group="mType" tag="Boost"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="PathOfWar" tag="Manuever"/>
     </thing>
-  <thing id="staPWSlGd3" name="Stance of the Sleeping Goddess" description="In this iconic stance, the disciple of the Sleeping Goddess gains the clarity to distinguish or obscure the line between the worlds of dream and reality as it fits . While in this stance, you are immune to sleep effects. You can adjust your body’s equilibrium to correspond with any solid or liquid that you stand on. Thus, you can walk on water, quicksand, or even a spider’s web without sinking or breaking through (this effect does not confer any resistance to particularly sticky webs). You can move at your normal speed, but you cannot run on an unfirm surface without sinking or breaking through. In addition, you gain the ability to mentally direct yourself to move up or down as much as 20 feet each round as a move action. You cannot move yourself horizontally, but you can can clamber along the face of a cliff, for example, or push against a ceiling to move laterally (generally at half your base land speed). If you fall from any height while in this stance, damage from the impact is halved." compset="PWManuever" summary="Stance makes you immune to sleep effects, and you can walk on any surface" uniqueness="useronce">
+  <thing id="staPWSlGd3" name="DEPRECATED - Stance of the Sleeping Goddess" description="{B}If you see this please remove and re-add the replacement stance, Unbroken Stride, to your character{/b}\n\nIn this iconic stance, the disciple of the Sleeping Goddess gains the clarity to distinguish or obscure the line between the worlds of dream and reality as it fits. While in this stance, you are immune to sleep effects. You can adjust your body’s equilibrium to correspond with any solid or liquid that you stand on. Thus, you can walk on water, quicksand, or even a spider’s web without sinking or breaking through (this effect does not confer any resistance to particularly sticky webs). You can move at your normal speed, but you cannot run on an unfirm surface without sinking or breaking through. In addition, you gain the ability to mentally direct yourself to move up or down as much as 20 feet each round as a move action. You cannot move yourself horizontally, but you can can clamber along the face of a cliff, for example, or push against a ceiling to move laterally (generally at half your base land speed). If you fall from any height while in this stance, damage from the impact is halved." compset="PWManuever" summary="Stance makes you immune to sleep effects, and you can walk on any surface" uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Swift1"/>
@@ -1517,8 +1523,10 @@
     <tag group="mTarget" tag="You"/>
     <tag group="mType" tag="Stance"/>
     <tag group="mLevel" tag="3"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="staPWMmSm5" name="Metamorphic Somnambulism Stance" description="To a master of the Sleeping Goddess, the line between reality and dreams is easily blurred with a supreme act of will, obliterating the distinction between the conscious and unconscious mind. Opponents who are immune to mind-affecting abilities lose this immunity against mind-affecting maneuvers you use against them, although they do gain a +5 resistance bonus on Will saves if they had immunity. In addition, you gain concealment (opponents have a 20% miss chance) while maintaining this stance." compset="PWManuever" summary="Enemies lose immunity to mind-affecting vs you, and you gain concealment" uniqueness="useronce">
+  <thing id="staPWMmSm5" name="DEPRECATED - Metamorphic Somnambulism Stance" description="{B}If you see this please remove and re-add the replacement stance, Inarguable Presence of the Sleeping Goddess, to your character{/b}\n\nTo a master of the Sleeping Goddess, the line between reality and dreams is easily blurred with a supreme act of will, obliterating the distinction between the conscious and unconscious mind. Opponents who are immune to mind-affecting abilities lose this immunity against mind-affecting maneuvers you use against them, although they do gain a +5 resistance bonus on Will saves if they had immunity. In addition, you gain concealment (opponents have a 20% miss chance) while maintaining this stance." compset="PWManuever" summary="Enemies lose immunity to mind-affecting vs you, and you gain concealment" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Swift1"/>
@@ -1530,8 +1538,10 @@
     <tag group="mTarget" tag="You"/>
     <tag group="mType" tag="Stance"/>
     <tag group="mLevel" tag="5"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="staPWUnls8" name="Unleash the Goddess" description="Through super-human force of will and meditative prowess, a Sleeping Goddess adept can ascend to a higher state of being, his mind and body becoming one. While maintaining this stance, you seem to become a transcendent, divine being, an illusion that you project into the minds of all who can see you (save those under the effects of true seeing or similar), appearing as hundreds of wild, idealistic images of yourself fused together and overlapping each other - a veritable sea of limbs, eyes, and heads. While you remain in this stance, you add your initiation modifier on initiative checks, and you are always considered to be maintaining psionic focus for the purpose of abilities that require you to remain focused, even if your psionic focus has been expended. In addition, you generate a subtle telekinetic field of mental contact, allowing you to “feel” your surroundings even in total darkness or when your sight would otherwise be obscured by your physical environment. Your telekinetic field emanates from you out to 60 feet. You ignore invisibility, darkness, and concealment, though you must have line of effect to a creature or an object to discern it. You do not need to make Perception checks to notice creatures; you can detect and pinpoint all creatures within 60 feet. In many circumstances, comparing your regular senses to what you learn with telekinetic sense is enough to tell you the difference between visible, invisible, hiding, and concealed creatures." compset="PWManuever" summary="Add initiator mod to init checks; you are always psi-focused and can see through darkness, invisibility, and concealment" uniqueness="useronce">
+  <thing id="staPWUnls8" name="DEPRECATED - Unleash the Goddess" description="{B}If you see this please remove and re-add the replacement stance, Unavoidable Gaze of the Sleeping Goddess, to your character{/b}\n\nThrough super-human force of will and meditative prowess, a Sleeping Goddess adept can ascend to a higher state of being, his mind and body becoming one. While maintaining this stance, you seem to become a transcendent, divine being, an illusion that you project into the minds of all who can see you (save those under the effects of true seeing or similar), appearing as hundreds of wild, idealistic images of yourself fused together and overlapping each other - a veritable sea of limbs, eyes, and heads. While you remain in this stance, you add your initiation modifier on initiative checks, and you are always considered to be maintaining psionic focus for the purpose of abilities that require you to remain focused, even if your psionic focus has been expended. In addition, you generate a subtle telekinetic field of mental contact, allowing you to “feel” your surroundings even in total darkness or when your sight would otherwise be obscured by your physical environment. Your telekinetic field emanates from you out to 60 feet. You ignore invisibility, darkness, and concealment, though you must have line of effect to a creature or an object to discern it. You do not need to make Perception checks to notice creatures; you can detect and pinpoint all creatures within 60 feet. In many circumstances, comparing your regular senses to what you learn with telekinetic sense is enough to tell you the difference between visible, invisible, hiding, and concealed creatures." compset="PWManuever" summary="Add initiator mod to init checks; you are always psi-focused and can see through darkness, invisibility, and concealment" uniqueness="useronce">
     <fieldval field="mPreReq" value="3"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Swift1"/>
@@ -1543,6 +1553,8 @@
     <tag group="mTarget" tag="You"/>
     <tag group="mType" tag="Stance"/>
     <tag group="mLevel" tag="8"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[      ~ Stop if we're not activated
       doneif (field[abilActive].value = 0)
 
@@ -1558,40 +1570,46 @@
 
       ~notify "focus: " & tagcount[Hero.PsiFocus]]]></eval>
     </thing>
-  <thing id="manPWBoDl1" name="Body of Delusion" description="A disciple beginning their training of the Sleeping Goddess must first learn that reality is an illusion, able to be altered at will like a lucid dream. With this technique, the disciple enters a simple meditative state that causes him to slightly fade from reality, reducing the impact of an opponent’s attack. Activate this ability when you are struck by a melee or ranged attack. Make an Autohypnosis check with a DC equal to your opponent’s attack roll; if you are successful, you only take half the hit point damage the attack would have caused (rounded down). Any other effects of the attack are resolved normally.\n\nIn addition, as long as you are maintaining psionic focus, you can use this counter on an ally within 60 feet who has been struck by a melee or ranged attack instead of targeting yourself.\n\n\n{b}Augment{/b} For every power point you spend, you gain a +1 bonus to your Autohypnosis check." compset="PWManuever" summary="Take half damage from an attack with a successful Autohypnosis check" uniqueness="useronce">
-    <fieldval field="mDuration" value="One round (see text)"/>
-    <fieldval field="mTarget" value="You (see text)"/>
+  <thing id="manPWBoDl1" name="Body of Delusion" description="The most basic tenet of the Sleeping Goddess discipline is that a strong enough belief, channeled through the lens of psionic power, can do anything. With this technique, you momentarily enter a state of denial, asserting through your power that you are not and will not be harmed. You can initiate this counter when you take damage from a melee or ranged attack. Make an Autohypnosis check, using your opponent’s attack roll as the DC. If you succeed, you take only half damage from the attack, although any other effects of the attack are resolved normally.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, you gain a +1 bonus on your Autohypnosis check.\n• If you spend 3 power points, you take no damage from the attack on a successful Autohypnosis check, rather than half.\n• If you spend 5 power points, you are completely unaffected by the attack on a successful Autohypnosis check, taking no damage and ignoring any additional effects of the attack.\n• If you expend your psionic focus while initiating this counter, you can use it in response to an attack damaging an ally within 60 feet. If you do, make an Autohypnosis check as normal, then apply the effects of this counter to that ally rather than yourself." compset="PWManuever" summary="Make an Autohypnosis check to halve damage taken from an attack." uniqueness="useronce">
+    <fieldval field="mTarget" value="You or one ally (see text)"/>
+    <fieldval field="mDuration" value="Instantaneous"/>
+    <fieldval field="mRange" value="Personal or 60 ft. (see text)"/>
     <usesource source="srcPOWEx"/>
-    <tag group="mLevel" tag="1"/>
-    <tag group="mInitAct" tag="Immed1"/>
     <tag group="mDuration" tag="Instant"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mRange" tag="Personal"/>
-    <tag group="mTarget" tag="You"/>
     <tag group="mType" tag="Counter"/>
-    </thing>
-  <thing id="manPWFoIn1" name="Flash of Insight" description="A basic technique a disciple of the Sleeping Goddess must master is the ability to quickly turn a sudden burst of inspiration into an edge in battle for an ally. Activate this boost before making a melee attack, ranged attack, or combat maneuver check against a foe. If your attack or combat maneuver is successful, an ally within 30 feet gains a saving throw against an ongoing effect that allows a saving throw. Even on a failed save, your ally takes no additional negative effects (such as against poison). You cannot give an ally more than one additional saving throw against any given condition.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 4 additional power points you spend, any affected allies gain a +1 insight bonus on their saving throws.\n• For every 4 additional power points you spend, you affect an additional ally in range on a successful attack or combat maneuver check." compset="PWManuever" summary="Next attack grants a new saving throw to you or an ally" uniqueness="useronce">
-    <usesource source="srcPOWEx"/>
+    <tag group="mInitAct" tag="Immed1"/>
     <tag group="mLevel" tag="1"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="mTarget" tag="YouOrAlly"/>
+    <tag group="mRange" tag="60"/>
+    </thing>
+  <thing id="manPWFoIn1" name="Flash of Insight" description="You turn a sudden burst of inspiration into strength for your allies, sharing your power to give them an edge in battle and help them shrug off their wounds. You can activate this boost after making a successful attack or combat maneuver check. One ally within 30 feet gains another saving throw against a non-instantaneous effect that allows a saving throw affecting them. This saving throw has the same DC as the original save. If your ally succeeds, the effect ends. The ally does not suffer any additional effects for failing the save (such as a poison&apos;s damage). You cannot grant an ally more than one additional save against a given effect.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, your ally gains a +1 insight bonus on their saving throw.\n• If you expend your psionic focus while initiating this boost, this boost instead affects up to two allies within 30 feet." compset="PWManuever" summary="On a successful attack or CMB check, you grant an ally a new save against an ongoing effect." uniqueness="useronce">
+    <fieldval field="mTarget" value="One or two allies (see text)"/>
+    <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Swift1"/>
     <tag group="mDuration" tag="Instant"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
-    <tag group="mRange" tag="Personal"/>
-    <tag group="mTarget" tag="You"/>
     <tag group="mType" tag="Boost"/>
+    <tag group="mRange" tag="30"/>
+    <tag group="mTarget" tag="Creature2"/>
+    <tag group="mLevel" tag="1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWHrSS1" name="Harmony-Shattering Strike" description="A Sleeping Goddess adept strikes at both body and mind at once, telepathically assaulting his foes with harmful psychic static that weakens them to future attacks. As part of this maneuver, you make a single attack against an opponent. In addition, the foe you attack must make a Will save. On a failed save, every successful weapon, unarmed, or natural attack against that creature for duration of this maneuver deals an additional 1d6 damage.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every two power points you spend, the damage dealt increases by one.\n• For every power point you spend, the duration increases by 1 round.\n• If you expend psionic focus, your foe does not gain a save against this effect." compset="PWManuever" summary="Attack causes target to take more damage from other attacks" uniqueness="useronce">
-    <fieldval field="mDuration" value="One round (see text)"/>
-    <fieldval field="mSave" value="Will negates (see text)"/>
+  <thing id="manPWHrSS1" name="Harmony-Shattering Strike" description="You strike at both your enemy’s body and his spirit, creating a destructive link between them and your allies. Make an attack. If it hits, it deals weapon damage as normal, and the target must succeed at a Will save (DC 11 + your initiation modifier) or for one round, any attacks from your allies against the target deal an additional 1d6 points of damage.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every 2 power points you spend, the additional damage your allies deal to the target increases by 1d6.\n• If you expend your psionic focus while initiating this strike, your target does not get a saving throw against it." compset="PWManuever" summary="Your attack may increase the damage the target takes by your allies by +1d6." uniqueness="useronce">
+    <fieldval field="mSave" value="Will negates or none (see text)"/>
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="1"/>
     <tag group="mInitAct" tag="Standard1"/>
     <tag group="mTarget" tag="Creature1"/>
-    <tag group="mDuration" tag="Round1"/>
+    <tag group="mDuration" tag="Instant"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
@@ -1599,23 +1617,30 @@
     <tag group="mDescript" tag="MindAffect"/>
     <tag group="mType" tag="Strike"/>
     <tag group="mSave" tag="WillNeg"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="manPWAdWl2" name="Adamant Will" description="Though armor can be pierced and shields can be broken, the will remains a final bastion; those who witness this resolution of mind can be inspired to cultivate it within themselves. With this maneuver, the disciple grants his allies the ability to connect with their own subconscious awareness, potentially dodging attacks. Activate this maneuver when an enemy makes an attack roll against you, but before the attack roll is resolved. You gain a +2 insight bonus to AC against that attack. In addition, the bonus to AC transfers to an ally of your choice within 60 feet, and the insight bonus increases by +1 (to a maximum of your initiator level), transferring and increasing again after the first attack against each affected creature. The maneuver can transfer any number of times until its duration expires and can be transferred to any given creature more than once.\n\nIn addition, as long as you are maintaining psionic focus, you can use this counter on an ally within 60 feet who has been targeted by an attack roll instead of targeting yourself.\n\n{b}Augment{/b} You can augment this maneuver in the following ways. \n• For every 2 power points you spend, the duration increases by 1 round.\n• For every 2 power points you spend, the initial and maximum insight bonus increase by 1." compset="PWManuever" summary="Gain an insight bonus to AC that transfers to an ally." uniqueness="useronce">
-    <fieldval field="mTarget" value="You (see text)"/>
+  <thing id="manPWAdWl2" name="Adamant Will" description="Though armor can be pierced and shields can be broken, your will remains a final bastion, and those who witness this resolution of mind can be inspired to cultivate it within themselves. You can initiate this counter in response to a melee or ranged attack being made against you. You gain a +4 insight bonus to your AC against that attack, potentially causing it to miss. In addition, one of your allies within 60 feet gains a +4 insight bonus to their AC against the next attack made against them for one round.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, the insight bonus to you and your ally&apos;s AC increases by +1.\n• For every 3 power points you spend, this counter lasts an additional round. If you augment this counter in this way, the bonus to your ally&apos;s AC applies against every attack made against that ally during the duration, rather than only the next attack." compset="PWManuever" summary="You and one ally gain a +4 insight bonus to your ACs." uniqueness="useronce">
+    <fieldval field="mTarget" value="You and one ally (see text)"/>
+    <fieldval field="mRange" value="Personal and 60 ft. (see text)"/>
+    <fieldval field="mDuration" value="1 round (see text)"/>
     <usesource source="srcPOWEx"/>
-    <tag group="mLevel" tag="2"/>
-    <tag group="mInitAct" tag="Immed1"/>
     <tag group="mDuration" tag="Round1"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mRange" tag="Personal"/>
-    <tag group="mTarget" tag="You"/>
     <tag group="mType" tag="Counter"/>
+    <tag group="mRange" tag="60"/>
+    <tag group="mInitAct" tag="Immed1"/>
+    <tag group="mTarget" tag="YouAndAlly"/>
+    <tag group="mLevel" tag="2"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="manPWMRSt2" name="Mind-Revealing Strike" description="As a foe desperately attempts to dodge or parry your attacks, its mind is weakened to resist telepathic intrusion. As your allies subject the foe to increased duress, you can read its intentions to force it into a place of weakness. Make a melee attack. If successful, your attack deals an additional 2d6 damage and the foe must make a Will save. On a failed save, you may read that creature’s surface thoughts (as {i}detect thoughts{/i}) for 2 rounds. While you are reading your target’s surface thoughts, they are flat-footed as long as you threaten them. Every time a creature other than you strikes a creature under the effects of Mind-Revealing Strike, its duration increases by 1 round, to a maximum of your initiator level. \n\n{b}Augment{/b} If you expend psionic focus, your foe does not gain a save against this effect." compset="PWManuever" summary="Attack deals +2d6 damage and may reveal surface thoughts of the target" uniqueness="useronce">
-    <fieldval field="mDuration" value="2 rounds (see text)"/>
-    <fieldval field="mSave" value="Will negates (see text)"/>
+  <thing id="manPWMRSt2" name="Mind-Revealing Strike" description="You and your allies harry a foe, weakening its resolve and leaving it open to mental intrusion. Make an attack. If it hits, it deals an additional 1d6 points of damage, and the target must succeed at a Will save (DC 12 + your initiation modifier) or you become able to read their surface thoughts, as if by the read thoughts power, for a number of rounds equal to your initiation modifier. You do not need to concentrate on this ability to maintain it. Each time one of your allies successfully hits that creature while it is under the effect of this strike, the duration increases by one round, up to a maximum number of rounds equal to your initiator level.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage. For every 2d6 you increase the damage by, the save DC of this strike increases by +1.\n• If you expend your psionic focus while initiating this strike, you may make a melee touch attack against the target rather than a normal attack. If it hits, it deals no damage, but you still can read their surface thoughts on a failed save.\n• If you expend your psionic focus while initiating this strike, your target does not get a saving throw against it." compset="PWManuever" summary="Your attack deals +1d6 damage, and you become able to read the target’s surface thoughts on a failed Will save." uniqueness="useronce">
+    <fieldval field="mDuration" value="Instantaneous (see text)"/>
+    <fieldval field="mSave" value="Will negates or none (see text)"/>
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="2"/>
     <tag group="mInitAct" tag="Standard1"/>
@@ -1624,12 +1649,15 @@
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mDescript" tag="MindAffect"/>
-    <tag group="mDuration" tag="Round2" name="2 rounds" abbrev="2 rds"/>
+    <tag group="mDuration" tag="Instant"/>
     <tag group="mSave" tag="WillNeg"/>
     <tag group="mType" tag="Strike"/>
     <tag group="mRange" tag="Melee"/>
+    <tag group="mSave" tag="SeeText"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="manPWRcDs2" name="Recursive Dash" description="To disorient a foe’s senses, it is not necessary to invade their mind; simply subverting their expectations by appearing where it seems impossible can leave a foe doubting the reality in front of them. Mark your current location. At any time before the end of your turn, you can take a free action to teleport to your original location, ending the maneuver. If your former space is currently occupied, you are teleported to the nearest unoccupied square. If there are no unoccupied squares within 30 ft., the maneuver fails and ends immediately.\n\n{b}Augment{/b} This maneuver may be augmented in the following ways.\n• For every 2 power points you spend, the maneuver’s duration increases by 1 round. \n• For every 2 power points you spend, you can attempt to return to your original space one additional time before the maneuver ends." compset="PWManuever" summary="Return to your starting location at the end of your turn." uniqueness="useronce">
+  <thing id="manPWRcDs2" name="DEPRECATED - Recursive Dash" description="{B}If you see this please remove and re-add the replacement maneuver, Reactive Reversion, to your character{/b}\n\nTo disorient a foe’s senses, it is not necessary to invade their mind; simply subverting their expectations by appearing where it seems impossible can leave a foe doubting the reality in front of them. Mark your current location. At any time before the end of your turn, you can take a free action to teleport to your original location, ending the maneuver. If your former space is currently occupied, you are teleported to the nearest unoccupied square. If there are no unoccupied squares within 30 ft., the maneuver fails and ends immediately.\n\n{b}Augment{/b} This maneuver may be augmented in the following ways.\n• For every 2 power points you spend, the maneuver’s duration increases by 1 round. \n• For every 2 power points you spend, you can attempt to return to your original space one additional time before the maneuver ends." compset="PWManuever" summary="Return to your starting location at the end of your turn." uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="2"/>
     <tag group="mInitAct" tag="Swift1"/>
@@ -1641,9 +1669,10 @@
     <tag group="mTarget" tag="You"/>
     <tag group="mType" tag="Boost"/>
     <tag group="mDescript" tag="Teleport"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWTFAs2" name="Twofold Assault" description="A disciple of the Sleeping Goddess must learn that the actual result of a blow is secondary to the impact it has on an opponent - a foe who believes they should be pushed back or knocked around may do so without a strike even landing. With this risky technique, the disciple floods an opponent’s mind with psionic energy while simultaneously assaulting their body. Make a bull rush, drag, overrun, reposition, or trip attempt that does not provoke attacks of opportunity, as well as an Autohypnosis check against your opponent’s CMD. If either is successful, your attempted combat maneuver is resolved as successful. If both are unsuccessful, your expenditure of psionic energy leaves you staggered on your next turn.\n\n{b}Trigger{/b} If both your CMB check and Autohypnosis check fail, you can expend psionic focus to avoid being staggered.\n\n{b}Augment{/b} For every 3 power points you spend, you gain a +1 bonus to your combat maneuver check and Autohypnosis check." compset="PWManuever" summary="Attempt a combat maneuver and an Autohypnosis check; success on either means the maneuver succeeds" uniqueness="useronce">
-    <fieldval field="mDuration" value="Instant and 1 round (see text)"/>
+  <thing id="manPWTFAs2" name="Twofold Assault" description="You assault your opponent&apos;s mind and body at the same instant, overwhelming them utterly with a single blow. Make a melee attack. If it hits, it deals weapon damage as normal plus an additional 1d6 points of damage, and you can make a combat maneuver attempt against the target as a free action. This combat maneuver attempt does not provoke an attack of opportunity, and you use an Autohypnosis check in place of your combat maneuver check.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage.\n• If you expend your psionic focus while initiating this strike, you can make a second combat maneuver attempt against the target as a free action, using an Autohypnosis check in place of your combat maneuver check." compset="PWManuever" summary="Your attack deals +1d6 damage and you may attempt a combat maneuver, using an Autohypnosis check in place of your combat maneuver check." uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="2"/>
     <tag group="mInitAct" tag="Standard1"/>
@@ -1653,8 +1682,11 @@
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mType" tag="Strike"/>
     <tag group="mRange" tag="Melee"/>
+    <tag group="mDuration" tag="Instant"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWUntR2" name="Untimely Repose" description="With this iconic strike, the disciple delivers a knock-out blow, typically to the head or neck. Even if his foe wakes and rejoins the battle, a follow-up burst of disruptive telepathic energy can keep it groggy and unfit to fight. Make a single attack that deals an additional 2d6 damage. If successful, your opponent must make a Will save or fall asleep for 3 rounds. The creature will not wake due to noise or light, but others can rouse it with a standard action. A sleeping creature wakes immediately if it takes damage.\n\n{b}Trigger{/b} When a creature wakes from this maneuver, you can expend your psionic focus as a free action to stagger the creature until the end of its next turn." compset="PWManuever" summary="Attack deals +2d6 damage and can put target to sleep" uniqueness="useronce">
+  <thing id="manPWUntR2" name="DEPRECATED - Untimely Repose" description="{B}If you see this please remove and re-add the replacement maneuver, Innexorable Embrace of Sleep, to your character{/b}\n\nWith this iconic strike, the disciple delivers a knock-out blow, typically to the head or neck. Even if his foe wakes and rejoins the battle, a follow-up burst of disruptive telepathic energy can keep it groggy and unfit to fight. Make a single attack that deals an additional 2d6 damage. If successful, your opponent must make a Will save or fall asleep for 3 rounds. The creature will not wake due to noise or light, but others can rouse it with a standard action. A sleeping creature wakes immediately if it takes damage.\n\n{b}Trigger{/b} When a creature wakes from this maneuver, you can expend your psionic focus as a free action to stagger the creature until the end of its next turn." compset="PWManuever" summary="Attack deals +2d6 damage and can put target to sleep" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="mLevel" tag="2"/>
     <tag group="mInitAct" tag="Standard1"/>
@@ -1666,8 +1698,10 @@
     <tag group="mDuration" tag="Round3"/>
     <tag group="mSave" tag="WillNeg"/>
     <tag group="mType" tag="Strike"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWFotW3" name="Forge of the Will" description="The disciple exposes his weapon to the fires of his mind, molding it and reforging it to suit the needs of the battle. You can only initiate this maneuver while wielding a discipline weapon. Your weapon gains a +1 enhancement bonus for 1 round plus 1 additional round for every six initiator levels you have. This cannot bring your weapon’s enhancement bonus above +5; if your weapon already has at least a +1 enhancement bonus, you can choose to instead grant it a +1 equivalent weapon special quality for the duration. If you initiate this maneuver while it is still in effect, you can change the special qualities granted or switch the weapon it applies to.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 5 power points you spend, your weapon gains an additional +1 weapon special quality. \n• If you pay an additional 5 power points, your weapon is treated as silver or cold iron (your choice) for the purpose of overcoming damage reduction." compset="PWManuever" summary="Give touched weapon an enhancement bonus" uniqueness="useronce">
+  <thing id="manPWFotW3" name="DEPRECATED - Forge of the Will" description="{B}If you see this please remove and re-add the replacement maneuver, Armory of the Sleeping Goddess, to your character{/b}\n\nThe disciple exposes his weapon to the fires of his mind, molding it and reforging it to suit the needs of the battle. You can only initiate this maneuver while wielding a discipline weapon. Your weapon gains a +1 enhancement bonus for 1 round plus 1 additional round for every six initiator levels you have. This cannot bring your weapon’s enhancement bonus above +5; if your weapon already has at least a +1 enhancement bonus, you can choose to instead grant it a +1 equivalent weapon special quality for the duration. If you initiate this maneuver while it is still in effect, you can change the special qualities granted or switch the weapon it applies to.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 5 power points you spend, your weapon gains an additional +1 weapon special quality. \n• If you pay an additional 5 power points, your weapon is treated as silver or cold iron (your choice) for the purpose of overcoming damage reduction." compset="PWManuever" summary="Give touched weapon an enhancement bonus" uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
     <fieldval field="mDuration" value="1 round + 1 round/6 initiator levels"/>
     <fieldval field="mTarget" value="One wielded discipline eapon"/>
@@ -1679,10 +1713,11 @@
     <tag group="mRange" tag="RTouch" name="Touch"/>
     <tag group="mLevel" tag="3"/>
     <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWGotG3" name="Grasp of the Goddess" description="A disciple of the Sleeping Goddess always seeks the transcend the limits inherent in his physical form. With this maneuver, the disciple briefly wields his weapon with telekinesis to strike a foe just out of reach. Your reach increased by 5 feet until the beginning of your next turn, and you can make one additional attack of opportunity this round. This bonus attack of opportunity stacks with the Combat Reflexes feat and similar effects.\n\n{b}Trigger{/b} At any time during this maneuver’s duration, you can return your weapon to you as a free action by expending psionic focus as long as you remain within 100 feet of it, even if you were disarmed or otherwise had lost control of your weapon.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 3 power points you spend, you gain one additional attack of opportunity this round.\n• For every 5 power points you spend, your reach is increased by another 5 feet for 1 round." compset="PWManuever" summary="Increase reach by 5 feet and gain an extra AoO allowed" uniqueness="useronce">
+  <thing id="manPWGotG3" name="Grasp of the Goddess" description="For a brief moment, you transcend the limits of your physical form, striking beyond the reach of your weapons and reacting with a speed and grace you would not normally have. After initiating this boost, your melee reach increases by 5 feet for one round, and you can make one additional attack of opportunity this round. This extra attack of opportunity stacks with other effects that grant additional attacks of opportunity, such as the Combat Reflexes feat. In addition, at any time during this boost&apos;s duration, you may expend your psionic focus as an immediate action to warp the world around you and move to any unoccupied space within your melee reach without provoking attacks of opportunity.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every 2 power points you spend, you can make another additional attack of opportunity each round while under the effect of this boost.\n• For every 3 power points you spend, the effect of this boost lasts an additional round." compset="PWManuever" summary="Your reach is increased by 5 feet and you can make an additional attack of opportunity this round." uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
-    <fieldval field="mDuration" value="1 round + 1 round/6 initiator levels"/>
     <usesource source="srcPOWEx"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
@@ -1693,38 +1728,49 @@
     <tag group="mLevel" tag="3"/>
     <tag group="mRange" tag="Personal"/>
     <tag group="mDuration" tag="Round1"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="manPWIEoS3" name="Inexorable Embrace of Sleep" description="With a devastating psychic strike, you can render a foe’s higher mind catatonic, reducing him to the state of a sleepwalker. As part of this maneuver, you make a single attack against an opponent that deals an additional 3d6 damage. If successful, the foe must make a Will save or be put into a trance for 3 rounds. While in a trance, the creature cannot cast spells, manifest powers, initiate maneuvers, or activate supernatural abilities (supernatural abilities that do not require an action or require only a  free action to activate are unaffected). A creature in this trance can still attack, move, or perform other actions but takes a penalty equal to your initiator level on all skill checks." compset="PWManuever" summary="Attack deals +3d6 damage and may put target in a trance" uniqueness="useronce">
+  <thing id="manPWIEoS3" name="Inexorable Embrace of Sleep" description="With a devastating psychic strike, you can render a foe&apos;s higher mind catatonic, reducing him to the state of a sleepwalker. Make an attack. If it hits, it deals weapon damage as normal plus an additional 2d6 points of damage, and the target must succeed at a Will save (DC 13 + your initiation modifier) or be forced into a dreamlike trance for three rounds. While in this trance, the target cannot activate spell-like or supernatural abilities, cast spells, manifest powers, or initiate maneuvers. Supernatural abilities that do not require an action or require only a free action to activate are unaffected, and spells and powers that the target is already concentrating on can be concentrated on as normal. The target may otherwise act normally, moving attacking, and performing other actions as it sees fit.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage. For every 2d6 you increase the damage by, the save DC of this strike increases by +1.\n• If you expend your psionic focus while initiating this strike, your target does not get a saving throw against it. However, the duration of the trance is reduced to one round rather than three." compset="PWManuever" summary="Your attack deals +2d6 damage and puts victim into a trance." uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
+    <fieldval field="mDuration" value="Instantaneous (see text)"/>
+    <fieldval field="mSave" value="Will negates or none (see text)"/>
     <usesource source="srcPOWEx"/>
-    <tag group="mInitAct" tag="Standard1"/>
-    <tag group="mTarget" tag="Creature1"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mRange" tag="MelOrRang"/>
     <tag group="mDescript" tag="MindAffect"/>
-    <tag group="mDuration" tag="Round3"/>
+    <tag group="mDuration" tag="Instant"/>
     <tag group="mSave" tag="WillNeg"/>
     <tag group="mType" tag="Strike"/>
     <tag group="mLevel" tag="3"/>
-    </thing>
-  <thing id="manPWPotG4" name="Puppet of the Goddess" description="The mind is all too easy to beguile when it is under stress. The disciple takes advantage of this by implanting a false sensation into his opponent’s mind at the exact moment he strikes, playing with his opponent as easily as a master puppeteer manipulates a marionette. As part of this maneuver, you make a single attack against an opponent. If the attack is successful, it deals +4d6 damage and the foe must make a Will save. If they fail, then you implant false images or sensation into their mind, altering their perception of a single stimulus as with the {i}false sensory input{/i} power. You cannot switch between senses to feed false stimuli with this maneuver." compset="PWManuever" summary="Attack deals +4d6 damage and can affect target as {i}false sensory input{/i}" uniqueness="useronce">
-    <fieldval field="mPreReq" value="1"/>
-    <usesource source="srcPOWEx"/>
+    <tag group="mTarget" tag="Creature1"/>
+    <tag group="mSave" tag="SeeText"/>
     <tag group="mInitAct" tag="Standard1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  <thing id="manPWPotG4" name="Puppet of the Goddess" description="You take control of your foe&apos;s perceptions, shutting them off from reality and substituting a false world of your choosing. Make an attack. If it hits, it deals weapon damage as normal plus an additional 4d6 points of damage, and the target must succeed at a Will save (DC 14 + your initiation modifier) or have one of its senses completely overridden for one round, as if you had manifested the {i}false sensory input{/i} power on them. You do not need to concentrate on this ability to maintain it, although you cannot switch the sense you are falsifying with this strike.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage. For every 2d6 you increase the damage by, the save DC of this strike increases by +1.\n• For every 3 power points you spend, the effect of this strike lasts an additional round.\n• If you expend your psionic focus while initiating this strike, you ignore any immunity to mind-affecting effects the target possesses. Instead, a normally-immune target gains a +5 resistance bonus on its saving throw." compset="PWManuever" summary="Your attack deals +4d6 damage and may override one of the target’s senses." uniqueness="useronce">
+    <fieldval field="mPreReq" value="1"/>
+    <fieldval field="mDuration" value="Instantaneous (see text)"/>
+    <usesource source="srcPOWEx"/>
     <tag group="mTarget" tag="Creature1"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mRange" tag="MelOrRang"/>
     <tag group="mDescript" tag="MindAffect"/>
-    <tag group="mDuration" tag="Round3"/>
+    <tag group="mDuration" tag="Instant"/>
     <tag group="mSave" tag="WillNeg"/>
     <tag group="mType" tag="Strike"/>
     <tag group="mLevel" tag="4"/>
+    <tag group="DescInfo" tag="puFalSeIn3"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="mInitAct" tag="Standard1"/>
     </thing>
-  <thing id="manPWSoSV4" name="Strike of Shared Vision" description="As a disciple of the Sleeping Goddess grows in power, he learns how to bring those around him into the utopia he creates for himself. With this maneuver, the disciple gives his allies a glimpse of a world in which every attack reaches its fullest potential. Make a full attack with one extra attack at your highest base attack bonus (this benefit is not cumulative with similar effects, such as a {i}haste{/i} spell), noting the highest successful d20 roll. Choose one creature you successfully struck with your full attack. The first time each ally of yours makes an attack roll against your target before the beginning of your next turn, they can choose to use your d20 roll instead of making their own (adding their modifiers instead of your own). If you roll a natural 20, your allies’ attacks modified by this maneuver are not automatically treated as hits, but they are treated as critical threats.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 3 power points you spend, each of your attacks gain a +1 insight bonus on the attack roll.\n• For every 7 power points you spend, your allies treat your highest successful dice roll as one higher (maximum 20). If this brings your highest successful dice roll to 20, your allies attacks are treated as critical threats, as normal." compset="PWManuever" summary="Make a full attack. Your allies can use your highest roll on their next attack roll within 1 round." uniqueness="useronce">
+  <thing id="manPWSoSV4" name="DEPRECATED - Strike of Shared Vision" description="{B}If you see this please remove and re-add a different maneuver to your character{/b}\n\nAs a disciple of the Sleeping Goddess grows in power, he learns how to bring those around him into the utopia he creates for himself. With this maneuver, the disciple gives his allies a glimpse of a world in which every attack reaches its fullest potential. Make a full attack with one extra attack at your highest base attack bonus (this benefit is not cumulative with similar effects, such as a {i}haste{/i} spell), noting the highest successful d20 roll. Choose one creature you successfully struck with your full attack. The first time each ally of yours makes an attack roll against your target before the beginning of your next turn, they can choose to use your d20 roll instead of making their own (adding their modifiers instead of your own). If you roll a natural 20, your allies’ attacks modified by this maneuver are not automatically treated as hits, but they are treated as critical threats.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 3 power points you spend, each of your attacks gain a +1 insight bonus on the attack roll.\n• For every 7 power points you spend, your allies treat your highest successful dice roll as one higher (maximum 20). If this brings your highest successful dice roll to 20, your allies attacks are treated as critical threats, as normal." compset="PWManuever" summary="Make a full attack. Your allies can use your highest roll on their next attack roll within 1 round." uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
     <fieldval field="mDuration" value="Instant and 1 round (see text)"/>
     <usesource source="srcPOWEx"/>
@@ -1736,29 +1782,35 @@
     <tag group="mType" tag="Strike"/>
     <tag group="mLevel" tag="4"/>
     <tag group="mInitAct" tag="Full1"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="manPWRinD4" name="Reunion in Dreams" description="As the disciple of the Sleeping Goddess deepens his connection with his own subconscious, concepts like time and distance lose their meaning. Once the disciple realizes the true nature of these illusions, he can subvert them to bring those he cares about to him. You call one willing creature within range to be teleported to a square adjacent to you (their choice). The creature receives a brief glimpse of the area around you before it is teleported. If there are no squares adjacent to you the creature can appear in, the maneuver fails. Movement caused by this maneuver does not provoke attacks of opportunity.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 2 power points you spend, you can call one additional willing creature.\n• If you expend psionic focus, you can choose to teleport yourself adjacent to a willing creature within range. Any additional creatures called arrive adjacent to your final location." compset="PWManuever" summary="Teleport a willing creature to your side" uniqueness="useronce">
+  <thing id="manPWRinD4" name="Reunion in Dreams" description="Your understanding of the world and your place in it grows, and allows you to reach out to others and bring them under your protection even over great distances. When you initiate this boost, you teleport one willing creature that you can see within close range (25 feet + 5 feet per 2 initiator levels) to an unoccupied square adjacent to you. If there are no unoccupied adjacent squares for the creature to appear in, this boost has no effect.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, you can teleport an additional willing creature within close range to an adjacent square.\n• If you expend your psionic focus while initiating this boost, you may teleport yourself to an unoccupied square adjacent to a willing creature within close range before resolving the other effects of this boost. Measure the range of this boost from and teleport targets to unoccupied squares adjacent to your new position." compset="PWManuever" summary="You teleport a willing creature to your side." uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
+    <fieldval field="mTarget" value="One willing creature (see text)"/>
     <usesource source="srcPOWEx"/>
-    <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mType" tag="Boost"/>
     <tag group="mLevel" tag="4"/>
     <tag group="mInitAct" tag="Swift1"/>
     <tag group="mDescript" tag="Teleport"/>
-    <tag group="mRange" tag="CloseMI"/>
     <tag group="mTarget" tag="CreatureW1" name="One willing creature"/>
     <tag group="mSave" tag="Harmless"/>
     <tag group="mSave" tag="WillNeg"/>
     <tag group="mDuration" tag="Instant"/>
+    <tag group="mRange" tag="Close"/>
+    <tag group="mTarget" tag="SeeDesc"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWTrRc4" name="Traumatic Reversal" description="Just as a warrior with a superior weapon may try to sunder an attacker&apos;s blade, you are able to shatter your foe&apos;s mind in order to defend yourself, creating a momentary psionic link along which the effects of their attack are shared. You can activate this counter when you take damage from an attack or effect originating from an opponent. You take only half damage from the attack or effect, although any other effects are resolved normally. In addition, the opponent that damaged you must succeed at a Will save (DC 14 + your initiation modifier) or take damage equal to half the damage they would have dealt.\n\n{b}Augment{/b} \nYou can augment this maneuver in one or more of the following ways:\n&amp;#149; If you spend 6 power points, you take no damage from the attack, and the opponent that damaged you takes the full amount of damage they dealt to you on a failed saving throw.{br}{br}&amp;#149; If you expend your psionic focus while initiating this counter, you can use it in response to an attack or effect damaging an ally within 60 feet. If you do, you apply the effects of this counter to that ally and the opponent that damaged that ally rather than yourself." compset="PWManuever" summary="You take half damage from an effect, and the effect&apos;s originator must succeed at a Will save or take half the damage they would have dealt." uniqueness="useronce">
+  <thing id="manPWTrRc4" name="Traumatic Reversal" description="Just as a warrior with a superior weapon may try to sunder an attacker’s blade, you are able to shatter your foe’s mind in order to defend yourself, creating a momentary psionic link along which the effects of their attack are shared. You can activate this counter when you take damage from an attack or effect originating from an opponent. You take only half damage from the attack or effect, although any other effects are resolved normally. In addition, the opponent that damaged you must succeed at a Will save (DC 14 + your initiation modifier) or take damage equal to half the damage they would have dealt.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• If you spend 6 power points, you take no damage from the attack, and the opponent that damaged you takes the full amount of damage they dealt to you on a failed saving throw.\n• If you expend your psionic focus while initiating this counter, you can use it in response to an attack or effect damaging an ally within 60 feet. If you do, you apply the effects of this counter to that ally and the opponent that damaged that ally rather than yourself." compset="PWManuever" summary="You take half damage from an effect, and the effect’s originator must succeed at a Will save or take half the damage they would have dealt." uniqueness="useronce">
     <fieldval field="mPreReq" value="1"/>
     <fieldval field="mTarget" value="You and one opponent (see text)"/>
     <fieldval field="mRange" value="Personal (see text)"/>
+    <fieldval field="mSave" value="Will negates (see text)"/>
     <usesource source="srcPOWEx"/>
-    <tag group="mLevel" tag="4"/>
     <tag group="mInitAct" tag="Immed1"/>
     <tag group="mDescript" tag="MindAffect"/>
     <tag group="AbilType" tag="Super"/>
@@ -1768,9 +1820,13 @@
     <tag group="mType" tag="Counter"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mDuration" tag="Instant"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="mSave" tag="WillNeg"/>
+    <tag group="mLevel" tag="4"/>
     </thing>
-  <thing id="manPWRtSM5" name="Reshape the Sculpted Mind" description="The mortal mind is known for its extraordinary resilience, capable of coping with and adapting to almost any trauma it can be faced with. But for those intimately acquainted with the true nature of the mind, it soon becomes apparent that if one were to strike at the mind in just the right fashion, the careful order it maintains could be undone, the mind reshaped to the adept’s liking. Such is the power of {i}reshape the sculpted mind{/i}. Make a single attack; if successful, the foe must make a Will save. If they fail, they take 1d4 points of Intelligence, Wisdom, or Charisma damage (your choice). In addition, they suffer additional effects based on which ability you damage:\n\n{i}Intelligence:{/i} The foe loses knowledge of all the languages it knows, becoming aphasiac, it is completely incapable of understanding any language, nor even of communicating by telepathy, as an {i}alienation{/i} power. The effect ends after a number of rounds equal to the Intelligence damage dealt by this strike.\n\n{i}Wisdom:{/i} The foe loses its grasp of reality, causing it to be confused for a number of rounds equal to the Wisdom damage dealt.\n\n{i}Charisma{/i}: The foe’s self-confidence is shaken, causing it to be frightened for a number of rounds equal to the Charisma damage dealt. The creature gains a new save at the beginning of each of your turns to end the effect.\n\n{b}Augment{/b} This maneuver can be augmented in the following way:\n• For every six power points you expend when initiating this maneuver, the ability damage increases by one." compset="PWManuever" summary="Your strike deals 1d4 damage to a mental ability score and inflicts a mental disorder." uniqueness="useronce">
-    <fieldval field="mDuration" value="See text"/>
+  <thing id="manPWRtSM5" name="Reshape the Sculpted Mind" description="Your intimate acquaintance with the nature of the mind allows you to strike it where it&apos;s most vulnerable. Make an attack. If it hits, it deals weapon damage as normal plus an additional 1d4 points of Intelligence, Wisdom, or Charisma damage (your choice), and the target must succeed at a Will save (DC 15 + your initiation modifier) or be affected by one of the following effects, depending on the type of ability damage selected. A target that is immune to ability damage still suffers this additional effect.\n\n{i}Intelligence:{/i} The target&apos;s ability to express its thoughts is dampened, causing it to be unable to communicate with others, even by telepathy, for a number of rounds equal to the Intelligence damage dealt by this strike. The target can still hear others, but anything it says or tries to convey nonverbally is completely unintelligible, even to a creature under the effect of a tongues spell or similar effect. Spells that require verbal components suffer a 50% chance of failure while the target is affected by this strike.\n\n{i}Wisdom:{/i} The target loses its grasp on reality, causing it to become confused for a number of rounds equal to the Wisdom damage dealt by this strike.\n\n{i}Charisma:{/i} The target&apos;s confidence and ability to believe in itself is shattered, causing it to become frightened for a number of rounds equal to the Charisma damage dealt by this strike. At the end of each of the target&apos;s turns while it is frightened, it can attempt another save to end this effect. This use of this strike is considered a fear effect.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every 2 power points you spend, the ability damage dealt by this strike increases by one.\n• If you expend your psionic focus while initiating this strike, you ignore any immunity to mind-affecting effects or fear effects the target possesses. Instead, a normally-immune target gains a +5 resistance bonus on its saving throw." compset="PWManuever" summary="Your attack deals 1d4 damage to a mental ability score and may damage the opponent’s mind temporarily." uniqueness="useronce">
+    <fieldval field="mDuration" value="Instantaneous (see text)"/>
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Standard1"/>
@@ -1779,16 +1835,18 @@
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mRange" tag="MelOrRang"/>
-    <tag group="mDuration" tag="Special"/>
+    <tag group="mDuration" tag="Instant"/>
     <tag group="mSave" tag="WillNeg"/>
     <tag group="mType" tag="Strike"/>
     <tag group="mLevel" tag="5"/>
     <tag group="mDescript" tag="MindAffect"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWRvoD5" name="Reverberation of Defeat" description="When a warrior is outmaneuvered, his allies feel the weight of his failure as if they had suffered the same defeat. With telekinetic might, the disciple can transform this mental disruption into a physical reality. Activate this boost when you succeed on a combat maneuver except a grapple attempt (such as a disarm or trip attempt). Make an Autohypnosis check. Use the results of that check as a combat maneuver of the same kind against each foe within 30 feet. You can affect creatures of any size with this combat maneuver.\n\n\n{b}Augment{/b} For every 2 power points you spend, you gain a +1 circumstance bonus to your Autohypnosis check." compset="PWManuever" summary="Make an Autohypnosis check as a CMB check to echo a successful combat maneuver onto all foes within 30 feet." uniqueness="useronce">
+  <thing id="manPWRvoD5" name="Reverberation of Defeat" description="As you destroy one foe, his allies feel the weight of his failure, the pain, fear, and feeling of utter defeat cascading down the ties of friendship or belief. You can activate this boost when you reduce an opponent to 0 or lower hit points. Each of that opponent&apos;s allies within 30 feet must succeed at a Will save (DC 15 + your initiation modifier) or become shaken and sickened for a number of rounds equal to your initiation modifier." compset="PWManuever" summary="When you reduce an opponent to 0 or fewer hit points, that target’s allies must succeed at a Will save or become shakened and sickened." uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
+    <fieldval field="mTarget" value="One or more creatures (see text)"/>
     <usesource source="srcPOWEx"/>
-    <tag group="mInitAct" tag="Swift1"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
@@ -1797,9 +1855,14 @@
     <tag group="mLevel" tag="5"/>
     <tag group="mDescript" tag="MindAffect"/>
     <tag group="mRange" tag="30"/>
-    <tag group="mTarget" tag="AllEnmRang" name="All enemies within range"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="mTarget" tag="Creat1Plus"/>
+    <tag group="mTarget" tag="SeeDesc"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="mSave" tag="WillNeg"/>
     </thing>
-  <thing id="manPWWotL5" name="Wanderings of the Lost" description="The discipline of the Sleeping Goddess teaches that without the true light of inspiration, all creatures are like drunk men stumbling in the darkness. A cunning disciple can take advantage of his foes’ clumsy grasp on reality to edge them into a poor position. Make a melee attack at your full base attack bonus against against every foe within reach. Each foes struck takes an additional 3d6 damage and must make a Will save. Each foe that fails its save is blinded for 1 round and must spend a move action to move on its turn; this movement provokes attacks of opportunity as usual.\n\n{b}Augment{/b} For every 4 power points you spend, all foes that fail their Will save are blinded for another round, but they are not forced to move on any round except the first." compset="PWManuever" summary="Attack vs all foes in reach deals +3d6 damage, can blind foes and force them to move" uniqueness="useronce">
+  <thing id="manPWWotL5" name="DEPRECATED - Wanderings of the Lost" description="{B}If you see this please remove and re-add a different maneuver to your character{/b}\n\nThe discipline of the Sleeping Goddess teaches that without the true light of inspiration, all creatures are like drunk men stumbling in the darkness. A cunning disciple can take advantage of his foes’ clumsy grasp on reality to edge them into a poor position. Make a melee attack at your full base attack bonus against against every foe within reach. Each foes struck takes an additional 3d6 damage and must make a Will save. Each foe that fails its save is blinded for 1 round and must spend a move action to move on its turn; this movement provokes attacks of opportunity as usual.\n\n{b}Augment{/b} For every 4 power points you spend, all foes that fail their Will save are blinded for another round, but they are not forced to move on any round except the first." compset="PWManuever" summary="Attack vs all foes in reach deals +3d6 damage, can blind foes and force them to move" uniqueness="useronce">
     <fieldval field="mDuration" value="See text"/>
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
@@ -1814,8 +1877,10 @@
     <tag group="mDescript" tag="MindAffect"/>
     <tag group="mRange" tag="Melee"/>
     <tag group="mTarget" tag="AllEnmRang"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="manPWAtGS6" name="Ascend the Goddess’s Stairway" description="With hours of meditation, an ascetic can focus his mind and strengthen its power. But within the timeless space of his dreams, a Sleeping Goddess adept can perform such meditations in a matter of seconds. When you activate this maneuver, you instantly regain psionic focus. In addition, one maneuver of your choice that you initiate within the next three rounds is augmented as if you had spent power points on it equal to your initiator level." compset="PWManuever" summary="Instantly regain psionic focus, and one maneuver initiated within 3 rounds is fully augmented." uniqueness="useronce">
+  <thing id="manPWAtGS6" name="DEPRECATED - Ascend the Goddess’s Stairway" description="{B}If you see this please remove and re-add the replacement maneuver, Overpowering Optimism, to your character{/b}\n\nWith hours of meditation, an ascetic can focus his mind and strengthen its power. But within the timeless space of his dreams, a Sleeping Goddess adept can perform such meditations in a matter of seconds. When you activate this maneuver, you instantly regain psionic focus. In addition, one maneuver of your choice that you initiate within the next three rounds is augmented as if you had spent power points on it equal to your initiator level." compset="PWManuever" summary="Instantly regain psionic focus, and one maneuver initiated within 3 rounds is fully augmented." uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Swift1"/>
@@ -1827,11 +1892,13 @@
     <tag group="mLevel" tag="6"/>
     <tag group="mTarget" tag="You"/>
     <tag group="mRange" tag="Personal"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="manPWCvIn6" name="Convert Intrusion" description="Though some might simply block or avoid an incoming attack, a disciple of the Sleeping Goddess can obtain a strategic position by turning an opponent’s aggression against them. With a practiced flourish of his weapon, the disciple can absorb the force of an opponent’s attack and redirect it to enhance his allies’ defenses. Activate this counter when an opponent hits you with a melee or ranged attack, or targets you with a spell, spell-like ability, power, or psi-like ability. \n\nAgainst an attack, make an Autohypnosis check with a DC equal to your opponent’s attack roll. If successful, your opponent’s attack is negated, and all allies within 30 feet gain a deflection bonus to their AC equal to your initiation modifier (minimum 1) for 1 round.\n\nAgainst a spell or power, make an Autohypnosis check opposed by your foe’s caster level check (or manifester level check, as appropriate). If successful, you are not affected by your opponent’s ability, and all allies within 30 feet gain a circumstance bonus to all saving throws equal to half your initiation modifier (minimum 1) for 1 round.\n\nIn addition, as long as you are maintaining psionic focus, you can use this counter on an ally within 60 feet who has been struck by a melee or ranged attack instead of targeting yourself.\n\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 2 power points you spend, you gain a +1 bonus on your Autohypnosis check.\n• For every 3 power points you spend, the deflection bonus to AC or circumstance bonus to saving throws (as appropriate) increases by 1.\n• For every 4 power points you spend, the deflection bonus to AC or circumstance bonus to saving throws (as appropriate) lasts an additional round." compset="PWManuever" summary="Autohypnosis check negates attack and and gives allies a bonus to AC or saves" uniqueness="useronce">
+  <thing id="manPWCvIn6" name="Convert Intrusion" description="With a practiced flourish of your weapon and a surge of spiritual might, you tear magic asunder and redirect its power to assist your allies. You can initiate this counter when in response to being targeted by or within the area of a power, psi-like ability, spell, or spell-like ability. Make an Autohypnosis check with a DC of 11 + the effect&apos;s caster or manifester level. If you succeed, the effect is negated, and all allies within 30 feet of you gain a competence bonus on saving throws equal to 1/2 your initiation modifier for one round.\n\n{b}Augment:{b} You can augment this maneuver in one or more of the following ways:\n\n• For every 2 power points you spend, the bonuses granted by this counter last an additional round.\n• If you expend your psionic focus while initiating this counter, you can use it in response to an ally within 60 feet being targeted by or within the area of a power, psi-like ability, spell, or spell-like ability. If you do, make an Autohypnosis check as normal, then apply the effects of this counter to that ally rather than yourself. Your allies within 30 feet of that ally gain the bonus on saving throws from this counter." compset="PWManuever" summary="Make an Autohypnosis check to transform an opponent’s spell into a bonus on saving throws for your allies." uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
-    <fieldval field="mDuration" value="Instant (see text)"/>
-    <fieldval field="mRange" value="Personal (see text)"/>
+    <fieldval field="mDuration" value="1 round (see text)"/>
+    <fieldval field="mRange" value="Personal and 30 ft. (see text)"/>
     <fieldval field="mTarget" value="You (see text)"/>
     <usesource source="srcPOWEx"/>
     <tag group="mType" tag="Counter"/>
@@ -1840,12 +1907,19 @@
     <tag group="AbilType" tag="Super"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="mDuration" tag="Round1"/>
+    <tag group="mTarget" tag="SeeDesc"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mRange" tag="30"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWDNSt6" name="Dreaming Nomad Strike" description="In a dream, space and distance are irrelevant, concepts that hold no meaning to a mind freed from the restraints of dull reality. By assuming such a dream-like state, a Sleeping Goddess adept can make use of the {i}dreaming nomad strike{/i} to move across the battlefield in a whirlwind of steel without ever taking a step. Upon initiating this maneuver, you may teleport into any square that is adjacent to an enemy and within 50 ft. of you. You may then make a single melee attack at your highest base attack bonus against that opponent. If the attack is successful, you may repeat the process, teleporting adjacent to another enemy with 50 ft. of your new location and attacking them, and so on. The maximum number of enemies you can attack with the {i}dreaming nomad strike{/i} is equal to your initiation modifier (minimum 2), and you can never make two attacks against the same enemy. If you miss on an attack roll, the maneuver ends, and your movement ends at your new location.\n\n{b}Trigger{/b} At the end of this maneuver, you can expend psionic focus as a free action to be teleported to your original position. \n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 2 power points you spend, your attacks from this maneuver gain a +1 insight bonus on their damage rolls.\n• For every 2 power points you spend, the range of this maneuver increases by 5 feet.\n• If you spend an additional 11 power points and expend psionic focus when you initiate this maneuver, you can attack each opponent up to two times, though you are still limited to a number of attacks equal to your initiation modifier (minimum 2)." compset="PWManuever" summary="Teleport and attack multiple enemies." uniqueness="useronce">
+  <thing id="manPWDNSt6" name="Dreaming Nomad Strike" description="You force reality around you to become dreamlike, eschewing the restrictions of distance and becoming a whirlwind of strikes flowing across the battlefield without needing to take a single step. When you initiate this strike, you may teleport to any space within 50 feet from which you could make a melee attack against an opponent. After you teleport, make a melee attack against that opponent. If it hits, it deals weapon damage as normal, and you can repeat this process, teleporting to a space within 50 feet of your new location. The maximum number of attacks you can make in this way is equal to one plus an additional attack for every four initiator levels you possess, and each attack is made at your highest attack bonus. You cannot attack an individual creature more than once during this strike.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage. For every 2d6 you increase the damage by, the distance you can teleport before each attack increases by 10 feet.\n• For every 2 power points you spend, the maximum number of attacks you can make with this strike is increased by one.\n• If you expend your psionic focus while initiating this strike, you may teleport to any open space within 50 feet at the conclusion of this strike, whether or not the strike ended because you missed an attack or because you made all possible attacks." compset="PWManuever" summary="You teleport across the battlefield, striking multiple enemies." uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
-    <fieldval field="mRange" value="50 feet (see text)"/>
+    <fieldval field="mRange" value="Melee attack and 50 feet (see text)"/>
+    <fieldval field="mTarget" value="One or more creatures (see text)"/>
     <usesource source="srcPOWEx"/>
-    <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mDuration" tag="Instant"/>
@@ -1853,13 +1927,17 @@
     <tag group="mLevel" tag="6"/>
     <tag group="mDescript" tag="Teleport"/>
     <tag group="mRange" tag="50"/>
-    <tag group="mInitAct" tag="Standard1"/>
+    <tag group="mInitAct" tag="Full1"/>
     <tag group="mTarget" tag="SeeDesc"/>
+    <tag group="mRange" tag="Melee"/>
+    <tag group="mTarget" tag="Creat1Plus"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWSBtS6" name="Self Beyond the Self" description="An accomplished sage of the Sleeping Goddess understands the perfect interconnectedness of all things and the simplicity of transferring one consciousness to another. With this strike, the disciple suppresses the persona of his foe, making their flesh but an extension of his own. Make a melee attack; if successful, the creature must make a Will save. If they fail, then you dominate that foe (as {i}dominate monster{/i}), gaining control of their next round of actions. While you control them, you may have them initiate any maneuver you have readied using your initiation modifier and initiator level, but otherwise using their modifiers for resolving the maneuver. Doing so still causes the maneuver to be expended normally." compset="PWManuever" summary="Successful attack can {i}dominate{/i} foe for a round" uniqueness="useronce">
+  <thing id="manPWSBtS6" name="DEPRECATED - Self Beyond the Self" description="{B}If you see this please remove and re-add the correct Self Beyond the Self maneuver to your character{/b}\n\nAn accomplished sage of the Sleeping Goddess understands the perfect interconnectedness of all things and the simplicity of transferring one consciousness to another. With this strike, the disciple suppresses the persona of his foe, making their flesh but an extension of his own. Make a melee attack; if successful, the creature must make a Will save. If they fail, then you dominate that foe (as {i}dominate monster{/i}), gaining control of their next round of actions. While you control them, you may have them initiate any maneuver you have readied using your initiation modifier and initiator level, but otherwise using their modifiers for resolving the maneuver. Doing so still causes the maneuver to be expended normally." compset="PWManuever" summary="Successful attack can {i}dominate{/i} foe for a round" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
     <usesource source="srcPOWEx"/>
-    <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mDuration" tag="Instant"/>
@@ -1870,21 +1948,31 @@
     <tag group="mRange" tag="Melee"/>
     <tag group="mTarget" tag="Creature1"/>
     <tag group="mSave" tag="WillNeg"/>
-    </thing>
-  <thing id="manPWPctS7" name="Pierce the Soul" description="The connections within the mind mind carve deep channels as emotions run through them time and time again, like water through a prayer wheel. In certain cases, these channels of emotion run so intensely between two creatures that a skilled practitioner of the Sleeping Goddess can strike one creature to harm the other. Until the beginning of your next turn, each time you hit a creature with a melee weapon, ranged weapon, natural attack, or unarmed strike you can transfer the full effect of the attack to a creature with a deep, supernatural connection to the creature struck. In all cases, your attacks use the creature struck’s AC, damage reduction, resistances and immunities, but the transferred damage is empathic in nature, so powers and abilities the final target may have such as damage reduction do not lessen or change this damage. The damage transferred by this maneuver has no type, so even if the final target has immunity to the type of damage the first target took, the transfer occurs normally and deals hit point damage to the final target. The final target makes any relevant save using its own modifiers.\n\n• If you strike a familiar, animal companion, eidolon, psicrystal, a creature created with a metacreativity (creation) effect, or a creature summoned with a conjuration (summoning) effect, you can choose for its master to take the full effect of your attack.\n• If you strike a creature that is under a charm or compulsion effect, you can choose for the originator of the charm or compulsion to take the full effect of your attack.\n• If you strike an undead created by an {i}animate dead{/i} spell or similar effect that counts against the total HD of undead its creator can control, you can choose for the undead’s controller to take the full effect of your attack.\n• If you strike a creature that is part of a {i}mindlink{/i} effect or collective, you can choose for the originator of the effect to take the full effect of your attack.\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• For every 4 power points you spend, its duration increases by 1 round.\n• If you spend 15 power points and expend psionic focus, your attacks affect both the creature struck and the creature your attacks are transferred to." compset="PWManuever" summary="Your attacks are transferred to a creature supernaturally connected to your target." uniqueness="useronce">
-    <fieldval field="mPreReq" value="3"/>
-    <usesource source="srcPOWEx"/>
     <tag group="AbilType" tag="Super"/>
-    <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  <thing id="manPWPctS7" name="Pierce the Soul" description="You deliver a deadly blow to an enemy with a familiar or similar bond, striking through the mystic ties between master and servant. Make an attack. If it hits, it deals weapon damage as normal plus an additional 7d6 points of damage. If your target is an animal companion, eidolon, familiar, psicrystal, or similar creature with a telepathic or empathic link to another creature (including creatures within a collective or under the effect of a mindlink power or telepathic bond spell, although not including creatures communicating with the telepathy ability), you can choose to deal this attack&apos;s damage to the creature that your target is linked to. The target can make a Will save (DC 17 + your initiation modifier) to negate this transfer of damage; if it succeeds, it takes the strike&apos;s damage as normal. The linked creature does not receive a saving throw against this effect. You automatically know whether or not the target is such a creature when this strike hits, although you do not learn the identity of the creature linked to it. If the target is linked to multiple other creatures, then the damage is transferred to one of them at random. This strike can transfer damage across any distance, although it cannot damage a creature on another plane of existence from the target.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage. For every 2d6 you increase the damage by, the save DC of this strike increases by +1.\n• If you expend your psionic focus while initiating this strike, you deal damage to both the target and the linked creature. The target may still make a Will save to negate the damage being dealt to that creature." compset="PWManuever" summary="Your attack deals +7d6 damage and strikes at a creature connected to the target’s mind or spirit, rather than the target." uniqueness="useronce">
+    <fieldval field="mPreReq" value="3"/>
+    <fieldval field="mTarget" value="One creature (see text)"/>
+    <fieldval field="mSave" value="Will partial (see text)"/>
+    <usesource source="srcPOWEx"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mDuration" tag="Round1"/>
-    <tag group="mType" tag="Boost"/>
+    <tag group="mType" tag="Strike"/>
     <tag group="mLevel" tag="7"/>
-    <tag group="mInitAct" tag="Immed1"/>
-    <tag group="mRange" tag="Personal"/>
-    <tag group="mTarget" tag="You"/>
+    <tag group="mInitAct" tag="Standard1"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="mTarget" tag="Creature1"/>
+    <tag group="mTarget" tag="SeeDesc"/>
+    <tag group="mRange" tag="MelOrRang"/>
+    <tag group="mSave" tag="SeeText"/>
+    <tag group="mSave" tag="WillPart"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWPMSt7" name="Psyche-Maiming Strike" description="Sleeping Goddess adepts disdain maneuvers that maim and scar a foe’s body, favoring those that attack the foe’s body through his mind. This maneuver disables a foe by inflicting phantom, but all too real, wounds upon them. Make a single attack; if successful, your target must make a Will save. If they fail, they take 1d8 points of Strength, Dexterity, or Constitution damage (your choice). In addition, they suffer additional effects on a failed save based on which ability you damage:\n\n{i}Strength:{/i} The foe is momentarily overwhelmed by a sensation of weakness, causing them to drop any weapons or items they are carrying, fall prone, and become fatigued for 1 minute or until the Strength damage from this maneuver has been healed.\n\n{i}Dexterity:{/i} The foe feels his arms and legs begin to numb, causing all forms of movement to be reduced to 5 feet for 1 minute or until the Dexterity damage from this maneuver has been healed; flying creatures have their maneuverability reduced to clumsy and must make Fly checks to remain aloft while this penalty lasts.\n\n{i}Constitution:{/i} The foe feels as if his organs are melting away inside of his body, causing him to be nauseated for 1 round and then sickened for 1 minute or until the Constitution damage from this maneuver has been healed.\n\nAugment For every 8 power points you spend, the ability damage increases by one." compset="PWManuever" summary="Your attack psychically cripples its victims" uniqueness="useronce">
+  <thing id="manPWPMSt7" name="Psyche-Maiming Strike" description="{B}If you see this please remove and re-add a different maneuver to your character{/b}\n\nSleeping Goddess adepts disdain maneuvers that maim and scar a foe’s body, favoring those that attack the foe’s body through his mind. This maneuver disables a foe by inflicting phantom, but all too real, wounds upon them. Make a single attack; if successful, your target must make a Will save. If they fail, they take 1d8 points of Strength, Dexterity, or Constitution damage (your choice). In addition, they suffer additional effects on a failed save based on which ability you damage:\n\n{i}Strength:{/i} The foe is momentarily overwhelmed by a sensation of weakness, causing them to drop any weapons or items they are carrying, fall prone, and become fatigued for 1 minute or until the Strength damage from this maneuver has been healed.\n\n{i}Dexterity:{/i} The foe feels his arms and legs begin to numb, causing all forms of movement to be reduced to 5 feet for 1 minute or until the Dexterity damage from this maneuver has been healed; flying creatures have their maneuverability reduced to clumsy and must make Fly checks to remain aloft while this penalty lasts.\n\n{i}Constitution:{/i} The foe feels as if his organs are melting away inside of his body, causing him to be nauseated for 1 round and then sickened for 1 minute or until the Constitution damage from this maneuver has been healed.\n\nAugment For every 8 power points you spend, the ability damage increases by one." compset="PWManuever" summary="Your attack psychically cripples its victims" uniqueness="useronce">
     <fieldval field="mDuration" value="See text"/>
     <fieldval field="mPreReq" value="3"/>
     <usesource source="srcPOWEx"/>
@@ -1898,13 +1986,14 @@
     <tag group="mType" tag="Strike"/>
     <tag group="mLevel" tag="7"/>
     <tag group="mDescript" tag="Compulsion"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="manPWSCM7" name="Soul-Crushing Mien" description="A warrior who has cultivated an attitude of stoic resolution can defy mental attacks, turning them back on their masters. Initiate this maneuver when you must make a Will save. You gain a +4 insight bonus on the saving throw. In addition, if you succeed on your save, the creature whose ability you saved against is staggered for 1 round (no save).\n\n{b}Augment{/b} You can augment this maneuver in the following ways:\n• If you expend psionic focus, your foe is instead stunned for 1 round (no save) if you make your Will save.\n• For every 4 power points you spend, you gain an additional +1 insight bonus on your saving throw." compset="PWManuever" summary="Gain a +4 insight bonus on a save against a mind-affecting-ability and stun its user with psychic backlash." uniqueness="useronce">
-    <fieldval field="mDuration" value="See text"/>
+  <thing id="manPWSCM7" name="Soul-Crushing Mien" description="Your resolution proves dangerous, and able to damage minds that even slightly contact your own. You can initiate this maneuver when you are targeted or otherwise affected by an effect that requires a Will save. You gain a +4 bonus on that saving throw, and if you succeed, the originator of the effect becomes stunned for one round.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every 2 power points you spend, the bonus on your Will save increases by +1.\n• If you expend your psionic focus while initiating this counter, the originator of the effect is dazed for one round if you succeed on your Will save, rather than stunned. The creature still drops held items, takes a –2 penalty to its AC, and loses its Dexterity bonus to its AC (if any) as if it were stunned." compset="PWManuever" summary="Gain a +4 bonus on a Will save, and possibly stun the effect’s originator." uniqueness="useronce">
     <fieldval field="mPreReq" value="3"/>
+    <fieldval field="mRange" value="Personal (see text)"/>
+    <fieldval field="mTarget" value="You (see text)"/>
     <usesource source="srcPOWEx"/>
-    <tag group="mInitAct" tag="Immed1"/>
-    <tag group="AbilType" tag="Super"/>
     <tag group="PathOfWar" tag="Manuever"/>
     <tag group="Discipline" tag="SlpGoddess"/>
     <tag group="mType" tag="Counter"/>
@@ -1912,9 +2001,14 @@
     <tag group="mDescript" tag="MindAffect"/>
     <tag group="mRange" tag="Personal"/>
     <tag group="mTarget" tag="You"/>
-    <tag group="mDuration" tag="Instant"/>
+    <tag group="mDuration" tag="Round1"/>
+    <tag group="mTarget" tag="SeeDesc"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="mInitAct" tag="Immed1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
-  <thing id="manPWDotS8" name="Death of the Self" description="A Sleeping Goddess adept’s ultimate defense is to forget himself, forsaking his name, identity, and very existence for the briefest of moments. Such an act of self-renunciation, coupled with psionic power, temporarily convinces the world that the adept does not even exist, allowing him to ignore the most powerful of attacks. Activate this maneuver when you are attacked or targeted by a spell or ability that allows a save. Make an Autohypnosis check with a DC equal to your opponent’s attack roll or the saving throw DC of the ability. If you succeed, you are removed from reality until the beginning of your next turn (similar to a {i}time hop{/i} power), completely negating the effect of your opponent’s attack, spell, or ability. If the space you departed from is occupied upon your return to reality, you appear in the closest unoccupied space. Determine the closest space randomly if necessary." compset="PWManuever" summary="Make an Autohypnosis check to cease to exist for 1 round." uniqueness="useronce">
+  <thing id="manPWDotS8" name="DEPRECATED - Death of the Self" description="{B}If you see this please remove and re-add the replacement maneuver, Indomitable Idealism, to your character{/b}\n\nA Sleeping Goddess adept’s ultimate defense is to forget himself, forsaking his name, identity, and very existence for the briefest of moments. Such an act of self-renunciation, coupled with psionic power, temporarily convinces the world that the adept does not even exist, allowing him to ignore the most powerful of attacks. Activate this maneuver when you are attacked or targeted by a spell or ability that allows a save. Make an Autohypnosis check with a DC equal to your opponent’s attack roll or the saving throw DC of the ability. If you succeed, you are removed from reality until the beginning of your next turn (similar to a {i}time hop{/i} power), completely negating the effect of your opponent’s attack, spell, or ability. If the space you departed from is occupied upon your return to reality, you appear in the closest unoccupied space. Determine the closest space randomly if necessary." compset="PWManuever" summary="Make an Autohypnosis check to cease to exist for 1 round." uniqueness="useronce">
     <fieldval field="mPreReq" value="3"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Immed1"/>
@@ -1926,9 +2020,11 @@
     <tag group="mRange" tag="Personal"/>
     <tag group="mTarget" tag="You"/>
     <tag group="mDuration" tag="Round1"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="manPWSoTA8" name="Strike of Transfixed Awe" description="With an outpouring of telepathic energy, the disciple briefly traps a foe in a trance where the situation seems so dire that it immediately attempt to end the battle with its most powerful abilities, expending them futilely in their fugue state. Make a single attack that deals an additional 8d6 damage; if successful, your foe must make a Will save or be stunned for 1 round. \n\nOn a failed save, you also learn your foe’s caster level, manifester level, and initiator level for all spellcasting, manifesting, initiating, spell-like abilities, and psi-like abilities you foe has. You then choose one of your foe’s resources (if any); in all situations, resolve ties randomly.\nIf you choose spellcasting, your foe loses its highest-level unexpended spell slot. \nIf you choose manifesting, your foe loses power points equal to its manifester level.\nIf you choose initiating, your foe’s highest level readied maneuver becomes expended.\nIf you choose a spell-like ability or a psi-like ability, your foe loses one daily use of the ability with the highest caster level or manifester level.\n\n{b}Augment{/b} For every 10 power points you pay, you chose another of your foe’s resources to be expended on a failed save. You can choose the same resource more than once." compset="PWManuever" summary="Attack deals +8d6 damage, can stun target and expend their abilities" uniqueness="useronce">
-    <fieldval field="mDuration" value="See text"/>
+  <thing id="manPWSoTA6" name="Strike of Transfixed Awe" description="Your strike momentarily alters the flow of magic around your opponent, viciously rending power from their mind. Make an attack. If it hits, it deals weapon damage as normal plus an additional 6d6 points of damage, and the target must succeed at a Will save (DC 16 + your initiation modifier) or become stunned for one round. In addition, if the target fails its save, you learn their caster level or manifester level (if any) and the target loses their highest level unexpended spell slot as if they had cast it (chosen at random) and power points equal to their manifester level. A target that cannot cast spells or does not possess power points is unaffected by this additional effect.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage. For every 2d6 you increase the damage by, the save DC of this strike increases by +1." compset="PWManuever" summary="Your attack deals +6d6 damage and may stun the target. If the target is a spellcaster or manifester, they lose one of their highest-level spell slots and power points." uniqueness="useronce">
+    <fieldval field="mDuration" value="Instantaneous (see text)"/>
     <fieldval field="mPreReq" value="3"/>
     <usesource source="srcPOWEx"/>
     <tag group="mInitAct" tag="Standard1"/>
@@ -1939,8 +2035,11 @@
     <tag group="mRange" tag="MelOrRang"/>
     <tag group="mSave" tag="WillNeg"/>
     <tag group="mType" tag="Strike"/>
-    <tag group="mLevel" tag="8"/>
+    <tag group="mLevel" tag="6"/>
     <tag group="mDescript" tag="Compulsion"/>
+    <tag group="mDuration" tag="Instant"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     </thing>
   <thing id="staPWVKSt1" name="Valiant Keeper’s Stance" description="The disciple of the Eternal Guardian must always strive to be a bastion for those he has sworn to protect. This defensive stance allows the disciple to ward off threats to nearby allies. While in this stance, your allies do not provoke attacks of opportunity when moving through squares you threaten." compset="PWManuever" summary="Allies do not provoke attacks of opportunity when moving through squares you threaten." uniqueness="useronce">
     <usesource source="srcPOWEx"/>
@@ -4770,6 +4869,297 @@ abValue2 = Init bonus</comment>
     <tag group="mTarget" tag="You"/>
     <tag group="mDuration" tag="Instant"/>
     <tag group="PathOfWar" tag="Manuever"/>
+    </thing>
+  <thing id="staPWUnSt1" name="Unbroken Stride" description="With careful steps and focused psionic power, you can slightly shift how you interact with the world, moving over liquids as if they were solid, sprinting along walls, and even walking through the air. While you maintain this stance, you can walk and stand on liquids and other unfirm surfaces as if they were solid ground. You can move at your normal speed, but you cannot run on such a surface. This stance does not protect you from any negative effects that the surface might carry, such as the heat of lava or the stickiness of a spider&apos;s web.\n\nAt initiator level 5th, you gain the ability to move along walls and ceilings as if under the effect of a {i}spider climb{/i} spell while you maintain this stance, except that you do not need to use your hands to climb and can fight normally. At initiator level 10th, you can walk through the air as if it were solid ground, gaining a fly speed equal to your land speed with good maneuverability while you maintain this stance. However, while flying in such a way, you cannot hover. At initiator level 15th, your maneuverability when flying in this way increases to perfect, and you can even stand still in midair, hovering as normal." compset="PWManuever" summary="You can walk on liquids and unstable surfaces, and eventually walls and even the air." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mLevel" tag="1"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="mDuration" tag="Stance"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="PathOfWar" tag="Stance"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mType" tag="Stance"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpInfo" tag="spSpidCli2"/>
+    </thing>
+  <thing id="manPWFeFa2" name="Fearless Faith" description="You know that fear is as great an enemy as the foes in front of you, and through this knowledge and your faith in yourself, you can power through even the most terrifying situations. You can initiate this counter when you would become shaken, frightened, or panicked. You reduce the fear by one step (from panicked to frightened, frightened to shaken, or shaken to unafraid), and are treated as having successfully saved against the effect for the purposes of determining if you can be affected again.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every 2 power points you spend, the fear is reduced by an additional step.\n• If you expend your psionic focus while initiating this counter, you can use it in response to an ally within 60 feet becoming shaken, frightened, or panicked. If you do, you apply the effects of this counter to that ally rather than yourself." compset="PWManuever" summary="You reduce the effects of a fear effect as it happens." uniqueness="useronce">
+    <fieldval field="mTarget" value="You or one ally (see text)"/>
+    <fieldval field="mRange" value="Personal or 60 ft. (see text)"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mInitAct" tag="Immed1"/>
+    <tag group="mDuration" tag="Instant"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mType" tag="Counter"/>
+    <tag group="mRange" tag="60"/>
+    <tag group="mLevel" tag="2"/>
+    <tag group="mTarget" tag="YouOrAlly"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="manPWReRe2" name="Reactive Reversion" description="You create a spiritual waypoint tied to your mind and body, allowing you to return to it in an instant for a short time. When you initiate this boost, mark your current location. You may instead teleport back to the marked space as a free action, even if it isn&apos;t your turn, any time during the next round. Using this ability ends this boost. If your former space is occupied, you are instead teleported to the nearest unoccupied space. If you use this ability to move out of the reach or range of an attack, the attack is negated.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every 2 power points you spend, the effect of this boost lasts an additional round.\n• For every 2 power points you spend, you can teleport to the marked space one additional time before ending this boost." compset="PWManuever" summary="You mark your location and can teleport back to it until the start of your next turn." uniqueness="useronce">
+    <fieldval field="mDuration" value="1 round (see text)"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mDuration" tag="Round1"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mType" tag="Boost"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="mLevel" tag="2"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="mDescript" tag="Teleport"/>
+    <tag group="mTarget" tag="You"/>
+    </thing>
+  <thing id="manPWChDo3" name="Chains of Doubt" description="You deliver a psionically-charged blow directly to your enemy&apos;s willpower and ability to press onwards, dragging them down with crushing doubt and despair. Make an attack. If it hits, it deals weapon damage as normal plus an additional 3d6 points of damage, and the target must succeed at a Will save (DC 13 + your initiation modifier) or become nauseated for one round.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage. For every 2d6 you increase the damage by, the save DC of this strike increases by +1.\n• If you expend your psionic focus while initiating this strike, one of the target&apos;s allies within 60 feet of your choice also becomes nauseated for the same duration if the target fails its saving throw. The target&apos;s ally does not receive a saving throw against this effect." compset="PWManuever" summary="Your attack deals +3d6 damage and may nauseate your target and its allies." uniqueness="useronce">
+    <fieldval field="mTarget" value="One or more creatures (see text)"/>
+    <fieldval field="mRange" value="Melee or ranged attack and 60 ft. (see text)"/>
+    <fieldval field="mDuration" value="Instantaneous (see text)"/>
+    <fieldval field="mPreReq" value="1"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mType" tag="Strike"/>
+    <tag group="mRange" tag="60"/>
+    <tag group="mInitAct" tag="Standard1"/>
+    <tag group="mLevel" tag="3"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="mDescript" tag="MindAffect"/>
+    <tag group="mDuration" tag="Instant"/>
+    <tag group="mRange" tag="MelOrRang"/>
+    <tag group="mTarget" tag="Creat1Plus"/>
+    <tag group="mTarget" tag="SeeDesc"/>
+    <tag group="mSave" tag="WillNeg"/>
+    </thing>
+  <thing id="manPWInDo3" name="Internal Dominion of the Sleeping Goddess" description="The term &quot;sleeping goddess&quot; refers not to any tangible entity, but a state of being; by focusing your psionic might through the lens of true belief, you become something akin to a minor divine power whose realm lies within your physical form. Through this power, you can outright deny the world when it tries to exert such paltry concepts as &quot;reality&quot; on you. While you maintain this stance, you gain the following abilities:\n\n• You can reroll a failed saving throw, taking the higher of the two rolls.\n• You can force an opponent who has just hit you with an attack or succeeded at a combat maneuver check against you to reroll his attack roll or combat maneuver check and take the lower of the two rolls.\n\nYou may only use a single one of these abilities per round, and activating them is a free action that can be taken even if it isn&apos;t your turn." compset="PWManuever" summary="Once per round, you can reroll a failed saving throw or force an opponent to reroll an attack roll." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="mPreReq" value="1"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="mDuration" tag="Stance"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="PathOfWar" tag="Stance"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mType" tag="Stance"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpInfo" tag="spSpidCli2"/>
+    <tag group="mLevel" tag="3"/>
+    </thing>
+  <thing id="manPWArSl4" name="Armory of the Sleeping Goddess" description="Your immense force of will allows you to shape your ideals into a more powerful weapon than before. When you initiate this boost, a {i}soul&apos;s blade{/i} appears in your hands, taking the form of a +3 melee weapon you are proficient with. Alternatively, you may create two {I}soul&apos;s blades{/i}, each taking the form of an identical +2 melee weapons you are proficient with. A {i}soul&apos;s blade{/i} created with this boost has hardness 15 and 30 hit points. The blade lasts a number of rounds equal to your initiator level before vanishing. If you throw your {I}soul&apos;s blade{/i} or otherwise relinquish your grip on it (such as by being disarmed), it dissipates after one round. You can have multiple {I}soul&apos;s blades{/i} created at once if you initiate this boost or other boosts that create a {i}soul&apos;s blade{/i} multiple times, although only as many as you can wield.\n\nIf you are currently wielding a mind blade or equivalent weapon (such as a deadly fist&apos;s empowered strikes, a psychic armory&apos;s panoply of blades, or a soulbolt&apos;s mind bolt), you can choose to amplify it instead of this boost&apos;s normal effects. Until the start of your next turn, all such weapons you wield (including those created after initiating this boost) gain the benefit of a single weapon special ability equivalent to up to +2 enhancement bonus. This ability must be chosen from the list of weapon special abilities you can normally place on your mind blade (see the enhanced mind blade class feature in Chapter 3 of {i}Ultimate Psionics{/i}).\n\n{b}NOTE:{/b} Don&apos;t forget to add a weapon to your character to represent the {i}soul&apos;s blade{/i}. Hero Lab does not automatically add the enhancement bonus to the weapon, so you will need to do that yourself." compset="PWManuever" summary="You create an enhanced weapon of ideals or empower your mind blade." uniqueness="useronce">
+    <fieldval field="mDuration" value="1 round/level (see text)"/>
+    <fieldval field="mPreReq" value="1"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="mDuration" tag="1rdLevel"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mType" tag="Boost"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="mLevel" tag="4"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    </thing>
+  <thing id="manPWInPr5" name="Inarguable Presence of the Sleeping Goddess" description="Your psionic might and the strength of your belief exert an immense pressure on the minds of your foes merely by being near them. You are a fact, and your power will not be denied. While you maintain this stance, your maneuvers and other abilities treat creatures that are normally immune to mind-affecting effects as if they were not immune. Such creatures gain a +5 resistance bonus on saving throws against your mind-affecting effects, rather than ignoring them outright. In addition, attacks made against you suffer a 20% miss chance." compset="PWManuever" summary="You ignore immunity to mind-affecting effects and gain a 20% miss chance against attacks." uniqueness="useronce">
+    <fieldval field="mPreReq" value="2"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="mDuration" tag="Stance"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="PathOfWar" tag="Stance"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mType" tag="Stance"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="mLevel" tag="5"/>
+    </thing>
+  <thing id="manPWTies5" name="The Ties That Bind" description="With a psionically-empowered strike, you stab through an enemy&apos;s physical form and attack their spirit and those tied to it. In the minds of your targets, the world warps, keeping them from fighting or moving effectively. Make an attack. If it hits, it deals weapon damage as normal plus an additional 5d6 points of damage, and the target must succeed at a Will save (DC 15 + your initiation modifier) or it and one of the target&apos;s allies within 60 feet of your choice become entangled for a number of rounds equal to your initiation modifier. The target&apos;s ally does not receive a saving throw against this effect.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage. For every 2d6 you increase the damage by, the save DC of this strike increases by +1.\n• For every 3 power points you spend, you may select an additional one of the target&apos;s allies to entangle if the target fails its saving throw.\n• If you expend your psionic focus while initiating this strike, the target and its affected allies also become nauseated for one round on a failed saving throw." compset="PWManuever" summary="Your attack deals +5d6 damage, and your target along with one of its allies may become entangled." uniqueness="useronce">
+    <fieldval field="mRange" value="Melee attack and 60 ft. (see text)"/>
+    <fieldval field="mTarget" value="One or more creatures (see text)"/>
+    <fieldval field="mDuration" value="Instantaneous (see text)"/>
+    <fieldval field="mPreReq" value="2"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mTarget" tag="Creat1Plus"/>
+    <tag group="mTarget" tag="SeeDesc"/>
+    <tag group="mType" tag="Strike"/>
+    <tag group="mDuration" tag="Instant"/>
+    <tag group="mInitAct" tag="Standard1"/>
+    <tag group="mLevel" tag="5"/>
+    <tag group="mRange" tag="60"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="mRange" tag="Melee"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="manPWOvOp6" name="Overpowering Optimism" description="Your faith in yourself allows you to press the advantage further than most—by believing you can succeed, you change yourself into someone who will. When you initiate this boost, you instantly regain your psionic focus. In addition, you may augment a maneuver you initiate within the next three rounds without spending power points, gaining the benefits of the maneuver as if you had spent the maximum number of power points you could spend on that maneuver. You may not spend additional power points when augmenting a maneuver in this way, nor does this maneuver allow you to spend more power points than you would normally be allowed to." compset="PWManuever" summary="You automatically regain psionic focus, and one of your maneuvers in the next three rounds is augmented for free." uniqueness="useronce">
+    <fieldval field="mPreReq" value="2"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mType" tag="Boost"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="mLevel" tag="6"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mDuration" tag="Round3"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="manPWUnGa6" name="Unavoidable Gaze of the Sleeping Goddess" description="You open your senses, gaining perfect awareness of the world around you with your enhanced perception. While you maintain this stance, you gain a bonus on initiative checks equal to your initiation modifier. You do not need to make Perception checks to notice creatures; you can detect and pinpoint all creatures within 60 feet. You also ignore miss chances granted by concealment, darkness, and invisibility, although you still must have line of effect to a creature or an object to discern it.\n\nIn addition, you can expend your psionic focus as a move action to pierce creatures&apos; minds as easily as your senses pierce darkness. For a number of rounds equal to your initiation modifier after activating this ability, you can read the surface thoughts of all creatures within 60 feet as if you had manifested the {i}read thoughts{/i} power. A creature can make a Will save (DC 16 + your initiation modifier) to keep you from reading their thoughts. A creature that successfully saves against this effect is immune to having its surface thoughts read by this stance for 24 hours. You do not need to concentrate on this ability to maintain it. This use of this stance is considered a mind-affecting effect." compset="PWManuever" summary="You do not need to make Perception checks to notice creatures within 60 feet, gain a bonus on initiative checks, and can read the thoughts of those around you by expending psionic focus." uniqueness="useronce">
+    <fieldval field="mPreReq" value="2"/>
+    <fieldval field="mRange" value="Personal (see text)"/>
+    <fieldval field="mTarget" value="You (see text)"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="PathOfWar" tag="Stance"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mTarget" tag="SeeDesc"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mType" tag="Stance"/>
+    <tag group="mDuration" tag="Stance"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="mLevel" tag="6"/>
+    <tag group="DescInfo" tag="puReadTho2"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ Stop if we're not activated
+      doneif (field[abilActive].value = 0)
+
+      ~ Initiative bonus
+      hero.child[Initiative].field[Bonus].value += field[mIM].value]]></eval>
+    </thing>
+  <thing id="manPWSoTA8" name="DEPRECATED - Strike of Transfixed Awe" description="{B}If you see this please remove and re-add the correct Strike of Transfixed Awe maneuver to your character{/b}\n\nWith an outpouring of telepathic energy, the disciple briefly traps a foe in a trance where the situation seems so dire that it immediately attempt to end the battle with its most powerful abilities, expending them futilely in their fugue state. Make a single attack that deals an additional 8d6 damage; if successful, your foe must make a Will save or be stunned for 1 round. \n\nOn a failed save, you also learn your foe’s caster level, manifester level, and initiator level for all spellcasting, manifesting, initiating, spell-like abilities, and psi-like abilities you foe has. You then choose one of your foe’s resources (if any); in all situations, resolve ties randomly.\nIf you choose spellcasting, your foe loses its highest-level unexpended spell slot. \nIf you choose manifesting, your foe loses power points equal to its manifester level.\nIf you choose initiating, your foe’s highest level readied maneuver becomes expended.\nIf you choose a spell-like ability or a psi-like ability, your foe loses one daily use of the ability with the highest caster level or manifester level.\n\n{b}Augment{/b} For every 10 power points you pay, you chose another of your foe’s resources to be expended on a failed save. You can choose the same resource more than once." compset="PWManuever" summary="Attack deals +8d6 damage, can stun target and expend their abilities" uniqueness="useronce">
+    <fieldval field="mDuration" value="See text"/>
+    <fieldval field="mPreReq" value="3"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mInitAct" tag="Standard1"/>
+    <tag group="mTarget" tag="Creature1"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mRange" tag="MelOrRang"/>
+    <tag group="mSave" tag="WillNeg"/>
+    <tag group="mType" tag="Strike"/>
+    <tag group="mLevel" tag="8"/>
+    <tag group="mDescript" tag="Compulsion"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    </thing>
+  <thing id="manPWPeDi7" name="Perfect Distillation of the Soul" description="Your soul&apos;s blade is unparalleled in form, shining as a beacon of your will and ideals, and carving through your foes as well as even the most powerful magic weapons. When you initiate this boost, a {i}soul&apos;s blade{/i} appears in your hands, taking the form of a +5 melee weapon you are proficient with. Alternatively, you may create two {i}soul&apos;s blades{/i}, each taking the form of an identical +4 melee weapons you are proficient with. A {i}soul&apos;s blade{/i} created with this boost has hardness 20 and 50 hit points. The blade lasts a number of rounds equal to your initiator level before vanishing. If you throw your {i}soul&apos;s blade{/i} or otherwise relinquish your grip on it (such as by being disarmed), it dissipates after one round. You can have multiple {i}soul&apos;s blades{/i} created at once if you initiate this boost or other boosts that create a {i}soul&apos;s blade{/i} multiple times, although only as many as you can wield.\n\nIf you are currently wielding a mind blade or equivalent weapon (such as a deadly fist&apos;s empowered strikes, a psychic armory&apos;s panoply of blades, or a soulbolt&apos;s mind bolt), you can choose to amplify it instead of this boost&apos;s normal effects. Until the start of your next turn, all such weapons you wield (including those created after initiating this boost) gain the benefit of a single weapon special ability equivalent to up to +3 enhancement bonus. This ability must be chosen from the list of weapon special abilities you can normally place on your mind blade (see the enhanced mind blade class feature in Chapter 3 of {i}Ultimate Psionics{/i}).\n\n{b}NOTE:{/b} Don&apos;t forget to add a weapon to your character to represent the {i}soul&apos;s blade{/i}. Hero Lab does not automatically add the enhancement bonus to the weapon, so you will need to do that yourself." compset="PWManuever" summary="You create a powerful weapon of ideals or empower your mind blade." uniqueness="useronce">
+    <fieldval field="mDuration" value="1 round/level (see text)"/>
+    <fieldval field="mPreReq" value="2"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="mDuration" tag="1rdLevel"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mType" tag="Boost"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="mLevel" tag="7"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    <eval phase="PostLevel" priority="10000">~ Calculate enhancement bonus from IL
+      field[abValue].value += round(field[mIL].value/4,0,-1)</eval>
+    <eval phase="Render" priority="10000" index="2"><![CDATA[      if (field[abValue].value > 0) then
+        field[livename].text &= " (" & signed(field[abValue].value) & " enhancement)"
+      endif]]></eval>
+    </thing>
+  <thing id="manPWInId8" name="Indomitable Idealism" description="An idea cannot be killed as long as it still inhabits a mind. As a master of the Sleeping Goddess discipline, you have the ability to use this fact to your advantage, channeling overwhelming psionic power through yourself for a brief moment in order to become a living embodiment of your ideals and beliefs. You can initiate this counter when you would be killed or knocked unconscious, either through damage reducing you to 0 or fewer hit points or by an effect that kills you outright (such as a death effect or a vorpal weapon). You do not take the damage or are completely unaffected by the effect, and may move to a space adjacent to any creature within 100 feet that has seen you or otherwise knows who you are. This movement does not provoke attacks of opportunity, nor does it require line of sight or line of effect, although you must be aware that the creature in question is in range. To observers, you seem to vanish and reappear next to the creature, folding out of space and becoming to all eyes a near-flawless, ideal version of yourself for a few seconds before returning to your normal appearance." compset="PWManuever" summary="You avoid death, recreating yourself from the thoughts of onlookers." uniqueness="useronce">
+    <fieldval field="mPreReq" value="3"/>
+    <fieldval field="mRange" value="Personal and 100 ft. (see text)"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mLevel" tag="8"/>
+    <tag group="mInitAct" tag="Immed1"/>
+    <tag group="mRange" tag="100"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mDuration" tag="Instant"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="mType" tag="Counter"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    </thing>
+  <thing id="manPWSBtS8" name="Self Beyond the Self" description="With your studied understanding of the mind and its motivations, beliefs, and ideals, you can temporarily subvert the spirit of a foe, briefly making them into a staunch ally. Make an attack. If it hits, it deals weapon damage as normal, and the target must succeed at a Will save (DC 18 + your initiation modifier) or fall under your complete control for one round, as if you had manifested a {i}Geth&apos;s mind control{/i} power on them, although it can affect any creature type, not just humanoids.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage. For every 2d6 you increase the damage by, the save DC of this strike increases by +1.\n• If you spend 6 power points, the target is controlled for an additional round.\n• If you expend your psionic focus while initiating this strike, you ignore any immunity to mind-affecting effects the target possesses. Instead, a normally-immune target gains a +5 resistance bonus on its saving throw." compset="PWManuever" summary="Your attack allows you to take control of the target’s mind temporarily, as if by a {i}Geth’s mind control power{/i}." uniqueness="useronce">
+    <fieldval field="mPreReq" value="3"/>
+    <fieldval field="mDuration" value="Instantaneous (see text)"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mDuration" tag="Instant"/>
+    <tag group="mType" tag="Strike"/>
+    <tag group="mLevel" tag="8"/>
+    <tag group="mInitAct" tag="Standard1"/>
+    <tag group="mDescript" tag="MindAffect"/>
+    <tag group="mRange" tag="Melee"/>
+    <tag group="mTarget" tag="Creature1"/>
+    <tag group="mSave" tag="WillNeg"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="DescInfo" tag="puMindCon4"/>
+    </thing>
+  <thing id="manPWUnIm8" name="Unimpeachable Authority of the Sleeping Goddess" description="You focus your spirit and belief, becoming a terrible and awe-inspiring sight; the world around you pales in comparison to your reality, and those who meet your eyes can feel your presence boring into their very soul. You may enter and maintain this stance even if you are immune to mind-affecting effects or fear effects. While you maintain this stance, opponents within 60 feet of you become shaken. TThis stance cannot create a stronger fear condition if an opponent is already shaken; affected opponents merely remain shaken while they remain within 60 feet of you (although other fear effects can do so as normal). In addition, as a move action, you can turn your attention to an opponent within 60 feet that can see or otherwise perceive you. That opponent must succeed at a Will save (DC 18 + your initiation modifier) or become panicked for one round. If you expend your psionic focus as part of using this ability, you ignore any immunity to mind-affecting or fear effects possessed by the target. Instead, a normally-immune target gains a +5 resistance bonus on its saving throw." compset="PWManuever" summary="Your presence causes opponents to become shaken, and you can focus your attention to panic an opponent for one round." uniqueness="useronce">
+    <fieldval field="mPreReq" value="3"/>
+    <fieldval field="mRange" value="Personal (see text)"/>
+    <fieldval field="mTarget" value="You (see text)"/>
+    <fieldval field="mSave" value="Will partial (see text)"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mLevel" tag="8"/>
+    <tag group="PathOfWar" tag="Stance"/>
+    <tag group="mInitAct" tag="Swift1"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="mRange" tag="Personal"/>
+    <tag group="mType" tag="Stance"/>
+    <tag group="mTarget" tag="SeeDesc"/>
+    <tag group="mTarget" tag="You"/>
+    <tag group="mDuration" tag="Stance"/>
+    <tag group="mDescript" tag="Fear"/>
+    <tag group="mSave" tag="WillPart"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="mDescript" tag="MindAffect"/>
+    </thing>
+  <thing id="manPWImTr9" name="Immortal Truths of the Sleeping Goddess" description="Standing at the pinnacle of the Sleeping Goddess discipline&apos;s students, you have the ability to share your beliefs in a way that no others can. By making contact with your opponent&apos;s mind and soul, you can open a dialogue, communicating your respective ideals instantaneously and debating their merits. Make an attack. If it hits, it deals an additional 10d6 points of damage. If this damage would reduce the target to 0 or fewer hit points, you can attempt to convert them to your way of thinking, clashing beliefs in a brief moment of spiritual contact. If you do, you and the target make an opposed ability check, with you using your initiation modifier and the target using its Charisma modifier. If the target succeeds, they take damage as normal, potentially killing them or knocking them unconscious. If you succeed, the target is instead reduced to 1 hit point, and their attitude towards you and your allies changes to helpful. This is not a compulsion, nor is it forcing the target to follow your orders, but rather the result of a spiritual conversation that took place in the instant of the strike. The target now understands your beliefs and ideals and either believes in them as well or respects your belief enough to be unwilling to oppose you. Regardless of whether or not the target succeeds on their check, you gain a deep understanding of their own beliefs and ideals. While you have this maneuver readied and unexpended, you automatically know the current hit point total of each creature within your melee reach.\n\n{b}Augment:{/b} You can augment this maneuver in one or more of the following ways:\n\n• For every power point you spend, this strike deals an additional 1d6 points of damage. For every 2d6 you increase the damage by, you gain a +1 bonus on your ability check.\n• If you expend your psionic focus while initiating this strike, you ignore any immunity to mind-affecting effects the target possesses." compset="PWManuever" summary="Your attack deals +10d6 damage, and if you would reduce the target to 0 or fewer hit points, you enter an instantaneous dialogue with them, potentially converting them to your way of thinking." uniqueness="useronce">
+    <fieldval field="mPreReq" value="4"/>
+    <usesource source="srcPOWEx"/>
+    <tag group="mType" tag="Strike"/>
+    <tag group="mDescript" tag="MindAffect"/>
+    <tag group="mLevel" tag="9"/>
+    <tag group="PathOfWar" tag="Manuever"/>
+    <tag group="mInitAct" tag="Standard1"/>
+    <tag group="mRange" tag="MelOrRang"/>
+    <tag group="mTarget" tag="Creature1"/>
+    <tag group="mDuration" tag="Instant"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Discipline" tag="SlpGoddess"/>
+    <tag group="AbilType" tag="Super"/>
     </thing>
   <thing id="staPWDTLS6" name="Diving Thunderbolt Stance" description="Your movements are light and nimble, allowing you to reach incredible heights and strike with the force of a swooping dragon. While you maintain this stance, you become immune to falling damage, gain a bonus on Acrobatics checks made to jump equal to twice your initiator level, and your vertical jumping distance is not limited by your maximum movement speed. In addition, if you attack your opponent from a higher elevation (including after jumping towards them as a move action), you are considered to be charging that opponent for the purposes of feats and abilities you possess that would provide a beneficial effect." compset="PWManuever" summary="Bonus on Acrobatics, immune to falling, charge from higher elevation" uniqueness="useronce">
     <fieldval field="mPreReq" value="2"/>
