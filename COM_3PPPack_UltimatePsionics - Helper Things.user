@@ -26,7 +26,6 @@
     <bootstrap thing="PUPathSk"></bootstrap>
     <bootstrap thing="PUClassFnd"></bootstrap>
     <bootstrap thing="PU0lvlPowe"></bootstrap>
-    <bootstrap thing="PUFreePowr"></bootstrap>
     <bootstrap thing="PUGiftBlad"></bootstrap>
 
     <bootstrap thing="zPUArtiste"></bootstrap>
@@ -90,33 +89,6 @@
       foreach pick in hero from BasePower where "sLevel.0 & Helper.Secondary"
         eachpick.field[psiCost].value = 0
       nexteach]]></eval>
-    </thing>
-
-  <thing id="PUFreePowr" name="Don't Count Some Powers"
-    description="Pathfinder 13.12 caused bootstrapped powers that are suppose to be free to be counted against a classes total powers/talents known. This"
-    compset="Simple" uniqueness="unique">
-    <usesource source="pPsiUn"/>
-    <eval phase="PreLevel" priority="10000"><![CDATA[
-      ~ Find all free powers/talents and make them not
-      ~ count against a classes total.
-      foreach pick in hero from BasePower where "PackHelper.FreePower"
-        perform hero.findchild[BaseClHelp,eachpick.tagids[SpellType.?]].setfocus
-
-        ~ If no class found get next power
-        if (state.isfocus <> 0) then
-
-          ~ lower count by 1 for a Talent or Power
-          if (eachpick.tagis[Helper.Secondary] = 1) then
-            focus.field[cPsiSPowCu].value += -1
-          else
-            focus.field[cPsiPowCur].value += -1
-          endif
-
-          ~ Clear class pointer
-          perform state.clearfocus
-        endif
-      nexteach
-      ]]></eval>
     </thing>
 
   <thing id="PUPathSk" name="Path Skills Setup" description="This puts the PathSkill.? tags on skills." compset="Simple" uniqueness="unique">
