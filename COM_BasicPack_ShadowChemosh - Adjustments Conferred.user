@@ -701,4 +701,133 @@
 
       perform field[usrChosen1].chosen.pulltags[DescInfo.?]]]></eval>
     </thing>
+  <thing id="pS2ArcPoo" name="Magus: Arcane Pool" description="At 1st level, the magus gains a reservoir of mystical arcane energy that he can draw upon to fuel his powers and enhance his weapon. This arcane pool has a number of points equal to 1/2 his magus level (minimum 1) + his Intelligence modifier. The pool refreshes once per day when the magus prepares his spells.\n\nAt 1st level, a magus can expend 1 point from his arcane pool as a swift action to grant any weapon he is holding a +1 enhancement bonus for 1 minute. For every four levels beyond 1st, the weapon gains another +1 enhancement bonus, to a maximum of +5 at 17th level. These bonuses can be added to the weapon, stacking with existing weapon enhancement to a maximum of +5. Multiple uses of this ability do not stack with themselves.\n\nAt 5th level, these bonuses can be used to add any of the following weapon properties: dancing, flaming, flaming burst, frost, icy burst, keen, shock, shocking burst, speed, or vorpal.\n\nAdding these properties consumes an amount of bonus equal to the property’s base price modifier. These properties are added to any the weapon already has, but duplicates do not stack. If the weapon is not magical, at least a +1 enhancement bonus must be added before any other properties can be added. These bonuses and properties are decided when the arcane pool point is spent and cannot be changed until the next time the magus uses this ability. These bonuses do not function if the weapon is wielded by anyone other than the magus.\n\nA magus can only enhance one weapon in this way at one time. If he uses this ability again, the first use immediately ends.\n\n{B}Note:{/b} This version places an activation on the &quot;In-Play&quot; tab instead of leaving it here as an adjustment. This is much more helpful for those using the iPad." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="abS2ArcPoo"></bootstrap>
+    </thing>
+  <thing id="abS2ArcPoo" name="Arcane Pool" description="At 1st level, the magus gains a reservoir of mystical arcane energy that he can draw upon to fuel his powers and enhance his weapon. This arcane pool has a number of points equal to 1/2 his magus level (minimum 1) + his Intelligence modifier. The pool refreshes once per day when the magus prepares his spells.\n\nAt 1st level, a magus can expend 1 point from his arcane pool as a swift action to grant any weapon he is holding a +1 enhancement bonus for 1 minute. For every four levels beyond 1st, the weapon gains another +1 enhancement bonus, to a maximum of +5 at 17th level. These bonuses can be added to the weapon, stacking with existing weapon enhancement to a maximum of +5. Multiple uses of this ability do not stack with themselves.\n\nAt 5th level, these bonuses can be used to add any of the following weapon properties: dancing, flaming, flaming burst, frost, icy burst, keen, shock, shocking burst, speed, or vorpal.\n\nAdding these properties consumes an amount of bonus equal to the property’s base price modifier. These properties are added to any the weapon already has, but duplicates do not stack. If the weapon is not magical, at least a +1 enhancement bonus must be added before any other properties can be added. These bonuses and properties are decided when the arcane pool point is spent and cannot be changed until the next time the magus uses this ability. These bonuses do not function if the weapon is wielded by anyone other than the magus.\n\nA magus can only enhance one weapon in this way at one time. If he uses this ability again, the first use immediately ends.\n\n{b}Note:{/b} The first dropdown lets you select the weapon you want to enchant. The second drop down lets you select the weapon property to add to your selected weapon. This feature does not currently enforce any of the rules about enhancement bonsues or needing to be level 5 to add properties." compset="Ability">
+    <fieldval field="usrCandid1" value="component.BaseWep &amp; !Helper.Helper"/>
+    <fieldval field="actUserMin" value="0"/>
+    <fieldval field="actUserMax" value="5"/>
+    <fieldval field="actName" value="Activate"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="ChooseSrc2" tag="Thing"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="UserAdjust"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Hide" tag="Statblock"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="50000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen2].ischosen = 0)
+      ~ If we don't have the Add Nothing choice
+      doneif (field[usrChosen2].chosen.tagis[DescInfo.?] = 0)
+
+      ~ Destroy our own description info tag
+      perform delete[DescInfo.?]
+      ~ Pull the selection helpers description tag and push
+      ~ to the selected weapon.
+      perform field[usrChosen2].chosen.pulltags[DescInfo.?]
+      perform field[usrChosen1].chosen.pushtags[DescInfo.?]]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~var AddPowers as number
+
+      ~ At level 5 Magus or no magus level add powers
+      ~If (hero.childfound[cMagArPool].field[xTotalLev].value >= 5) Then
+      ~  AddPowers = 1
+      ~Endif
+      ~If (hero.childfound[cMagArPool].field[xTotalLev].value = 0) Then
+      ~  AddPowers = 1
+      ~Endif
+      ~If (AddPowers = 1) Then
+      ~  field[usrCandid2].text = "component.SelectHelp & PackSelect.ArcPolWep"
+      ~Endif
+
+      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Increase the Enhancement bonus on the selected weapon
+      field[usrChosen1].chosen.field[BonEnhance].value += field[actUser].value]]></eval>
+    <eval phase="Final" priority="10000" index="3"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+      ~ If no Weapon chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+      ~ If no Weapon Power chosen get out now!
+      doneif (field[usrChosen2].ischosen = 0)
+      ~ If we don't have the Add Nothing choice
+      doneif (field[usrChosen2].chosen.tagis[DescInfo.?] = 0)
+
+      var critdice as number
+
+      ~ Set pointer to the selected weapon
+      perform field[usrChosen1].chosen.setfocus
+
+      ~ Flaming
+      If (field[usrChosen2].chosen.tagis[DescInfo.iFlaming] = 1) Then
+        #extradamwithavg[focus," plus 1d6 fire",field[thingname].text,"3.5"]
+
+      ~ Flaming Burst
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iFlamBurst] = 1) Then
+        critdice = focus.tagvalue[wCritMult.?] + focus.tagcount[Broadcast.CritMult] - 1
+        #extradamwithavg[focus," plus 1d6 fire",field[thingname].text,"3.5"]
+        #extracrit[focus,signed(critdice) & "d10 fire",field[livename].text]
+
+      ~ Frost
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iFrost] = 1) Then
+        #extradamwithavg[focus," plus 1d6 cold",field[thingname].text,"3.5"]
+
+      ~ Icy Burst
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iIcyBurst] = 1) Then
+        critdice = focus.tagvalue[wCritMult.?] + focus.tagcount[Broadcast.CritMult] - 1
+        #extradamwithavg[focus," plus 1d6 cold",field[thingname].text,"3.5"]
+        #extracrit[focus,signed(critdice) & "d10 cold",field[livename].text]
+
+      ~ Keen
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iKeen] = 1) Then
+        perform focus.assign[Helper.Keen]
+
+      ~ Shock
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iShock] = 1) Then
+        #extradamwithavg[focus," plus 1d6 electricity",field[thingname].text,"3.5"]
+
+      ~ Shocking Burst
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iShockBrst] = 1) Then
+        critdice = focus.tagvalue[wCritMult.?] + focus.tagcount[Broadcast.CritMult] - 1
+        #extradamwithavg[focus," plus 1d6 electricity",field[thingname].text,"3.5"]
+        #extracrit[focus,signed(critdice) & "d10 electricity",field[livename].text]
+
+      ~ Speed
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iSpeed] = 1) Then
+        perform focus.assign[Helper.ExtraHigh]
+      Endif]]></eval>
+    <eval phase="Render" priority="99999999" index="4"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+      ~ If no Weapon chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+      ~ If no Weapon Power chosen get out now!
+      doneif (field[usrChosen2].ischosen = 0)
+      ~ If we don't have the Add Nothing choice
+      doneif (field[usrChosen2].chosen.tagis[DescInfo.?] = 0)
+
+      ~ Set pointer to the selected weapon
+      perform field[usrChosen1].chosen.setfocus
+
+      ~ Append power name to weapon
+      field[usrChosen1].chosen.field[livename].text &= " (" & field[usrChosen2].chosen.tagnames[DescInfo.?] & ")"]]></eval>
+    </thing>
   </document>
