@@ -709,7 +709,7 @@
     <bootstrap thing="abS2ArcPoo"></bootstrap>
     </thing>
   <thing id="abS2ArcPoo" name="Arcane Pool" description="At 1st level, the magus gains a reservoir of mystical arcane energy that he can draw upon to fuel his powers and enhance his weapon. This arcane pool has a number of points equal to 1/2 his magus level (minimum 1) + his Intelligence modifier. The pool refreshes once per day when the magus prepares his spells.\n\nAt 1st level, a magus can expend 1 point from his arcane pool as a swift action to grant any weapon he is holding a +1 enhancement bonus for 1 minute. For every four levels beyond 1st, the weapon gains another +1 enhancement bonus, to a maximum of +5 at 17th level. These bonuses can be added to the weapon, stacking with existing weapon enhancement to a maximum of +5. Multiple uses of this ability do not stack with themselves.\n\nAt 5th level, these bonuses can be used to add any of the following weapon properties: dancing, flaming, flaming burst, frost, icy burst, keen, shock, shocking burst, speed, or vorpal.\n\nAdding these properties consumes an amount of bonus equal to the property’s base price modifier. These properties are added to any the weapon already has, but duplicates do not stack. If the weapon is not magical, at least a +1 enhancement bonus must be added before any other properties can be added. These bonuses and properties are decided when the arcane pool point is spent and cannot be changed until the next time the magus uses this ability. These bonuses do not function if the weapon is wielded by anyone other than the magus.\n\nA magus can only enhance one weapon in this way at one time. If he uses this ability again, the first use immediately ends.\n\n{b}Note:{/b} The first dropdown lets you select the weapon you want to enchant. The second drop down lets you select the weapon property to add to your selected weapon. This feature does not currently enforce any of the rules about enhancement bonsues or needing to be level 5 to add properties." compset="Ability">
-    <fieldval field="usrCandid1" value="component.BaseWep &amp; !Helper.Helper"/>
+    <fieldval field="usrCandid1" value="component.BaseWep"/>
     <fieldval field="actUserMin" value="0"/>
     <fieldval field="actUserMax" value="5"/>
     <fieldval field="actName" value="Activate"/>
@@ -725,6 +725,7 @@
     <tag group="User" tag="NoAutoName"/>
     <tag group="abAction" tag="None"/>
     <tag group="abRange" tag="Personal"/>
+    <tag group="PackSelect" tag="ArPoolWep"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="50000"><![CDATA[
       ~ If we're not enabled, get out now
@@ -741,19 +742,6 @@
       perform field[usrChosen2].chosen.pulltags[DescInfo.?]
       perform field[usrChosen1].chosen.pushtags[DescInfo.?]]]></eval>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
-      ~var AddPowers as number
-
-      ~ At level 5 Magus or no magus level add powers
-      ~If (hero.childfound[cMagArPool].field[xTotalLev].value >= 5) Then
-      ~  AddPowers = 1
-      ~Endif
-      ~If (hero.childfound[cMagArPool].field[xTotalLev].value = 0) Then
-      ~  AddPowers = 1
-      ~Endif
-      ~If (AddPowers = 1) Then
-      ~  field[usrCandid2].text = "component.SelectHelp & PackSelect.ArcPolWep"
-      ~Endif
-
       ~ If we're not enabled, get out now
       doneif (field[abilActive].value = 0)
       ~ If nothing chosen get out now!
@@ -810,11 +798,56 @@
         #extradamwithavg[focus," plus 1d6 electricity",field[thingname].text,"3.5"]
         #extracrit[focus,signed(critdice) & "d10 electricity",field[livename].text]
 
+      ~ Bane
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iBane] = 1) Then
+        #extradamwithavg[focus," plus 2d6 vs. bane",field[thingname].text,"7"]
+
       ~ Speed
       ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iSpeed] = 1) Then
         perform focus.assign[Helper.ExtraHigh]
+
+      ~ Anarchic
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iAnarchic] = 1) Then
+        #extradamwithavg[focus," plus 2d6 vs. lawful",field[thingname].text,"7"]
+
+      ~ Axiomatic
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iAxiomatic] = 1) Then
+        #extradamwithavg[focus," plus 2d6 vs. chaos",field[thingname].text,"7"]
+
+      ~ Holy
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iHoly] = 1) Then
+        #extradamwithavg[focus," plus 2d6 vs. evil",field[thingname].text,"7"]
+
+      ~ Unholy
+      ElseIf (field[usrChosen2].chosen.tagis[DescInfo.iUnholy] = 1) Then
+        #extradamwithavg[focus," plus 2d6 vs. good",field[thingname].text,"7"]
+
+
+
       Endif]]></eval>
-    <eval phase="Render" priority="99999999" index="4"><![CDATA[
+    <eval phase="Validation" priority="50000" index="4"><![CDATA[
+      ~ Bane Blade
+      If (#hasability[cMagBanBla] = 1) Then
+        perform assign[PackSelect.ArPoolBB]
+      Endif
+
+      ~ Devoted Blade
+      If (#hasability[cMagDevBla] = 1) Then
+        perform assign[PackSelect.ArPoolDB]
+      Endif
+
+      ~ Ghost Blade
+      If (#hasability[cMagGhoBla] = 1) Then
+        perform assign[PackSelect.ArPoolGB]
+      Endif
+
+      ~ Planar Hunter
+      If (#hasability[cMagPlaHun] = 1) Then
+        perform assign[PackSelect.ArPoolPH]
+      Endif
+
+      field[usrCandid2].text = "component.SelectHelp & (" & tagids[PackSelect.?,"|"] & ")"]]></eval>
+    <eval phase="Render" priority="99999999" index="5"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[abilActive].value = 0)
       ~ If no Weapon chosen get out now!
