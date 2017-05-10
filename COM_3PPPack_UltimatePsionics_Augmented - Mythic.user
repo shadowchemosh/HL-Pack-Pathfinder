@@ -1,0 +1,2170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <thing id="cPUMBndMnd" name="Boundless mind" description="At 10th tier, whenever you manifest a psionic power that targets one or more non-mythic creatures, each of those creatures must roll any saving throw against the power twice and take the lower result. You gain power resistance\nequal to 15 + your highest manifester level, but only against psionic powers. Once per round when your power resistance protects you from a power manifested by an enemy mythic creature, you regain one use of mythic power." compset="ClSpecial">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      foreach pick in hero from Class where "CasterSrc.Psionic"
+        field[abValue].value = maximum(field[abValue].value, eachpick.field[cCasterLev].value)
+        nexteach
+
+      field[abValue].value += 15]]></eval>
+    <eval phase="Render" priority="10000" index="2"><![CDATA[
+      field[livename].text = field[name].text & " (SR " & field[abValue].value & " vs. Psionic Powers)"]]></eval>
+    </thing>
+  <thing id="cMOMMyMan" name="Mythic Manifestation" description="As a standard action, you can expend one use of mythic power to manifest any one psionic power without expending any psionic power points. This must be one of your powers known. If the power requires a saving throw, any non-mythic creatures affected by the power roll twice and take the lower result. If you must attempt a manifester level check for the power to overcome a creature’s power resistance, you can roll your manifester level check twice (adding your tier to each) and take the higher result. You can’t add a metapsionic feat to a power you manifest using this ability. The power is treated as if augmented to your manifester level, should the power allow augmenting." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    </thing>
+  <thing id="cMOMPsiStk" name="Psionic Strike" description="As a swift action, you can expend one use of mythic power to make one melee attack. This is in addition to any other attacks you make this round. Add your tier to the attack roll of this attack. The normal damage from this attack bypasses all damage reduction, although any energy damage on the attack from sources like flaming or the like are still affected by resistances and immunities." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="abAction" tag="Swift"/>
+    </thing>
+  <thing id="cMOMSrgPsi" name="Surging Psionics" description="As a standard action, you can expend one use of mythic power to manifest any one psionic power without spending any power points. The power must be on your class power list and one of your powers known. When manifesting a power in this way, you treat your manifester level as 2 levels higher for the purpose of any effect dependent on level. The power is treated as if augmented to your manifester level, should the power allow augmenting. You can apply any metapsionic feats\nyou know to this power, but you must still expend psionic focus as normal to power the metapsionic feats and the total effective cost of the power cannot exceed your manifester level and count against any potential augmenting." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="abAction" tag="Standard"/>
+    </thing>
+  <thing id="cMTrRePatt" name="Reinforced Pattern" description="You can expend your psionic focus to add your mythic tier to your altered defense value for one round. You can expend one use of mythic power to have this bonus last for the duration of your altered defense. You must have the altered defense class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="SpecSource" tag="mypTrickst" name="Trickster" abbrev="Trickster"/>
+    <eval phase="PostLevel" priority="10000">~ add competence bonus to Altered Defense ability equaul to tier
+
+      field[abValue].value += #tiereffect[]
+      hero.child[cPUAltDef].field[abValue].value += field[abValue].value</eval>
+    <eval phase="Render" priority="10000" index="2"><![CDATA[
+      field[livename].text = field[name].text & " (" & signed(field[abValue].value) & ")"]]></eval>
+    </thing>
+  <thing id="cMTrMiFog" name="Mind Fog" description="You create a mental fog that makes other creatures more susceptible to your lies. You gain a bonus equal to your tier to all Bluff checks to lie. In addition, you can expend one use of mythic power to gain a bonus equal to your tier on the save DC  of a single mind-effecting power or spell you manifest or cast. You must have a power point pool to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="SpecSource" tag="mypTrickst" name="Trickster" abbrev="Trickster"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[~ add competence bonus to Altered Defense ability equaul to tier
+
+field[abValue].value += #tiereffect[]
+
+        #situational[hero.childfound[skBluff],signed(field[abValue].value) & " to all Bluff checks to lie.",field[name].text]]]></eval>
+    <exprreq message="Power Point Pool Required."><![CDATA[#resmax[resPowerPt] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMImpDis" name="Improved Disruption" description="Your disrupt pattern attacks are more destructive.\n\n{b}Prerequisites:{/b} Disrupt pattern ability.\n\n{b}Benefit:{/b} Your disrupt pattern ability deals an additional point of damage per die equal to half your mythic tier (minimum 1.) You can expend one use of mythic power when using disrupt pattern to maximize the damage of the ability, treating all dice rolled as the maximum value possible." compset="Feat" summary="Your disrupt pattern ability deals one additional point of damage per die of damage." uniqueness="useronce">
+    <usesource source="DSPMyPsi" parent="pPsionics" name="DSP - Mythic Psionics"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <eval phase="Final" priority="8000"><![CDATA[
+  ~ If we're disabled, do nothing
+  doneif (tagis[Helper.FtDisable] <> 0)
+
+  ~ Give bonus damage based on the number of dice
+  ~ from Ehanced Disruption and Disrupt Pattern
+  ~ Class Abilities times one half mythic tier
+
+  ~ abValue is number of dice from Disrupt Pattern and Enhanced     ~   ~ Disruption
+    field[abValue].value += #value[cPUEnhDisr] + #value[cPUDisPatt]
+
+  ~ abValue2 is product of half tier and number of dice.
+    field[abValue2].value += #tiereffecthalf[] * field[abValue].value
+
+  ~ Assign bonus to Disrupt Pattern
+    #value3[cPUDisPatt] += field[abValue2].value]]></eval>
+    <exprreq message="Improved Disruption Required"><![CDATA[#hasfeat[fPUImpDisr] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMAdDisc" name="Additional Discipline" description="Select one psionic discipline that is not your selected discipline. You gain discipline abilities from that discipline, treating your tier as your psion level for the purposes of these abilities. Once you have chosen the discipline, it cannot be changed. You must have the discipline class feature to select this ability. You can select this ability up to three times, each time selecting another psionic discipline other than your own." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Final" priority="10000">~ Add 1 to Secondary Ability Count
+
+    hero.childfound[cHelpPsi].field[cGiveSp2nd].value += 1</eval>
+    </thing>
+  <thing id="cMOMArFrc" name="Armor of Force" description="You surround yourself in psychokinetic energy that grants you protection like armor, but made of force. This grants you an armor bonus to AC equal to 3 + your tier. This ability is a psychokinetic effect with a power level equal to your tier. If this armor is dispelled or otherwise ended, you can reactivate it as a swift action." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <eval phase="Render" priority="10000" index="2"><![CDATA[
+field[livename].text = field[name].text & " (" & signed(field[abValue].value) & ")"]]></eval>
+    <eval phase="PostLevel" priority="10000">~ assign tier level +3 to abvalue
+~ Force effect applies to touch AC
+
+    field[abValue].value = (3 + #tiereffect[])
+    hero.child[ArmorClass].field[tACArmor].value = field[abValue].value
+    hero.child[ArmorClass].field[tACTouch].value = field[abValue].value</eval>
+    </thing>
+  <thing id="cMOMBstSrg" name="Boosted Surge" description="When determining the effects of your surge blast, treat your surge as 1 higher. In addition, when using wild surge, you can expend one use of mythic power to add half your tier (minimum 1) to the bonus to your manifester level. You must have the wild surge class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <eval phase="PostLevel" priority="9000">~ add 1 to surge blast
+
+#value[cWldSurBla] += 1</eval>
+    <exprreq message="Wild Surge Class Ability Required"><![CDATA[#hasability[cWldWildSu] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMBColl" name="Boundless Collective" description="You are able to tap into the psionic knowledge and power of your collective with ease. As a swift action, you can request psionic power from your collective. Members of your collective can choose to spend power points, granting you the same number of power points, up to a total number of power points gained per use of this ability equal to your tier. In addition, by expending one use of mythic power, you can manifest one power known by any member of your collective as if it was\non your list of powers known and on your class list. The power known can be up to a power level equal to your tier. You must have the collective class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <exprreq message="Collective Class Ability Required"><![CDATA[#hasability[cPUCollect] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMBMDef" name="Bypass Mental Defenses" description="When manifesting a power or using a class feature with the mind-affecting descriptor, you can expend one use of mythic power to affect creatures immune to mind-affecting effects and ignore abilities that apply their benefit only against mind-affecting effects, such as barred mind, as long as the creature being targeted is not mindless." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    </thing>
+  <thing id="cMOMClmP" name="Calming Presence" description="You give off a telepathic soothing effect to all creatures within 30 feet, improving the starting attitude of any non-mythic creature by one step. This is a mind-affecting effect." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    </thing>
+  <thing id="cMOMCrMast" name="Crafting Mastery" description="You can craft any psionic item as if you had the necessary item creation feats. If you actually have the item creation feat needed for a psionic item you’re crafting, whenever you attempt a skill check to create that item, roll twice and use the\nhigher result, and you make twice as much progress on the item for any time spent. This ability does not reduce the item’s cost or any other requirements." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    </thing>
+  <thing id="cMOMDiscBs" name="Discipline Boost" description="When determining the effects of your psionic discipline abilities, you’re considered 4 levels higher. This increases the effects of abilities you have access to, but doesn’t grant you abilities at a lower level than normal. If you have a discipline ability that can be used multiple times per day, such as ectoplasmic protection, you gain a number of extra uses of that power equal to half your tier (minimum 1). You must have the discipline class feature to select this ability. If you have more than one discipline, you must choose which discipline this ability uses when you select this ability. This ability can be selected once for every discipline you have." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[~ increase the custom ability count which makes an additional psion discipline available to be chosen.
+
+  foreach pick in hero from BaseCustSp where "abCategory.PUPsiDisc"
+    eachpick.field[xExtraLev].value += 4
+  nexteach]]></eval>
+    <exprreq message="Psion Discipline Class feature required"><![CDATA[tagis[abCategory.PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOM2Enrgy" name="Dual Energy" description="When you gain psionic focus, you choose two energy types as your active types. All effects that use your active energy type count both energies as active. When manifesting a power that deals fire, cold, sonic, or electricity damage, you can\ndivide the dice of damage between the two energy types, but you gain the bonus for both energy types on all dice and attack rolls.\\n\nNote: Not Implemented." compset="CustomSpec" uniqueness="useronce">
+    <comment>Note: There is currently no active energy type available with Ultimate Psioncs.  With active energy type being tied to psionic focus, a bug report for psionic focus/active energy type capability has been submitted.</comment>
+    <usesource source="DSPMyPsi"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    </thing>
+  <thing id="cMOMDurPwr" name="Durable Powers" description="When determining the duration of psionic powers you manifest, treat your manifester level as 4 higher. This does not affect any other variables of the power, such as range or the amount of power points you can spend augmenting the effect.  \n{b}Note{/b}: Hero Lab does not calculate ranges for spells/powers.  This calculation will need to be performed manually." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    </thing>
+  <thing id="cMOMEngBnd" name="Energy Bond" description="You are connected to one of the four psionic energies. Select one energy type: cold, electricity, fire, or sonic. Whenever you manifest a power with a descriptor matching that energy type, add your tier to your manifester level for that power. You gain resistance 10 against that energy type. At 6th tier, this resistance increases to 20. At 9th tier, this resistance increases by 30.\n\nNote: Due to the lack of an active energy type in HL, this has not been implemented." compset="CustomSpec" uniqueness="useronce">
+    <comment>Note: There is currently no active energy type available with Ultimate Psioncs.  With active energy type being tied to psionic focus, a bug report for psionic focus/active energy type capability has been submitted.</comment>
+    <usesource source="DSPMyPsi"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="fShowWhat" tag="Energy"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <eval phase="First">~set our focus to the chosen attribute. This saves typing later
+    perform field[usrChosen1].chosen.setfocus</eval>
+    </thing>
+  <thing id="cMOMEnhItm" name="Enhance Psionic Items" description="Your mythic presence enhances the power of certain psionic items. Add half your tier to the manifester level of psionic tattoos, power stones, psicrowns, and dorjes you use. When using a psicrown or dorje, you may activate the item by expending one use of mythic power instead of one of the dorje’s charges or psicrown’s power points." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMOMExUnd" name="Expansive Understanding" description="Add one new power known from any power list per mythic tier. If your tier goes up, add a new power. Expend one use of mythic power to change one of these powers.\n\nNote: Implementation of this Mythic Ability will need to be simulated via Adjustments: Powers Known Adjustment is equal to Mythic Tier, and Add Power to Class Power List adjustment can be used to add specific powers to the class list which makes them available to be chosen under the psionic class tab." compset="CustomSpec" uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.Class &amp; Psionics.Class"/>
+    <usesource source="DSPMyPsi"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    </thing>
+  <thing id="cMOMExDisc" name="Extra Discipline" description="Select one discipline other than your own. You can select powers from that discipline’s power list when selecting your powers known. You must have the discipline class feature to select this ability. You can choose this ability up to three times, each time selecting another discipline other than your own." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <eval phase="First">~ Add 1 to Tertiary Ability Count
+
+    hero.childfound[cHelpPsi].field[cGiveSp3rd].value += 1</eval>
+    </thing>
+  <thing id="cMOMSeer2" name="Clairsentience (Seer)" description="Select one psionic discipline that is not your selected discipline. You gain discipline abilities from that discipline, treating your tier as your psion level for the purposes of these abilities. Once you have chosen the discipline, it cannot be changed. You must have the discipline class feature to select this ability. You can select this ability up to three times, each time selecting another psionic discipline other than your own." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPsiSeer"/>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiPerFSi">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiRecInf">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPsiSeeCon">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMCnstr2" name="Constructor (Shaper)" description="{b}Associated Discipline:{/b} Metacreativity{br}A psion specializing in metacreativity is known as a shaper. This discipline includes powers that draw ectoplasm from the Astral Plane, creating semisolid and solid items such as armor, weapons, or animated constructs to do battle at the shaper&apos;s command.\n\n{i}Class Skills:{/i} Bluff (Cha), Disguise (Cha), and Use Magic Device (Cha)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPUConSha"/>
+    <bootstrap thing="cPUIConstr">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiSumCal">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPUIConstr">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPUIConstr">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cPUMsConst">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPUIConstr">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAstAll">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMInSt2" name="Insight (Seer)" description="{b}Associated Discipline:{/b} Clairsentience\nA psion who chooses clairsentience is known as a seer. Seers can learn precognitive powers to aid their comrades in combat, as well as powers that permit them to gather information in many different ways.\n\n{i}Class Skills:{/i} Diplomacy (Cha) and Perception (Wis)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPUInsSeer"/>
+    <bootstrap thing="cPsiSeeCon">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiPerFSi">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPUInsStep">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPUAltProb">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAltWav">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMJaun2" name="Jaunting (Nomad)" description="{b}Associated Discipline:{/b} Psychoportation\nA psion who relies on psychoportation powers is known as a nomad. Nomads can wield powers that propel or displace objects in space or time.\n\n{i}Class Skills:{/i} Climb (Str), Fly (Dex), Survival (Wis), and Swim (Str)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPUJaunNom"/>
+    <bootstrap thing="cPsiNomSte">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPUEvac">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPUFarStri">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiIncPos">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMShpr2" name="Metacreativity (Shaper)" description="A psion specializing in metacreativity is known as a shaper. This discipline includes powers that draw ectoplasm from the Astral Plane, creating semisolid and solid items such as armor, weapons, or animated constructs to do battle at the shaper&apos;s command.\n\n{i}Class Skills:{/i} Bluff (Cha), Disguise (Cha), and Use Magic Device (Cha)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPsiShaper"/>
+    <bootstrap thing="cPsiEctPro">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiEctPro">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPsiSumCal">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPsiMaeEct">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAstAll">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiEctPro">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cPsiEctPro">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMTelep2" name="Telepathy (Telepath)" description="A psion who chooses the discipline of telepathy is known as a telepath. He is the master of powers that allow mental contact and control of other sentient creatures. A telepath can deceive or destroy the minds of his enemies with ease.\n\n{i}Class Skills:{/i} Bluff (Cha), Diplomacy (Cha), and Sense Motive (Wis)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPsiTelepa"/>
+    <bootstrap thing="cPsiLastRe">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiGrdTho">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelpth">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPsiMenInt">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMNomad2" name="Psychoportation (Nomad)" description="A psion who relies on psychoportation powers is known as a nomad. Nomads can wield powers that propel or displace objects in space or time.\n\n{i}Class Skills:{/i} Climb (Str), Fly (Dex), Survival (Wis), and Swim (Str)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPsiNomad"/>
+    <bootstrap thing="cPsiIncPos">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPsiNomSte">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPsiAccAct">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiRapMov">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMKinet2" name="Psychokinesis (Kineticist)" description="Psions who specialize in psychokinesis are known as kineticists. They are the masters of powers that manipulate and transform matter and energy. Kineticists can attack with devastating blasts of energy.   Unlike other psions, when a kineticist selects any power that specifies the character must select from cold, electricity, fire, or sonic damage, he gains the option to choose the type of damage at the time the power is manifested.\n\n{i}Class Skills:{/i} Disable Device (Dex) and Intimidate (Cha)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPsiKineti"/>
+    <bootstrap thing="cPsiKinAur">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiKinAur">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cPsiKinAur">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiKinAur">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelHur">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPsiEngRec">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiEngImm">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelHur">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelHur">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelHur">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelHur">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cPsiKinAur">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMEgost2" name="Psychometabolism (Egoist)" description="A psion who specializes in psychometabolism is known as an egoist. This discipline consists of powers that alter the psion&apos;s psychobiology, or that of creatures near him. An egoist can both heal and transform himself into a fearsome fighter.\n\n{i}Class Skills:{/i} Acrobatics (Dex) and Heal (Wis)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPsiEgoist"/>
+    <bootstrap thing="cPsiInfFor">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiShaEff">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPsiMetHea">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPsiResBod">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMMind2" name="Mindbender (Telepath)" description="{b}Associated Discipline:{/b} Telepathy{br}A psion who chooses the discipline of telepathy is known as a telepath. He is the master of powers that allow mental contact and control of other sentient creatures. A telepath can deceive or destroy the minds of his enemies with ease.\n\n{i}Class Skills:{/i} Bluff (Cha), Diplomacy (Cha), and Sense Motive (Wis)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPUMindTel"/>
+    <bootstrap thing="cPUImpWill">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnthral">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiGrdTho">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelpth">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMTrnEg2" name="Transmogrifist (Egoist)" description="{b}Associated Discipline:{/b} Psychometabolism{br}A psion who specializes in psychometabolism is known as an egoist. This discipline consists of powers that alter the psion&apos;s psychobiology, or that of creatures near him. An egoist can both heal and transform himself into a fearsome fighter.\n\n{i}Class Skills:{/i} Acrobatics (Dex) and Heal (Wis)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPUTranEgo"/>
+    <bootstrap thing="cPUInfBody">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPUEmpAlt">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPsiMetHea">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPsiResBod">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMUnSHd2" name="Unseen Hand (Kineticist)" description="{b}Associated Discipline:{/b} Psychokinesis{br}Psions who specialize in psychokinesis are known as kineticists. They are the masters of powers that manipulate and transform matter and energy. Kineticists can attack with devastating blasts of energy. Unlike other psions, when a kineticist selects any power that specifies the character must select from cold, electricity, fire, or sonic damage, he gains the option to choose the type of damage at the time the power is manifested.\n\n{i}Class Skills:{/i} Disable Device (Dex) and Intimidate (Cha)." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="HasAbility" tag="cPUUnseHan"/>
+    <tag group="Helper" tag="Secondary"/>
+    <bootstrap thing="cPsiKinAur">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <bootstrap thing="cPUTelBurs">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiKinAur">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
+    <bootstrap thing="cPUPermTel">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPsiKinAur">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelHur">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelHur">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelHur">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelHur">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPsiTelHur">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMSeer3" name="Clairsentience (Seer)" compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="psiClass" tag="cPsiSeer"/>
+    <tag group="ClsAllowPs" tag="puClrvSen2"/>
+    <tag group="ClsAllowPs" tag="puMetafac9"/>
+    <tag group="ClsAllowPs" tag="puDestDis1"/>
+    <tag group="ClsAllowPs" tag="puFalFu2"/>
+    <tag group="ClsAllowPs" tag="puPrecogn1"/>
+    <tag group="ClsAllowPs" tag="puPsyTr1"/>
+    <tag group="ClsAllowPs" tag="puAncNavi4"/>
+    <tag group="ClsAllowPs" tag="puClrtanH5"/>
+    <tag group="ClsAllowPs" tag="puEscDete3"/>
+    <tag group="ClsAllowPs" tag="puFatLink3"/>
+    <tag group="ClsAllowPs" tag="puFateOne7"/>
+    <tag group="ClsAllowPs" tag="puHypercg8"/>
+    <tag group="ClsAllowPs" tag="puObjRead2"/>
+    <tag group="ClsAllowPs" tag="puPrecogG6"/>
+    <tag group="ClsAllowPs" tag="puRemView4"/>
+    <tag group="ClsAllowPs" tag="puSecChan5"/>
+    <tag group="ClsAllowPs" tag="puSnPsyIm2"/>
+    <tag group="ClsAllowPs" tag="puTruTe2"/>
+    <eval phase="Final" priority="1000"><![CDATA[~ Give access to Seer Powers
+   If (tagis[psiClass.?] = 1) then
+        ~ Give the linked class access to Discipline Class Powers
+        ~ This is for where the Power is marked with the psiClass tag.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
+    Endif
+
+~ Make sure we have tags to add so that we don't mess up the expression
+   If (tagis[ClsAllowPs.?] = 1) then
+    ~ Give the linked class access to Discipline Specific Powers. This
+    ~ is for for where the Discipline is tagged with specific power.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+   Endif]]></eval>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMShpr3" name="Metacreativity (Shaper)" compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="psiClass" tag="cPsiShaper"/>
+    <tag group="ClsAllowPs" tag="puAstCons1"/>
+    <tag group="ClsAllowPs" tag="puEctoCre1"/>
+    <tag group="ClsAllowPs" tag="puAstSeed8"/>
+    <tag group="ClsAllowPs" tag="puCryBo4"/>
+    <tag group="ClsAllowPs" tag="puCrystal6"/>
+    <tag group="ClsAllowPs" tag="puEctoCoc3"/>
+    <tag group="ClsAllowPs" tag="puEctoCoM7"/>
+    <tag group="ClsAllowPs" tag="puGenesis9"/>
+    <tag group="ClsAllowPs" tag="puHailCry5"/>
+    <tag group="ClsAllowPs" tag="puModMatt4"/>
+    <tag group="ClsAllowPs" tag="puModMatG6"/>
+    <tag group="ClsAllowPs" tag="puQuintes4"/>
+    <tag group="ClsAllowPs" tag="puReconst2"/>
+    <tag group="ClsAllowPs" tag="puTrCreat9"/>
+    <tag group="ClsAllowPs" tag="puConAmoG3"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+~ Give access to Shaper Powers
+   If (tagis[psiClass.?] = 1) then
+        ~ Give the linked class access to Discipline Class Powers
+        ~ This is for where the Power is marked with the psiClass tag.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
+    Endif
+
+~ Make sure we have tags to add so that we don't mess up the expression
+   If (tagis[ClsAllowPs.?] = 1) then
+    ~ Give the linked class access to Discipline Specific Powers. This
+    ~ is for for where the Discipline is tagged with specific power.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+   Endif]]></eval>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMKinet3" name="Psychokinesis (Kineticist)" compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="psiClass" tag="cPsiKineti"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="HasAbility" tag="cPsiKineti"/>
+    <tag group="ClsAllowPs" tag="puContAir2"/>
+    <tag group="ClsAllowPs" tag="puContBod4"/>
+    <tag group="ClsAllowPs" tag="puContObj1"/>
+    <tag group="ClsAllowPs" tag="puDispeBu6"/>
+    <tag group="ClsAllowPs" tag="puEneBall4"/>
+    <tag group="ClsAllowPs" tag="puEneCone3"/>
+    <tag group="ClsAllowPs" tag="puEnCurre5"/>
+    <tag group="ClsAllowPs" tag="puEnMissi2"/>
+    <tag group="ClsAllowPs" tag="puFirDisc5"/>
+    <tag group="ClsAllowPs" tag="puInerBar4"/>
+    <tag group="ClsAllowPs" tag="puLocWi3"/>
+    <tag group="ClsAllowPs" tag="puNullPsi6"/>
+    <tag group="ClsAllowPs" tag="puPsyknSp8"/>
+    <tag group="ClsAllowPs" tag="puReddops7"/>
+    <tag group="ClsAllowPs" tag="puTornBlt9"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+~ Give access to Kineticist Powers
+   If (tagis[psiClass.?] = 1) then
+        ~ Give the linked class access to Discipline Class Powers
+        ~ This is for where the Power is marked with the psiClass tag.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
+    Endif
+
+~ Make sure we have tags to add so that we don't mess up the expression
+   If (tagis[ClsAllowPs.?] = 1) then
+    ~ Give the linked class access to Discipline Specific Powers. This
+    ~ is for for where the Discipline is tagged with specific power.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+   Endif]]></eval>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMEgost3" name="Psychometabolism (Egoist)" compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="HasAbility" tag="cPsiEgoist"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="psiClass" tag="cPsiEgoist"/>
+    <tag group="ClsAllowPs" tag="puAniAff2"/>
+    <tag group="ClsAllowPs" tag="puChamele2"/>
+    <tag group="ClsAllowPs" tag="puClnsSpr6"/>
+    <tag group="ClsAllowPs" tag="puCorAu1"/>
+    <tag group="ClsAllowPs" tag="puEctoFrm3"/>
+    <tag group="ClsAllowPs" tag="puEmpTran2"/>
+    <tag group="ClsAllowPs" tag="puExpWe3"/>
+    <tag group="ClsAllowPs" tag="puFission7"/>
+    <tag group="ClsAllowPs" tag="puFusion8"/>
+    <tag group="ClsAllowPs" tag="puHidBo4"/>
+    <tag group="ClsAllowPs" tag="puHustle3"/>
+    <tag group="ClsAllowPs" tag="puMetamor3"/>
+    <tag group="ClsAllowPs" tag="puMetamor6"/>
+    <tag group="ClsAllowPs" tag="puMetamor1"/>
+    <tag group="ClsAllowPs" tag="puMetamor9"/>
+    <tag group="ClsAllowPs" tag="puNatHeal1"/>
+    <tag group="ClsAllowPs" tag="puPhyAc3"/>
+    <tag group="ClsAllowPs" tag="puPsiRviv5"/>
+    <tag group="ClsAllowPs" tag="puPsyDran4"/>
+    <tag group="ClsAllowPs" tag="puPsyfdbk5"/>
+    <tag group="ClsAllowPs" tag="puRegAu9"/>
+    <tag group="ClsAllowPs" tag="puResDe4"/>
+    <tag group="ClsAllowPs" tag="puResTo2"/>
+    <tag group="ClsAllowPs" tag="puRestExt5"/>
+    <tag group="ClsAllowPs" tag="puThickSk1"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+~ Give access to Egoist Powers
+   If (tagis[psiClass.?] = 1) then
+        ~ Give the linked class access to Discipline Class Powers
+        ~ This is for where the Power is marked with the psiClass tag.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
+    Endif
+
+~ Make sure we have tags to add so that we don't mess up the expression
+   If (tagis[ClsAllowPs.?] = 1) then
+    ~ Give the linked class access to Discipline Specific Powers. This
+    ~ is for for where the Discipline is tagged with specific power.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+   Endif]]></eval>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMNomad3" name="Psychoportation (Nomad)" compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="HasAbility" tag="cPsiNomad"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="psiClass" tag="cPsiNomad"/>
+    <tag group="ClsAllowPs" tag="puAstCara3"/>
+    <tag group="ClsAllowPs" tag="puBaleTel5"/>
+    <tag group="ClsAllowPs" tag="puBanish6"/>
+    <tag group="ClsAllowPs" tag="puBurst1"/>
+    <tag group="ClsAllowPs" tag="puDelRe2"/>
+    <tag group="ClsAllowPs" tag="puDetTprt1"/>
+    <tag group="ClsAllowPs" tag="puDimSwap2"/>
+    <tag group="ClsAllowPs" tag="puDreaTra7"/>
+    <tag group="ClsAllowPs" tag="puEtherFo7"/>
+    <tag group="ClsAllowPs" tag="puExpulsi4"/>
+    <tag group="ClsAllowPs" tag="puFlight4"/>
+    <tag group="ClsAllowPs" tag="puGraAn3"/>
+    <tag group="ClsAllowPs" tag="puGraWe2"/>
+    <tag group="ClsAllowPs" tag="puPsyport5"/>
+    <tag group="ClsAllowPs" tag="puPsyPorT5"/>
+    <tag group="ClsAllowPs" tag="puPsyprtC9"/>
+    <tag group="ClsAllowPs" tag="puRepos6"/>
+    <tag group="ClsAllowPs" tag="puTmeHopM8"/>
+    <tag group="ClsAllowPs" tag="puTimRegr9"/>
+    <tag group="ClsAllowPs" tag="puWrench4"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+~ Give access to Nomad Powers
+   If (tagis[psiClass.?] = 1) then
+        ~ Give the linked class access to Discipline Class Powers
+        ~ This is for where the Power is marked with the psiClass tag.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
+    Endif
+
+~ Make sure we have tags to add so that we don't mess up the expression
+   If (tagis[ClsAllowPs.?] = 1) then
+    ~ Give the linked class access to Discipline Specific Powers. This
+    ~ is for for where the Discipline is tagged with specific power.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+   Endif]]></eval>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMTelep3" name="Telepathy (Telepath)" compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="Tertiary"/>
+    <tag group="ClsAllowPs" tag="puEmpConn1"/>
+    <tag group="ClsAllowPs" tag="puMindlnk1"/>
+    <tag group="ClsAllowPs" tag="puSupCo1"/>
+    <tag group="ClsAllowPs" tag="puAlien4"/>
+    <tag group="ClsAllowPs" tag="puAvers2"/>
+    <tag group="ClsAllowPs" tag="puBattl3"/>
+    <tag group="ClsAllowPs" tag="puBraiLck2"/>
+    <tag group="ClsAllowPs" tag="puCompVoi2"/>
+    <tag group="ClsAllowPs" tag="puCrisBre3"/>
+    <tag group="ClsAllowPs" tag="puCrisLif7"/>
+    <tag group="ClsAllowPs" tag="puEmpTraH3"/>
+    <tag group="ClsAllowPs" tag="puFalSeIn3"/>
+    <tag group="ClsAllowPs" tag="puFeaCa4"/>
+    <tag group="ClsAllowPs" tag="puMemMod4"/>
+    <tag group="ClsAllowPs" tag="puMetacon5"/>
+    <tag group="ClsAllowPs" tag="puMindCon4"/>
+    <tag group="ClsAllowPs" tag="puMindPro5"/>
+    <tag group="ClsAllowPs" tag="puMindSed8"/>
+    <tag group="ClsAllowPs" tag="puMindSwt6"/>
+    <tag group="SpecSource" tag="cHelpPsi"/>
+    <tag group="ClsAllowPs" tag="puMindSwt9"/>
+    <tag group="ClsAllowPs" tag="puMndLnkT4"/>
+    <tag group="ClsAllowPs" tag="puPsyChir9"/>
+    <tag group="ClsAllowPs" tag="puReadTho2"/>
+    <tag group="ClsAllowPs" tag="puSchism4"/>
+    <tag group="ClsAllowPs" tag="puSenMi2"/>
+    <tag group="ClsAllowPs" tag="puSenCa4"/>
+    <tag group="HasAbility" tag="cPsiTelepa"/>
+    <tag group="psiClass" tag="cPsiTelepa"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+~ Give access to Telepath Powers
+   If (tagis[psiClass.?] = 1) then
+        ~ Give the linked class access to Discipline Class Powers
+        ~ This is for where the Power is marked with the psiClass tag.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
+    Endif
+
+~ Make sure we have tags to add so that we don't mess up the expression
+   If (tagis[ClsAllowPs.?] = 1) then
+    ~ Give the linked class access to Discipline Specific Powers. This
+    ~ is for for where the Discipline is tagged with specific power.
+        linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+   Endif]]></eval>
+    <exprreq message="Psion Discipline Class Ability Required"><![CDATA[#hasability[PUPsiDisc] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMMetSrg" name="Metabolic Surge" description="When you heal yourself, your mythic power and psionic energy grant you a brief boost of energy. Any time you manifest a personal range power on yourself that heals hit point damage, you gain a metabolic surge. This surge can only be used once and must be used before the end of your next turn. This surge can either be used to increase your speed by 10 ft., to gain a +1 circumstance bonus on your attack rolls, or to augment a power manifested by half your tier (minimum 1) in power points without having to spend those power points.  The total number of power points spent on the power is still limited by your manifester level." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMMConst" name="Mighty Construct" description="Your astral constructs gain DR 5/epic for the duration of the power. In addition, you can expend one use of mythic power when manifesting astral construct to grant your astral construct a number of aegis customization points equal to half your tier (rounded down, minimum 1).  Treat the construct as an aegis equal to your tier when determining which customizations you can choose. If you summon more than one astral construct while using this ability, the customization points are split among the astral constructs." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMMyIn" name="Mythic Insight" description="Any time you manifest a power or activate a class feature that grants an insight bonus, you can expend one use of mythic power to double the insight bonus gained." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMMyMeth" name="Mythic Method" description="When determining the effects of your vitalist method abilities, you’re considered 4 levels higher. This increases the effects of abilities you have access to, but doesn’t grant you abilities at a lower level than normal. You must have the vitalist\nmethod class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not Implemented.</comment>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMMyWPth" name="Mythic Warrior Path" description="When determining the effects of your warrior’s path trance and maneuver, you are considered 4 levels higher. This increases the effects of abilities you have access to, but doesn’t grant you abilities at a lower level than normal. You must have the warrior’s path class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not Implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMNatFoc" name="Naturally Focused" description="You do not lose your psionic focus when you sleep, lose consciousness, or enter a meditative trance, and you are always treated as having your focus for effects that require maintaining psionic focus. In addition, you can expend one use of mythic power as a free action when you expend your psionic focus to automatically regain psionic focus. This does not allow you to use two effects that require expending psionic focus on a single action." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMPenEnr" name="Penetrating Energy" description="When you manifest a power that allows you to choose the energy type, such as energy ray, you can expend one use of mythic power as a swift action to have that power ignore any resistance or immunity that would be applied to it." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMPsiBrc" name="Psionic Breach" description="You are adept at breaching psionic defenses and overcoming resistance to your power. When attempting a manifester level check to dispel an effect, overcome power resistance, or otherwise determine whether your power affects a target (such as with breach), roll twice and take the higher result." compset="CustomSpec" uniqueness="useronce">
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMPsyBL" name="Psychic Backlash" description="Your mind lashes out when you suffer critical hits. When an enemy confirms a  critical hit against you, you can target that enemy with an empathic blast that deals 1d6 points of damage per power point spent. You can spend up to your tier in power points each time you use this effect.  This is a mind-affecting effect with a maximum range of 100 feet and you do not need line of sight to the target enemy." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMRpdCn" name="Rapid Construct" description="You can manifest astral construct as a standard action instead of as a fullround action. In addition, if you expend one use of mythic power while manifesting astral construct, the manifesting time becomes one swift action." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMRedEnv" name="Reduced Enervation" description="Your chance to suffer psychic enervation is reduced by 10% (to a minimum of 0%).  When you would suffer from psychic enervation, you can expend one use of mythic power to negate theeffects of enervation and instead gain your surging\neuphoria. If you do not have the surging euphoria class feature, you do not gain the benefits of it. You must have the psychic enervation class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <exprreq message="Psychic Enervation class feature required."><![CDATA[#hasability[cWldPsyEne] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMOMSuffPs" name="Suffused With Psionics" description="You require no food, water, or sleep. If you have abilities or class features that require rest before they can be regained, you can choose to regain them once per day by spending 1 hour in uninterrupted meditation. If you are 3rd tier or higher, you can expend one use of mythic power in order to also not need to breathe for 24 hours." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="cMOMSwPKn" name="Swap Power Known" description="As a full round action, you can spend one use of mythic power to replace one of your powers known with another power known. The new power must be on your class list and must be of a power level equal to or lower than the power being replaced. After you’ve rested and regained your power points, you can choose to swap the power known back to the original power." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMOMTrPsiC" name="Transformative Psicrystal" description="Your psicrystal is able to assume the shape of a single masterwork amulet, ring, staff, wand, or weapon. While it’s in this form, treat the psicrystal as an intelligent magic item with the psicrystal’s mental ability scores but no magical abilities. You can add magical enhancements, intelligent item powers, and intelligent item senses as if you possessed the appropriate crafting feat. (For example, if your psicrystal transforms into a staff, you could craft it into an intelligent staff of fire as if you possessed the Craft Staff feat.) You must still pay for enhancements as normal.   \n  As a standard action, the psicrystal can transform into and out of its item form and does so in such a way that you can have it immediately equipped when the transformation is complete. While in item form, your psicrystal retains its original hit points, but gains the hardness of the item it transforms into. If your psicrystal takes enough points of damage in item form to become broken, it automatically reverts to its psicrystal form and cannot change to item form again until it is healed to its maximum hit point total.  You must have a psicrystal to select this path ability." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cMOMFlxFrm" name="Flexible Form" description="You can alter your appearance at will as if using minor metamorphosis, but you do not gain any menu options. You can expend one use of mythic power to change shape as if using major metamorphosis, with a duration of 1 minute per tier.\nYour manifester level for this ability is a number equal to 10 + your tier. At 6th tier, the duration of the major metamorphosis ability increases to 10 minutes per tier." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    </thing>
+  <thing id="cMOMMyPsPw" name="Mythic Psionic Power" description="You have a pool of psionic power you can draw upon for manifesting mythic powers. Up to twice per day, you can use this power to manifest a mythic power without expending any uses of mythic power. You can select this ability up to three times; each time you do, you gain two additional uses of this ability per day." compset="CustomSpec" uniqueness="useronce">
+    <fieldval field="trkMax" value="2"/>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="AbilType" tag="PsiLike"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    </thing>
+  <thing id="cMOMPoPool" name="Potent Pool" description="Choose one of your manifesting classes. You gain four bonus power points. These power points stack with bonus power points from all other sources. You can take this ability once for each level of powers you can manifest of the chosen class.\nFor example, if you are a 9th level psion, you can choose this ability five times. Each time beyond the first, you gain a number of power points equal to the previous time plus 8. These additional power points are cumulative. For example, the second time you take this ability, you gain 12 additional power points, for a total of 20; the third time an additional 20 power points, for a total of 40, and so on.\n\nNote: Progression is: 4, 12, 20, 28, 36, 44, 52, 60, 68, 76\nTotals: 4, 16, 36, 64, 100, 144, 196, 256, 316" compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    </thing>
+  <thing id="cMOMPsiMta" name="Psionic Metamastery" description="As a swift action, you can expend one use of mythic power and pick any one metapsionic feat you know that does not increase the power point cost of a power. For the next 10 rounds, you can apply this metapsionic feat  to any psionic power you manifest without needing to expend psionic focus, or if you have taken this ability multiple times, without increasing the power point cost. You can also use this ability on a psionic power you manifest from a power stone, psicrown, or dorje. You can’t have more than one use of this ability active at a time. If you use this ability again, any previous use immediately ends (though this doesn’t affect powers already manifested). You can select this ability more than once. Each time you select this ability, the metapsionic feat chosen can increase the power point cost by 2 additional power points, to a maximum of 6." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="AbilType" tag="Super"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    </thing>
+  <thing id="cMOMPsyTsu" name="Psychic Tsunami" description="You generate crashing waves of psychic force that shatter objects around you.  By expending one use of mythic power, you generate a 30-ft. aura that assaults non-magical objects within range (except for those upon your person). This aura lasts a number of rounds equal to your tier and causes 5 points of force damage per tier to each object affected for each round they are exposed to the effect, and ignores any hardness objects may possess. This aura damages all objects and structures indiscriminately, though if you maintain your psionic focus while this effect is ongoing, you can exempt structures or specific creatures and any objects they possess from the power of your aura.\nAdditionally, creatures moving toward you while your aura is in effect find it more difficult to approach you and move as though moving through difficult terrain." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="AbilType" tag="Super"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    </thing>
+  <thing id="cMOMPyMael" name="Pyrokinetic Maelstrom" description="You summon a swirling mass of psionic fire. You can expend one use of mythic power to attack each creature within 30 ft. with a wreath of green fire. Creatures suffer 2d6 fire damage per mythic tier you possess. A successful Reflex save (DC 10 + your mythic tier + your Charisma modifier) halves the damage. If so desired, unattended flammable objects are also set alight." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="AbilType" tag="PsiLike"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    </thing>
+  <thing id="cMOMRavTim" name="Ravaging Time" description="When you are affected by time stop or similar effects that alter your time relative to the manifester’s, you can expend one use of mythic power to take a standard action during the effect." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="AbilType" tag="Super"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    </thing>
+  <thing id="cMOMRinfCo" name="Reinforced Collective" description="Your collective is reinforced by your mythic power. Any powers you manifest over the collective through the use of spirit of the many add your tier rank when subjected to dispel checks. You must have the spirit of the many class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="AbilType" tag="Super"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    </thing>
+  <thing id="cMOMBTele" name="Block Telepathy" description="As an immediate action, you can spend one use of mythic power to gain immunity to mind-affecting effects for one round." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="AbilType" tag="Super"/>
+    <exprreq message="Mythic Tier 6 or greater required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
+    </thing>
+  <thing id="cMOMEnMon" name="Enthrall Monster" description="You can exert your will over the minds of lesser beings. You can expend one use of mythic power to manifest mind control on any type of creature for a number of days equal to your mythic tier." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="AbilType" tag="PsiLike"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
+    </thing>
+  <thing id="cMOMTelekM" name="Telekinetic Mastery" description="You can use your telekinetic powers to catch and hurl massive objects. You expend one use of mythic power to exert telekinetic influence over all nearby objects. You gain rock throwing, rock catching and a deflection bonus to your AC equal to your mythic tier. You do not need free hands to use either rock throwing or rock catching. Treat your size category as one larger than your actual size for purposes of this power. You gain these bonuses for a number of minutes equal to your mythic tier." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="AbilType" tag="Super"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
+    </thing>
+  <thing id="cMOMThrall" name="Thrall" description="Your influence is so great that no creature can resist your will. When a creature makes an additional saving throw (not an initial saving throw) against one of your mind-affecting powers or abilities, you can expend one use of your mythic power to make them automatically fail that save.  Non-mythic attempts to dispel your mind-affecting powers or abilities automatically fail." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="AbilType" tag="Extra"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
+    </thing>
+  <thing id="cMOMTelekS" name="Telekinetic Surge" description="With a primal scream, you unleash a wave of telekinetic energy, shoving back your foes. You expend one use of mythic power to make a bull rush attempt against each creature you choose within a 30 ft. burst. Make a single CMB check with a bonus equal to your mythic tier and compare it to the CMD of each creature affected. You can choose to substitute your Intelligence, Wisdom or Charisma in place of your Strength for this CMB check." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypOvrMnd" name="Overmind" abbrev="Overmind"/>
+    <tag group="AbilType" tag="Super"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
+    </thing>
+  <thing id="cMChFavShB" name="Favored Shot" description="You add a competence bonus to all damage rolls with your favored weapon group equal to your mythic tier. Expend one use of mythic power to deal maximum damage on one ranged attack. You must have the favored weapon group class feature to select this ability." compset="CustomSpec" summary="Competence bonus to ranged attacks any bow." uniqueness="useronce">
+    <comment>Note that the Weapon Group tag is assigned through the Fields button</comment>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="SpecSource" tag="cHelpPU3" name="Marksman" abbrev="Marksman"/>
+    <tag group="SpecType" tag="Attack" name="Special Attacks" abbrev="Special Attacks"/>
+    <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[~ If we're not shown, just get out now
+doneif (tagis[Helper.ShowSpec] = 0)
+
+~ Adjust our total bonus
+var bonus as number
+bonus = #tiereffect[]
+
+field[livename].text = "Favored Shot +" & field[abValue].value
+
+field[abSumm].text = " +" & field[abValue].value & " competence bonus to ranged attack rolls made with any weapon in favored weapon group."]]></eval>
+    <eval phase="PostLevel" priority="10100" index="3"><![CDATA[var myWpn as string
+
+myWpn = "IsWeapon.wShortbow|IsWeapon.wLongbow|IsWeapon.wJavelin|IsWeapon.wLance|isWeapon.wLongspear|IsWeapon.wPilum|IsWeapon.wShortspr|IsWeapon.wSpear|IsWeapon.wTrident|IsWeapon.wCrsDouble|IsWeapon.wCrsLight|IsWeapon.wCrsHeavy|IsWeapon.wCrsHand|IsWeapon.wCrsRpHvy|IsWeapon.wCrsRpLgt|IsWeapon.wCrsRpHand|IsWeapon.wBlowgun|IsWeapon.wBolas|IsWeapon.wBoomerang|IsWeapon.wChakram|IsWeapon.wClub|IsWeapon.wDagger|IsWeapon.wDart|IsWeapon.wSlingSt|IsWeapon.wJavelin|IsWeapon.wHammLight|IsWeapon.wNet|IsWeapon.wShortSpr|IsWeapon.wShurikenM|IsWeapon.wSling|IsWeapon.wSpear|IsWeapon.wStarknife|IsWeapon.wAxeThrow|IsWeapon.wTrident|IsWeapon.wWoodStake"
+
+foreach pick in hero from BaseWep where myWpn
+  eachpick.field[wAttBonus].value += field[abValue].value
+~    #competencebonus[eachpick,field[abValue].value]
+nexteach]]></eval>
+    <exprreq message="Favored Weapon Group Class feature required"><![CDATA[#hasability[cPU3FavWep] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMChImpSht" name="Impossible Shot" description="You gain a bonus to all rolls to confirm a critical hit with ranged attacks equal to half your mythic tier (round down, minimum +1). In addition, you can expend one use of mythic power to ignore all range increments and cover on your next ranged attack made that round. You must have a power point pool to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypChamp"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="PostAttr"><![CDATA[~ Bonus to confirm critical hit confirmation rolls equal to Mythic Tier for Ranged attacks
+
+field[abValue].value += maximum(1,#tiereffect[])
+
+      foreach pick in hero from BaseWep where "wCategory.RangeProj|wCategory.RangeThrow|wCategory.TouchRange"
+        eachpick.field[dmrBonus].value += field[abValue].value
+        #situational[eachpick,signed(field[abValue].value) & " to confirm criticals",field[name].text]
+      nexteach]]></eval>
+    </thing>
+  <thing id="cMChMBStrm" name="Mind Blade Storm" description="You launch an impossibly dense storm of mind blades. You can expend one use of mythic power to make a single mind blade attack roll and apply the results to every creature in a 30 ft. cone. You must be able to form a mind blade to select\nthis power." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecSource" tag="mypChamp"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
+    <exprreq message="Form Mind Blade ability required"><![CDATA[#hasability[cSknMindBl] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMGuEndEnd" name="Endless Endurance" description="Add half your mythic tier (round down, minimum 1) to your damage reduction gained from your astral suit. In addition, you can expend one use of mythic power to treat all damage you take for one round as nonlethal. You must have the astral suit class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="SpecSource" tag="mypGuard"/>
+    <eval phase="PostLevel" priority="10000">~ Add Half of mythic tier round down, minimum 1 to DR from Astral Suit
+
+    field[abValue].value += maximum(1,#tiereffecthalf[])
+
+    #value[cPUAegDR] += field[abValue].value</eval>
+    <exprreq message="Astral Suit Class Feature Required"><![CDATA[#hasability[cPUAstSuit] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMGuMenFrt" name="Mental Fortress" description="Your mental defenses are unrivalled. When you fail a Will save, you can expend one use of mythic power to reroll the save, adding a bonus equal to your mythic tier. You must have a power point pool to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="SpecSource" tag="mypGuard"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[~ Add mythic tier to Will Save
+
+    field[abValue].value += maximum(1,#tiereffect[])
+
+    #situational[hero.childfound[svWill],signed(field[abValue].value) & " bonus to will save by expending one use of mythic power",field[thingname].text]]]></eval>
+    <exprreq message="Power Point Pool Required."><![CDATA[#resmax[resPowerPt] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMUnAnPatt" name="Annihilate Pattern" description="You add your mythic tier to the damage your do with disrupt pattern. In addition, you can expend one use of mythic power to deal maximum damage with a single disrupt pattern attack. You must have the disrupt pattern class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypAll"/>
+    <eval phase="PostAttr" priority="9000">~ Give bonus damage based on the number of dice
+      ~ from Ehanced Disruption and Disrupt Pattern
+      ~ Class Abilities
+      #value3[cPUDisPatt] += #tiereffect[]</eval>
+    <exprreq message="Disrupt Pattern Class Feature Required"><![CDATA[#hasability[cPUDisPatt] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMGuTelPry" name="Telekinetic Parry" description="You can use your telekinetic power to block an incoming attack. As an immediate action, you can expend one use of mythic power to make a parry attempt to protect one creature within 30 feet of you. To resolve this, make an attack roll at your full base attack bonus plus your Charisma modifier. If you exceed the attack roll of your opponent, the attack automatically misses. You must have a power point pool to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not implemented</comment>
+    <tag group="SpecSource" tag="mypGuard"/>
+    <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    <exprreq message="Power Point Pool Required"><![CDATA[#resmax[resPowerPt] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMMaColMar" name="Collective Marshal" description="Your ability to work within a collective gives you additional freedom with your mythic powers. You can use any of your marshal mythic powers on any creature in your collective, regardless of range. You must have the collective class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="SpecSource" tag="mypMarshal"/>
+    <exprreq message="Collective Class Ability Required"><![CDATA[#hasability[cPUCollect] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMMaMyColl" name="Mythic Collective" description="You can expand your collective to include far more creatures than normal. You can expend one use of mythic power to include every creature within 100 feet as part of your collective. You can choose whether to include any given creature. This ability lasts for a number of minutes equal to your mythic tier. You must have the collective class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="SpecSource" tag="mypMarshal"/>
+    <exprreq message="Collective Class Ability Required"><![CDATA[#hasability[cPUCollect] <> 0]]></exprreq>
+    <exprreq message="Mythic Tier 6 or Greater Required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
+    </thing>
+  <thing id="cMTrPrImpL" name="Project Impossible Location" description="You cloud the minds of others, projecting false information to mask your movements. As an immediate action, you can expend a use of mythic power to make an opponent that just attacked you think you’re in the wrong place.  When an opponent attacks you, before the results of the attack are announced, you make a 5-ft. step. The attack misses. In addition, your opponent must make a Will save (DC 10 + your mythic tier + your Charisma modifier) to realize you have moved, or it wastes any additional attacks against a perceived double.  This effect ends at the end of that opponent’s actions.  Using this power prevents you from taking a 5-ft. step on your next turn. You must have a power point pool to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="SpecSource" tag="mypTrickst" name="Trickster" abbrev="Trickster"/>
+    <exprreq message="Mythic Tier 3 Required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    <exprreq message="Power Point Pool Required."><![CDATA[#resmax[resPowerPt] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMUnCalCst" name="Calibrated Customization" description="You gain a number of additional customization points equal to your mythic tier. In addition, you can expend one use of mythic power to reset all of your customization points and choose new customizations. You must have the form astral suit class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypAll"/>
+    <eval phase="PostLevel" priority="500">~ add customization points equal to Mythic Rank
+
+    hero.childfound[cPUAegHelp].field[abValue2].value += #tiereffect[]</eval>
+    <exprreq message="Form Astral Suit class feature required."><![CDATA[#hasability[cPUAstSuit] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMUnEndTch" name="Endbringer’s Touch" description="Your devastating touch ability deals 1d6 points of damage per level, instead of 1d6 points of damage plus your class level. In addition, you can expend one use of mythic power to deal maximum damage with one devastating touch attack. You must have the devastating touch class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypAll"/>
+    <eval phase="Final" priority="1000"><![CDATA[
+      ~ Set the list name
+      var vLevel as number
+      vLevel = #levelcount[Dread]
+      field[livename].text = field[thingname].text & " " & " (" & vLevel & "d6" & ")"]]></eval>
+    <exprreq message="Devastating Touch Class Ability Required"><![CDATA[#hasability[cPUDevaTou] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMUnExpCol" name="Expanding Collective" description="You add your mythic tier to the number of people you can hold in your collective. In addition, you can expend one use of mythic power to ignore any negative effects from a member dying while in your collective. You must have the collective class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <tag group="SpecSource" tag="mypAll"/>
+    <eval phase="Final" priority="9000">~ Add Mythic Ranks to number of members of the collective
+
+   #value[cPUCollect] += #tiereffect[]</eval>
+    <exprreq message="Collective Class Ability Required"><![CDATA[#hasability[cPUCollect] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMUnMyAsSt" name="Mythic Astral Suit" description="You can reinforce your astral suit beyond its normal bounds. You can expend one use of mythic power to add an enhancement bonus to your astral suit equal to your mythic tier. This bonus lasts for a number of rounds equal to your mythic tier. You must have the form astral suit class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not Yet Implemented</comment>
+    <tag group="SpecSource" tag="mypAll"/>
+    <eval phase="PostLevel" priority="10000">~ Add Mythic Tier as enhancement bonus to astral suit AC
+
+    doneif (hero.childfound[cPUAstSuit].field[abilActive].value = 0)
+~    doneif (field[gIsEquip].value = 0) 
+    var vRanks as number
+    vRanks = #tiereffect[]
+    hero.child[ArmorClass].field[BonEnhance].value = maximum(hero.child[ArmorClass].field[BonEnhance].value, vRanks)</eval>
+    <exprreq message="Form Astral Suit Class ability required."><![CDATA[#hasability[cPUAstSuit] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMUnMyMBld" name="Mythic Mind Blade" description="You can greatly enhance the power of your mind blade. You can expend one use of mythic power to double the effective enhancement bonus of your mind blade for a number of rounds equal to your mythic tier. This enhancement bonus can be used to increase the mind blade’s effective bonus above +10. It will always be used to increase the actual enhancement bonus to +5 first, then can be spent on powers until the weapon the weapon reaches an effective enhancement bonus of +10. Any effective bonus above +10 can be allocated to actual enhancement bonus or effective enhancement bonus as desired. For example, a 7th level soulknife would double their effective bonus to +6, which would give them a +5 mind blade with a +1 ability; a 13th level soulknife would double his effective bonus to +12, giving him a +5 mind blade with +5 enhancement bonus worth of special abilities and another +2 which could be allocated to either the actual or effective enhancement bonus. The actual enhancement bonus of the mind blade cannot exceed +10. You must have the form mind blade class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not Yet Implemented</comment>
+    <tag group="SpecSource" tag="mypAll"/>
+    <eval phase="PostLevel" priority="10000">~ Add Mythic Tier as enhancement bonus to Mind Blade
+
+~    doneif (hero.child[cSknMindBl].field[abilActive].value = 0)
+~    doneif (hero.child[cSknMindBl].field[gIsEquip].value = 0) 
+    var vRanks as number
+    vRanks = #tiereffect[]
+    hero.child[cSknMindBl].field[abValue].value += hero.child[cSknMindBl].field[xCount].value</eval>
+    <exprreq message="Form MInd Blade Class ability required."><![CDATA[#hasability[cSknMindBl] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMUnMyMan" name="Mythic Manifesting" description="You can learn a number of mythic powers equal to your tier and can expend mythic power when manifesting them to enhance the results. To select a mythic power, you must have it on your list of powers known. Every time you gain a new tier, you can select an additional mythic power. You can take this ability up to three times. Each additional time you take it, you can select an additional number of powers equal to your tier and you gain one additional mythic power whenever you gain a tier." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not Yet Implemented</comment>
+    <fieldval field="usrCandid1" value="component.Class &amp; Psionics.Class"/>
+    <tag group="SpecSource" tag="mypAll"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If nothing chosen get out now
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      ~ Increase number of known powers by 1
+      field[usrChosen1].chosen.field[cPsiPowMax].value += #tiereffect[]]]></eval>
+    </thing>
+  <thing id="cMUnUnfDev" name="Unfettered Devastation" description="You can use your devastating touch attack on any creature, regardless if they are living or not. In addition, you can expend one use of mythic power to remove any and all immunity to fear for one round from a single creature. You must have the devastating touch class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <comment>Not Yet Implemented</comment>
+    <fieldval field="usrCandid1" value="component.Class &amp; Psionics.Class"/>
+    <tag group="SpecSource" tag="mypAll"/>
+    <exprreq message="Devastating Touch Class Ability Required."><![CDATA[#hasability[cPUDevaTou] <> 0]]></exprreq>
+    </thing>
+  <thing id="cMUnMyEloc" name="Mythic Elocation" description="Your mythic power grants you the ability to break the bonds of gravity for brief stretches. You can expend one use of your mythic power to gain the scorn earth ability as an elocator. This ability lasts a number of minutes equal to your mythic tier. You must have a power point pool to select this ability." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="DSPMyPsi"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="Helper" tag="Mythic" name="Mythic" abbrev="Mythic"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="SpecSource" tag="mypAll"/>
+    <bootstrap thing="cScornEart"></bootstrap>
+    <eval phase="PostAttr" priority="10000">~ Disable if the ability is not active
+
+    doneif (field[abilActive].value = 0)</eval>
+    <exprreq message="Mythic Tier 3 Required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    <exprreq message="Power Point Pool Required."><![CDATA[#resmax[resPowerPt] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMAlgnAt" name="Aligned Attack" description="Benefit: You can expend a use of mythic power as a swift action to change the alignment choice for the Aligned Attack feat. The alignment chosen must still match one of your alignment components." compset="Feat" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fShowWhat" tag="AlignMatch" name="Alignment Axis, Matching" abbrev="Alignment Axis, Matching"/>
+    <tag group="ChooseSrc1" tag="Hero" name="All Picks on Hero" abbrev="All Picks on Hero"/>
+    <tag group="DescInfo" tag="fPUAlignAt"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Aligned Attack Feat Required." iserror="no"><![CDATA[#hasfeat[fPUAlignAt] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUAscPow" name="Ascendant Power" description="{b}Benefit{/b}: To use this feat, you must expend your psionic focus. You can modify a power to imitate the mythic version of that power. An ascendant power uses the mythic version of the power, but doesn’t count as a mythic  power for the purposes of effects that interact with the power, unless you are a mythic creature. You can’t use the augmented version of the mythic power, or use power effects that require you to expend uses of mythic power (even if you have uses of mythic power available).\nUsing this feat increases the power point cost of the power by 8. The power’s total cost cannot exceed your manifester level." compset="Feat" summary="You have learned how to emulate mythic manifesting using non-mythic forces." uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Metapsion"/>
+    </thing>
+  <thing id="fPUMAuton" name="Autonomous" description="{b}Benefit:{/b} The bonus on Autohypnosis and Knowledge (psionics) skill checks from Autonomous increases by 2. In addition, you can expend one use of mythic power to treat an Autohypnosis or Knowledge (psionics) check as if you had rolled a natural 20. You must decide to use this ability before making the roll." compset="Feat" summary="You get a +2 bonus on all Autohypnosis checks and Knowledge (Psionics) checks." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #skillbonus[skPUAhypno] += 2
+      #skillbonus[skPUKnwPsi] += 2]]></eval>
+    <exprreq message="Autonomous Feat Required"><![CDATA[#hasfeat[fPUAuton] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMBdyFul" name="Body Fuel" description="You can expand your power point total at the expense of your health.\n\n{b}Benefit:{/b} When using the Body Fuel feat, you need only choose a single physical ability score (Strength, Dexterity, or Constitution) to suffer ability burn, instead of all three." compset="Feat" summary="You are able to selectively decide which ability to sacrifice for more power points." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Body Fuel Required"><![CDATA[#hasfeat[fPUBdyFuel] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMBstCns" name="Boost Construct" description="{b}Benefit:{/b} Any astral construct you create is considered mythic for the purpose of interacting with other mythic creatures. It doesn’t gain any mythic abilities or powers, but is affected by mythic powers, spells, and abilities as if it were a 1st-tier mythic creature. Additionally, if the astral construct has damage reduction, its damage reduction becomes DR/ epic." compset="Feat" summary="Your astral constructs are creatures of legendary might and toughness." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="General" name="General" abbrev="General"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Boost Construct Required"><![CDATA[#hasfeat[fPUBstCons] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMBurPwr" name="Burrowing Power" description="{b}Benefit:{/b} You can manifest a burrowing power even if you do not have line of sight to the intended target or targeted area. If the power being manifested affects an area, you specify the starting point of the effect. If the power being manifested targets a particular creature or creatures and you don’t have some means of seeing the target, such as line of sight or clairvoyant sense, you choose a particular location. If no creature is in that space, the power fails. Should you specify a location for an effect that is invalid, such as directing a burrowing power around a corner and into a wall, the power fails.\n  Alternatively, you may expend a use of mythic power to manifest a power as a burrowing power (gaining only the normal benefits of a burrowing power, rather than the increased benefits outlined above) without increasing the number of power\npoints spent or expending psionic focus. \n\n{b}Normal:{/b} You must have some line of sight to use Burrowing Power." compset="Feat" summary="Your powers can get around obstacles." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="3rd Mythic Tier Required"><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    <exprreq message="Burrowing Power Required"><![CDATA[#hasfeat[fPUBurPwr] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMChnPwr" name="Chain Power" description="{b}Benefit{/b}: When using Chain Power, the secondary arcs strike back at the original target after striking the secondary targets. When a secondary arc strikes the original target, it does not roll an additional save and takes minimized damage from the power being chained (treat all damage dice as automatic 1s). \n  Alternatively, you may expend a use of mythic power to manifest a power as a chained power (gaining only the normal benefits of a chained power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus." compset="Feat" summary="Your chained powers arc back on the original target." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="2nd Mythic Tier Required"><![CDATA[#tierprereq[] >= 2]]></exprreq>
+    <exprreq message="Chain Power Required"><![CDATA[#hasfeat[fPUChnPwr] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMCmMan" name="Combat Manifestation" description="{b}Benefit{/b}: The bonus from Combat Manifestation increases to +8. Anytime you fail a concentration check, you do not lose the power points you were attempting to use. You do not manage to manifest the power, but the power points remains available for you to use at a later time. Additionally if you successfully make a check to manifest a power defensively and the power requires a ranged attack roll, that ranged attack does not provoke an attack of opportunity." compset="Feat" summary="You rarely lose concentration in combat." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Combat Manifestation Required"><![CDATA[#hasfeat[fPUComMan] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMCshBlo" name="Cushion the Blow" description="{b}Benefit:{/b} You can share the effect of Cushion the Blow, Greater Cushion the Blow, and Improved Cushion the Blow to a number of members of your collective equal to your mythic tier. \n  In addition, if you expend one use of mythic power, you can use Cushion the Blow as a free action even if it is not your turn.\n{b}Normal:{/b} Using Cushion the Blow is an immediate action and only applies to a single member of your collective." compset="Feat" summary="You are able to block damage to multiple targets at once." uniqueness="useronce">
+    <fieldval field="reqWis" value="15"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Cushion the Blow Required"><![CDATA[#hasfeat[fPUCushBlo] <> 0]]></exprreq>
+    <exprreq message="Collective class feature required"><![CDATA[#hasability[cPUCollect] <> 0]]></exprreq>
+    <prereq message="Manifester level 6+ required.">
+      <validate><![CDATA[~check for Manifester level 6
+validif (hero.tagcount[Hero.Manifester] >= 6)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPUMDedThr" name="Deadly Throw" description="{b}Benefit:{/b} You do not need to maintain psionic focus to gain the benefits of Deadly Throw. If you are maintaining psionic focus while using Deadly Throw, you add half your mythic tier (round down, minimum 1) to your damage rolls made with thrown weapons." compset="Feat" uniqueness="useronce">
+    <fieldval field="reqDex" value="15"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <tag group="DescInfo" tag="fPUDeadThr"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[~ Add Half Tier 
+
+field[abValue].value += maximum(1,#tiereffecthalf[])
+
+      foreach pick in hero from BaseWep where "wCategory.RangeProj|wCategory.RangeThrow"
+        eachpick.field[dmrBonus].value += field[abValue].value
+        #situational[eachpick,signed(field[abValue].value) & " to damage with thrown weapons",field[name].text]
+      nexteach]]></eval>
+    <exprreq message="Deadly Throw feat Required"><![CDATA[#hasfeat[fPUDeadThr] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMDepFoc" name="Deep Focus" description="{b}Benefit:{/b} As long as you have at least one use of mythic power remaining or one power point remaining in your power point pool, you are always treated as if you are maintaining psionic focus for abilities powered by maintaining psionic focus. You may still only expend your psionic focus if you are actually maintaining psionic focus. In addition, you can expend a use of mythic power as a swift action to regain both your own and the psionic focus provided by Deep Focus." compset="Feat" summary="Your subconscious mind’s focus is improved." uniqueness="useronce">
+    <comment>Not yet implemented.  Need new tag Hero.isPsiFocus</comment>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+~ if mythic power >= 1 or Power Point Pool >=1 then considered focused.
+
+    var vPwrPts as number
+    vPwrPts = #resleft[resPowerPt]
+
+    if (vPwrPts >= 1) Then
+       ~ Character is Psionically Focused
+       perform hero.assign[MythicPsi.PsiFocus]
+    elseif (hero.child[trkMythic].field[trkLeft].value >= 1) Then
+       ~ Character is Psionically Focused
+       perform hero.assign[MythicPsi.PsiFocus]
+    Endif]]></eval>
+    <exprreq message="Deep Focus feat Required"><![CDATA[#hasfeat[fPUDeepFoc] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMDepImp" name="Deep Impact" description="{b}Benefit{/b}: When you make an attack using Deep Impact, add half your tier (minimum 1) to the attack roll. In addition, you can expend a use of mythic power when using Deep Impact to treat all melee attacks made during your turn as melee touch attacks." compset="Feat" summary="Your weapon finds even the slightest of openings in an enemy’s defenses." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="First"><![CDATA[~ Add Half Tier 
+
+field[abValue].value += maximum(1,#tiereffecthalf[])
+
+      foreach pick in hero from BaseWep 
+        eachpick.field[Bonus].value += field[abValue].value
+        #situational[eachpick,signed(field[abValue].value) & " to attack",field[name].text]
+      nexteach]]></eval>
+    <exprreq message="Deep Impact required."><![CDATA[#hasfeat[fPUDeepImp] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMDelPwr" name="Delay Power" description="{b}Benefit{/b}: Add your mythic tier to the number of rounds you can delay a power. In addition, you may activate a delayed power as a swift or immediate action instead of as a standard action. Alternatively, you may expend a use of mythic power to manifest a power as a delayed power (gaining only the normal benefits of a delayed power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus.\n{b}Normal:{/b} You can delay a power for up to 5 rounds.  Activating a delayed power is a standard action." compset="Feat" summary="You have better control over your delayed powers." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Delay Power Required"><![CDATA[#hasfeat[fPUDelPwr] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMEffAid" name="Efficient Aid" description="{b}Benefit:{/b} The damage healed through the use of request aid is increased by 50%. In addition, if you expend one use of mythic power, you can cure a number of points of ability damage equal to your mythic tier to the target. The target creature specifies which ability damage to heal." compset="Feat" summary="Your ability to heal others is significantly increased." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Efficient Aid Required"><![CDATA[#hasfeat[fPUEfftAid] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMEmpPwr" name="Empower Power" description="{b}Benefit{/b}: When you manifest a power affected by Empower Power, all variable, numeric effects of the power are increased by +75%, including bonuses to those dice rolls. \n  Alternatively, you may expend a use of mythic power to manifest a power as an empowered power (gaining only the normal benefits of an empowered power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus.\n\n{b}Normal:{/b} All variable, numeric effects of an empowered power are increased by half including bonuses to those dice rolls." compset="Feat" summary="You can increase the effect of a power by +75%." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Empower Power Required"><![CDATA[#hasfeat[fPUEmpPwr] <> 0]]></exprreq>
+    <exprreq message="5th Mythic Tier Required"><![CDATA[#tierprereq[] >= 5]]></exprreq>
+    </thing>
+  <thing id="fPUMEnFort" name="Enervation Fortitude" description="{b}Benefit:{/b} When you suffer psychic enervation, you do not lose any hit points or power points, although you still suffer any additional effects like being stunned or sickened. In addition, you can expend one use of mythic power when you would suffer psychic enervation to negate the psychic enervation and instead gain surging euphoria." compset="Feat" summary="You are extremely resilient against psychic enervation." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Enervation Fortitude required"><![CDATA[#hasfeat[fPUEneFort] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMEnhStL" name="Enhanced Steal Life" description="{b}Benefit:{/b} The number of hit points gained when using steal life is increased by 50% (round down.) When using the steal life class feature, you can expend one use of mythic power. If the target makes a successful save against the attempt, you instead steal hit points as if you had used the steal health class feature." compset="Feat" summary="You are skilled at extracting the life force out of other creatures." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Enhanced Steal Life Required"><![CDATA[#hasfeat[fPUEnhStLi] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMEnlPwr" name="Enlarge Power" description="{b}Benefit{/b}: When you manifest a power with a range of close, medium, or long affected by Enlarge Power, its range is increased by +200%. An enlarged power with a range of close now has a range of 75 ft. + 15 ft./2 levels, while medium-range powers have a range of 300 ft. + 30 ft./level and long-range powers have a range of 1,200 ft. + 120 ft./level. Alternatively, you may expend a use of mythic power to manifest a power as an enlarged power (gaining only the normal benefits of an enlarged power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus.\n\n{b}Normal:{/b}An enlarged power with a range of close has a range of 50 ft. + 5 ft./level, while medium-range powers have a range of 200 ft. + 20 ft./level and long range powers have a range of 800 ft. + 80 ft./level." compset="Feat" summary="You can triple the range of a power." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Enlarge Power Required"><![CDATA[#hasfeat[fPUEnlPwr] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMExtPow" name="Extend Power" description="{b}Benefit:{/b} When you manifest a power augmented with Extend Spell, it lasts three times as long as normal. A power with a duration of concentration, instantaneous, or permanent is not affected by this feat.\n  Alternatively, you may expend a use of mythic power to manifest a power as an extended power (gaining only the normal benefits of an extended power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus.\n\n{b}Normal:{/b} An extended power lasts twice as long as normal." compset="Feat" summary="You can triple the duration of a power." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Extend Power required"><![CDATA[#hasfeat[fPUExtPow] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMExBlSk" name="Extra Blade Skill" description="{b}Benefit:{/b} Each day, you can take 1 hour of meditation to decide how to focus your mythic energies. At the end of this time, select 1 blade skill for which you meet all the prerequisites. You retain this blade skill until you next meditate on your mythic blade skill." compset="Feat" summary="You can meditate to gain a blade skill.">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PreLevel" priority="20000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If no soulknife class then get out now!
+      doneif (hero.childlives[cHelpSkn] <> 1)
+
+      ~ Give an additional blade skill custom ability
+      hero.childfound[cHelpSkn].field[cGiveSpec].value += 1]]></eval>
+    <exprreq message="Extra Blade Skill Required"><![CDATA[#hasfeat[fPUExBldSk] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMExCust" name="Extra Customization" description="{b}Benefit:{/b} Each day, you can take 1 hour of meditation to decide how to focus your mythic energies. At the end of this time, you gain one additional customization point to spend. You retain this customization point until you next meditate on\nyour mythic customizations." compset="Feat" summary="You can meditate to gain additional customizations.">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~hero.childfound[cfgPUAstSu].field[cfgLeft2].value += 1
+      hero.childfound[cfgPUAstSu].field[cfgMax2].value += 1]]></eval>
+    <exprreq message="Extra Customization Required"><![CDATA[#hasfeat[fPUExCust] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMExInsg" name="Extra Insight" description="{b}Benefit:{/b} Each day, you can take 1 hour of meditation to decide how to focus your mythic energies. At the end of this time, you gain one additional insight for which you meet all the prerequisites. You retain this insight until you next meditate on your mythic insights." compset="Feat" summary="You can meditate to gain additional insights." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PreLevel" priority="20000">hero.childfound[cHelpPU1].field[cGiveSpec].value += 1</eval>
+    <exprreq message="Extra Insight Required"><![CDATA[#hasfeat[fPUExInsig] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMExRecn" name="Extra Reconfiguration" description="{b}Benefit:{/b} You gain one additional daily use of your reconfigure ability.\n  Additionally, if you have no uses of reconfigure remaining, you may expend two uses of mythic power to use your reconfigure ability." compset="Feat" summary="Your mythic energies grant you additional opportunities to reconfigure your astral suit." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostLevel" priority="1000">hero.childfound[cPUReconfi].field[abValue].value += 1</eval>
+    <exprreq message="Extra Reconfiguration Required"><![CDATA[#hasfeat[fPUExRecon] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMExStrt" name="Extra Strategy" description="{b}Benefit:{/b} You gain two additional daily uses of your strategy ability. Additionally, if you have no uses of strategy remaining, you may expend one use of mythic power to use your strategy ability." compset="Feat" summary="You are able to use your mythic energy to gain strategic opportunities." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostLevel" priority="1000">hero.childfound[cPUTacStra].field[trkMax].value += 2</eval>
+    <exprreq message="Extra Strategy Required"><![CDATA[#hasfeat[fPUExStrat] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMExTerr" name="Extra Terrors" description="{b}Benefit:{b} You gain three additional daily uses of your terrors ability. Additionally, if you have no uses of terrors remaining, you may expend one use of mythic power to use your terrors ability." compset="Feat" summary="Your mythic power allows you to inflict additional terrors." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostLevel" priority="1000">hero.childfound[cPUTerrors].field[trkMax].value += 3</eval>
+    <exprreq message="Extra Terrors Required"><![CDATA[#hasfeat[fPUExTerr] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMExTrns" name="Extra Transfer" description="{b}Benefit:{/b} You gain two additional daily uses of your transfer wounds or sickening touch ability. \n  Additionally, if you have no uses of transfer wounds or sickening touch remaining, you may expend one use of mythic power to use your transfer wounds or sickening touch ability." compset="Feat" summary="You are able to channel mythic energy to transfer wounds more often." maxlimit="2">
+    <arrayval field="usrArray" index="0" value="Transfer Wounds"/>
+    <arrayval field="usrArray" index="1" value="Sickening Touch"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostAttr" priority="9000">hero.childfound[cPUVitTraW].field[trkMax].value += 2</eval>
+    <exprreq message="Extra Transfer Required"><![CDATA[#hasfeat[fPUExTrans] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMFastSt" name="Fast Step" description="{b}Benefit:{/b} You can use the nomad’s step class feature as a swift action. Alternatively, you can spend one use of mythic power to use nomad’s step as an immediate action.\n  In addition, you add your mythic tier to your psion class level when determining the distance you can travel while using nomad’s step." compset="Feat" summary="You can rapidly alter your location." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Fast Step Required"><![CDATA[#hasfeat[fPUFastSte] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMFavEne" name="Favored Energy" description="{b}Benefit:{/b} When manifesting a power that deals damage of your favored energy type, the power’s damage is increased by an additional 50% (round down.) This stacks with the effects of Empower Power to increase the damage by 100%." compset="Feat" summary="Powers using your favored energy are particularly damaging." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.SelectHelp &amp; Selection.Energy &amp; (BloodEner.Cold|BloodEner.Elec|BloodEner.Fire|BloodEner.Sonic)"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ChooseSrc1" tag="Thing" name="All Things" abbrev="All Things"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Favored Energy Required"><![CDATA[#hasfeat[fPUFavEner] <> 0]]></exprreq>
+    <prereq message="Manifester level 3+ required.">
+      <validate><![CDATA[~check for Manifester level 3
+validif (hero.tagcount[Hero.Manifester] >= 3)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="fPUMFellSh" name="Fell Shot" description="{b}Benefit:{/b} When you make an attack using Fell Shot, add half your tier (minimum 1) to the attack roll. In addition, you can expend a use of mythic power when using Fell Shot to treat all ranged attacks made during your turn as ranged touch attacks." compset="Feat" summary="Your ranged attacks are exceptionally accurate." uniqueness="useronce">
+    <fieldval field="reqDex" value="13"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="First"><![CDATA[~ Add Half Tier 
+    var myWpn as string
+    myWpn = "wCategory.RangeProj|wCategory.RangeThrow"
+    field[abValue].value += maximum(1,#tiereffecthalf[])
+   
+    foreach pick in hero from BaseWep where myWpn 
+      eachpick.field[Bonus].value += field[abValue].value
+      #situational[eachpick,signed(field[abValue].value) & " to attack",field[name].text]
+      nexteach]]></eval>
+    <exprreq message="Fell Shot Required"><![CDATA[#hasfeat[fPUFellSh] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMGhostA" name="Ghost Attack" description="{b}Benefit:{/b} Your attacks against incorporeal creatures always deal full damage. In addition, you can expend a use of mythic power as a swift action when you make a successful attack against an incorporeal creature to deal an additional amount of damage equal to your tier." compset="Feat" summary="Your attacks against the incorporeal are more especially effective." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="First"><![CDATA[~   Add damage as situational bonus
+
+    field[abValue].value += maximum(1,#tiereffect[])
+   
+    foreach pick in hero from BaseWep 
+      eachpick.field[Bonus].value += field[abValue].value
+      #situational[eachpick,signed(field[abValue].value) & " to attack vs an incorporeal creature",field[name].text]
+      nexteach]]></eval>
+    <exprreq message="Ghost Attack Required"><![CDATA[#hasfeat[fPUGhostA] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMHarRes" name="Harmonic Resonance" description="{b}Benefit:{/b} When selecting powers from those known by members of your collective, you can choose to have those powers as your powers known, instead of as powers you can use for the purposes of manifesting another’s powers known. Powers selected in this way only stay as powers known until you meditate to regain power points, at which point you can choose new powers from members of your collective. Powers chosen must have a power level equal to or lower\nthan the maximum power level you can manifest. \n  In addition, you can expend one use of mythic power to manifest a single power from those known by any member of your collective without having to pay the power point cost. The power manifested in this fashion is automatically augmented up to your manifester level.\n\nNote: Number of Powers Known and adding specific powers to the list of powers known is achieved by using adjustments." compset="Feat" summary="You are able to learn powers from members in your collective." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Harmonic Resonance Required"><![CDATA[#hasfeat[fPUHarRes] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMImpPsi" name="Improved Psi-like Ability" description="{b}Benefit:{/b} Your racial psi-like ability has a manifester level equal to your character level plus your mythic tier. In addition, you can use your racial psi-like ability a number of times per day equal to your mythic tier. \n\n{b}Special:{/b} You can take this feat multiple times, each time choosing another racial psi-like ability that has been improved by Improve Psi-Like Ability." compset="Feat" summary="Your psi-like abilities grow with your experience." uniqueness="useronce">
+    <fieldval field="usrCandid1" value="Helper.PsiLike"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="fCategory" tag="Racial" name="Racial" abbrev="Racial"/>
+    <tag group="ChooseSrc1" tag="Hero" name="All Picks on Hero" abbrev="All Picks on Hero"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="Final" priority="999"><![CDATA[      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~if our chosen ability has less than 3 uses per day, we have as many uses
+
+      if (field[usrChosen1].ischosen <> 0) then
+        ~unlimited use psi-like abilities might have 0 charges, so only retrieve the target's charges if they're positive
+        if (field[usrChosen1].chosen.field[trkMax].value > 0) then
+          ~add Tier to number of charges.
+          field[usrChosen1].chosen.field[trkMax].value += #tiereffect[]
+        endif
+      endif]]></eval>
+    <eval phase="Render" priority="10000" index="2"><![CDATA[
+      if (tagis[Target.?] <> 0) then
+        field[sbName].text = "Improved Psi-Like Ability ({i}" & lowercase(tagnames[Target.?]) & "{/i})"
+      else
+        if (field[usrChosen1].ischosen <> 0) then
+          field[sbName].text = "Improved Psi-Like Ability ({i}" & lowercase(field[usrChosen1].chosen.field[thingname].text) & "{/i})"
+        endif
+      endif]]></eval>
+    <exprreq message="Improved Psi-Like Ability Required"><![CDATA[#hasfeat[fPUImpPsiA] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMIPsicr" name="Improved Psicrystal" description="{b}Benefit:{/b} The bonus gained from all of your psicrystal personalities doubles." compset="Feat" summary="The personality fragments from your psicrystal greatly improve your abilities.">
+    <fieldval field="usrCandid1" value="component.Simple &amp; Psicrystal.Personalty"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ChooseSrc1" tag="Hero" name="All Picks on Hero" abbrev="All Picks on Hero"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      perform field[usrChosen1].chosen.pulltags[PsicrysBon.?]
+      perform field[usrChosen1].chosen.pulltags[PsicryType.?]
+      perform field[usrChosen1].chosen.pulltags[PsicrystID.?]
+
+      ~If bonus to one knowledge skill setup here
+      If (tagis[PsicryType.Other] + tagis[PsicrystID.Knowledge] = 2) Then
+        ~One Knowledge Skill bonus
+        field[usrCandid2].text = "component.BaseSkill & Helper.SkCatKnow"
+        perform assign[ChooseSrc2.Hero]
+      Endif]]></eval>
+    <eval phase="PostLevel" priority="20000" index="2">~ Setup for all the psicrystal personality bonuses
+      Call PsicryPers</eval>
+    <eval phase="First" priority="400" index="3">~ Give a bonus level to the psicyrstal
+      perform hero.assign[Psicrystal.BonusLvl]</eval>
+    <exprreq message="Improved Psicrystal feat required."><![CDATA[#hasfeat[fPUIPsicry] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMInquis" name="Inquisitor" description="{b}Benefit:{/b} The bonus on Sense Motive checks to oppose Bluff checks increases by 2. In addition, you can expend one use of mythic power to treat a Sense Motive check to oppose a Bluff check as if you had rolled a natural 20. You must decide to use this ability before making the roll." compset="Feat" summary="You know when others lie." uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      var v_focus as number
+      call PUPsiFocus
+      ~ If not psionically focused get out now!
+      doneif (v_focus = 0)
+
+      if (#skillranks[skSenseMot] >= 10) then
+        field[abValue].value += 2
+      endif
+
+      ~ Add situational note to Sense Motive for bonus
+      #situational[hero.child[skSenseMot],"+" & hero.child[fPUMInquis].field[abValue].value & " on Sense Motive checks to oppose a Bluff check.",field[thingname].text & ",Mythic"]
+
+
+      #skillbonus[skAcrobat] += field[abValue].value]]></eval>
+    <exprreq message="Inquisitor feat required"><![CDATA[#hasfeat[fPUInquis] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMIntimS" name="Intimidating Shot" description="{b}Benefit:{/b} Any ranged or thrown attack you make while maintaining psionic focus grants you a free Intimidate check to demoralize the target. You can expend one use of mythic power while making an Intimidate check to cause the target to be frightened instead of shaken." compset="Feat" summary="Your thrown and ranged attacks strike fear into the hearts of your enemies." maxlimit="2">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <exprreq message="Intimidating Shot feat required."><![CDATA[#hasfeat[fPUIntimSh] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMMaxPow" name="Maximize Power" description="{b}Benefit:{/b} When you manifest a power affected by Maximize Power, all variable, numeric effects of the power are treated as 150% of their maximum. Alternatively, you may expend two uses of mythic power to manifest a power as a maximized power (gaining only the normal benefits of a maximized power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus.\n\n{b}Normal:{/b} All variable, numeric effects of a maximized power are automatically at their highest value." compset="Feat" summary="Your maximum psionic power is “more than maximum.”" uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Maximize Power feat required."><![CDATA[#hasfeat[fPUMaxPow] <> 0]]></exprreq>
+    <exprreq message="7th Mythic Tier required."><![CDATA[#tierprereq[] >= 7]]></exprreq>
+    </thing>
+  <thing id="fPUMMenLea" name="Mental Leap" description="{b}Benefit:{/b}  The enhancement bonus from Mental Leap on Acrobatics checks made to jump is doubled.  In addition, you can expend a use of mythic power as a swift action while making a jump to be treated as if under the catfall power, with a manifester level equal to your tier." compset="Feat" summary="The leaps you are able to make are astounding." uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="4"/>
+    <fieldval field="abValue3" value="10"/>
+    <fieldval field="abValue4" value="20"/>
+    <fieldval field="actName" value="Expended focus"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostAttr"><![CDATA[      ~Stop now if we're disabled
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Start by assuming no bonus
+      var bon as number
+      bon = 0
+
+      ~ If we've expended focus for the large bonus, handle that
+      if (field[abilActive].value <> 0) then
+        if (#skillranks[skAcrobat] >= 10) then
+          bon = field[abValue4].value
+        else
+          bon = field[abValue3].value
+        endif
+      else
+        var v_focus as number
+        call PUPsiFocus
+
+        ~ If we are psi-focused, add smaller bonus
+        if (v_focus = 1) then
+          if (#skillranks[skAcrobat] >= 10) then
+            bon = field[abValue2].value
+          else
+            bon = field[abValue].value
+          endif
+        endif
+      endif
+
+      doneif (bon < 1)
+
+      #situational[hero.child[skAcrobat],signed(bon) & " to  jump", field[thingname].text]]]></eval>
+    <exprreq message="Mental Leap feat required."><![CDATA[#hasfeat[fPUMenLeap] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMMerDes" name="Merge Designs" description="{b}Benefit:{/b} You can wear a number of additional psionic tattoos equal to your mythic tier. In addition, your psionic tattoos are never at risk of simultaneously activating due to having too many tattoos on your body; tattoos beyond your limit are simply inert until such time as you remove or tap other tattoos. You can expend one use of mythic power while tapping a psionic tattoo to add your mythic tier to the manifester level of the tattoo tapped.\n\n{b}Normal:{/b} A character can only safely wear twenty psionic tattoos." compset="Feat" summary="Your tattoos blend together into a greater pattern." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Merge Designs feat required."><![CDATA[#hasfeat[fPUMerDesi] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMMindBo" name="Mind Over Body" description="{b}Benefit:{/b}  When you heal ability damage for the day, you heal all ability damage and ability burn damage." compset="Feat" summary="Your body recovers quickly from ability damage." uniqueness="useronce">
+    <fieldval field="reqCon" value="13"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Mind over Body feat required."><![CDATA[#hasfeat[fPUMindBod] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMModBls" name="Modified Blast" description="{b}Benefit:{/b} When you augment your surge blast, you add your mythic tier to the number of power points spent. These points can exceed the normal limit of power points spent augmenting your surge blast. In addition, you can expend one use of mythic power while augmenting a surge blast to have the damage of the surge blast maximized and the DC (if any) increased by half your mythic tier (minimum 1.)" compset="Feat" summary="Your surge blasts are more dangerous than others." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Modified Blast feat required"><![CDATA[#hasfeat[fPUModBlst] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMMPwrKn" name="Mythic Powers Known" description="{b}Benefit: {/b} You learn a number of mythic powers known equal to your tier and can expend mythic power when manifesting them to enhance the results. To select a mythic power, you must be able to manifest the non-mythic version or have it on your list of powers known. Every time you gain a new tier, you can select an additional mythic psionic power.\n\n{b}Special:{/b} You can select this feat multiple times. Each time you select this feat, you must select different psionic powers." compset="Feat" summary="You have learned how to use your mythic power in combination with your psionic manifesting." uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <tag group="fShowWhat" tag="Classes"/>
+    <eval phase="PreLevel" priority="10000">~ add mythic tier to number of powers known
+
+   field[usrChosen1].chosen.field[cPsiPowMax].value += #tiereffect[]</eval>
+    <exprreq message="Ability to manifest powers required."><![CDATA[hero.tagcount[Hero.Manifester] >= 1]]></exprreq>
+    </thing>
+  <thing id="fPUMMyPAtk" name="Mythic Psionic Attacks" description="Benefit: When expending your psionic focus while using either the Psionic Fist, Psionic Shot, or Psionic Weapon feat, all attacks made during that round gain the additional damage from expending psionic focus." compset="Feat" summary="Your subsequent attacks continue to be infused with psionic energy." uniqueness="useronce">
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Psionic Fist or Psionic Shot or Psionic Weapon feat(s) required."><![CDATA[(#hasfeat[fPUPsiFist] + #hasfeat[fPUPsiShot] + #hasfeat[fPUPsiWep]) <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMOpenMn" name="Open Minded" description="{b}Benefit:{/b} Choose one skill that you have ranks in that is not already a class skill. That skill is now a class skill. You can expend one use of mythic power while making a skill check to roll that skill check twice and take the higher result." compset="Feat" summary="You have an amazing ability to learn and develop skills." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <tag group="fShowWhat" tag="Skills"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If nothing chosen get out now
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      ~ Make skill choice a class skill
+      perform field[usrChosen1].chosen.assign[Helper.ClassSkill]]]></eval>
+    <exprreq message="Open Minded feat required."><![CDATA[#hasfeat[fPUOpenMn] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMOppPwr" name="Opportunity Power" description="{b}Benefit:{/b} When using Opportunity Power, you can use a power that does not have a range of touch, so long as the creature that provoked the attack of opportunity is the target of the power.\n  Alternatively, you may expend two uses of mythic power to manifest a power as an opportunity power (gaining only the normal benefits of an opportunity power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus.\n\n{b}Normal:{/b} An opportunity power must have a range of touch." compset="Feat" summary="Enemies who give you an opportunity do so at their own peril." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="5th Mythic Rank Required"><![CDATA[#tierprereq[] >= 5]]></exprreq>
+    <exprreq message="Opportunity Power feat required."><![CDATA[#hasfeat[fPUOppPwr] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMOverch" name="Overchannel" description="{b}Benefit{/b}: You can increase your manifester level when using Overchannel by half your tier (minimum 1), but doing so adds an additional 1d8 points of damage per manifester level added." compset="Feat" summary="You have learned to push yourself harder to increase your manifesting power." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ 15th+ level
+      if (herofield[tMaxCaster].value >= 15) then
+        field[abSumm].text = "Take 5d8 to gain +3 manifester level."
+      ~ 8th+ level
+      elseif (herofield[tMaxCaster].value >= 8) then
+        field[abSumm].text = "Take 3d8 to gain +2 manifester level."
+      ~ 1st to 7th level
+      else
+        field[abSumm].text = "Take 1d8 to gain +1 manifester level."
+      endif]]></eval>
+    <exprreq message="Overchannel feat required."><![CDATA[#hasfeat[fPUOverch] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPwrPen" name="Power Penetration" description="{b}Benefit:{/b} Add half your tier to manifester level checks to overcome power resistance. If you have Greater Power Penetration, add your full tier instead. When you expend your psionic focus while using Power Penetration, double the bonus from your tier." compset="Feat" summary="Your mythic power aids you in bypassing enemy defenses." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      if (hero.tagis[HasFeat.fPUGPwrPen] <> 0) then
+         field[abValue].value = #tiereffect[]
+      else
+         field[abValue].value = #tiereffecthalf[]
+      endif
+
+      field[livename].text = field[name].text & " " & signed(field[abValue].value) & " vs PR"]]></eval>
+    <exprreq message="Power Penetration feat required."><![CDATA[#hasfeat[fPUPwrPen] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsicry" name="Psicrystal Affinity" description="Your psicrystal can use the surge ability a number of times per day equal to your tier. Its surge ability uses the same bonus die type as you do when you use your surge ability." compset="Feat" summary="Your psicrystal is infused with your mythic power." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Set hero tag so the Psicyrstal minion knows its allowed
+      ~ to be taken.
+      Perform hero.assign[Psicrystal.Allowed]]]></eval>
+    <exprreq message="Psicrystal Affinity feat required."><![CDATA[#hasfeat[fPUPsicry] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsicrC" name="Psicrystal Containment" description="{b}Benefit{/b}: So long as your psicrystal is within 5 feet of you, you are always treated as if you are maintaining psionic focus for abilities powered by maintaining psionic focus. You may still only expend your psionic focus if you are actually maintaining psionic focus. \n  In addition, you can expend a use of mythic power as a swift action to regain both your own and your psicrystal’s psionic focus." compset="Feat" summary="Your psicrystal’s presence grants you focus." uniqueness="useronce">
+    <fieldval field="actName" value="Psionically Focus Psicrystal"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <eval phase="First"><![CDATA[~ "Within Arms Reach" qualifies as within 5 feet
+~ Check for Helper.Activated tag on hero
+
+  if (hero.tagis[Helper.Activated] = 1) then
+     perform hero.assign[MythicPsi.PsiFocus]
+  endif]]></eval>
+    <exprreq message="Psicrystal Containment feat required."><![CDATA[#hasfeat[fPUPsicryC] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsiBdy" name="Psionic Body" description="{b}Benefit:{/b} The number of hit points gained from Psionic Body for each psionic feat you possess increases to 6 per feat." compset="Feat" summary="Your psionic training and mythic power toughen your physical form." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Add 2 * (number of psionic feats on the hero) to our hit points.
+      field[abValue].value = 4 * hero.tagcount[fCategory.Psionic]
+      ~ Give the bonus HP to the character
+      herofield[tHP].value += field[abValue].value
+      ~ Give a note on the summary about this
+      field[abSumm].text &= " Bonus HP " & signed(field[abValue].value)]]></eval>
+    <exprreq message="Psionic Body feat required."><![CDATA[#hasfeat[fPUPsiBody] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsiChr" name="Psionic Charge" description="{b}Benefit:{/b} When using Psionic Charge, you can make a number of additional 90 degree turns equal to half your tier (minimum 1). For example, at 4th tier, you could make three 90 degree turns during a charge." compset="Feat" summary="You have learned to charge a foe regardless of the path to reach him." uniqueness="useronce">
+    <fieldval field="reqDex" value="13"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Psionic Charge feat required."><![CDATA[#hasfeat[fPUPsiChrg] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsiDdg" name="Psionic Dodge" description="{b}Benefit{/b}: The dodge bonus you gain from Psionic Dodge is doubled. In addition, when an attack against you misses, you can expend a use of mythic power as an immediate action to take a 5-foot step." compset="Feat" summary="Your psionically-empowered reflexes are heightened by your mythic power." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="4"/>
+    <fieldval field="actName" value="Expended Focus (+4 vs one attack)"/>
+    <fieldval field="reqDex" value="13"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="abAction" tag="Immediate" name="Immediate" abbrev="imm"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~don't proceed if we're disabled
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      if (field[abilActive].value = 1) then
+        hero.child[ArmorClass].field[tACDodge].value += field[abValue2].value
+      elseif (hero.tagis[Hero.PsiFocus] + tagis[Psionics.PsiFocus] <> 0) then
+        hero.child[ArmorClass].field[tACDodge].value += field[abValue].value
+      endif]]></eval>
+    <exprreq message="Psionic Dodge feat required." iserror="no"><![CDATA[#hasfeat[fPUPsiDodg] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsiEnd" name="Psionic Endowment" description="{b}Benefit:{/b} When you use Psionic Endowment, double the amount added to the save DC. In addition, you can expend a use of mythic power as a swift action when using Psionic Endowment to force a non-mythic enemy to automatically fail the save." compset="Feat" summary="Enemies have an incredibly difficult time resisting your manifestations." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #value[fPUPsiEnd] *= 2]]></eval>
+    <exprreq message="Psionic Endowment feat required."><![CDATA[#hasfeat[fPUPsiEnd] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsiFst" name="Psionic Fist" description="Double the damage added to your attacks when using Psionic Fist or Greater Psionic Fist. In addition, you can expend a use of mythic power as a swift action to reroll any extra damage dice from Psionic Fist or Greater Psionic Fist and take the better result." compset="Feat" summary="You imbue your unarmed attacks with your mythic power." uniqueness="useronce">
+    <comment>abValue = Damage Bonus (+1),abValue2 = # of Dice (Xd6),abValue3 = Die Size (2dX)</comment>
+    <fieldval field="abValue3" value="6"/>
+    <fieldval field="actName" value="Expend Focus"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostLevel" priority="9000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Increase damage of Psionic Fist feat
+      #value[fPUPsiFist] += field[abValue].value
+      #value2[fPUPsiFist] += field[abValue2].value
+      #value3[fPUPsiFist] += field[abValue3].value]]></eval>
+    <exprreq message="Psionic Fist feat required."><![CDATA[#hasfeat[fPUPsiFist] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsiMed" name="Psionic Meditation" description="{b}Benefit:{/b} You no longer provoke attacks of opportunity when meditating to gain psionic focus. Should you have multiple psionic foci, such as from Deep Focus, you regain any psionic focus you are not currently maintaining anytime you meditate to gain psionic focus. In addition, you can expend a use of mythic power to regain your psionic focus as a free action." compset="Feat" summary="Gaining psionic focus comes second nature to you." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Psionic Meditation feat required."><![CDATA[#hasfeat[fPUPsiMed] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsiSho" name="Psionic Shot" description="{b}Benefit:{/b} Double the damage added to your attacks when using Psionic Shot or Greater Psionic Shot. In addition, you can expend a use of mythic power as a swift action to reroll any extra damage dice from Psionic Shot or Greater Psionic Shot and take the better result." compset="Feat" summary="Your ranged attacks are infused with your mythic power." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostLevel" priority="9000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Increase Pisonic Shot by 1
+      #value[fPUPsiShot] *= 2]]></eval>
+    <exprreq message="Point Blank Shot required."><![CDATA[#hasfeat[fPUPsiShot] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsiTal" name="Psionic Talent" description="{b}Benefit{/b}: Double the number of power points gained for each Psionic Talent feat you possess." compset="Feat" summary="Your reservoir of psionic power grows more quickly than most.">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <bootstrap thing="abPUPsiTal"></bootstrap>
+    <eval phase="PreLevel" priority="1000">~ Double the value of power points added to power point resevoir
+
+    #value2[abPUPsiTal] *= 2</eval>
+    <exprreq message="Psionic Talent feat required"><![CDATA[#hasfeat[fPUPsiTal] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMPsiWep" name="Psionic Weapon" description="{b}Benefit:{/b} Double the damage added to your attacks when using Psionic Weapon or Greater Psionic Weapon. In addition, you can expend a use of mythic power as a swift action to reroll any extra damage dice from Psionic Weapon or Greater Psionic Weapon and take the better result." compset="Feat" summary="Your mythic power enhances the psionic power of your melee attacks." uniqueness="useronce">
+    <comment>abValue = Damage Bonus (+1),abValue2 = # of Dice (Xd6),abValue3 = Die Size (2dX)</comment>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="2"/>
+    <fieldval field="abValue3" value="6"/>
+    <fieldval field="actName" value="Expend Focus"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Increase damage of Psionic Fist feat
+      #value[fPUPsiWep] += field[abValue].value
+      #value2[fPUPsiWep] += field[abValue2].value
+      #value3[fPUPsiWep] += field[abValue3].value]]></eval>
+    <exprreq message="Psionic Weapon feat required"><![CDATA[#hasfeat[fPUPsiWep] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMQuiPwr" name="Quicken Power" description="{b}Benefit{/b}: You can manifest any power as a swift action, regardless of its normal manifesting time. If a target provokes an attack of opportunity from you, you can target it with a quickened power as your attack of opportunity. Only quickened powers with a specific number of targets (rather than effect or area) can be manifested as an attack of opportunity, and only the creature that provoked the attack is targeted by the power (regardless of how many creatures the power normally targets).\n  Alternatively, you may expend two uses of mythic power to manifest a power as a quickened power (gaining only the normal benefits of a quickened power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus.\n{b}Normal:{/b} A quickened power that normally has a manifesting time of 1 standard action can instead be manifested as a swift action." compset="Feat" summary="Manifesting a power can be nearly effortless for you." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Quicken Power feat required"><![CDATA[#hasfeat[fPUQuiPwr] <> 0]]></exprreq>
+    <exprreq message="10th Mythic tier required"><![CDATA[#tierprereq[] >= 10]]></exprreq>
+    </thing>
+  <thing id="fPUMRapMet" name="Rapid Metabolism" description="{b}Benefit{/b}: When you regain hit points from daily healing, you regain all lost hit points and heal all ability damage, including any ability burn." compset="Feat" summary="You heal at incredible speed." uniqueness="useronce">
+    <fieldval field="reqCon" value="13"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="General" name="General" abbrev="General"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Rapid Metabolism feat required"><![CDATA[#hasfeat[fPURapMet] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMReboun" name="Rebounding Throw" description="{b}Benefit:{/b} When you use Rebounding Throw, you may rebound the attack to a number of additional targets equal to half your mythic tier (minimum 1.) Each rebound adds a cumulative -2 penalty to the next attack. You cannot strike the same creature twice when using Rebounding Throw. If you expend one use of mythic power while using Rebounding Throw, the additional attacks are made at the full attack bonus and there are no penalties for range increments." compset="Feat" summary="Your thrown attacks are capable of mowing down multiple enemies with a single throw." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="Free" name="Free" abbrev="Free"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <exprreq message="Rebounding Throw feat required"><![CDATA[#hasfeat[fPRRebound] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMRtrnSh" name="Return Shot" description="{b}Benefit{/b}: You can use Return Shot once per round without having to expend your psionic focus. In addition, you can expend a use of mythic power when using Return Shot to redirect the attack at another enemy within one range increment of you instead of at the attacker." compset="Feat" summary="Enemies find it incredibly difficult to strike you with ranged attacks." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Return Shot feat required."><![CDATA[#hasfeat[fPUReturnS] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMScrTat" name="Scribe Tattoo" description="{b}Benefit:{/b} At the beginning of each day when you regain your uses of mythic power, you can expend one use of mythic power to accomplish eight hours of work on one psionic tattoo you are scribing. You can only do this once per day per tattoo you are scribing, though you may also add an actual eighthour work day toward the scribing of such a tattoo. Unlike normal tattoo scribing, work accomplished by expending a use of mythic power does not require any special work space or quiet (though the cost of making magic items created this way is normal). \n  Additionally, there is no limit to the level of power you can imbue into a tattoo." compset="Feat" summary="You have mastered the art of scribing psionic tattoos." uniqueness="useronce">
+    <comment>Updated to UP text 4/2/2014 - Tim Shadow</comment>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="ItemCreate" name="Item Creation" abbrev="Item Creation"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <exprreq message="Scribe Tattoo feat required"><![CDATA[#hasfeat[fPUScrTatt] <> 0]]></exprreq>
+    <exprreq message="Manifester level 3 required."><![CDATA[hero.tagcount[Hero.Manifester] >= 3]]></exprreq>
+    </thing>
+  <thing id="fPUMSidChr" name="Sidestep Charge" description="{b}Benefit{/b}: You gain the benefits of Sidestep Charge even if you are flat-footed or otherwise denied your Dexterity bonus to Armor Class. In addition, if a charging opponent triggers an attack of opportunity, you can expend a use of mythic power as an immediate action to use an attack of opportunity and not have it count against your attacks of opportunity allowed in a round." compset="Feat" summary="Only a fool would charge you." uniqueness="useronce">
+    <fieldval field="reqDex" value="13"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="fCategory" tag="General" name="General" abbrev="General"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <exprreq message="Dodge required." iserror="no"><![CDATA[#hasfeat[fDodge] <> 0]]></exprreq>
+    <exprreq message="Sidestep Charge feat required."><![CDATA[#hasfeat[fPUSidChrg] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMSpThgt" name="Speed of Thought" description="{b}Benefit:{/b} Double the bonus to your speed from Speed of Thought. In addition, you can expend a use of mythic power when taking a 5-foot step to instead move your full speed." compset="Feat" summary="You are faster than the eye can see." uniqueness="useronce">
+    <fieldval field="actName" value="Expend Focus"/>
+    <fieldval field="reqWis" value="13"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostLevel" priority="9000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Double bonus to Speed of Thought
+        #value[fPUSpdThgt] *= 2]]></eval>
+    <exprreq message="Speed of Thought required."><![CDATA[#hasfeat[fPUSpdThgt] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMSpPsiR" name="Split Psionic Ray" description="{b}Benefit{\b}: When manifesting a power affected by Split Psionic Ray, it can affect an additional number of targets equal to one third of your mythic tier (rounded down) and the range between targets increases by 5 feet for each mythic tier you have achieved.\n  Alternatively, you may expend one use of mythic power to manifest a power as a split ray power (gaining only the normal benefits of a split ray power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus." compset="Feat" summary="Your rays affect multiple targets." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="3rd Tier Mythic rank required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    <exprreq message="Split Psionic Ray feat required."><![CDATA[#hasfeat[fPUSplPsiR] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMSurAur" name="Surging Aura" description="{b}Benefit:{/b} The insight bonus from your surging aura doubles and the effect lasts a number of rounds equal to your mythic tier." compset="Feat" summary="Your wild surges inspire your allies in battle." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <eval phase="Final" priority="25000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Set aura feet distance
+      #value[cWldWildSu] *= 2]]></eval>
+    <exprreq message="Surging Aura feat required."><![CDATA[#hasfeat[fPUSurAur] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMTalent" name="Talented" description="{b}Benefit:{/b} Add half your tier (minimum 1) to the maximum power level you can use Talented on to not take damage from when overchanneling." compset="Feat" summary="You are incredibly skilled at pushing yourself beyond normal limits." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[~ Add 1/2 Tier (minimum 1) to level of power able to manifest using
+~ overchannel without damage 
+
+  field[abValue].value += maximum(1,#tiereffecthalf[]) + 3
+
+  field[livename].text = field[name].text & " " & signed(field[abValue].value) & " level"]]></eval>
+    <exprreq message="Overchannel feat required."><![CDATA[#hasfeat[fPUTalent] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMTwnPwr" name="Twin Power" description="{b}Benefit{\b}: When manifesting a twinned power, you can choose separate targets or areas for the two effects.\n  Alternatively, you may expend two uses of mythic power to manifest a power as a twinned power (gaining only the normal benefits of a twinned power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus.\n\n{b}Normal:{/b} A twinned power affects the same target or area." compset="Feat" summary="You can split the effects of a twinned power." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Twin Power feat required."><![CDATA[#hasfeat[fPUTwinPwr] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMUStrik" name="Unavoidable Strike" description="{b}Benefit{/b}: When you make an attack using Unavoidable Strike, add half your tier (minimum 1) to the attack roll. In addition, you can expend a use of mythic power when using Unavoidable Strike to treat all attacks made during your turn as melee touch attacks." compset="Feat" summary="Your mythic power guides your unarmed strikes and natural attacks." uniqueness="useronce">
+    <fieldval field="reqStr" value="13"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="First">~ add to damage from unavoidable strike equal to half tier 
+~ minimum 1
+
+   #value[fPUPsiFist] += maximum(1,#tiereffecthalf[])</eval>
+    <exprreq message="Unavoidable Strike feat required."><![CDATA[#hasfeat[fPUUStrike] <> 0]]></exprreq>
+    </thing>
+  <thing id="mypOvrMnd" name="Overmind" description="Manifesters learn to use psionic powers in a variety of different ways. From the raw bursts of emotion from the wilder, to the teamwork oriented manifesting of the tactician, to the deep understanding of the psion, each of these manifesters learns to channel psionic energy into effects that alter themselves or the world around them. The overmind takes this ability to new heights, learning not only to weave psionic energy into a variety of effects, but to do it easily and in ways other manifesters could never achieve. The overmind is unparalleled in skill manifesting psionic powers, and many of the abilities of the overmind path improve your ability to manifest psionic powers or increase their capacity. In addition, this path offers a variety of options in increasing knowledge of psionics and typical defenses used against psionic powers. Overminds that approach the highest of mythic tiers can affect even the strongest-willed of creatures, while they themselves gain immunity from such effects. \n\n{b}Role{/b}: As an overmind, your role in the group is to enhance your manifesting ability and to have the right power for a particular situation. Whether that is improving the coordination over a collective or creating an opening in an enemy’s defenses, you channel psionic energy to overcome challenges and defeat foes. While you gain only limited defensive boosts, your offensive and tactical options prove that the best defense is a good offense. \n\n{b}Classes{/b}: The overmind is the primary path for psions, tacticians, vitalists, and wilders, the pure manifesting classes. Cryptics and psychic warriors might find many abilities in the overmind path useful, but could find other paths more appealing to their particular mix of skills and psionics." compset="MythPath" uniqueness="useronce">
+    <fieldval field="mpTierHp" value="3"/>
+    <fieldval field="mpOthAbNm" value="Psionic Secret"/>
+    <arrayval field="mpOthArr" index="0" value="1"/>
+    <arrayval field="mpPathArr" index="0" value="1"/>
+    <arrayval field="mpPathArr" index="1" value="2"/>
+    <arrayval field="mpPathArr" index="2" value="3"/>
+    <arrayval field="mpPathArr" index="3" value="4"/>
+    <arrayval field="mpPathArr" index="4" value="5"/>
+    <arrayval field="mpPathArr" index="5" value="6"/>
+    <arrayval field="mpPathArr" index="6" value="7"/>
+    <arrayval field="mpPathArr" index="7" value="8"/>
+    <arrayval field="mpPathArr" index="8" value="9"/>
+    <arrayval field="mpPathArr" index="9" value="10"/>
+    <arrayval field="mpFeatArr" index="0" value="1"/>
+    <arrayval field="mpFeatArr" index="2" value="2"/>
+    <arrayval field="mpFeatArr" index="4" value="3"/>
+    <arrayval field="mpFeatArr" index="6" value="4"/>
+    <arrayval field="mpFeatArr" index="8" value="5"/>
+    <arrayval field="mpAbilArr" index="1" value="1"/>
+    <arrayval field="mpAbilArr" index="3" value="2"/>
+    <arrayval field="mpAbilArr" index="5" value="3"/>
+    <arrayval field="mpAbilArr" index="7" value="4"/>
+    <arrayval field="mpAbilArr" index="9" value="5"/>
+    <usesource source="DSPMyPsi"/>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="7"/>
+      </bootstrap>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="MythAbiSco">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="MythAbiSco">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="MythAbiSco">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="MythAbiSco">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="MythAbiSco">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cPUMBndMnd">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    </thing>
+  <thing id="fPUMUncPwr" name="Unconditional Power" description="{b}Benefit{/b}:You can manifest any power as an unconditional power and under any status effect except unconscious or dead. \n  Alternatively, you may expend two uses of mythic power to manifest a power as an unconditional power (gaining only the normal benefits of an unconditional power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus.\n{b}Normal:{/b} Only personal powers and powers that affect your person can be manifested as unconditional powers." compset="Feat" summary="You can manifest powers under nearly any condition." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Unconditional Power feat required."><![CDATA[#hasfeat[fPUUncPwr] <> 0]]></exprreq>
+    <exprreq message="10th Mythic Tier required."><![CDATA[#tierprereq[] >= 10]]></exprreq>
+    </thing>
+  <thing id="fPUMUnwill" name="Unwilling Participant" description="{b}Benefit:{/b} You add half your tier to the save DC when forcing an unwilling creature into your collective. Additionally, you can expend one use of mythic power when a creature succeeds on its saving throw against being added to your collective to force that creature to roll a second time and take the lower result." compset="Feat" summary="Creatures find it difficult to resist joining your collective." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="UseAttr" tag="aWIS" name="Wisdom" abbrev="Wisdom"/>
+    <tag group="abAction" tag="Move" name="Move" abbrev="mv"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="abAction" tag="Standard" name="Standard" abbrev="std"/>
+    <tag group="abSave" tag="WillNeg" name="Will Negates" abbrev="Will neg"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <eval phase="Final" priority="20000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Add half tier value to DC of unwilling participant
+      hero.child[cPUUnwPart].field[abDC].value += maximum(1,#tiereffecthalf[])]]></eval>
+    <exprreq message="Unwilling Participant feat required."><![CDATA[#hasfeat[fPUUnwillP] <> 0]]></exprreq>
+    <exprreq message="2nd Mythic Tier required."><![CDATA[#tierprereq[] >= 2]]></exprreq>
+    </thing>
+  <thing id="fPUMUpWall" name="Up The Walls" description="{b}Benefit{/b}: You can expend a use of mythic power when using the Up the Walls feat to remain on a surface other than the floor for a number of rounds equal to your tier." compset="Feat" summary="Your ability to traverse walls defies all laws of physics." uniqueness="useronce">
+    <fieldval field="reqWis" value="13"/>
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <exprreq message="Up the Walls required."><![CDATA[#hasfeat[fPUUpWall] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMWidPwr" name="Widen Power" description="{b}Benefit{/b}: When you manifest a power affected by Widen Power, any numeric measurements of the power’s area increase by 200%. Only a burst, emanation, or spread-shaped power can be affected by this feat.\n  Alternatively, you may expend a use of mythic power to manifest a power as a widened power (gaining only the normal benefits of a widened power, rather than the increased benefits outlined above) without increasing the number of power points spent or expending psionic focus.\n{b}Normal:{/b} A widened power increases its area by 100%." compset="Feat" summary="You can manifest powers that cover vast areas." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Widen Power feat required."><![CDATA[#hasfeat[fPUWidPwr] <> 0]]></exprreq>
+    </thing>
+  <thing id="fPUMWndAtt" name="Wounding Attack" description="{b}Benefit:{/b} The Constitution damage dealt from Wounding Attack is doubled. In addition, you can expend a use of mythic power as a swift action when an attack made with Wounding Attack misses to reroll the attack roll." compset="Feat" summary="Your attacks are particularly debilitating." uniqueness="useronce">
+    <usesource source="pPsiUn" parent="pPsionics" name="DSP - Ultimate Psionics"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <tag group="Helper" tag="ShowSpec" name="Show Spec" abbrev="Show Spec"/>
+    <tag group="fCategory" tag="Mythic"/>
+    <exprreq message="Wounding Attack feat required."><![CDATA[#hasfeat[fPUWndAtt] <> 0]]></exprreq>
+    </thing>
+  </document>
