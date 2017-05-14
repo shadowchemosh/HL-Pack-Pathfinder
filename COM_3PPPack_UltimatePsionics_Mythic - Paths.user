@@ -25,10 +25,7 @@
     <arrayval field="mpAbilArr" index="7" value="4"/>
     <arrayval field="mpAbilArr" index="9" value="5"/>
     <usesource source="srcMyPsi"/>
-    <bootstrap thing="MythFeat">
-      <autotag group="Helper" tag="Mythic"/>
-      <autotag group="ClSpecWhen" tag="5"/>
-      </bootstrap>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="MythFeat">
       <autotag group="Helper" tag="Mythic"/>
       <autotag group="ClSpecWhen" tag="7"/>
@@ -69,5 +66,30 @@
       <autotag group="Helper" tag="Mythic"/>
       <autotag group="ClSpecWhen" tag="3"/>
       </bootstrap>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
     </thing>
-</document>
+  <thing id="cPUMBndMnd" name="Boundless mind" description="At 10th tier, whenever you manifest a psionic power that targets one or more non-mythic creatures, each of those creatures must roll any saving throw against the power twice and take the lower result. You gain power resistance equal to 15 + your highest manifester level, but only against psionic powers. Once per round when your power resistance protects you from a power manifested by an enemy mythic creature, you regain one use of mythic power." compset="ClSpecial">
+    <fieldval field="abValue" value="15"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="50000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Calculate the highest manifester level
+      foreach pick in hero from Class where "CasterSrc.Psionic"
+        #applybonus[abValue,this,eachpick.field[cCasterLev].value]
+      nexteach
+
+      ~ 15 + highest manifester level
+      field[abValue].value += field[abValue2].value
+
+      ~ Set the final value into power resistance
+      #value[xPwrRes] += field[abValue].value]]></eval>
+    </thing>
+  </document>
