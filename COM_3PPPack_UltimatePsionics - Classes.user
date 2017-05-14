@@ -4355,6 +4355,18 @@ if (field[abilActive].value <> 0) then
       <autotag group="ClSpecWhen" tag="12"/>
       </bootstrap>
     <bootstrap thing="cPU3FavWep">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPU3FavWep">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cPU3FavWep">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cPU3FavWep">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPU3FavWep">
       <autotag group="ClSpecWhen" tag="18"/>
       </bootstrap>
     <bootstrap thing="cPUCovFire">
@@ -4484,15 +4496,6 @@ if (field[abilActive].value <> 0) then
     <bootstrap thing="cPUTechFin">
       <containerreq phase="First" priority="500"><![CDATA[count:Custom.CStyleFin >= 1]]></containerreq>
       <autotag group="ClSpecWhen" tag="2"/>
-      </bootstrap>
-    <bootstrap thing="cPU3FavWep">
-      <autotag group="ClSpecWhen" tag="6"/>
-      </bootstrap>
-    <bootstrap thing="cPU3FavWep">
-      <autotag group="ClSpecWhen" tag="10"/>
-      </bootstrap>
-    <bootstrap thing="cPU3FavWep">
-      <autotag group="ClSpecWhen" tag="14"/>
       </bootstrap>
     <bootstrap thing="cPUSkilFin">
       <containerreq phase="First" priority="500"><![CDATA[count:Custom.CStyleFin >= 1]]></containerreq>
@@ -6484,13 +6487,13 @@ endif]]></eval>
     </thing>
   <thing id="cPUMrkWnd" name="Wind Reader" description="A marksman can use her heightened senses and awareness of her surroundings to read the wind and environment, allowing her to drastically improve her accuracy. While maintaining psionic focus, she can spend a swift action to gain a competence bonus equal to her Wisdom modifier on ranged attacks until the end of the round. She can do this a number of times per day equal to 3 + her class level.\n\n{b}TO-DO{/b} Activation not currently implemented." compset="ClSpecial" summary="Psionically focused, gain competence bonus to ranged attacks equal to Wisdom.">
     <fieldval field="trkMax" value="3"/>
-    <usesource source="pPsiUn"/>
     <tag group="ChargeCalc" tag="LevelFull"/>
     <tag group="ChargeCalc" tag="LevelX1"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="User" tag="Tracker"/>
     <tag group="Usage" tag="Day"/>
     <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="cPUMrkFin" name="Combat Style (Finesse)" description="Finesse marksmen learn special techniques with ranged attacks that otherwise would find too difficult to perform. A finesse marksman is capable of knocking the weapon out of an opponent’s hand with the flick of the wrist, or pinning a target to a door without drawing blood." compset="CustomSpec" uniqueness="unique">
     <fieldval field="shortname" value="Combat Style"/>
@@ -6814,25 +6817,42 @@ field[trkMax].value += field[abValue].value]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="Usage" tag="Minute10"/>
     </thing>
-  <thing id="cPU3FavWep" name="Favored Weapon" description="Marksmen of 2nd level select a group of ranged weapons from the list below as their preferred weapons and gain a +1 competence bonus to ranged attack rolls made with any weapon of that group. Every four marksman levels thereafter, this bonus increases by 1.\n\n{i}Bows:{/i} composite longbow, composite shortbow, longbow,  and shortbow.\n\n{i}Crossbows:{/i} double crossbow, hand crossbow, heavy crossbow, light crossbow, repeating heavy crossbow, and repeating light crossbow.\n\n{i}Spears:{/i} javelin, lance, longspear, pilum, shortspear, spear, and trident.\n\n{i}Thrown:{/i} blowgun, bolas, boomerang, chakram, club, dagger, dart, halfling sling staff, javelin, light hammer, net, shortspear, shuriken, sling, spear, starknife, throwing axe, trident, wooden stake.\n\nNote: Additional weapons can be added to these groups or additional weapon groups can be created at your GM’s discretion. Some weapons may belong to multiple weapon groups at your GM’s discretion." compset="ClSpecial">
-    <usesource source="pPsiUn"/>
+  <thing id="cPU3FavWep" name="Favored Weapon" description="Marksmen of 2nd level select a group of ranged weapons from the list below as their preferred weapons and gain a +1 competence bonus to ranged attack rolls made with any weapon of that group. Every four marksman levels thereafter, this bonus increases by 1.\n\n{i}Bows:{/i} composite longbow, composite shortbow, longbow,  and shortbow.\n\n{i}Crossbows:{/i} double crossbow, hand crossbow, heavy crossbow, light crossbow, repeating heavy crossbow, and repeating light crossbow.\n\n{i}Spears:{/i} javelin, lance, longspear, pilum, shortspear, spear, and trident.\n\n{i}Thrown:{/i} blowgun, bolas, boomerang, chakram, club, dagger, dart, halfling sling staff, javelin, light hammer, net, shortspear, shuriken, sling, spear, starknife, throwing axe, trident, wooden stake.\n\n{b}Note:{/b} Note this ability is using the standard &quot;Fighter&quot; weapon groups. Meaning the weapons that are in each group will grow when every Paizo adds any weapons to the selected group." compset="ClSpecial" summary="Gain a compentence bonus to ranged attacks with the selected weapon group.">
+    <fieldval field="usrCandid1" value="component.SelectHelp &amp; Selection.WeaponsGrp &amp; (wFtrGroup.Bows|wFtrGroup.Crossbows|wFtrGroup.Spears|wFtrGroup.Thrown)"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Usage" tag="Day"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <eval phase="PreAttr" priority="1000"><![CDATA[var myTimes as number
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " (" & signed(field[xIndex].value) & ")"
 
-myTimes = field[xIndex].value + 1
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-field[listname].text = "Favored Weapon (+" & myTimes & ")"
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " (" & signed(field[abValue].value) & ")"
 
-~These calculations should only happen for the first copy
-doneif (tagis[Helper.FirstCopy] = 0)
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen <> 1)
 
-~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
+      perform field[usrChosen1].chosen.pulltags[wFtrGroup.?]
 
-field[abValue].value += field[xCount].value
+      ~ Give a ranged attack bonus to each weapon
+      foreach pick in hero from BaseWep where tagids[wFtrGroup.?]
+        #applybonus[atrBonComp,eachpick,field[abValue].value]
+      nexteach]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ The following should only happen on each additional
+      ~ bootstrap of this ability.
+      doneif (tagis[Helper.FirstCopy] = 1)
 
-field[livename].text = "Favored Weapon (+" & field[abValue].value & ")"]]></eval>
+      ~ Remove weapon group selection
+      perform delete[ChooseSrc1.?]
+      field[usrCandid1].text = ""]]></eval>
     </thing>
   <thing id="cPUCovFire" name="Cover FIre" description="Beginning at 4th level, the marksman knows not only how to directly engage her enemies, but also how to protect her allies. As an attack action, she may choose to fire a ranged or thrown weapon at an opponent within 30 feet to distract that opponent rather than to deal damage. Make an attack roll against the space a target occupies (AC 10). If successful, the targeted enemy must make a Reflex save (DC 10 + one-half the marksman’s class level + the marksman’s Dexterity modifier), or be staggered for one round. The marksman still expends ammunition as normal for this attack.\n\nIf the attack roll would indicate a critical threat and the result would hit the opponent’s AC, roll to confirm: if the critical hit is confirmed against the opponent’s AC, the attack does normal damage as well. A marksman cannot use cover fire if her opponent or the square she targets would be subject to a miss chance (such as from a concealed target)." compset="ClSpecial">
     <usesource source="pPsiUn"/>
