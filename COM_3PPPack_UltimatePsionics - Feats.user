@@ -2059,12 +2059,15 @@ validif (hero.tagcount[Hero.Manifester] >= 3)]]></validate>
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Psionic"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="Render" priority="11000"><![CDATA[      ~ If we're disabled, do nothing
+    <eval phase="PostAttr" priority="25000"><![CDATA[
+      ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
 
-      hero.child[cPUDevaTou].field[livename].text = hero.child[cPUDevaTou].field[listname].text & "(+" & #attrmod[aCHA] & " for Touch of Terror)"
+      ~ Increase Plus damage by Charisma modifier
+      #value2[cPUDevaTou] += #attrmod[aCHA]
 
-      hero.child[cPUDevaTou].field[listname].text = hero.child[cPUDevaTou].field[listname].text & "(+" & #attrmod[aCHA] & " for Touch of Terror)"]]></eval>
+      ~ Set some helpful text reminder
+      hero.childfound[cPUDevaTou].field[DescAppend].text &= "{br}" & field[thingname].text & ":{/b} " & "Gain your Charisma modifier as a damage bonus.{br}{br}"]]></eval>
     <exprreq message="Devastating Touch class feature required."><![CDATA[#hasability[cPUDevaTou] <> 0]]></exprreq>
     </thing>
   <thing id="fPUTwinThr" name="Twin Throw" description="You can hurl multiple weapons at the same time.{br}{br}{b}Prerequisites:{/b} Dex 17, Point-Blank Shot, Two-Weapon Fighting, base attack bonus +6.{br}{br}{b}Benefit:{/b} When making a full-attack action with a thrown weapon, your first attack fires two thrown weapons. If the attack hits, both weapons hit. Apply precision-based damage (such as sneak attack) and critical hit damage only once for this attack. Damage bonuses from a high Strength bonus apply to each weapon, as do other damage bonuses, such as a ranger&apos;s favored enemy bonus. Damage reduction and resistances apply separately to each weapon." compset="Feat" uniqueness="useronce">

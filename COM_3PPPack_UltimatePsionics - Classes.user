@@ -4949,15 +4949,19 @@ perform forward[WepProf.?]]]></eval>
     <bootstrap thing="cfgPUAstSu">
       <containerreq phase="First" priority="450">count:AbReplace.cPUAstSuit = 0</containerreq>
       </bootstrap>
-    <eval phase="First" priority="90" index="2">if (field[abilActive].value = 1) then
-   perform forward[Custom.WearAstS]
-endif</eval>
-    <eval phase="PreLevel" priority="10000"><![CDATA[~if we've been replaced, get out now
-doneif (tagis[Helper.SpcReplace] <> 0)
+    <eval phase="First" priority="90" index="2"><![CDATA[
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+      ~ If ability not active get out now!
+      doneif (field[abilActive].value = 0)
 
-if (hero.childlives[cfgPUAstSu] <> 0) then
-  hero.childfound[cfgPUAstSu].field[cfgMax1].value += 1
-  endif]]></eval>
+      ~ Set a hero tag so we can test that we are active by other Picks
+      perform hero.assign[Custom.WearAstS]]]></eval>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+
+      hero.childfound[cfgPUAstSu].field[cfgMax1].value += 1]]></eval>
     </thing>
   <thing id="cPUCraftsm" name="Craftsman" description="Beginning at 2nd level, an aegis gains a +1 bonus to any one Craft skill of his choice. At 6th level and every four levels thereafter, this bonus increases by 1." compset="ClSpecial">
     <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
@@ -6008,20 +6012,37 @@ MyBonus += field[abValue].value
 field[abSumm].text = "+" & MyBonus & " Insight bonus to Intimidate."]]></eval>
     </thing>
   <thing id="cPUDevaTou" name="Devastating Touch" description="A dread is able to channel psionic energy from fear and nightmares into a touch that causes pain. To use this ability, a dread must make a melee touch attack as a standard action on a living target. If the attack hits, it deals 1d6 points of damage plus 1 point per class level. The dread does not add his Strength modifier to the damage of this attack." compset="ClSpecial">
-    <usesource source="pPsiUn"/>
+    <fieldval field="abValue3" value="6"/>
     <tag group="AbilType" tag="Super"/>
+    <tag group="abDuration" tag="Instant"/>
+    <tag group="abRange" tag="Touch"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="Helper" tag="WeaponSpec"/>
+    <tag group="Helper" tag="SingleAtt"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCritMult" tag="2"/>
+    <tag group="wCategory" tag="Melee"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
       ~ Set the list name
-      field[listname].text = field[name].text & " (" & field[xIndex].value & "d6+" & field[xTotalLev].value & ")"
+      field[listname].text = field[name].text & " (" & field[xIndex].value & "d6" & signed(field[xTotalLev].value) & ")"
 
       ~ If we've been Disabled, get out now
       doneif (tagis[Helper.SpcDisable] <> 0)
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] = 0)
 
+      ~ NOTE:
+      ~ abValue - Holds the number of dice
+      ~ abvalue2 - Holds the Plus Damage
       field[abValue].value += field[xCount].value
+      field[abValue2].value += field[xTotalLev].value
 
-      field[livename].text = field[name].text & " (" & field[abValue].value & "d6+" & field[xTotalLev].value & ")"]]></eval>
+      ~ Build damage dice and plus value
+      field[abText].text = field[abValue].value & "d" & field[abValue3].value & signed(field[abValue2].value)
+
+      ~ Fill in the fixed melee damage
+      field[wFixDamage].text = field[abText].text]]></eval>
     </thing>
   <thing id="cPUAuraFea" name="Aura of Fear" description="At 3rd level, a dread radiates a palpably daunting aura that causes all enemies within 10 feet to take a –4 penalty on saving throws against fear effects. Creatures that are normally immune to fear lose that immunity while within 10 feet of a dread with this ability. This ability functions only while the dread remains conscious, not if she is unconscious or dead." compset="ClSpecial">
     <usesource source="pPsiUn"/>
