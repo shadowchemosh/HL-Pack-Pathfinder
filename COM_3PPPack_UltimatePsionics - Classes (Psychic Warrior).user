@@ -106,27 +106,6 @@
     <tag group="AgeColumn" tag="2"/>
     <tag group="ClassSkill" tag="skAcrobat"/>
     <tag group="ClassSkill" tag="skClimb" name="Climb" abbrev="Climb"/>
-    <bootstrap thing="cPWaTwistP">
-      <autotag group="ClSpecWhen" tag="12"/>
-      </bootstrap>
-    <bootstrap thing="cPWaPathSk">
-      <autotag group="ClSpecWhen" tag="13"/>
-      </bootstrap>
-    <bootstrap thing="cPWaPathwe">
-      <autotag group="ClSpecWhen" tag="15"/>
-      </bootstrap>
-    <bootstrap thing="cPWaPathSk">
-      <autotag group="ClSpecWhen" tag="16"/>
-      </bootstrap>
-    <bootstrap thing="cPWaPathwe">
-      <autotag group="ClSpecWhen" tag="18"/>
-      </bootstrap>
-    <bootstrap thing="cPWaPathSk">
-      <autotag group="ClSpecWhen" tag="19"/>
-      </bootstrap>
-    <bootstrap thing="cPWaEterna">
-      <autotag group="ClSpecWhen" tag="20"/>
-      </bootstrap>
     <bootstrap thing="fWepMart"></bootstrap>
     <bootstrap thing="fArmLight"></bootstrap>
     <bootstrap thing="fArmHeavy"></bootstrap>
@@ -160,6 +139,27 @@
     <bootstrap thing="cPWaPathSk">
       <autotag group="ClSpecWhen" tag="10"/>
       </bootstrap>
+    <bootstrap thing="cPWaTwistP">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cPWaPathSk">
+      <autotag group="ClSpecWhen" tag="13"/>
+      </bootstrap>
+    <bootstrap thing="cPWaPathwe">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cPWaPathSk">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <bootstrap thing="cPWaPathwe">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cPWaPathSk">
+      <autotag group="ClSpecWhen" tag="19"/>
+      </bootstrap>
+    <bootstrap thing="cPWaEterna">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
     <link linkage="psiattr" thing="aWIS"/>
     </thing>
   <thing id="cPUPsiWar" name="Psychic Warrior" description="Where the psion spends his days studying the intricacies of psionic power and unlocking the mysteries of the mind, others choose to use their internal power to augment their physical form. These psychic warriors use their psionic potential as a way to improve their natural abilities, becoming fierce and deadly in their chosen path.{br}{br}{b}Role:{/b} The psychic warrior&apos;s path determines his strengths and weaknesses within a party. Whether he is the epitome of unleashing the beast within, or a stealthy combatant who strikes from the shadows, the psychic warrior&apos;s primary focus is typically battlefield control and dealing or blocking damage.{br}{br}{b}Alignment:{/b} Any." compset="ClassLevel" maxlimit="20">
@@ -176,11 +176,14 @@
     <tag group="Helper" tag="UseOwnLev"/>
     <tag group="AbilType" tag="Extra"/>
     <eval phase="PreLevel"><![CDATA[
-    if (field[xIndex].value >= 2) then
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      if (field[xIndex].value >= 2) then
         field[livename].text = "Way of the Warrior"
         field[listname].text = "Way of the Warrior"
         field[abSumm].text = "The psychic warrior gets to choose a second warrior's path. He can exchange one of his current path powers for one of the new path powers available.  The psychic warrior may only have two path powers in total."
-    endif]]></eval>
+      endif]]></eval>
     </thing>
   <thing id="cPWaMarPow" name="Martial Power" description="If the psychic warrior makes a melee attack, he can manifest a path power as part of the attack action. The power takes effect immediately after the attack has been finished." compset="ClSpecial" summary="Manifest a path power as part of a melee attack.">
     <tag group="SpecType" tag="Attack"/>
@@ -189,32 +192,27 @@
     <tag group="abAction" tag="PUManFocus"/>
     <tag group="abAction" tag="Swift"/>
     </thing>
-  <thing id="cPWaPathwe" name="Pathweaving" description="As long as the psychic warrior maintains psionic focus, once per day he can gain the benefits of both of his Trances for up to 5 minutes.  Activating this ability is a free action.  \nEvery third level thereafter, the psychic warrior can use this ability an additional time per day." compset="ClSpecial" summary="Gain the benefit of both path trances for an encounter.">
+  <thing id="cPWaPathwe" name="Pathweaving" description="At 15th level, as long as the psychic warrior maintains psionic focus, once per day he can gain the benefits of both of his trances for up to 5 minutes. Activating this ability is a free action.\n\nEvery third level thereafter, the psychic warrior can use this ability an additional time per day." compset="ClSpecial" summary="Gain the benefit of both path trances for up to 5 minutes.">
     <tag group="User" tag="Tracker"/>
     <tag group="abAction" tag="Free"/>
     <tag group="abAction" tag="PUManFocus"/>
-    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[      ~ If we're not shown, just get out now
-      doneif (tagis[Helper.ShowSpec] = 0)
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Usage" tag="Day"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " (" & field[xIndex].value & "/day)"
 
-      ~ Add a tag indicating that wild shape is ok
-      ~ perform hero.assign[Hero.Pathweaving]
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-      ~we get 1 use at 15th level & 2 at 18th
-      var uses as number
-      uses = (field[xAllLev].value - 15) / 3
-      ~if (field[xAllLev].value >= 18) then
-      ~  uses = 2
-      ~elseif (field[xAllLev].value >= 15) then
-      ~  uses = 1
-      ~endif
-
-      field[trkMax].value += round(uses,0,-1)
-      perform assign[Usage.Day]]]></eval>
-    <eval phase="Final" priority="10000"><![CDATA[
       field[abValue].value += field[xCount].value
-      field[livename].text = "Pathweaving " & field[abValue].value & "/day"
-      field[abSumm].text = "Gain the benefit of both your Trances " & field[abValue].value & "/day."
-      field[listname].text = "Pathweaving " & field[xIndex].value & "/day"]]></eval>
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      field[trkMax].value += field[abValue].value]]></eval>
     </thing>
   <thing id="cPWaEterna" name="Eternal Warrior" description="Once per day as a free action, the psychic warrior can enter into a very powerful Trance. As long as he maintains psionic focus, for up to 5 minutes the psychic warrior adds his Wisdom modifier to his attack rolls, damage rolls, AC, skill checks, ability checks, saves, and initiative, and he increases his speed by +5 feet for every point of his Wisdom modifier." compset="ClSpecial" summary="Enter a powerful trance as long as you maintain your psionic focus.">
     <fieldval field="trkMax" value="1"/>
@@ -319,21 +317,21 @@
     <tag group="ClassSkill" tag="skKnowRel"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="cPWaTraAsc"></bootstrap>
+    <bootstrap thing="cPWaManAsc"></bootstrap>
     <bootstrap thing="puPrecogD1">
       <autotag group="PsyWarrior" tag="PathPower"/>
       </bootstrap>
     <bootstrap thing="puPrecogO1">
       <autotag group="PsyWarrior" tag="PathPower"/>
       </bootstrap>
-    <bootstrap thing="cPWaManAsc"></bootstrap>
     </thing>
   <thing id="cPWaTraAsc" name="Trance (Ascetic Path)" description="Beginning at 3rd level, while maintaining psionic focus and wearing no or light armor, you gain gain a +1 competence bonus to your AC or saves, chosen at the time you gain psionic focus. This bonus increases by 1 every four psychic warrior levels thereafter." compset="ClSpecial" summary="When psi-focused you gain a competence bonus to saves or AC.">
     <arrayval field="usrArray" index="1" value="Saves"/>
     <arrayval field="usrArray" index="0" value="Armor Class"/>
     <tag group="User" tag="Activation"/>
     <tag group="abAction" tag="PUManFocus"/>
-    <eval phase="First" priority="10000" index="2">~ Setup this Maneuver or Trance for the Psy Warrior
-      Call PsyWarTrMa</eval>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
@@ -374,58 +372,42 @@
       ElseIf (field[usrIndex].value = 1) Then
         #applybonus[BonComp,hero.child[svAll],field[abValue].value]
       Endif]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
   <thing id="cPWaManAsc" name="Maneuver (Ascetic Path)" description="Beginning at 3rd level, as an immediate action, you can expend your psionic focus to gain a +2 dodge bonus to your AC until the beginning of your next turn. This bonus increases by +1 for every five psychic warrior levels you have.{br}{br}In addition, if you did this in response to an attack and that attack misses you, you may take a 5-foot step as part of this action." compset="ClSpecial">
     <tag group="abAction" tag="PUExpFocus"/>
-    <eval phase="First" priority="10000">~ Setup this Maneuver or Trance for the Psy Warrior
-    Call PsyWarTrMa</eval>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
-  <thing id="cWPaAssPri" name="Assassin&apos;s Path" description="While others prefer to stand boldly in the face of danger, your preferred weapon is stealth and silence. When you attack, your enemy is bound to fall.\n\n{b}Bonus Class Skill{/b}: Stealth\n\n{b}Powers{/b}: {i}Distract, prevenom{/i} or {i}prevenom weapon{/i}\n\n{b}Skills{/b}: Acrobatics, Perception, Stealths\n\n{b}Note:{/b} You need to correctly set one of the Path&apos;s selected as your Primary path and the 2nd one as the Secondary path to have everthing calc correctly." compset="CustomSpec" summary="You are a follower of the Assassin&apos;s Path" uniqueness="useronce">
-    <comment><![CDATA[PathSkill - This tag group is used to setup the skills associated to the Path. These skills will only be allowed to be selection from the "PathSkill" class ability.
-
-ClassSkill - This tag group is used to setup the skills that will become the Bonus Ckass Skills.
-
-ClsAllowPs - This tag group is used to setup the Powers that this Path grants. You will also still need to bootstrap the same powers onto this Thing with the "Hide.Power" and "PsyWarrior.PathPower" tags.]]></comment>
-    <arrayval field="usrArray" index="1" value="Secondary"/>
-    <arrayval field="usrArray" index="0" value="Primary"/>
+  <thing id="cWPaAssPri" name="Assassin&apos;s Path" description="While others prefer to stand boldly in the face of danger, your preferred weapon is stealth and silence. When you attack, your enemy is bound to fall.\n\n{b}Bonus Class Skill{/b}: Stealth\n\n{b}Powers{/b}: {i}Distract, prevenom{/i} or {i}prevenom weapon{/i}\n\n{b}Skills{/b}: Acrobatics, Perception, Stealths" compset="PUPsyPath" summary="You are a follower of the Assassin&apos;s Path" uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="SpecSource" tag="cHelpPWa"/>
     <tag group="ClassSkill" tag="skStealth"/>
     <tag group="PathSkill" tag="skStealth"/>
     <tag group="PathSkill" tag="skAcrobat"/>
     <tag group="PathSkill" tag="skPercep"/>
-    <tag group="ClsAllowPs" tag="puDistrac1"/>
-    <tag group="ClsAllowPs" tag="puPrevenm1"/>
-    <tag group="ClsAllowPs" tag="puPreVenW1"/>
-    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaManAss"></bootstrap>
     <bootstrap thing="puPrevenm1">
-      <autotag group="Hide" tag="Power"/>
       <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="Helper" tag="Free"/>
       </bootstrap>
     <bootstrap thing="puPreVenW1">
-      <autotag group="Hide" tag="Power"/>
       <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="Helper" tag="Free"/>
+      </bootstrap>
+    <bootstrap thing="puDistrac1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
       </bootstrap>
     <bootstrap thing="cPWaTraAss"></bootstrap>
-    <bootstrap thing="cPWaManAss"></bootstrap>
-    <bootstrap thing="puDistrac1">
-      <autotag group="Hide" tag="Power"/>
-      <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="Helper" tag="Free"/>
-      </bootstrap>
-    <eval phase="First">~ Setup the Psychic Warrior Path
-      Call PsyWarPath</eval>
     </thing>
   <thing id="cPWaTraAss" name="Trance (Assassin&apos;s Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain a +1 competence bonus on attack rolls.  This bonus increases by 1 every 4 levels thereafter." compset="ClSpecial" summary="When psi-focused you gain a competence bonus to attack rolls.">
     <tag group="User" tag="Activation"/>
     <tag group="abAction" tag="PUManFocus"/>
-    <eval phase="First" priority="10000" index="2">~ Setup this Maneuver or Trance for the Psy Warrior
-Call PsyWarTrMa</eval>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000" name="Trance Assassins Path Setup"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
@@ -461,13 +443,16 @@ Call PsyWarTrMa</eval>
       #applybonus[atmBonComp,hero.child[Attack],field[abValue].value]
       ~ Range bonus
       #applybonus[atrBonComp,hero.child[Attack],field[abValue].value]]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
   <thing id="cPWaManAss" name="Maneuver (Assassin&apos;s Path)" description="Beginning at 3rd level, any time you strike an enemy with a melee attack and there are no other enemies adjacent to you, you can expend your psionic focus to deal an additional +2d6 damage. For every five psychic warrior levels you gain thereafter, this damage increases by +1d6. This damage is precision-based damage." compset="ClSpecial">
     <fieldval field="abValue" value="2"/>
     <fieldval field="abValue2" value="6"/>
     <tag group="abAction" tag="PUExpFocus"/>
-    <eval phase="First" priority="10000">~ Setup this Maneuver or Trance for the Psy Warrior
-      Call PsyWarTrMa</eval>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
@@ -486,48 +471,31 @@ Call PsyWarTrMa</eval>
       Endif
       ~ Set live name to include the bonus damage
       field[livename].text = field[thingname].text & " " & signed(field[abValue].value) & "d" & field[abValue2].value]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
-  <thing id="cWPaBraPri" name="Brawling Path" description="You bring the combat to your enemy - up into his face. Your powers allow you to overpower enemies and bring them to bear, either to bring justice to them, or to finish them off when they are out.\n\n{b}Bonus Class Skill{/b}: Escape Artist\n\n{b}Powers{/b}: Grip of iron, hammer\n\n{b}Skills{/b}: Acrobatics, Autohypnosis, Escape Artist\n\n{b}Note:{/b} You need to correctly set one of the Path&apos;s selected as your Primary path and the 2nd one as the Secondary path to have everthing calc correctly." compset="CustomSpec" summary="You are a follower of the Brawler&apos;s Path" uniqueness="unique">
-    <comment><![CDATA[PathSkill - This tag group is used to setup the skills associated to the Path. These skills will only be allowed to be selection from the "PathSkill" class ability.
-
-ClassSkill - This tag group is used to setup the skills that will become the Bonus Ckass Skills.
-
-ClsAllowPs - This tag group is used to setup the Powers that this Path grants. You will also still need to bootstrap the same powers onto this Thing with the "Hide.Power" and "PsyWarrior.PathPower" tags.]]></comment>
-    <arrayval field="usrArray" index="0" value="Primary"/>
-    <arrayval field="usrArray" index="1" value="Secondary"/>
+  <thing id="cWPaBraPri" name="Brawling Path" description="You bring the combat to your enemy - up into his face. Your powers allow you to overpower enemies and bring them to bear, either to bring justice to them, or to finish them off when they are out.\n\n{b}Bonus Class Skill{/b}: Escape Artist\n\n{b}Powers{/b}: Grip of iron, hammer\n\n{b}Skills{/b}: Acrobatics, Autohypnosis, Escape Artist" compset="PUPsyPath" summary="You are a follower of the Brawler&apos;s Path" uniqueness="unique">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <tag group="AbilType" tag="Extra"/>
-    <tag group="Helper" tag="NoPathSoc"/>
     <tag group="PathSkill" tag="skAcrobat"/>
     <tag group="PathSkill" tag="skPUAhypno"/>
     <tag group="PathSkill" tag="skEscape"/>
-    <tag group="ClsAllowPs" tag="puGripIrn1"/>
-    <tag group="ClsAllowPs" tag="puHammer1"/>
     <tag group="ClassSkill" tag="skEscape"/>
-    <tag group="SpecSource" tag="cHelpPWa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaManBra"></bootstrap>
     <bootstrap thing="puHammer1">
-      <autotag group="Hide" tag="Power"/>
       <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="Helper" tag="Free"/>
+      </bootstrap>
+    <bootstrap thing="puGripIrn1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
       </bootstrap>
     <bootstrap thing="cPWaTraBra"></bootstrap>
-    <bootstrap thing="cPWaManBra"></bootstrap>
-    <bootstrap thing="puGripIrn1">
-      <autotag group="Hide" tag="Power"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="Helper" tag="Free"/>
-      </bootstrap>
-    <eval phase="First">~ Setup the Psychic Warrior Path
-      Call PsyWarPath</eval>
     </thing>
   <thing id="cPWaTraBra" name="Trance (Brawler&apos;s Path)" description="Beginning at 3rd level, while maintaining psionic focus, each time you make a successful grapple check, you can deal damage to that enemy equal to your Wisdom modifier." compset="ClSpecial" summary="When psi-focused and make a successful grapple you deal">
     <tag group="User" tag="Activation"/>
     <tag group="abAction" tag="PUManFocus"/>
-    <eval phase="First" priority="10000" index="2">~ Setup this Maneuver or Trance for the Psy Warrior
-Call PsyWarTrMa</eval>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
@@ -541,12 +509,20 @@ Call PsyWarTrMa</eval>
 
       ~ Set Summary
       field[abSumm].text = "When psi-focused and make a successful grapple you deal " & signed(field[abValue].value) & " dmg."]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
   <thing id="cPWaManBra" name="Maneuver (Brawler&apos;s Path)" description="{b}Maneuver{/b}: Beginning at 3rd level, as a swift action you can expend your psionic focus to cause an enemy you are grappling to take 2d6 non-lethal damage. For every two psychic warrior levels you gain thereafter, the damage increases by 1d6." compset="ClSpecial">
     <fieldval field="abValue" value="2"/>
     <fieldval field="abValue2" value="6"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="abAction" tag="Swift"/>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
@@ -580,48 +556,28 @@ Call PsyWarTrMa</eval>
       Endif
       ~ Set live name to include the bonus damage
       field[livename].text = field[thingname].text & " " & signed(field[abValue].value) & "d" & field[abValue2].value]]></eval>
-    <eval phase="First" priority="10000">~ Setup this Maneuver or Trance for the Psy Warrior
-      Call PsyWarTrMa</eval>
     </thing>
-  <thing id="cWPaFWaPri" name="Feral Warrior&apos;s Path" description="You are the beast incarnate, the animal made flesh. You channel your rage and power into physically transforming yourself into the likeness of a monster.\n\n{b}Bonus Class Skill{/b}: Survival\n\n{b}Powers{/b}:  Bite of the wolf, claws of the beast\n\n{b}Skills{/b}: Acrobatics, Perception, Survival\n\n{b}Note:{/b} You need to correctly set one of the Path&apos;s selected as your Primary path and the 2nd one as the Secondary path to have everthing calc correctly." compset="CustomSpec" summary="You are a follower of the Feral Warrior&apos;s Path" uniqueness="unique">
-    <comment><![CDATA[PathSkill - This tag group is used to setup the skills associated to the Path. These skills will only be allowed to be selection from the "PathSkill" class ability.
-
-ClassSkill - This tag group is used to setup the skills that will become the Bonus Ckass Skills.
-
-ClsAllowPs - This tag group is used to setup the Powers that this Path grants. You will also still need to bootstrap the same powers onto this Thing with the "Hide.Power" and "PsyWarrior.PathPower" tags.]]></comment>
-    <arrayval field="usrArray" index="0" value="Primary"/>
-    <arrayval field="usrArray" index="1" value="Secondary"/>
+  <thing id="cWPaFWaPri" name="Feral Warrior&apos;s Path" description="You are the beast incarnate, the animal made flesh. You channel your rage and power into physically transforming yourself into the likeness of a monster.\n\n{b}Bonus Class Skill{/b}: Survival\n\n{b}Powers{/b}:  Bite of the wolf, claws of the beast\n\n{b}Skills{/b}: Acrobatics, Perception, Survival" compset="PUPsyPath" summary="You are a follower of the Feral Warrior&apos;s Path" uniqueness="unique">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <tag group="SpecSource" tag="cHelpPWa"/>
     <tag group="ClassSkill" tag="skSurvival"/>
     <tag group="PathSkill" tag="skAcrobat"/>
     <tag group="PathSkill" tag="skPercep"/>
     <tag group="PathSkill" tag="skSurvival"/>
-    <tag group="ClsAllowPs" tag="puBiteWlf1"/>
-    <tag group="ClsAllowPs" tag="puClawBea1"/>
-    <bootstrap thing="cPWaManFer"></bootstrap>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaTraFer"></bootstrap>
     <bootstrap thing="puBiteWlf1">
-      <autotag group="Hide" tag="Power"/>
       <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="Helper" tag="Free"/>
       </bootstrap>
     <bootstrap thing="puClawBea1">
-      <autotag group="Hide" tag="Power"/>
       <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="Helper" tag="Free"/>
       </bootstrap>
-    <bootstrap thing="cPWaTraFer"></bootstrap>
-    <eval phase="First">~ Setup the Psychic Warrior Path
-      Call PsyWarPath</eval>
+    <bootstrap thing="cPWaManFer"></bootstrap>
     </thing>
   <thing id="cPWaTraFer" name="Trance (Feral Warrior&apos;s Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain a +1 competence bonus to your attack rolls on attacks made with natural weapons. This bonus increases by 1 every four psychic warrior levels you gain thereafter." compset="ClSpecial" summary="When psi-focused gain a competence bonus to attack with natural weapons.">
     <tag group="User" tag="Activation"/>
     <tag group="abAction" tag="PUManFocus"/>
-    <eval phase="First" priority="10000" index="2">~ Setup this Maneuver or Trance for the Psy Warrior
-Call PsyWarTrMa</eval>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
@@ -660,12 +616,15 @@ Call PsyWarTrMa</eval>
         ~ Range bonus
         #applybonus[atrBonComp,eachpick,field[abValue].value]
       nexteach]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
   <thing id="cPWaManFer" name="Maneuver (Feral Warrior&apos;s Path)" description="{b}Maneuver{/b}: Beginning at 3rd level, you can expend your psionic focus when use the charge action. If you do, you can make one additional attack at the end of your charge instead of making a single melee attack, but each attack suffers a -2 penalty to the attack roll. In addition, you gain a +1 competence bonus to any damage rolls made as part of this action. This competence bonus increases by +1 for every four psychic warrior levels you gain thereafter. At 20th level, when using the charge action, you can instead make a full attack at the end of the charge." compset="ClSpecial">
     <fieldval field="abValue" value="1"/>
     <tag group="abAction" tag="PUExpFocus"/>
-    <eval phase="First" priority="10000">~ Setup this Maneuver or Trance for the Psy Warrior
-Call PsyWarTrMa</eval>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
@@ -688,41 +647,31 @@ Call PsyWarTrMa</eval>
 
       ~ Set live name to include the bonus damage
       field[livename].text = field[thingname].text & " " & signed(field[abValue].value)]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
-  <thing id="cWPaMKnPri" name="Mindknight&apos;s Path" description="You have sworn an oath to your order, and in exchange you have been trained in mystic techniques that allow you to summon a weapon from beyond time and space, while protecting yourself with the power of your mind.\n\n{b}Bonus Class Skill{/b}: Diplomacy\n\n{b}Powers{/b}:  Call weapon, inertial armor\n\n{b}Skills{/b}: Autohypnosis, Diplomacy, Ride\n\n{b}Note:{/b} You need to correctly set one of the Path&apos;s selected as your Primary path and the 2nd one as the Secondary path to have everthing calc correctly." compset="CustomSpec" summary="You are a follower of the Mindknight&apos;s Path" uniqueness="unique">
-    <arrayval field="usrArray" index="0" value="Primary"/>
-    <arrayval field="usrArray" index="1" value="Secondary"/>
+  <thing id="cWPaMKnPri" name="Mindknight&apos;s Path" description="You have sworn an oath to your order, and in exchange you have been trained in mystic techniques that allow you to summon a weapon from beyond time and space, while protecting yourself with the power of your mind.\n\n{b}Bonus Class Skill{/b}: Diplomacy\n\n{b}Powers{/b}:  Call weapon, inertial armor\n\n{b}Skills{/b}: Autohypnosis, Diplomacy, Ride" compset="PUPsyPath" summary="You are a follower of the Mindknight&apos;s Path" uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="ClassSkill" tag="skDiplo"/>
     <tag group="PathSkill" tag="skPUAhypno"/>
     <tag group="PathSkill" tag="skDiplo"/>
     <tag group="PathSkill" tag="skRide"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <tag group="SpecSource" tag="cHelpPWa"/>
-    <tag group="ClsAllowPs" tag="puPUCalWe1"/>
-    <tag group="ClsAllowPs" tag="puInerArm1"/>
-    <bootstrap thing="cPWaTraMin"></bootstrap>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="cPWaManMin"></bootstrap>
     <bootstrap thing="puPUCalWe1">
-      <autotag group="Hide" tag="Power"/>
       <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="Helper" tag="Free"/>
       </bootstrap>
     <bootstrap thing="puInerArm1">
-      <autotag group="Hide" tag="Power"/>
       <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="Helper" tag="Free"/>
       </bootstrap>
-    <eval phase="First">~ Setup the Psychic Warrior Path
-      Call PsyWarPath</eval>
+    <bootstrap thing="cPWaTraMin"></bootstrap>
     </thing>
   <thing id="cPWaTraMin" name="Trance (Mind Knight&apos;s Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain a +1 competence bonus to your initiative. In addition, when wielding a weapon you gain through call weaponry, you gain a +1 bonus to attack and damage rolls with that weapon. All of these bonuses increase by 1 for every four psychic warrior levels you gain thereafter.\n\n{B}Note:{/b} To gain the Call Weaponry bonus add the &quot;Call Weaponry&quot; spell/power on the &quot;Adjust&quot; tab." compset="ClSpecial" summary="When psi-focused competence bonus Hit/Dmg with Call Weaponry weapons.">
     <tag group="abAction" tag="PUManFocus"/>
-    <eval phase="First" priority="10000" index="2">~ Setup this Maneuver or Trance for the Psy Warrior
-Call PsyWarTrMa</eval>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
       ~ If we've been Disabled, get out now
@@ -752,95 +701,485 @@ Call PsyWarTrMa</eval>
       doneif (v_focus <> 1)
       ~ Give bonus to initiative
       #applybonus[BonComp,hero.child[Initiative],field[abValue].value]]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
   <thing id="cPWaManMin" name="Maneuver (Mind Knight&apos;s Path)" description="{b}Maneuver{/b}: Beginning at 3rd level, you can expend your psionic focus as a standard action to make a melee attack against two creatures adjacent to you. For every five psychic warrior levels you gain thereafter, you can make one additional attack against another enemy adjacent to you." compset="ClSpecial">
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="abAction" tag="Standard"/>
-    <eval phase="First" priority="10000">~ Setup this Maneuver or Trance for the Psy Warrior
-      Call PsyWarTrMa</eval>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
-  <thing id="cWPaWpnPri" name="Weaponmaster Path" description="You become one with your weapon and wield it with vicious strokes, cleaving enemies as if wheat before a scythe. Your weapon is an extension of your will and thus it is deadly.\n\n{b}Bonus Class Skill{/b}: Knowledge (nobility)\n\n{b}Powers{/b}: Empty mind, metaphysical weapon\n\n{b}Skills{/b}: Acrobatics, Craft, Knowledge (nobility)\n\n{b}Note:{/b} You need to correctly set one of the Path&apos;s selected as your Primary path and the 2nd one as the Secondary path to have everthing calc correctly." compset="CustomSpec" summary="You are a follower of the Weaponmaster&apos;s Path" uniqueness="unique">
-    <comment><![CDATA[PathSkill - This tag group is used to setup the skills associated to the Path. These skills will only be allowed to be selection from the "PathSkill" class ability.
-
-ClassSkill - This tag group is used to setup the skills that will become the Bonus Ckass Skills.
-
-ClsAllowPs - This tag group is used to setup the Powers that this Path grants. You will also still need to bootstrap the same powers onto this Thing with the "Hide.Power" and "PsyWarrior.PathPower" tags.]]></comment>
-    <arrayval field="usrArray" index="0" value="Primary"/>
-    <arrayval field="usrArray" index="1" value="Secondary"/>
+  <thing id="cWPaWpnPri" name="Weaponmaster Path" description="You become one with your weapon and wield it with vicious strokes, cleaving enemies as if wheat before a scythe. Your weapon is an extension of your will and thus it is deadly.\n\n{b}Bonus Class Skill{/b}: Knowledge (nobility)\n\n{b}Powers{/b}: Empty mind, metaphysical weapon\n\n{b}Skills{/b}: Acrobatics, Craft, Knowledge (nobility)" compset="PUPsyPath" summary="You are a follower of the Weaponmaster&apos;s Path" uniqueness="unique">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <tag group="SpecSource" tag="cHelpPWa"/>
     <tag group="ClassSkill" tag="skKnowNobl"/>
     <tag group="PathSkill" tag="skAcrobat"/>
     <tag group="PathSkill" tag="Craft"/>
     <tag group="PathSkill" tag="skKnowNobl"/>
-    <tag group="ClsAllowPs" tag="puMetaPhW1"/>
-    <tag group="ClsAllowPs" tag="puEmpMind1"/>
-    <bootstrap thing="cPWaTraWea"></bootstrap>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="cPWaManWea"></bootstrap>
     <bootstrap thing="puMetaPhW1">
-      <autotag group="Hide" tag="Power"/>
       <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="Helper" tag="Free"/>
       </bootstrap>
     <bootstrap thing="puEmpMind1">
-      <autotag group="Hide" tag="Power"/>
       <autotag group="PsyWarrior" tag="PathPower"/>
-      <autotag group="SpellType" tag="cHelpPWa"/>
-      <autotag group="Helper" tag="Free"/>
       </bootstrap>
-    <eval phase="PreLevel">~ Setup the Psychic Warrior Path
-      Call PsyWarPath</eval>
+    <bootstrap thing="cPWaTraWea"></bootstrap>
     </thing>
   <thing id="cPWaTraWea" name="Trance (Weaponmaster&apos;s Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain a +1 competence bonus on attack rolls made with a weapon (natural weapons do not count for this benefit). This bonus increases by 1 every four psychic warrior levels thereafter." compset="ClSpecial" summary="When psi-focused gain a competence bonus on manufactured weapons.">
     <tag group="User" tag="Activation"/>
     <tag group="abAction" tag="PUManFocus"/>
-    <eval phase="First" priority="10000" index="2">~ Setup this Maneuver or Trance for the Psy Warrior
-Call PsyWarTrMa</eval>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-    ~ If we're not shown, just get out now
-    doneif (tagis[Helper.ShowSpec] <> 1)
-    ~ If we've been Disabled, get out now
-    doneif (tagis[Helper.SpcDisable] <> 0)
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-    ~ Set the level bonus
-    field[abValue].value += 1
-    If (field[xTotalLev].value >= 7) Then
+      ~ Set the level bonus
       field[abValue].value += 1
-    Endif
-    If (field[xTotalLev].value >= 11) Then
-      field[abValue].value += 1
-    Endif
-    If (field[xTotalLev].value >= 15) Then
-      field[abValue].value += 1
-    Endif
-    If (field[xTotalLev].value >= 19) Then
-      field[abValue].value += 1
-    Endif
+      If (field[xTotalLev].value >= 7) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 11) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 15) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 19) Then
+        field[abValue].value += 1
+      Endif
 
-    ~ Set live name
-    field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+      ~ Set live name
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
 
       var v_focus as number
       call PUPsiFocus
       ~ If Not psionically focused get out now
       doneif (v_focus <> 1)
-    ~ If not active get out now
-    doneif (field[abilActive].value <> 1)
+      ~ If not active get out now
+      doneif (field[abilActive].value <> 1)
 
-    ~ Give bonus to attack to non natural weapons
-    foreach pick in hero from BaseWep where "!Helper.NatAttSpec & !wGroup.Natural"
-       ~ Melee bonus
-       #applybonus[atmBonComp,eachpick,field[abValue].value]
-       ~ Range bonus
-       #applybonus[atrBonComp,eachpick,field[abValue].value]
-    nexteach]]></eval>
+      ~ Give bonus to attack to non natural weapons
+      foreach pick in hero from BaseWep where "!Helper.NatAttSpec & !wGroup.Natural"
+        ~ Melee bonus
+        #applybonus[atmBonComp,eachpick,field[abValue].value]
+        ~ Range bonus
+        #applybonus[atrBonComp,eachpick,field[abValue].value]
+      nexteach]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
   <thing id="cPWaManWea" name="Maneuver (Weaponmaster&apos;s Path)" description="{b}Maneuver{/b}: Beginning at 3rd level, you can expend your psionic focus as an immediate action when an enemy attacks you to make a single melee attack against that enemy and then take a 5-foot step. The enemy’s attack is resolved before you take your action. At 8th level and every five psychic warrior levels thereafter, you gain a +1 competence bonus on the attack and damage rolls made for this attack." compset="ClSpecial">
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="abAction" tag="Immediate"/>
-    <eval phase="First" priority="10000">~ Setup this Maneuver or Trance for the Psy Warrior
-      Call PsyWarTrMa</eval>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPUGlaPPri" name="Gladiator&apos;s Path" description="Your tactic is not to simply attack, but to maneuver your enemies into the most optimal position, forcibly if necessary.\n\n{b}Bonus Skill:{/b} Bluff\n\n{b}Skills:{/b} Acrobatics, Bluff, Perception" compset="PUPsyPath" summary="You are a follower of the Gladiator&apos;s Path" uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="ClassSkill" tag="skBluff"/>
+    <tag group="PathSkill" tag="skBluff"/>
+    <tag group="PathSkill" tag="skAcrobat"/>
+    <tag group="PathSkill" tag="skPercep"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaManGla"></bootstrap>
+    <bootstrap thing="puGripIrn1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="puPreTa1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="cPWaTraGla"></bootstrap>
+    </thing>
+  <thing id="cPWaTraGla" name="Trance (Gladiator Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain a +1 competence bonus to your CMB and a +2 competence bonus to your CMD. These bonuses increase by 1 every four psychic warrior levels thereafter." compset="ClSpecial" summary="When psi-focused you gain a competence bonus to CMB and CMD.">
+    <tag group="abAction" tag="PUManFocus"/>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set the level bonus
+      field[abValue].value += 1
+      If (field[xTotalLev].value >= 7) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 11) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 15) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 19) Then
+        field[abValue].value += 1
+      Endif
+
+      ~ Set live name
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ If Not psionically focused get out now
+      doneif (v_focus <> 1)
+
+      ~ competence bonus to CMB/CMD
+      #applybonus[BonComp,hero.child[Maneuver],field[abValue].value]]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPWaManGla" name="Maneuver (Gladiator Path)" description="Beginning at 3rd level, you can expend your psionic focus when using a combat maneuver to not provoke an attack of opportunity for using that combat maneuver. If you have a feat that already does this, such as Improved Bull Rush, your trance competence bonus on this specific maneuver check increases by 2 or you gain a +2 competence bonus on this check if you do not have the Gladiator trance active. Additionally at 8th level and every four psychic warrior levels thereafter, the bonus you gain on this specific maneuver check increases by 1." compset="ClSpecial">
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPUDerPPri" name="Dervish&apos;s Path" description="You are a whirlwind in combat. Your blades strike out faster than the eye can perceive, sending enemies reeling from your twin-bladed attacks.\n\n{b}Powers:{/b} {i}Force screen{/i}, {i}metaphysical weapon{/i} \n\n{b}Skills:{/b} Acrobatics, Bluff, Perform \n\n{b}Bonus Class Skill:{/b} Bluff" compset="PUPsyPath" summary="You are a follower of the Dervish&apos;s Path" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="ClassSkill" tag="skBluff"/>
+    <tag group="PathSkill" tag="skBluff"/>
+    <tag group="PathSkill" tag="Perform"/>
+    <tag group="PathSkill" tag="skAcrobat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaManDer"></bootstrap>
+    <bootstrap thing="puMetaPhW1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="puForcScr1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="cPWaTraDer"></bootstrap>
+    </thing>
+  <thing id="cPWaTraDer" name="Trance (Dervish Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain a +1 competence bonus on attack rolls made when you wield two weapons. This bonus increases by 1 every four psychic warrior levels thereafter." compset="ClSpecial" summary="When psi-focused you gain a competence bonus to attack rolls when using two weapons.">
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set the level bonus
+      field[abValue].value += 1
+      If (field[xTotalLev].value >= 7) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 11) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 15) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 19) Then
+        field[abValue].value += 1
+      Endif
+
+      ~ Set live name
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ If Not psionically focused get out now
+      doneif (v_focus <> 1)
+      ~ If not duel wielding weapons get out now!
+      doneif (tagexpr[(count:hero#Hero.EquipWep = 2) | hero#Hero.EquipDbl] = 0)
+
+      #applybonus[atmBonComp,hero.child[Attack],field[abValue].value]]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPWaManDer" name="Maneuver (Dervish Path)" description="Beginning at 3rd level, you can expend your psionic focus as part of a full attack when you fight with two weapons to take a 5-foot step between your attacks, even if you have already taken a 5-foot step, but not if you have moved normally (such as by using hustle). At 8th level and every five psychic warrior levels thereafter, you gain one additional 5-foot step, but each of these 5-foot steps must be made after an attack in your full attack." compset="ClSpecial">
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPUInfPPri" name="Infiltrator&apos;s Path" description="You are adept at changing your form and altering your physiology to meet any situation and strike fear into your enemies.\n\n{b}Powers:{/b} {i}Chameleon{/i}, {i}minor metamorphosis{/i}\n\n{b}Skills:{/b} Disguise, Escape Artist, Intimidate \n\n{b}Bonus Class Skill:{/b} Disguise" compset="PUPsyPath" summary="You are a follower of the Infiltrator&apos;s Path" uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="ClassSkill" tag="skDisguise"/>
+    <tag group="PathSkill" tag="skDisguise"/>
+    <tag group="PathSkill" tag="skEscape"/>
+    <tag group="PathSkill" tag="skIntim"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaManInf"></bootstrap>
+    <bootstrap thing="puMetamor1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="puChamele1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="cPWaTraInf"></bootstrap>
+    </thing>
+  <thing id="cPWaTraInf" name="Trance (Infiltrator Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain a +2 competence bonus on Disguise checks and a +1 competence bonus on damage rolls made with natural weapons. These bonuses increase by 1 every four psychic warrior levels thereafter." compset="ClSpecial" summary="When psi-focused you gain a competence bonus to Disguise checks and damage with natural weapons.">
+    <tag group="abAction" tag="PUManFocus"/>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set the level bonus
+      field[abValue].value += 1
+      If (field[xTotalLev].value >= 7) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 11) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 15) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 19) Then
+        field[abValue].value += 1
+      Endif
+
+      ~ Set live name
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ If Not psionically focused get out now
+      doneif (v_focus <> 1)
+
+      ~ Bonus to disguise skill
+      #applybonus[ModCirc,hero.childfound[skDisguise],field[abValue].value]
+
+      ~ Bonus to natural attack damage
+      foreach pick in hero from BaseWep where "wGroup.Natural"
+        #applybonus[dmmBonComp,eachpick,field[abValue].value]
+        #applybonus[dmrBonComp,eachpick,field[abValue].value]
+      nexteach]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPWaManInf" name="Maneuver (Infiltrator Path)" description="Beginning at 3rd level, you can expend your psionic focus when manifesting minor metamorphosis, metamorphosis, or major metamorphosis to gain an intimidating visage. For the duration of the manifestation, you may make a free Intimidate check against any creature that comes within 30 ft. of you. You must have line of sight to the creature and you may only make one such check against that creature per manifestation of minor metamorphosis, metamorphosis, or major metamorphosis. At 7th level and every four psychic warrior levels thereafter, you gain a +1 competence bonus to this Intimidate check." compset="ClSpecial">
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPUIntPPri" name="Interceptor&apos;s Path" description="You are adept at engaging enemies, guarding your allies, and blocking interlopers. Speed and maneuverability are not your only tools; you know how stop a foe in his tracks.\n\n{b}Powers{/b}: {i}Burst, expansion{/i} \n\n{b}Skills:{/b} Acrobatics, Intimidate, Perception \n\n{b}Bonus class skill:{/b} Intimidate" compset="PUPsyPath" summary="You are a follower of the Interceptor&apos;s Path" uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="ClassSkill" tag="skIntim"/>
+    <tag group="PathSkill" tag="skAcrobat"/>
+    <tag group="PathSkill" tag="skPercep"/>
+    <tag group="PathSkill" tag="skIntim"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaManInt"></bootstrap>
+    <bootstrap thing="puExpand1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="puBurst1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="cPWaTraInt"></bootstrap>
+    </thing>
+  <thing id="cPWaTraInt" name="Trance (Interceptor Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain a +1 competence bonus on attack and damage rolls made against any opponent that threatens any of your allies. This bonus increases by 1 every four psychic warrior levels thereafter." compset="ClSpecial" summary="When psi-focused you gain a competence bonus to attack and damage rolls against opponents who threaten your allies.">
+    <fieldval field="actName" value="Threatens Ally"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="abAction" tag="PUManFocus"/>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set the level bonus
+      field[abValue].value += 1
+      If (field[xTotalLev].value >= 7) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 11) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 15) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 19) Then
+        field[abValue].value += 1
+      Endif
+
+      ~ Set live name
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ If Not psionically focused get out now
+      doneif (v_focus <> 1)
+      ~ If not activated get out now!
+      doneif (field[abilActive].value = 0)
+
+      ~ Competence bonus to attack & damage
+      #applybonus[BonComp,hero.child[Attack],field[abValue].value]
+      #applybonus[BonComp,hero.child[Damage],field[abValue].value]]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPWaManInt" name="Maneuver (Interceptor Path)" description="Beginning at 3rd level, you can expend your psionic focus as an immediate action when an enemy you threaten attacks one of your allies to make a single melee attack or bull rush attempt against that enemy. Your attack or bull rush attempt is resolved before the enemy’s attack. If you made a melee attack and it is successful, the struck enemy takes a penalty equal to the competence bonus of the Interceptor trance on the attack and damage rolls of the attack that triggered this maneuver." compset="ClSpecial">
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="abAction" tag="Immediate"/>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPUSurPPri" name="Survivor&apos;s Path" description="Survivor Path {i}You are capable of surviving in harsh environments and enduring deadly assaults. You recognize the power of the body&apos;s ability to overcome even the most deadly of afflictions.\n\n{/i}{b}Powers:{/b} {i}Catfall{/i}, {i}vigor{/i}\n\n{b}Skills:{/b} Autohypnosis, Heal, Survival \n\n{b}Bonus class skill:{/b} Survival" compset="PUPsyPath" summary="You are a follower of the Survivor&apos;s Path" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="ClassSkill" tag="skSurvival"/>
+    <tag group="PathSkill" tag="skHeal"/>
+    <tag group="PathSkill" tag="skPUAhypno"/>
+    <tag group="PathSkill" tag="skSurvival"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaManSur"></bootstrap>
+    <bootstrap thing="puCatfall1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="puPVigor1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="cPWaTraSur"></bootstrap>
+    </thing>
+  <thing id="cPWaTraSur" name="Trance (Survivor Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain DR 2/-. This damage reduction improves by 1 every four psychic warrior levels thereafter. In addition, you suffer no harm from being in a hot or cold environment. You can exist comfortably in conditions between –50 and 140 degrees Fahrenheit without having to make Fortitude saves. Your equipment is likewise protected. This doesn’t provide any protection from fire or cold damage, nor does it protect against other environmental hazards such as smoke, lack of air, and so forth." compset="ClSpecial" summary="When psi-focused you gain DR and hot or cold environment endurance.">
+    <tag group="abAction" tag="PUManFocus"/>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xDamRd"></bootstrap>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set the level bonus
+      field[abValue].value += 2
+      If (field[xTotalLev].value >= 7) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 11) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 15) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 19) Then
+        field[abValue].value += 1
+      Endif
+
+      ~ Set live name
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ If Not psionically focused get out now
+      doneif (v_focus <> 1)
+
+      ~ Give bonus to DR
+      #applydr[xDamRd,field[abValue].value]]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPWaManSur" name="Maneuver (Survivor Path)" description="Beginning at 3rd level, you can expend your psionic focus as an immediate action to be treated as having the Stalwart ability until the beginning of your next turn. At 7th level and every four psychic warrior levels beyond, you gain a +1 competence bonus to Will saves when using this maneuver. In addition, at 11th level, when using this maneuver, you are treated as having the Improved Stalwart ability." compset="ClSpecial">
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="abAction" tag="Immediate"/>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPUArcPPri" name="Archer&apos;s Path" description="Your focus is on ranged combat rather than wading into the thick of things.\n\n{b}Powers:{/b} {i}Force screen{/i}, {i}psychokinetic cannon{/i}* \n\n{b}Skills:{/b} Perception, Ride, Stealth \n\n{b}Bonus Class Skill:{/b} Stealth" compset="PUPsyPath" summary="You are a follower of the Archer&apos;s Path" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="ClassSkill" tag="skStealth"/>
+    <tag group="PathSkill" tag="skStealth"/>
+    <tag group="PathSkill" tag="skRide"/>
+    <tag group="PathSkill" tag="skPercep"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaTraArc"></bootstrap>
+    <bootstrap thing="puForcScr1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="puPsyCa1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="cPWaManArc"></bootstrap>
+    </thing>
+  <thing id="cPWaTraArc" name="Trance (Archer Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain a +1 competence bonus on attack rolls made with a ranged or thrown weapon (natural weapons do not count for this benefit). This bonus increases by 1 every four psychic warrior levels thereafter." compset="ClSpecial" summary="When psi-focused you gain a competence bonus to ranged or thrown weapons">
+    <tag group="abAction" tag="PUManFocus"/>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set the level bonus
+      field[abValue].value += 1
+      If (field[xTotalLev].value >= 7) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 11) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 15) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 19) Then
+        field[abValue].value += 1
+      Endif
+
+      ~ Set live name
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ If Not psionically focused get out now
+      doneif (v_focus <> 1)
+
+      ~ If not active get out now
+      doneif (field[abilActive].value <> 1)
+
+      ~ Give competence bonus to attack rolls for ranged weapons
+      #applybonus[atrBonComp,hero.child[Attack],field[abValue].value]]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPWaManArc" name="Maneuver (Archer Path)" description="Beginning at 3rd level, you can expend your psionic focus and make a ranged trip attack as a standard action. If your target is flying, they are instead staggered for one round. At 7th level and every four psychic warrior levels thereafter, you gain a +1 bonus to your CMB when using this maneuver." compset="ClSpecial">
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
     </thing>
   </document>

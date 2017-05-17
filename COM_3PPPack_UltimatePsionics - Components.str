@@ -126,7 +126,7 @@
   <!-- ************************************************************************ -->
 
   <!-- ==================================================  -->
-  <!-- Psychic Warrior Path Custom Ability.                    -->
+  <!-- Psychic Warrior Path Custom Ability.                -->
   <!-- ==================================================  -->
   <component
     id="PUPsyPath"
@@ -154,6 +154,9 @@
       Else
         perform assign[PsyWarrior.PathSec]
       Endif
+
+      ~ Push primary/secondary tag to hero
+      perform hero.pushtags[PsyWarrior.?]
 
       ~ if we have less than two paths selected then do nothing!
       doneif (hero.tagcount[PsyWarrior.PathAdded] < 2)
@@ -214,17 +217,48 @@
 
     <!--
       This makes sure that only a single discipline is marked as primary.
-    <prereq message="Only one Psion Discipline can be marked as primary.">
-      <validate>
+     -->
+    <prereq message="Only one Psychic Warrior Path can be marked as primary.">
+      <validate><![CDATA[
         @valid = 1
 
         ~ Check for more than one primary discipline
-        If (hero.tagcount[PUDisc.Primary] > 1) Then
+        If (hero.tagcount[PsyWarrior.PathPrim] > 1) Then
           @valid = 0
         Endif
+        ]]>
       </validate>
     </prereq>
-    -->
+
+    <!--
+      This makes sure that only a single discipline is marked as primary.
+     -->
+    <prereq message="Only the specific archetype can take this Path.">
+      <validate><![CDATA[
+        @valid = 1
+
+        ~ Are we a Pick or a Thing? Either way set our focus.
+        if (@ispick <> 0) then
+          perform altpick.setfocus
+        else
+          perform altthing.setfocus
+        endif
+
+        ~ Check for more than one SpecSource this tells us we are suppose to be
+        ~ to a specific archetype.
+        If (focus.tagcount[SpecSource.?] <> 1) Then
+
+          ~ Check the hero for the specific archetype and if not found
+          ~ we are in error.
+          If (focus.intersect[SpecSource,ClassVary] = 0) Then
+            @valid = 0
+            @message = "Only the archetype (" & focus.tagnames[SpecSource.ar?] & ") can take this path"
+          Endif
+        Endif
+        ]]>
+      </validate>
+    </prereq>
+
 
   </component>
   <!-- ************************************************************************ -->
