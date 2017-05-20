@@ -1136,7 +1136,10 @@
     <tag group="abAction" tag="PUManFocus"/>
     <tag group="abCategory" tag="PUPsyWarTr"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
+    <eval phase="First" priority="10000" index="1"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
       ~ If we've been Disabled, get out now
@@ -1170,9 +1173,6 @@
 
       ~ Give competence bonus to attack rolls for ranged weapons
       #applybonus[atrBonComp,hero.child[Attack],field[abValue].value]]]></eval>
-    <eval phase="First" priority="10000" index="2"><![CDATA[
-      ~ Setup this Maneuver or Trance for the Psy Warrior &
-      Call PsyWarTrMa]]></eval>
     </thing>
   <thing id="cPWaManArc" name="Maneuver (Archer Path)" description="Beginning at 3rd level, you can expend your psionic focus and make a ranged trip attack as a standard action. If your target is flying, they are instead staggered for one round. At 7th level and every four psychic warrior levels thereafter, you gain a +1 bonus to your CMB when using this maneuver." compset="ClSpecial">
     <tag group="abAction" tag="PUExpFocus"/>
@@ -1181,5 +1181,26 @@
     <eval phase="First" priority="10000"><![CDATA[
       ~ Setup this Maneuver or Trance for the Psy Warrior &
       Call PsyWarTrMa]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      If (field[xTotalLev].value >= 7) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 11) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 15) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 19) Then
+        field[abValue].value += 1
+      Endif
+
+      ~ Set live name
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)]]></eval>
     </thing>
   </document>
