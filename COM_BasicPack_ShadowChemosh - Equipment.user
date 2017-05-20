@@ -470,18 +470,57 @@
           eachpick.field[Bonus].value += 2
         nexteach
       endif]]></eval>
-    <eval phase="Final" priority="50000" index="2">~ Only proceed if we are a type of ammunition like arrows/bolts
+    <eval phase="Final" priority="50000" index="2"><![CDATA[
+      ~ Only proceed if we are a type of ammunition like arrows & bolts
       doneif (parent.tagis[wCategory.Ammunition] = 0)
 
       ~ We want to always show the activation button as this is really
       ~ useful for arrows/bolts. So even if not equipped show us.
       perform delete[Helper.SpcDisable]
-      perform delete[Hide.Activation]</eval>
+      perform delete[Hide.Activation]]]></eval>
     <eval phase="Render" priority="10000" index="3"><![CDATA[
-      ~ Correct set the statblock name for printing
+      ~ Correctly set the statblock name for printing
       if (field[iCustSpec].isempty = 0) then
         field[sbName].text = lowercase(field[iCustSpec].text & "-" & field[thingname].text)
       endif]]></eval>
+    <eval phase="Render" priority="111000" index="4"><![CDATA[
+      ~ Set a nice looking activation name &
+      field[actName].text = field[abSource].text & " (+2d6 vs " & field[iCustSpec].text &")"]]></eval>
+    </thing>
+  <thing id="ipS2Viciou" name="Vicious" description="This special ability can only be placed on melee weapons. When a vicious weapon strikes an opponent, it creates a flash of disruptive energy that resonates between the opponent and the wielder. This energy deals an extra 2d6 points of damage to the opponent and 1d6 points of damage to the wielder. Only melee weapons can be vicious.\n\n{B}Note:{/b} This verison of bane allows for the bane bonuses to be activated on the {b}In-Play{/b} tab instead of always being on.\n\n{b}Construction{/b}\n{b}Requirements{/b}: Craft Magic Arms and Armor, {i}enervation{/i}; {b}Cost{/b} +1 Bonus" compset="ItemPower" summary="+2d6 damage, does 1d6 to wielder." uniqueness="useronce">
+    <fieldval field="iPrice" value="1"/>
+    <fieldval field="iCL" value="9"/>
+    <usesource source="srcS2Gear"/>
+    <tag group="User" tag="NoAutoName"/>
+    <tag group="iSchool" tag="Necromancy"/>
+    <tag group="Helper" tag="Shadow"/>
+    <tag group="PowerReq" tag="Melee"/>
+    <tag group="PowerType" tag="Weapon"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      if (parent.tagis[component.BaseWep] <> 0) then
+        #extradamwithavg[parent," plus 2d6 vicious",field[thingname].text,"7"]
+      else
+        foreach pick in hero from BaseWep where container.child[gCustMagic].field[gWeapExpr].text
+          #extradamwithavg[eachpick," plus 2d6 vicious",field[thingname].text,"7"]
+        nexteach
+      endif]]></eval>
+    <eval phase="Final" priority="50000" index="2"><![CDATA[
+      ~ Only proceed if we are a type of ammunition like arrows & bolts
+      doneif (parent.tagis[wCategory.Ammunition] = 0)
+
+      ~ We want to always show the activation button as this is really
+      ~ useful for arrows/bolts. So even if not equipped show us.
+      perform delete[Helper.SpcDisable]
+      perform delete[Hide.Activation]]]></eval>
+    <eval phase="Render" priority="111000" index="3"><![CDATA[
+      ~ Set a nice looking activation name &
+      field[actName].text = field[abSource].text & " (+2d6, 1d6 to self)"]]></eval>
     </thing>
   <thing id="gS2Antitox" name="Antitoxin" description="This substance counteracts a specific toxin. If you drink a vial of antitoxin, you gain a +5 alchemical bonus on Fortitude saving throws against poison for 1 hour.\n\n{b}Alchemical Power Component{/b}\nLike antiplague, this substance can augment certain healing spells.\n{b}Neutralize Poison (M){/b}: Add +2 on your caster level check to neutralize poison on a target creature. Antitoxin has no effect when you cast the spell on an object.\n\n{b}Note:{/b} This gear item allows for activation ability on the In-Play tab." compset="Gear" stacking="merge">
     <fieldval field="gCost" value="50"/>
