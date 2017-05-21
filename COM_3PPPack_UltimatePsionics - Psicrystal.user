@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <document signature="Hero Lab Data">
   <loadonce key="COM_3PPPack_UltimatePsionics - Psicrystal"/>
-  <fileinfo>
-    <info_history>April 2, 2014 - Tim Shadow
--Fixed Psicrystal to no longer ask for a class level.</info_history>
-    </fileinfo>
   <thing id="abPUAlertn" name="Alertness" description="The presence of a psicrystal sharpens its master&apos;s senses. While a psicrystal is within arm&apos;s reach (adjacent to or in the same square as its owner), its owner gains the Alertness feat." compset="Ability" summary="While a psicrystal is within arm&apos;s reach, its owner gains the Alertness feat." uniqueness="useronce">
     <fieldval field="actName" value="Within Arms Reach"/>
     <fieldval field="actName2" value="Within 1 Mile"/>
@@ -28,10 +24,11 @@
       #skillbonus[skSenseMot] += field[abValue2].value]]>
       <after name="fAlertness assigns Hero.fAlertness"/>
       </eval>
-    <eval phase="PostLevel" priority="20000" index="3">~ Setup for all the psicrystal personality bonuses
-      Call PsicryPers</eval>
+    <eval phase="PostLevel" priority="20000" index="3"><![CDATA[
+      ~ Setup for all the psicrystal personality bonuses &
+      Call PsicryPers]]></eval>
     <eval phase="First" priority="10000"><![CDATA[
-      ~ If we're within arm's reach, make sure our 'within 1 mile' 
+      ~ If we're within arm's reach, make sure our 'within 1 mile'
       ~ field is selected and locked
       if (field[abilActive].value <> 0) then
         trustme
@@ -46,7 +43,7 @@
         perform hero.assign[Psicrystal.MasterMile]
       endif
 
-      ~we had used the livename as a storage for the information about 
+      ~we had used the livename as a storage for the information about
       ~what familiar bonus we got use that to generate a summary,
       ~ then restore the livename to a name
       if (field[livename].isempty = 0) then
@@ -115,87 +112,90 @@
     <bootstrap thing="raPUPerson"></bootstrap>
     <bootstrap thing="raPUShaPwr"></bootstrap>
     <bootstrap thing="raPUSighte"></bootstrap>
-    <eval phase="Final" priority="50000" index="4"><![CDATA[~ Set the psicrystal's saves to be the equal to the masters base
-~ save plus attribute.
-hero.child[svFort].field[svTotal].value = master.hero.child[svFort].field[svBase].value + master.hero.child[svFort].field[svAttr].value
-hero.child[svRef].field[svTotal].value = master.hero.child[svRef].field[svBase].value + master.hero.child[svRef].field[svAttr].value
-hero.child[svWill].field[svTotal].value = master.hero.child[svWill].field[svBase].value + master.hero.child[svWill].field[svAttr].value]]></eval>
+    <eval phase="Final" priority="50000" index="4"><![CDATA[
+      ~ Set the psicrystal's saves to be the equal to the masters base
+      ~ save plus attribute.
+      hero.child[svFort].field[svTotal].value = master.hero.child[svFort].field[svBase].value + master.hero.child[svFort].field[svAttr].value
+      hero.child[svRef].field[svTotal].value = master.hero.child[svRef].field[svBase].value + master.hero.child[svRef].field[svAttr].value
+      hero.child[svWill].field[svTotal].value = master.hero.child[svWill].field[svBase].value + master.hero.child[svWill].field[svAttr].value]]></eval>
     <eval phase="First" priority="490"><![CDATA[
-~ Set skill bonsues
-#skillbonus[skPercep] += 6
+      ~ Set skill bonsues
+      #skillbonus[skPercep] += 6
 
-~ Pull Masters alignment and set to ourself
-perform master.hero.findchild[Alignment].pulltags[Alignment.?]
-~perform master.hero.pulltags[Alignment.?]
-perform forward[Alignment.?]
+      ~ Pull Masters alignment and set to ourself
+      perform master.hero.findchild[Alignment].pulltags[Alignment.?]
+      ~perform master.hero.pulltags[Alignment.?]
+      perform forward[Alignment.?]
 
-~ Hide the Unarmed Attack weapon
-perform hero.child[wUnarmed].assign[Hide.Weapon]
-~ Set level to the number of Psionic Classes the master has
-field[anCompLev].value += master.hero.tagcount[Psionics.Class]
-~ Give any bonus levels like from "improved psicyrstal" feat
-field[anCompLev].value += master.hero.tagcount[Psicrystal.BonusLvl]
+      ~ Hide the Unarmed Attack weapon
+      perform hero.child[wUnarmed].assign[Hide.Weapon]
+      ~ Set level to the number of Psionic Classes the master has
+      field[anCompLev].value += master.hero.tagcount[Psionics.Class]
+      ~ Give any bonus levels like from "improved psicyrstal" feat
+      field[anCompLev].value += master.hero.tagcount[Psicrystal.BonusLvl]
 
-~ Set the correct Intelligence and Natural Armor bonus
-If (field[anCompLev].value >= 19) Then
-  hero.child[aINT].field[aStartMod].value += 9
-  hero.child[ArmorClass].field[tACNatural].value += 9
-ElseIf (field[anCompLev].value >= 17) Then
-  hero.child[aINT].field[aStartMod].value += 8
-  hero.child[ArmorClass].field[tACNatural].value += 8
-ElseIf (field[anCompLev].value >= 15) Then
-  hero.child[aINT].field[aStartMod].value += 7
-  hero.child[ArmorClass].field[tACNatural].value += 7
-ElseIf (field[anCompLev].value >= 13) Then
-  hero.child[aINT].field[aStartMod].value += 6
-  hero.child[ArmorClass].field[tACNatural].value += 6
-ElseIf (field[anCompLev].value >= 11) Then
-  hero.child[aINT].field[aStartMod].value += 5
-  hero.child[ArmorClass].field[tACNatural].value += 5
-ElseIf (field[anCompLev].value >= 9) Then
-  hero.child[aINT].field[aStartMod].value += 4
-  hero.child[ArmorClass].field[tACNatural].value += 4
-ElseIf (field[anCompLev].value >= 7) Then
-  hero.child[aINT].field[aStartMod].value += 3
-  hero.child[ArmorClass].field[tACNatural].value += 3
-ElseIf (field[anCompLev].value >= 5) Then
-  hero.child[aINT].field[aStartMod].value += 2
-  hero.child[ArmorClass].field[tACNatural].value += 2
-ElseIf (field[anCompLev].value >= 3) Then
-  hero.child[aINT].field[aStartMod].value += 1
-  hero.child[ArmorClass].field[tACNatural].value += 1
-Endif]]></eval>
+      ~ Set the correct Intelligence and Natural Armor bonus
+      If (field[anCompLev].value >= 19) Then
+        hero.child[aINT].field[aStartMod].value += 9
+        hero.child[ArmorClass].field[tACNatural].value += 9
+      ElseIf (field[anCompLev].value >= 17) Then
+        hero.child[aINT].field[aStartMod].value += 8
+        hero.child[ArmorClass].field[tACNatural].value += 8
+      ElseIf (field[anCompLev].value >= 15) Then
+        hero.child[aINT].field[aStartMod].value += 7
+        hero.child[ArmorClass].field[tACNatural].value += 7
+      ElseIf (field[anCompLev].value >= 13) Then
+        hero.child[aINT].field[aStartMod].value += 6
+        hero.child[ArmorClass].field[tACNatural].value += 6
+      ElseIf (field[anCompLev].value >= 11) Then
+        hero.child[aINT].field[aStartMod].value += 5
+        hero.child[ArmorClass].field[tACNatural].value += 5
+      ElseIf (field[anCompLev].value >= 9) Then
+        hero.child[aINT].field[aStartMod].value += 4
+        hero.child[ArmorClass].field[tACNatural].value += 4
+      ElseIf (field[anCompLev].value >= 7) Then
+        hero.child[aINT].field[aStartMod].value += 3
+        hero.child[ArmorClass].field[tACNatural].value += 3
+      ElseIf (field[anCompLev].value >= 5) Then
+        hero.child[aINT].field[aStartMod].value += 2
+        hero.child[ArmorClass].field[tACNatural].value += 2
+      ElseIf (field[anCompLev].value >= 3) Then
+        hero.child[aINT].field[aStartMod].value += 1
+        hero.child[ArmorClass].field[tACNatural].value += 1
+      Endif]]></eval>
     <eval phase="PreLevel" priority="4000" index="2"><![CDATA[
-var sTag as string
+      var sTag as string
 
-~ Loop through all the masters skills
-foreach pick in master from BaseSkill
-  ~ If we have user entered ranks then attempt to give them
-  ~ to the psicrystal.
-  If (eachpick.field[skUser].value <> 0) Then
-    ~ Save the ThingID tag
-    sTag = eachpick.tagids[thingid.?]
-    ~ Find the same skill on the minion
-    perform hero.findchild[BaseSkill,sTag].setfocus
-    ~ If we got a lock then set minion skill
-    If (state.isfocus <> 0) Then
-      ~ Add the master ranks to the minon's skill bonus.
-      focus.field[Bonus].value += eachpick.field[skUser].value
-      ~ Remove the Not Usable tag so that the bonus always displays
-      perform focus.delete[Helper.NotUsable]
-      perform focus.delete[Helper.TrainOnly]
-      ~ Clear the focus so we can focus again on the next 
-      perform state.clearfocus
-    Endif
-  Endif  
-nexteach]]></eval>
-    <eval phase="Final" priority="5000" index="3">var hitpoints as number
-~ Total up the Masters Hit Points
-hitpoints = master.hero.child[Totals].field[tHP].value + master.hero.child[Totals].field[tBonusHP].value
-~ We have hit points equal to half our master
-herofield[tHP].value = round(hitpoints/2,0,-1)</eval>
-    <eval phase="PostAttr" priority="50000" index="5">~ Remove skill points
-#resmax[resSkill] = 0</eval>
+      ~ Loop through all the masters skills
+      foreach pick in master from BaseSkill
+        ~ If we have user entered ranks then attempt to give them
+        ~ to the psicrystal.
+        If (eachpick.field[skUser].value <> 0) Then
+          ~ Save the ThingID tag
+          sTag = eachpick.tagids[thingid.?]
+          ~ Find the same skill on the minion
+          perform hero.findchild[BaseSkill,sTag].setfocus
+          ~ If we got a lock then set minion skill
+          If (state.isfocus <> 0) Then
+            ~ Add the master ranks to the minon's skill bonus.
+            focus.field[Bonus].value += eachpick.field[skUser].value
+            ~ Remove the Not Usable tag so that the bonus always displays
+            perform focus.delete[Helper.NotUsable]
+            perform focus.delete[Helper.TrainOnly]
+            ~ Clear the focus so we can focus again on the next
+            perform state.clearfocus
+          Endif
+        Endif
+      nexteach]]></eval>
+    <eval phase="Final" priority="5000" index="3"><![CDATA[
+      var hitpoints as number
+      ~ Total up the Masters Hit Points &
+      hitpoints = master.hero.child[Totals].field[tHP].value + master.hero.child[Totals].field[tBonusHP].value
+      ~ We have hit points equal to half our master
+      herofield[tHP].value = round(hitpoints/2,0,-1)]]></eval>
+    <eval phase="PostAttr" priority="50000" index="5"><![CDATA[
+      ~ Remove skill points &
+      #resmax[resSkill] = 0]]></eval>
     <exprreq message="This race is only valid to be taken when added on the &quot;Other&quot; tab."><![CDATA[hero.tagis[system_tag.minion] <> 0]]></exprreq>
     </thing>
   <thing id="raPUPerson" name="Personality" description="Each psicrystal has a distinct personality, chosen by its owner at the time of its creation from among those given on the Psicrystal Personalities table. At 1st level, its owner typically gets a feel for a psicrystal&apos;s personality only through occasional impulses, but as the owner increases in level the psicrystal&apos;s personality becomes more pronounced.\n\nAt higher levels, it is not uncommon for a psicrystal to constantly ply its owner with observations and advice, often severely slanted toward the psicrystal&apos;s particular worldview. The owner always sees a bit of himself in his psicrystal, even if magnified and therefore distorted.\n\n{b}Note:{/b} The Sage personality is not fully implented yet and won&apos;t provide a bonus to single knowledge skill." compset="RaceSpec" summary="Every psicrystal has a personality.">
@@ -205,29 +205,29 @@ herofield[tHP].value = round(hitpoints/2,0,-1)</eval>
     <tag group="ChooseSrc1" tag="Hero"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="10000"><![CDATA[
-~ If we're disabled, do nothing
-doneif (tagis[Helper.SpcDisable] <> 0)
-~ If we have not chosen then get out now
-doneif (field[usrChosen1].ischosen <> 1)
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
 
-perform field[usrChosen1].chosen.pulltags[PsicrysBon.?]
-perform field[usrChosen1].chosen.pulltags[PsicryType.?]
-perform field[usrChosen1].chosen.pulltags[PsicrystID.?]
+      perform field[usrChosen1].chosen.pulltags[PsicrysBon.?]
+      perform field[usrChosen1].chosen.pulltags[PsicryType.?]
+      perform field[usrChosen1].chosen.pulltags[PsicrystID.?]
 
-perform master.child[abPUAlertn].pushtags[PsicrysBon.?]
-perform master.child[abPUAlertn].pushtags[PsicryType.?]
-perform master.child[abPUAlertn].pushtags[PsicrystID.?]
+      perform master.child[abPUAlertn].pushtags[PsicrysBon.?]
+      perform master.child[abPUAlertn].pushtags[PsicryType.?]
+      perform master.child[abPUAlertn].pushtags[PsicrystID.?]
 
-~If bonus to one knowledge skill setup here by letting the 2nd
-~Personality racial ability select the knowledge skill.
-If (tagis[PsicryType.Other] + tagis[PsicrystID.Knowledge] = 2) Then
-   ~One Knowledge Skill bonus
-   field[usrCandid2].text = "component.BaseSkill & Helper.SkCatKnow"
-   ~Allow all knowledge skills to be chosen
-   perform assign[ChooseSrc2.Thing]
-   perform field[usrChosen2].chosen.pulltags[thingid.?,Reference]
-   perform master.child[abPUAlertn].pushtags[Reference.?]
-Endif]]></eval>
+      ~If bonus to one knowledge skill setup here by letting the 2nd
+      ~Personality racial ability select the knowledge skill.
+      If (tagis[PsicryType.Other] + tagis[PsicrystID.Knowledge] = 2) Then
+         ~One Knowledge Skill bonus
+         field[usrCandid2].text = "component.BaseSkill & Helper.SkCatKnow"
+         ~Allow all knowledge skills to be chosen
+         perform assign[ChooseSrc2.Thing]
+         perform field[usrChosen2].chosen.pulltags[thingid.?,Reference]
+         perform master.child[abPUAlertn].pushtags[Reference.?]
+      Endif]]></eval>
     </thing>
   <thing id="raPUShaPwr" name="Share Powers" description="At the owner&apos;s option, he can have any power (but not any psi-like ability) he manifests on himself also affect his psicrystal. The psicrystal must be within 5 feet of him at the time of the manifestation to receive the benefit. If the power has a duration other than instantaneous, it stops affecting the psicrystal if it moves farther than 5 feet away, and will not affect the psicrystal again, even if it returns to its owner before the duration expires.\n\nAdditionally, the owner can manifest a power with a target of &#147;You&#148; on his psicrystal (as a touch range power) instead of on himself. The owner and psicrystal cannot share powers if the powers normally do not affect creatures of the psicrystal&apos;s type (construct)." compset="RaceSpec">
     <tag group="AbilType" tag="Super"/>
@@ -258,12 +258,12 @@ Endif]]></eval>
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
-~ If we're disabled, do nothing
-doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-~ Set fly to 50ft and poor
-#value[xFly] += 50
-perform hero.child[xFly].assign[Maneuver.Poor]]]></eval>
+      ~ Set fly to 50ft and poor
+      #value[xFly] += 50
+      perform hero.child[xFly].assign[Maneuver.Poor]]]></eval>
     </thing>
   <thing id="raPUPwrRes" name="Power Resistance" description="If the owner is 11th level or higher, the psicrystal gains power resistance equal to the owner&apos;s level + 5. To affect the psicrystal with a power, another manifester must get a result on a manifester level check that equals or exceeds the psicrystal&apos;s power resistance." compset="RaceSpec">
     <fieldval field="abValue" value="5"/>
@@ -271,16 +271,16 @@ perform hero.child[xFly].assign[Maneuver.Poor]]]></eval>
     <tag group="SpecType" tag="Resist"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
-~ If we're disabled, do nothing
-doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-~ Our bonus is 5 + Class levels
-field[abValue].value += master.hero.tagcount[Psionics.Class]
-~ Give any bonus levels like from "improved psicyrstal" feat
-field[abValue].value += master.hero.tagcount[Psicrystal.BonusLvl]
+      ~ Our bonus is 5 + Class levels
+      field[abValue].value += master.hero.tagcount[Psionics.Class]
+      ~ Give any bonus levels like from "improved psicyrstal" feat
+      field[abValue].value += master.hero.tagcount[Psicrystal.BonusLvl]
 
-~ Set the bonus on the Power Resistance Helper
-#applybonus[abValue,hero.child[xPwrRes],field[abValue].value]]]></eval>
+      ~ Set the bonus on the Power Resistance Helper
+      #applybonus[abValue,hero.child[xPwrRes],field[abValue].value]]]></eval>
     </thing>
   <thing id="raPUSigLnk" name="Sight Link" description="If the owner is 13th level or higher, the character can remote view the psicrystal (as if manifesting the remote view power) once per day." compset="RaceSpec">
     <fieldval field="trkMax" value="1"/>
@@ -304,32 +304,33 @@ field[abValue].value += master.hero.tagcount[Psicrystal.BonusLvl]
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="1000"><![CDATA[
-~ If we're disabled, do nothing
-doneif (tagis[Helper.SpcDisable] <> 0)
-~ If we're not activated, just get out now
-doneif (field[abilActive].value <> 1)
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we're not activated, just get out now
+      doneif (field[abilActive].value <> 1)
 
-~ We do have an STR and DEX score when Active
-perform hero.child[aSTR].delete[Helper.NoScore]
-perform hero.child[aDEX].delete[Helper.NoScore]
+      ~ We do have an STR and DEX score when Active
+      perform hero.child[aSTR].delete[Helper.NoScore]
+      perform hero.child[aDEX].delete[Helper.NoScore]
 
-~ Force our Strength to 1 and our Dexterity to 15
-hero.child[aSTR].field[aNormForce].value = 1
-hero.child[aDEX].field[aNormForce].value = 15
+      ~ Force our Strength to 1 and our Dexterity to 15
+      hero.child[aSTR].field[aNormForce].value = 1
+      hero.child[aDEX].field[aNormForce].value = 15
 
-~ set base speed to 30
-hero.child[Speed].field[tSpeed].value = 30
+      ~ set base speed to 30
+      hero.child[Speed].field[tSpeed].value = 30
 
-~ set climb speed to 20
-#value[xClimb] = maximum(20, #value[xClimb])
+      ~ set climb speed to 20
+      #value[xClimb] = maximum(20, #value[xClimb])
 
-~ Change the attributes on Climb
-perform hero.child[skClimb].assign[SkillOver.aDEX]]]></eval>
+      ~ Change the attributes on Climb
+      perform hero.child[skClimb].assign[SkillOver.aDEX]]]></eval>
     </thing>
   <thing id="minPUPsicr" name="Psicrystal" description="A psicrystal is a fragment of a psionic character&apos;s personality, brought into physical form and a semblance of life (via the Psicrystal Affinity feat). A psicrystal appears as a crystalline construct about the size of a human hand.{br}{br}Because it is an extension of its creator&apos;s personality, a character&apos;s psicrystal is in some ways a part of him.{br}{br}That&apos;s why, for example, a psionic character can manifest a personal range power on his psicrystal even though normally he can manifest such a power only on himself.{br}{br}A psicrystal is treated as a construct for the purposes of all effects that depend on its type.{br}{br}A psicrystal grants special abilities to its owner, as shown on the Psicrystal Special Abilities table below. In addition, a psicrystal has a personality (being a fragment of the owner&apos;s personality), which gives its owner a bonus on certain types of checks or saving throws, as given on the Psicrystal Personalities table below. These special abilities and bonuses apply only when the owner and the psicrystal are within 1 mile of each other.{br}{br}Psicrystal abilities are based on the owner&apos;s levels in psionic classes. Levels from other classes do not count toward the owner&apos;s level for purposes of psicrystal abilities.{br}{br}A psicrystal can speak one language of its owner&apos;s choice (so long as it is a language the owner knows). A psicrystal can understand all other languages known by its owner, but cannot speak them. This is a supernatural ability." compset="Minion" stacking="never">
     <usesource source="pPsiUn"/>
+    <tag group="gType" tag="PUPsionics"/>
     <tag group="gType" tag="PUPsicrsta"/>
-    <tag group="Helper" tag="NoPathSoc" name="Not Allowed for Pathfinder Society Characters" abbrev="Not Allowed for Pathfinder Society Characters"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     <bootstrap thing="abPUAlertn"></bootstrap>
     <bootstrap thing="abPUDeToPo">
       <containerreq phase="First" priority="495"><![CDATA[count:Psionics.Class + count:Psicrystal.BonusLvl >= 3]]></containerreq>
@@ -337,8 +338,8 @@ perform hero.child[skClimb].assign[SkillOver.aDEX]]]></eval>
     <bootstrap thing="abPUSharPo"></bootstrap>
     <bootstrap thing="abPUTeleLi"></bootstrap>
     <exprreq message="Psicrystal not allowed."><![CDATA[hero.tagis[Psicrystal.Allowed] <> 0]]></exprreq>
-    <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
+    <minion id="PUPsicrys">
+      <tag group="Hero" tag="FixedRace"/>
       <bootstrap thing="rPUPsicrys"></bootstrap>
       </minion>
     </thing>
