@@ -270,14 +270,22 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="Helper" tag="Mythic"/>
-    <eval phase="PreLevel" priority="10000"><![CDATA[~ abCategory.PUPsyPath
-~ Add 4 to class level when the Warrior's path ability if found.
-
-      ~ If we've been Disabled, get out now
+    <eval phase="PostLevel" priority="100"><![CDATA[
+      ~ If we've been Disabled, get out now &
       doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If Psychic Warrior less than 3 then do nothing
+      doneif (hero.tagcount[Classes.PsychicWar] < 3)
 
-      foreach pick in hero from BaseCustSp where "abCategory.PUPsyPath"
-        eachpick.field[xExtraLev].value += 4
+      ~ Make sure we don't increase effective level before we
+      ~ actually got our path abilities.
+      foreach pick in hero from BaseClSpec where "abCategory.PUPsyWarMa|abCategory.PUPsyWarTr"
+
+        ~ Make sure the Path ability is active BEFORE giving the extra levels
+        if (eachpick.field[xTotalLev].value >= eachpick.tagvalue[ClSpecWhen.?]) then
+          eachpick.field[xExtraLev].value += 4
+          eachpick.field[xTotalLev].value += 4
+        endif
+
       nexteach]]></eval>
     <exprreq message="Warrior&apos;s Path Class Ability Required."><![CDATA[tagcount[abCategory.PUPsyPath] <> 0]]></exprreq>
     </thing>
@@ -287,7 +295,8 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="Helper" tag="Mythic"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ If we've been Disabled, get out now
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we've been Disabled, get out now &
       doneif (tagis[Helper.SpcDisable] <> 0)
 
       ~ Assign Mythic Psionic Focus to qualify for psionic focus even
@@ -374,7 +383,7 @@
     doneif (tagis[Helper.SpcDisable] <> 0)
 
     ~ Add 2 to Mythic Psionic Power for each time it is taken.
-    
+
     hero.childfound[trkPUMPsiP].field[trkMax].value += 2]]></eval>
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     </thing>
