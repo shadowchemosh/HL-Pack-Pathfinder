@@ -79,15 +79,25 @@
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="fPUBstCons" name="Boost Construct" description="Your astral constructs have more abilities.{br}{br}{b}Benefit:{/b} When you create an astral construct, you can give it one additional special ability from any menu that the construct currently has an ability from.{br}{br}{b}Special:{/b} This effect stacks with the summoner&apos;s call ability of the shaper." compset="Feat" summary="Your astral constructs have \nmore abilities." uniqueness="useronce">
+  <thing id="fPUBstCons" name="Boost Construct" description="Your astral constructs have more abilities.{br}{br}{b}Benefit:{/b} When you create an astral construct, you can give it one additional special ability from any menu that the construct currently has an ability from.{br}{br}{b}Special:{/b} This effect stacks with the summoner&apos;s call ability of the shaper.{br}{br}{b}Note:{/b} This feat is scripted to only work with Astral Constructs added through the Other tab." compset="Feat" summary="Your astral constructs has more abilities." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="fCategory" tag="General"/>
+    <tag group="fCategory" tag="Psionic"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Find all Astral Construct minions and assign a helper
+      ~ tag to let the Astral Construct increase the allowed
+      ~ menu choices
+      foreach pick in hero from OnlyMinion where "gType.PUAstrCons"
+        perform eachpick.minion.assign[Psionics.AstConMenu]
+      nexteach]]></eval>
     </thing>
   <thing id="fPUBurPwr" name="Burrowing Power" description="Your powers sometimes bypass barriers.\n\n{b}Prerequisites:{/b} Spellcraft 8 ranks.\n\n{b}Benefit:{/b} To use this feat, you must expend your psionic focus. You can attempt to manifest your powers against targets that are sheltered behind a wall or force effect. Your power briefly skips through the Astral Plane to bypass the barrier.\n\nIf a power requires line of sight (which includes most powers that affect a target or targets instead of an area), you cannot manifest it as a burrowing power unless you can somehow see the target, such as with {i}clairvoyant sense{/i}. Using this feat increases the power point cost of the power by 4. The power&apos;s total cost cannot exceed your manifester level." compset="Feat" summary="Your powers sometimes bypass barriers." uniqueness="useronce">
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Metapsion"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <exprreq message="Spellcraft 8+ ranks required."><![CDATA[#skillranks[skSpellcr] >= 8]]></exprreq>
@@ -95,7 +105,7 @@
   <thing id="fPUChnPwr" name="Chain Power" description="You can manifest powers that arc to hit other targets in addition to the primary target.\n\n{b}Benefit{/b}: To use this feat, you must expend your psionic focus. You can chain any power that affects a single target and that deals either acid, cold, electricity, fire, or sonic damage. After the primary target is struck, the power can arc to a number of secondary targets equal to your manifester level (maximum twenty). The secondary arcs each strike one target and deal half as much damage as the primary one did (round down).\n\nEach target gets to make a saving throw, if one is allowed by the power. You choose secondary targets as you like, but they must all be within 30 feet of the primary target, and no target can be struck more than once. You can choose to affect fewer secondary targets than the maximum (to avoid allies in the area, for example).\n\nUsing this feat increases the power point cost of the power by 6. The power&apos;s total cost cannot exceed your manifester level.\n\nIf a power requires line of sight (which includes most powers that affect a target or targets instead of an area), you cannot manifest it as a burrowing power unless you can somehow see the target, such as with clairvoyant sense. Using this feat increases the power point cost of the power by 4. The power&apos;s total cost cannot exceed your manifester level." compset="Feat" summary="You can manifest powers that arc to hit other targets\nin addition to the primary target." uniqueness="useronce">
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Metapsion"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="abAction" tag="PUExpFocus"/>
     </thing>
@@ -109,7 +119,7 @@
   <thing id="fPUComMan" name="Combat Manifestation" description="You are adept at manifesting powers in combat.\n\n{b}Benefit{/b}: You get a +4 bonus on concentration checks made to manifest a power or use a psi-like ability when manifesting on the defensive or while grappled." compset="Feat" summary="+4 to Concentration checks to manifest power while on the defensive." uniqueness="useronce">
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Psionic"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <exprreq message="Psionic character required."><![CDATA[hero.tagis[Hero.Psionic] <> 0]]></exprreq>
     </thing>
@@ -125,7 +135,7 @@
   <thing id="fPUDeepImp" name="Deep Impact" description="You can strike your foe with a melee weapon as if making a touch attack.\n\n{b}Prerequisites{/b}: Str 13, Psionic Weapon, base attack bonus +6..\n\n{b}Benefit{/b}: To use this feat, you must expend your psionic focus as part of a melee attack. You can resolve that attack with a melee weapon as a touch attack. You must decide whether or not to use this feat prior to making an attack. If your attack misses, you still expend your psionic focus. Abilities that do not work on touch attacks similarly do not work with this feat." compset="Feat" summary="You can strike your foe with a melee weapon as if\nmaking a touch attack." uniqueness="useronce">
     <fieldval field="reqStr" value="13"/>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="fCategory" tag="Psionic"/>
@@ -135,28 +145,28 @@
   <thing id="fPUDelPwr" name="Delay Power" description="You can manifest powers that go off up to 5 rounds later.\n\n{b}Benefit{/b}: To use this feat, you must expend your psionic focus. You can manifest a power as a delayed power. A delayed power doesn&apos;t activate immediately. When you manifest the power, you choose one of three trigger mechanisms: (1) The power activates when you take a standard action to activate it; (2) It activates when a creature enters the area that the power will affect (only powers that affect areas can use this trigger condition); or (3) It activates on your turn after 5 rounds pass. If you choose one of the first two triggers and the conditions are not met within 5 rounds, the power activates automatically on the fifth round.\n\nOnly area and personal powers can be delayed.\n\nAny decisions you would make about the delayed power, including attack rolls, designating targets, or determining or shaping an area, are decided when the power is manifested. Any effects resolved by those affected by the power, including saving throws, are decided when the delay period ends.\n\nA delayed power can be dispelled normally during the delay, and can be detected normally in the area or on the target by the use of powers that can detect psionic effects.\n\nUsing this feat increases the power point cost of the power by 2. The power&apos;s total cost cannot exceed your manifester level." compset="Feat" summary="You can manifest powers that go off up to 5 rounds\nlater." uniqueness="useronce">
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Metapsion"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="fPUEmpPwr" name="Empower Power" description="You can manifest powers to greater effect.\n\n{b}Benefit{/b}: To use this feat, you must expend your psionic focus. You can empower a power. All variable, numeric effects of an empowered power are increased by one-half. An empowered power deals half again as much damage as normal, cures half again as many hit points, affects half again as many targets, and so forth, as appropriate. Augmented powers can also be empowered (multiply 1-1/2 times the damage total of the augmented power). Saving throws and opposed checks (such as the one you make when you manifest dispel psionics) are not affected, nor are powers without random variables.\n\nUsing this feat increases the power point cost of the power by 2. The power&apos;s total cost cannot exceed your manifester level." compset="Feat" summary="Numeric effects of a power are increased 50%. +2 Power Points." uniqueness="useronce">
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Metapsion"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="fPUEndMind" name="Endowed Mind" description="You can make your powers more difficult to resist.\n\n{b}Benefit:{/b} As long as you maintain psionic focus, increase the save DC of any power you manifest by 1 for every 2 power points you spend augmenting the power, provided the augmentation does not already increase the power&apos;s save DC. You may even spend 2 power points to increase a power&apos;s save DC even if the power does not have any augment options.\n\n{b}Special:{/b} Unlike most metapsionic feats, you do not need to expend your psionic focus to use this feat" compset="Feat" summary="You can make your powers more difficult to resist." uniqueness="useronce">
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Metapsion"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="abAction" tag="PUManFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="fPUEnlPwr" name="Enlarge Power" description="You can manifest powers farther than normal.\n\n{b}Benefit{/b}: To use this feat, you must expend your psionic focus. You can alter a power with a range of close, medium, or long to increase its range by 100%. An enlarged power with a range of close has a range of 50 feet + 5 feet per level, a medium-range power has a range of 200 feet + 20 feet per level, and a long-range power has a range of 800 feet + 80 feet per level. \n\nPowers whose ranges are not defined by distance, as well as powers whose ranges are not close, medium, or long, are not affected.\n\nUsing this feat does not increase the power point cost of the power." compset="Feat" summary="You can manifest powers farther than normal." uniqueness="useronce">
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Metapsion"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
@@ -357,7 +367,7 @@
     <fieldval field="usrCandid1" value="component.Simple &amp; Psicrystal.Personalty"/>
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="ChooseSrc1" tag="Hero"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="400" index="3">~ Give a bonus level to the psicyrstal
@@ -388,7 +398,7 @@
     <usesource source="pPsiUn"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="abAction" tag="PUExpFocus"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="abAction" tag="PUManFocus"/>
     <tag group="fCategory" tag="Psionic"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[      ~ If we're disabled, do nothing
@@ -588,7 +598,7 @@
     <tag group="fCategory" tag="Psionic"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <exprreq message="Speed of Thought required."><![CDATA[#hasfeat[fPUSpdThgt] <> 0]]></exprreq>
     </thing>
   <thing id="fPUPsiDodg" name="Psionic Dodge" description="You are proficient at dodging blows.\n\n{b}Prerequisites{/b}: Dex 13, Dodge.\n\n{b}Benefit{/b}: You must be psionically focused to use this feat. You receive a +1 dodge bonus to your Armor Class. This bonus stacks with the bonus from the Dodge feat. You may expend your psionic focus as an immediate action to increase this bonus to a +4 dodge bonus to your Armor Class for a single attack made against you." compset="Feat" summary="+1 AC when psi-focused, expend focus for +4 vs. one attack" uniqueness="useronce">
@@ -598,7 +608,7 @@
     <fieldval field="reqDex" value="13"/>
     <usesource source="pPsiUn"/>
     <tag group="abAction" tag="PUManFocus"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="User" tag="Activation"/>
     <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -642,7 +652,7 @@
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
     <tag group="User" tag="Activation"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="abAction" tag="PUManFocus"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -713,7 +723,7 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="User" tag="Activation"/>
     <tag group="fCategory" tag="Psionic"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="abAction" tag="PUManFocus"/>
     <eval phase="Final" priority="50000"><![CDATA[
@@ -731,7 +741,7 @@
     </thing>
   <thing id="fPUQuiPwr" name="Quicken Power" description="You can manifest a power with a moment&apos;s thought.\n\n{b}Benefit{/b}: To use this feat, you must expend your psionic focus. You can quicken a power. You can perform another action, even manifest another power, in the same round that you manifest a quickened power. You can manifest only one quickened power per round. A power whose manifesting time is longer than 1 round cannot be quickened.\n  Using this feat increases the power point cost of the power by 6. The power&apos;s total cost cannot exceed your manifester level.\n  Manifesting a quickened power does not provoke attacks of opportunity." compset="Feat" summary="You can manifest a power with a moment&apos;s thought." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -741,14 +751,14 @@
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="General" name="General" abbrev="General"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     </thing>
   <thing id="fPUReckOff" name="Reckless Offense" description="You can shift your focus from defense to offense.\n\n{b}Prerequisites{/b}: Base attack bonus +1.\n\n{b}Benefit{/b}: When you use the attack action or full attack action in melee, you can take a penalty of -4 to your Armor Class and add a +2 bonus on your melee attack roll. The bonus on attack rolls and penalty to Armor Class last until the beginning of your next turn." compset="Feat" summary="You can shift your focus from defense to offense." uniqueness="useronce">
     <fieldval field="actName" value="Reckless Offense"/>
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="General" name="General" abbrev="General"/>
     <tag group="User" tag="Activation"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostAttr" priority="14001"><![CDATA[      ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
@@ -766,7 +776,7 @@
     </thing>
   <thing id="fPUReturnS" name="Return Shot" description="You can return incoming arrows, as well as crossbow bolts, spears, and other projectile or thrown weapons.\n\n{b}Prerequisites{/b}: Point Blank Shot, Psionic Shot, Fell Shot, base attack bonus +6.\n\n{b}Benefit{/b}: To use this feat, you must expend your psionic focus and have at least one hand free. Once per round when you would normally be hit by a projectile or a thrown weapon no more than one size category larger than your size, you can deflect the attack so that you take no damage from it. The attack is deflected back at your attacker, using the attack bonus of the original attack on you. You must be aware of the attack and not flat-footed. Attempting to return a shot is a free action.\n\n{b}Special{/b}: If you also have the Deflect Arrows feat, the deflected attack is made with the original attack bonus plus your Dexterity bonus." compset="Feat" summary="You can return incoming arrows, as well as crossbow bolts, spears, and other projectile or thrown weapons." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -788,7 +798,7 @@
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="General" name="General" abbrev="General"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <exprreq message="Dodge required." iserror="no"><![CDATA[#hasfeat[fDodge] <> 0]]></exprreq>
     </thing>
   <thing id="fPUSpdThgt" name="Speed of Thought" description="The energy of your mind energizes the alacrity of your body.{br}{br}{b}Prerequisite:{/b} Wis 13.{br}{br}{b}Benefit:{/b} As long as you are psionically focused and not wearing heavy armor, you gain an insight bonus to your speed of 10 feet. You may expend your psionic focus to increase the insight bonus to your speed to 30 feet for your turn." compset="Feat" summary="When focused speed +10ft or +30ft when you expend focus." uniqueness="useronce">
@@ -797,7 +807,7 @@
     <usesource source="pPsiUn"/>
     <tag group="fCategory" tag="Psionic"/>
     <tag group="User" tag="Activation"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="abAction" tag="PUManFocus"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -835,7 +845,7 @@
     </thing>
   <thing id="fPUTalent" name="Talented" description="You can overchannel powers with less cost to yourself.\n\n{b}Prerequisites:{/b} Overchannel. \n\n{b}Benefit:{/b} To use this feat, you must expend your psionic focus. When manifesting a power of 3rd level or lower, you do not take damage from overchanneling." compset="Feat" summary="You can overchannel powers with less cost to yourself." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Psionic"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -854,13 +864,13 @@
     <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <exprreq message="Base attack bonus +6 required." iserror="no"><![CDATA[child[Attack].field[tAtkBase].value >= 6]]></exprreq>
     <exprreq message="Psionic Fist required." iserror="no"><![CDATA[#hasfeat[fPUPsiFist] <> 0]]></exprreq>
     </thing>
   <thing id="fPUUncPwr" name="Unconditional Power" description="Disabling conditions do not hold you back.\n\n{b}Benefit{/b}: To use this feat, you must expend your psionic focus. Your mental strength is enough to overcome some otherwise disabling conditions. You can manifest an unconditional power when you are dazed, {i}confused{/i}, nauseated, shaken, or stunned.\n  Only personal powers and powers that affect your person can be manifested as unconditional powers.\n  Using this feat increases the power point cost of the power by 8. The power&apos;s total cost cannot exceed your manifester level." compset="Feat" summary="Disabling conditions do not hold you back." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -871,11 +881,11 @@
     <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
     <tag group="abAction" tag="PUManFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     </thing>
   <thing id="fPUWidPwr" name="Widen Power" description="You can increase the area of your powers.\n\n{b}Benefit{/b}: To use this feat, you must expend your psionic focus. You can alter a burst, emanation, line, or spread-shaped power to increase its area. (Powers that do not have an area of one of these four sorts are not affected by this feat.) Any numeric measurements of the power&apos;s area increase by 100%.\n  Using this feat increases the power point cost of the power by 4. The power&apos;s total cost cannot exceed your manifester level." compset="Feat" summary="You can increase the area of your powers." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Metapsion" name="Metapsionic" abbrev="Metapsionic"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -906,7 +916,7 @@
     </thing>
   <thing id="fPUWndAtt" name="Wounding Attack" description="Your vicious attacks wound your foe.\n\n{b}Prerequisite:{/b} Base attack bonus +8.\n\n{b}Benefit:{/b} To use this feat, you must expend your psionic focus. You can make an attack with such vicious force that you wound your opponent. A wound deals 1 point of Constitution damage to your foe in addition to the usual damage dealt.\n  You must decide whether or not to use this feat prior to making an attack. If your attack misses, you still expend your psionic focus." compset="Feat" uniqueness="useronce">
     <usesource source="pPsiUn" parent="UserParent" name="Psionics Unleashed: Feats and Skills"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Psionic"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -951,7 +961,7 @@
     </thing>
   <thing id="fPUSurAur" name="Surging Aura" description="Your wild surge enhances the aim of nearby allies.\n\n{b}Prerequisites:{/b} Wild Surge +1. \n\n{b}Benefit:{/b} You gain a 10&apos; surging aura. When you use your wild surge class feature, you can designate one ally for every +1 of your wild surge within the surging aura to gain an insight bonus to attack rolls equal to your wild surge until the end of their next turn." compset="Feat" summary="Your wild surge enhances the aim of nearby allies." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Psionic"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="30000"><![CDATA[
@@ -966,7 +976,7 @@
     </thing>
   <thing id="fPUSwftSha" name="Swift Shapeshifter" description="You are naturally confident with different shapes and forms, and years of training have allowed your body to more easily flow into new shapes.\n\n{b}Prerequisites:{/b} Ability to manifest {i}metamorphosis{/i}.\n\n{b}Benefit:{/b} When you manifest {i}minor metamorphosis{/i}, {i}major metamorphosis{/i} or {i}metamorphosis{/i} the manifestation time is a move action instead of a standard action." compset="Feat" uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Psionic"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <prereq message="Ability to manifest {i}metamorphosis{/i}">
@@ -1144,8 +1154,9 @@ validif (hero.tagcount[Hero.Manifester] >= 10)]]></validate>
     <exprreq message="Brawler path class feature required."><![CDATA[#hasability[cWPaBraPri] <> 0]]></exprreq>
     <exprreq message="Improved Grapple feat required"><![CDATA[#hasfeat[fImpGrapp] <> 0]]></exprreq>
     <prereq message="Manifester level 10 required">
-      <validate><![CDATA[~check for Manifester level 10
-validif (hero.tagcount[Hero.Manifester] >= 10)]]></validate>
+      <validate><![CDATA[
+        ~check for Manifester level 10
+        validif (hero.tagcount[Hero.Manifester] >= 10)]]></validate>
       </prereq>
     </thing>
   <thing id="fPUAdvCons" name="Advanced Constructs" description="You are especially skilled at creating astral constructs.\n\n{b}Prerequisite:{/b} Able to manifest {i}astral construct{/i}.\n\n{b}Benefit:{/b} You gain additional menu options for astral constructs, as detailed below.\n\n{b}{i}Menu A{/b}{/i}\n{b}Armor Spikes (Ex):{/b} The construct’s body is covered in spikes, allowing the construct to deal an extra 1d6 points of piercing damage with a successful trample, constrict, bull rush, or grapple attack. The construct also can make a regular melee attack with the spikes, dealing 1d6 points of damage.\n{b}Dodge (Ex):{/b} The astral construct gains the Dodge feat even if it does not meet the prerequisites.\n{b}Psionic Attacks (Su):{/b} The astral construct’s attacks are treated as psionic for the purposes of overcoming damage reduction.\n{b}Might (Ex):{/b} The astral construct’s melee attacks deal an additional +1 point of damage.\n{b}Talons (Ex):{/b} The astral construct replaces its slam attacks with claw attacks that deal either slashing or piercing damage, chosen at time of manifestation.\n{b}Utility (Ex):{/b} Your construct can perform tasks for you. This can include such tasks as cleaning, cooking, or setting up camp, or any other activity that requires a DC 10 or lower skill check. An astral construct with this option does not need to stay close to the manifester and will continue following any given order until given other instructions. You can select this menu option multiple\ntimes. Each time, the DC of skill checks the construct can attempt increases by 2. An astral construct with this option that is not used in combat has a duration of 1 hour / level. If it later enters combat, its duration resets to 1 round / level, but suffers a -2 penalty to its attack rolls.\n\n{b}{i}Menu B{/b}{/i}\n{b}Great Cleave (Ex):{/b} The astral construct gains the Great Cleave feat even if it does not meet the prerequisites.\n{b}Improved Might (Ex):{/b} The astral construct’s melee attacks deal an additional +3 points of damage. This does not stack with the Might menu option.\n{b}Reach (Ex):{/b} The astral construct’s reach increases by 5 feet.\n{b}Stunning Fist (Ex):{/b} The astral construct gains the Stunning Fist feat even if it does not meet the prerequisites. The construct can use Stunning Fist with its slam attack.\n\n{b}{i}Menu C{/b}{/i}\n{b}Greater Might (Ex):{/b} The astral construct’s melee attacks deal an additional +5 points of damage. This does not stack with the Improved Might or Might menu option.\n{b}Tail Slap (Ex):{/b} The astral construct gains a tail, giving it a tail slap secondary attack. A tail slap deals 2d8 points of damage." compset="Feat" uniqueness="useronce">
@@ -1154,11 +1165,12 @@ validif (hero.tagcount[Hero.Manifester] >= 10)]]></validate>
     <tag group="fCategory" tag="Psionic"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <prereq message="Able to manifest {i}astral construct{/i}">
-      <validate><![CDATA[    var PowerID as String
-    var HavePower as number
-    PowerID = "puAstCons1"
-    Call HavePower
-    @valid = HavePower]]></validate>
+      <validate><![CDATA[
+        var PowerID as String
+        var HavePower as number
+        PowerID = "puAstCons1"
+        Call HavePower
+        @valid = HavePower]]></validate>
       </prereq>
     </thing>
   <thing id="fPUAdDerPa" name="Advanced Dervish Path" description="You seem to float between enemies, a blur of destruction.{br}{br}{b}Prerequisites:{/b} Dex 15, Double Slice, Two-Weapon Fighting, Dervish path class feature, manifester level 10th, base attack bonus +6 \n\n{b}Benefit:{/b} When using the Dervish trance, the competence bonus applies to your damage as well as your attack rolls. In addition, you can use the Dervish maneuver even if you moved before your attack and you have no limit of how many 5-foot steps you can take while using the Dervish maneuver, as long as you make at least one attack before each 5-foot step. The maximum distance you can move in this round is that of a double move." compset="Feat" uniqueness="useronce">
@@ -2275,7 +2287,7 @@ validif (hero.tagcount[Hero.Manifester] >= 3)]]></validate>
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="trCategory" tag="Psionic" name="Psionic"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
+    <eval phase="PostLevel" priority="10000">
       var v_focus as number
       call PUPsiFocus
       ~ If we are not psionic focus get out now!
@@ -2284,7 +2296,7 @@ validif (hero.tagcount[Hero.Manifester] >= 3)]]></validate>
       field[abValue].value += 1
 
       #applybonus[BonTrait,hero.child[Initiative],field[abValue].value]
-      #applybonus[BonTrait,hero.childfound[skSenseMot],field[abValue].value]]]></eval>
+      #applybonus[BonTrait,hero.childfound[skSenseMot],field[abValue].value]</eval>
     </thing>
   <thing id="trPUPsigif" name="Psigifted" description="You have an affinity for one particular power chosen from ones that you know, and your effective manifester level for that psionic power increases by 1. Once this power is selected it cannot be changed." compset="Trait">
     <fieldval field="usrCandid1" value="component.BasePower"/>
