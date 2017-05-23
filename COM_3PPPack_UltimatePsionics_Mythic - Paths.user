@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <thing id="mypPUOvrMi" name="Overmind" description="Manifesters learn to use psionic powers in a variety of different ways. From the raw bursts of emotion from the wilder, to the teamwork oriented manifesting of the tactician, to the deep understanding of the psion, each of these manifesters learns to channel psionic energy into effects that alter themselves or the world around them. The overmind takes this ability to new heights, learning not only to weave psionic energy into a variety of effects, but to do it easily and in ways other manifesters could never achieve. The overmind is unparalleled in skill manifesting psionic powers, and many of the abilities of the overmind path improve your ability to manifest psionic powers or increase their capacity. In addition, this path offers a variety of options in increasing knowledge of psionics and typical defenses used against psionic powers. Overminds that approach the highest of mythic tiers can affect even the strongest-willed of creatures, while they themselves gain immunity from such effects. \n\n{b}Role{/b}: As an overmind, your role in the group is to enhance your manifesting ability and to have the right power for a particular situation. Whether that is improving the coordination over a collective or creating an opening in an enemy’s defenses, you channel psionic energy to overcome challenges and defeat foes. While you gain only limited defensive boosts, your offensive and tactical options prove that the best defense is a good offense. \n\n{b}Classes{/b}: The overmind is the primary path for psions, tacticians, vitalists, and wilders, the pure manifesting classes. Cryptics and psychic warriors might find many abilities in the overmind path useful, but could find other paths more appealing to their particular mix of skills and psionics." compset="MythPath" uniqueness="useronce">
+    <fieldval field="mpTierHp" value="3"/>
+    <fieldval field="mpOthAbNm" value="Psionic Secret"/>
+    <arrayval field="mpOthArr" index="0" value="1"/>
+    <arrayval field="mpPathArr" index="0" value="1"/>
+    <arrayval field="mpPathArr" index="1" value="2"/>
+    <arrayval field="mpPathArr" index="2" value="3"/>
+    <arrayval field="mpPathArr" index="3" value="4"/>
+    <arrayval field="mpPathArr" index="4" value="5"/>
+    <arrayval field="mpPathArr" index="5" value="6"/>
+    <arrayval field="mpPathArr" index="6" value="7"/>
+    <arrayval field="mpPathArr" index="7" value="8"/>
+    <arrayval field="mpPathArr" index="8" value="9"/>
+    <arrayval field="mpPathArr" index="9" value="10"/>
+    <arrayval field="mpFeatArr" index="0" value="1"/>
+    <arrayval field="mpFeatArr" index="2" value="2"/>
+    <arrayval field="mpFeatArr" index="4" value="3"/>
+    <arrayval field="mpFeatArr" index="6" value="4"/>
+    <arrayval field="mpFeatArr" index="8" value="5"/>
+    <arrayval field="mpAbilArr" index="1" value="1"/>
+    <arrayval field="mpAbilArr" index="3" value="2"/>
+    <arrayval field="mpAbilArr" index="5" value="3"/>
+    <arrayval field="mpAbilArr" index="7" value="4"/>
+    <arrayval field="mpAbilArr" index="9" value="5"/>
+    <usesource source="srcMyPsi"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="7"/>
+      </bootstrap>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="MythAbiSco">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="MythAbiSco">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="MythAbiSco">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="MythAbiSco">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="MythAbiSco">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cPUMBndMnd">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="MythFeat">
+      <autotag group="Helper" tag="Mythic"/>
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    </thing>
+  <thing id="cPUMBndMnd" name="Boundless mind" description="At 10th tier, whenever you manifest a psionic power that targets one or more non-mythic creatures, each of those creatures must roll any saving throw against the power twice and take the lower result. You gain power resistance equal to 15 + your highest manifester level, but only against psionic powers. Once per round when your power resistance protects you from a power manifested by an enemy mythic creature, you regain one use of mythic power." compset="ClSpecial">
+    <fieldval field="abValue" value="15"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="50000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Calculate the highest manifester level
+      foreach pick in hero from Class where "CasterSrc.Psionic"
+        #applybonus[abValue,this,eachpick.field[cCasterLev].value]
+      nexteach
+
+      ~ 15 + highest manifester level
+      field[abValue].value += field[abValue2].value
+
+      ~ Set the final value into power resistance
+      #value[xPwrRes] += field[abValue].value]]></eval>
+    </thing>
+  </document>

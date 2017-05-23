@@ -117,7 +117,7 @@
     <bootstrap thing="puDetPsi0">
       <autotag group="SpellSort" tag="cHelpPsi"/>
       <autotag group="SpellType" tag="cHelpPsi"/>
-      <autotag group="PackHelper" tag="FreePower"/>
+      <autotag group="Helper" tag="Free"/>
       </bootstrap>
     </thing>
   <thing id="cPsiSeer" name="Clairsentience (Seer)" description="A psion who chooses clairsentience is known as a seer. Seers can learn precognitive powers to aid their comrades in combat, as well as powers that permit them to gather information in many different ways.\n\n{i}Class Skills:{/i} Diplomacy (Cha) and Perception (Wis)." compset="PUDisc" uniqueness="useronce">
@@ -264,21 +264,32 @@
       <autotag group="ClSpecWhen" tag="2"/>
       </bootstrap>
     </thing>
-  <thing id="cPsiSumCal" name="Summoner&apos;s Call" description="At 2nd level, if you maintain focus when manifesting a power of the creation subdiscipline, the duration is increased by 1 round plus 1 round for every four psion levels. In addition, your astral constructs gain an additional menu option of the highest menu available when you manifest the power." compset="ClSpecial">
+  <thing id="cPsiSumCal" name="Summoner&apos;s Call" description="At 2nd level, if you maintain focus when manifesting a power of the creation subdiscipline, the duration is increased by 1 round plus 1 round for every four psion levels. In addition, your astral constructs gain an additional menu option of the highest menu available when you manifest the power.{br}{br}{b}Note:{/b} This ability is scripted to only work with Astral Constructs added through the Other tab" compset="ClSpecial">
     <tag group="AbilType" tag="Extra"/>
     <tag group="abAction" tag="PUManFocus"/>
-    <eval phase="Render" priority="1000"><![CDATA[
-      var v_focus as number
-      call PUPsiFocus
-      ~ If Not psionically focused get out now
-      doneif (v_focus <> 1)
+    <eval phase="PreLevel" priority="10000" index="1"><![CDATA[
+      ~ We're earlier than the normal test for whether we've reached the correct level, so we'll recreate that test here
+      doneif (root.linkage[table].field[cTotalLev].value + field[xExtraLev].value + field[xEffectLev].value < tagvalue[ClSpecWhen.?])
 
-      ~the bonus rounds for the creation subdiscipline 1+level/4
-      var bonus as number
-      bonus = 1+(#levelcount[Psion]/4)
-      bonus = round(bonus,0,-1)
+      ~ Find all Astral Construct minions and assign a helper
+      ~ tag to let the Astral Construct increase the allowed
+      ~ menu choices
+      foreach pick in hero from OnlyMinion where "gType.PUAstrCons"
+        perform eachpick.minion.assign[Psionics.AstConMenu]
+      nexteach]]></eval>
+    <eval phase="Final" priority="50000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-      field[abSumm].text = "Manifestations from the creation subdiscipline last an additional " & bonus & "rounds."]]></eval>
+      ~ Calculate the bonus rounds as 1+level/4
+      field[abDuration].value = round(#levelcount[Psion]/4,0,-1) + 1
+
+      field[abSumm].text = "Manifestations from the creation subdiscipline last an additional " & field[abDuration].value & " rounds."
+
+      field[livename].text = field[thingname].text & " (" & field[abDuration].value & " rds)"
+      ]]></eval>
     </thing>
   <thing id="cPUIConstr" name="Improved Constructs" description="At 8th level, you gain your choice of the Advanced Construct* or Boost Construct feat as a bonus feat. If you already have one of the feats, you gain the other instead. If you already possess both feats, you gain a bonus psionic feat of your choice. You must meet any applicable prerequisites to select the feat.\n\n{b}Note:{/b} Not Scripted yet." compset="ClSpecial">
     <comment>Stub</comment>

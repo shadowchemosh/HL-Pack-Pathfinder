@@ -13,20 +13,33 @@
     <tag group="psiClass"   tag="PUVitMetGu"  name="Vitalist Method - Guardian"/>
     <tag group="psiClass"   tag="PUVitMetMe"  name="Vitalist Method - Mender"/>
     <tag group="psiClass"   tag="PUVitMetSo"  name="Vitalist Method - Soulthief"/>
+    <tag group="sDescript"  tag="PUSpirit"    name="Spirit"/>
     <tag group="wFtrGroup"  tag="WPMndBld"    name="Weapon Proficiency - Mind Blade" abbrev="WP - Mind Blade"/>
     <tag group="IsWeapon"   tag="wMindBlade"  name="Mind Blade"/>
     <tag group="WepFocus"   tag="wMindBlade"  name="Mind Blade"/>
     <tag group="Target"     tag="wMindBlade"  name="Mind Blade"/>
     <tag group="abAction"   tag="PUExpFocus"  name="Expend Psionic Focus"/>
+    <tag group="abCategory" tag="PUConjure"   name="Conjure"/>
     <tag group="abCategory" tag="PUBladeSk"   name="Soulknife Blade Skill" abbrev="Blade Skill"/>
     <tag group="abAction"   tag="PUManFocus"  name="Maintain Psionic Focus"/>
     <tag group="wGroup"     tag="cSknMindBl"  name="Soulknife Mind Blade"/>
     <tag group="abCategory" tag="PUPsiDisc"   name="Psion Discipline" abbrev="Discipline"/>
+    <tag group="Custom"     tag="ASChosen"    name="Astral Suit Chosen"/>
+    <tag group="Custom"     tag="HasAstSkin"  name="Has Astral Suit"/>
+    <tag group="Custom"     tag="WearAstS"    name="Wearing Astral Suit"/>
+    <tag group="abCategory" tag="PUPsyPath"   name="Psychic Warrior Path" abbrev="Path"/>
+    <tag group="abCategory" tag="PUPsyWarMa"  name="Psy Warrior Maneuver" abbrev="Maneuver"/>
+    <tag group="abCategory" tag="PUPsyWarTr"  name="Psy Warrior Trance"   abbrev="Trance"/>
+    <tag group="AllowRCust" tag="PUMenuA"     name="Menu A" abbrev="A"/>
+    <tag group="AllowRCust" tag="PUMenuB"     name="Menu B" abbrev="B"/>
+    <tag group="AllowRCust" tag="PUMenuC"     name="Menu C" abbrev="C"/>
+    <tag group="gType"      tag="PUPsionics"  name="Psionics"/>
+    <tag group="gType"      tag="PUAstrCons"  name="Astral Construct"/>
+    <tag group="gType"      tag="PUPsicrsta"  name="Psicrystals"/>
 
     <bootstrap thing="PUPathSk"></bootstrap>
     <bootstrap thing="PUClassFnd"></bootstrap>
     <bootstrap thing="PU0lvlPowe"></bootstrap>
-    <bootstrap thing="PUFreePowr"></bootstrap>
     <bootstrap thing="PUGiftBlad"></bootstrap>
 
     <bootstrap thing="zPUArtiste"></bootstrap>
@@ -81,40 +94,15 @@
     compset="Simple" uniqueness="unique">
     <usesource source="pPsiUn"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
+      var v_focus as number
+      call PUPsiFocus
       ~ If not Psi Focused get out now
-      doneif (hero.tagis[Hero.PsiFocus] <> 1)
+      doneif (v_focus <> 1)
 
       ~ Find all zero level powers/talents and make cost 0 PP
       foreach pick in hero from BasePower where "sLevel.0 & Helper.Secondary"
         eachpick.field[psiCost].value = 0
       nexteach]]></eval>
-    </thing>
-
-  <thing id="PUFreePowr" name="Don't Count Some Powers"
-    description="Pathfinder 13.12 caused bootstrapped powers that are suppose to be free to be counted against a classes total powers/talents known. This"
-    compset="Simple" uniqueness="unique">
-    <usesource source="pPsiUn"/>
-    <eval phase="PreLevel" priority="10000"><![CDATA[
-      ~ Find all free powers/talents and make them not
-      ~ count against a classes total.
-      foreach pick in hero from BasePower where "PackHelper.FreePower"
-        perform hero.findchild[BaseClHelp,eachpick.tagids[SpellType.?]].setfocus
-
-        ~ If no class found get next power
-        if (state.isfocus <> 0) then
-
-          ~ lower count by 1 for a Talent or Power
-          if (eachpick.tagis[Helper.Secondary] = 1) then
-            focus.field[cPsiSPowCu].value += -1
-          else
-            focus.field[cPsiPowCur].value += -1
-          endif
-
-          ~ Clear class pointer
-          perform state.clearfocus
-        endif
-      nexteach
-      ]]></eval>
     </thing>
 
   <thing id="PUPathSk" name="Path Skills Setup" description="This puts the PathSkill.? tags on skills." compset="Simple" uniqueness="unique">
@@ -351,9 +339,20 @@
     <comment><![CDATA[This is a helper object for the "Vitalist" class header.]]></comment>
     <link linkage="varies" thing="cHelpPU5"/>
     </thing>
-  <thing id="minHdPUPsc" name="Psicrystals" compset="Minion" isshowonly="yes">
-    <tag group="gType" tag="PUPsicrsta" name="Psicrystals"/>
+
+  <thing id="arHdPUPsiU" name="Psion Uncarnate" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Psion Uncarnate" class header.]]></comment>
+    <link linkage="varies" thing="cHelpPsU"/>
+    </thing>
+  <thing id="arHdPUBoSa" name="Body Snatcher" compset="ClassVary" uniqueness="unique" isshowonly="yes">
+    <comment><![CDATA[This is a helper object for the "Body Snatch" class header.]]></comment>
+    <link linkage="varies" thing="cHelpBSn"/>
     </thing>
 
+  <thing id="minHdPUPsc" name="Psionics" compset="Minion" isshowonly="yes">
+    <tag group="gType" tag="PUPsionics"/>
+    <tag group="gType" tag="PUPsicrsta"/>
+    <tag group="gType" tag="PUAstrCons"/>
+    </thing>
 
   </document>

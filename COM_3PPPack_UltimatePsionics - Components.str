@@ -21,20 +21,24 @@
     <tag group="SpecSource" tag="cHelpPsi"/>
 
     <eval index="1" phase="First" priority="50"><![CDATA[
+      ~ If we where added by a configurable then we don't
+      ~ need to do Primary/Secondary logic.
+      doneif (linkage[table].tagis[component.Configure] = 1)
+
       ~ We need a hero tag really early that can be tested for
       perform hero.assign[PUDisc.Added]
       ]]></eval>
 
     <eval index="2" phase="First" priority="99"><![CDATA[
+      ~ if we have less than two disciplines selected then do nothing!
+      doneif (hero.tagcount[PUDisc.Added] < 2)
+
       ~ If Primary then set primary tag
       If (field[usrIndex].value = 0) Then
         perform assign[PUDisc.Primary]
       Else
         perform assign[PUDisc.Secondary]
       Endif
-
-      ~ if we have less than two disciplines selected then do nothing!
-      doneif (hero.tagcount[PUDisc.Added] < 2)
 
       ~ Setup the manual arrays to allow for selecting Primary/Secondary values
       field[usrArray].arraytext[0] = "Primary"
@@ -85,23 +89,23 @@
 
     <!-- Allow access to powers setup against this Psion Discipline -->
     <eval index="4" phase="Final" priority="1000"><![CDATA[
+      ~ Push any Psion Discipline tags to the hero so other Picks
+      ~ can easily test for them.
+      perform hero.pushtags[PUDisc.?]
+
       ~ Make sure we have tags to add so that we don't mess up the expression
       If (tagis[psiClass.?] = 1) then
         ~ Give the linked class access to Discipline Class Powers
         ~ This is for where the Power is marked with the psiClass tag.
-        linkage[table].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
+        hero.childfound[cHelpPsi].field[cPsiExpr].text &= "|" & tagids[psiClass.?,"|"]
       Endif
 
       ~ Make sure we have tags to add so that we don't mess up the expression
       If (tagis[ClsAllowPs.?] = 1) then
         ~ Give the linked class access to Discipline Specific Powers. This
         ~ is for for where the Discipline is tagged with specific power.
-        linkage[table].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
+        hero.childfound[cHelpPsi].field[cPsiExpr].text &= "|" & tagids[ClsAllowPs.?,"|"]
       Endif
-
-      ~ Push any Psion Discipline tags to the hero so other Picks
-      ~ can easily test for them.
-      perform hero.pushtags[PUDisc.?]
       ]]></eval>
 
     <!--
@@ -120,6 +124,145 @@
 
   </component>
   <!-- ************************************************************************ -->
+
+  <!-- ==================================================  -->
+  <!-- Psychic Warrior Path Custom Ability.                -->
+  <!-- ==================================================  -->
+  <component
+    id="PUPsyPath"
+    name="Psychic Warrior Path"
+    autocompset="no"
+    hasshortname="no"
+    ispublic="yes">
+
+    <!-- TAGS -->
+    <tag group="abCategory" tag="PUPsyPath"/>
+    <tag group="HasAbility" tag="PUPsyPath"/>
+    <tag group="Ability"    tag="PUPsyPath"/>
+    <tag group="SpecSource" tag="cHelpPWa"/>
+    <tag group="Helper"     tag="SpecUp"/>
+
+    <eval index="1" phase="First" priority="50"><![CDATA[
+      ~ We need a hero tag really early that can be tested for
+      perform hero.assign[PsyWarrior.PathAdded]
+      ]]></eval>
+
+    <eval index="2" phase="First" priority="99"><![CDATA[
+      ~ If Primary then set primary tag
+      If (field[usrIndex].value = 0) Then
+        perform assign[PsyWarrior.PathPrim]
+      Else
+        perform assign[PsyWarrior.PathSec]
+      Endif
+
+      ~ Push primary/secondary tag to hero
+      perform hero.pushtags[PsyWarrior.?]
+
+      ~ if we have less than two paths selected then do nothing!
+      doneif (hero.tagcount[PsyWarrior.PathAdded] < 2)
+
+      ~ Setup the manual arrays to allow for selecting Primary/Secondary values
+      field[usrArray].arraytext[0] = "Primary"
+      field[usrArray].arraytext[1] = "Secondary"
+
+      ~ Give some helpful text
+      field[DescAppend].text &= "{B}Note:{/b} Because you have multiple paths you must select which is the primary and which is secondary. This allows the path abilities to display at the correct levels."
+      ]]></eval>
+
+    <eval index="3" phase="First" priority="100"><![CDATA[
+      var s2Power as string
+
+      ~ If Primary then set correct levels here
+      If (tagis[PsyWarrior.PathPrim] = 1) Then
+
+        ~ Path Powers are level 1 & 3 only for primary
+        s2Power = "thingid.cPWaPathPo & (ClSpecWhen.1|ClSpecWhen.3)"
+
+      ~..if Secondary then set correct levels here
+      ElseIf (tagis[PsyWarrior.PathSec] = 1) Then
+
+        ~ Path Powers are level 9 only for secondary
+        s2Power = "thingid.cPWaPathPo & (ClSpecWhen.9)"
+      Endif
+
+      ~ Find all the skills we need to make a class skill
+      foreach pick in hero from BaseSkill where tagids[ClassSkill.?,"|"]
+         ~ Assign the Helper.ClassSkill tag to make a class skill
+         perform eachpick.assign[Helper.ClassSkill]
+      nexteach
+
+      ~ Find all the Path Psionic Powers
+      foreach pick in hero from BasePower where "PsyWarrior.PathPower"
+         ~ Get the Class Allow Power tag from the power
+         perform eachpick.pulltags[ClsAllowPs.?]
+
+         ~ Assign special helper tags here so they don't have to be done in the editor
+         perform eachpick.assign[Hide.Power]
+         perform eachpick.assign[SpellType.cHelpPWa]
+         perform eachpick.assign[Helper.Free]
+      nexteach
+
+      ~ Find all the Class Path class ability Picks
+      foreach pick in hero from BaseClSpec where s2Power
+         ~ Push all Allow Power tags to the Path Power Thing
+         perform eachpick.pushtags[ClsAllowPs.?]
+      nexteach
+
+      ~ Find all the Class Path class ability Picks
+      foreach pick in hero from BaseClSpec where "thingid.cPWaPathSk"
+         ~ Push all Allow Skil tags to the Path Skill Thing
+         perform eachpick.pushtags[PathSkill.?]
+      nexteach
+      ]]></eval>
+
+    <!--
+      This makes sure that only a single discipline is marked as primary.
+     -->
+    <prereq message="Only one Psychic Warrior Path can be marked as primary.">
+      <validate><![CDATA[
+        @valid = 1
+
+        ~ Check for more than one primary discipline
+        If (hero.tagcount[PsyWarrior.PathPrim] > 1) Then
+          @valid = 0
+        Endif
+        ]]>
+      </validate>
+    </prereq>
+
+    <!--
+      This makes sure that only a single discipline is marked as primary.
+     -->
+    <prereq message="Only the specific archetype can take this Path.">
+      <validate><![CDATA[
+        @valid = 1
+
+        ~ Are we a Pick or a Thing? Either way set our focus.
+        if (@ispick <> 0) then
+          perform altpick.setfocus
+        else
+          perform altthing.setfocus
+        endif
+
+        ~ Check for more than one SpecSource this tells us we are suppose to be
+        ~ to a specific archetype.
+        If (focus.tagcount[SpecSource.?] <> 1) Then
+
+          ~ Check the hero for the specific archetype and if not found
+          ~ we are in error.
+          If (focus.intersect[SpecSource,ClassVary] = 0) Then
+            @valid = 0
+            @message = "Only the archetype (" & focus.tagnames[SpecSource.ar?] & ") can take this path"
+          Endif
+        Endif
+        ]]>
+      </validate>
+    </prereq>
+
+
+  </component>
+  <!-- ************************************************************************ -->
+
 
   <compset
     id="PUDisc">
@@ -158,5 +301,44 @@
     <compref component="WepFeatTag"/>
     <compref component="shortname"/>
   </compset>
+
+  <compset
+    id="PUPsyPath">
+    <compref component="PUPsyPath"/>
+    <compref component="AbCatProc"/>
+    <compref component="Ability"/>
+    <compref component="Activated"/>
+    <compref component="ActiveList"/>
+    <compref component="AlignReq"/>
+    <compref component="AttDam"/>
+    <compref component="AttDamMods"/>
+    <compref component="AutoPrereq"/>
+    <compref component="BaseCustSp"/>
+    <compref component="BaseEquip"/>
+    <compref component="BasePolymo"/>
+    <compref component="BaseSpecLv"/>
+    <compref component="Buyable"/>
+    <compref component="ClassIndex"/>
+    <compref component="Custom"/>
+    <compref component="DescInfo"/>
+    <compref component="Domain"/>
+    <compref component="InnateAtt"/>
+    <compref component="Modifiers"/>
+    <compref component="NeedSLASrc"/>
+    <compref component="PathSocRes"/>
+    <compref component="PolyDefRet"/>
+    <compref component="Sellable"/>
+    <compref component="SetName"/>
+    <compref component="SourceAbbr"/>
+    <compref component="SourceFull"/>
+    <compref component="SpecialTab"/>
+    <compref component="StatblName"/>
+    <compref component="Tracker"/>
+    <compref component="UserSelect"/>
+    <compref component="Value"/>
+    <compref component="WepFeatTag"/>
+    <compref component="shortname"/>
+  </compset>
+
 
   </document>

@@ -1047,58 +1047,30 @@ perform forward[Alignment.?]</eval>
     <bootstrap thing="raDelTouch">
       <containerreq phase="First" priority="5000"><![CDATA[fieldval:anCompLev >= 3]]></containerreq>
       </bootstrap>
-    <eval phase="Final" priority="5000" index="2"><![CDATA[hero.child[raPsicrPer].field[livename].text = "Personality (Artiste)"
-~hero.field[tAlign].text = master.field[tAlign].text]]></eval>
+    <eval phase="Final" priority="5000" index="2"><![CDATA[
+      hero.child[raPsicrPer].field[livename].text = "Personality (Artiste)"
+      ~hero.field[tAlign].text = master.field[tAlign].text]]></eval>
     <eval phase="PreLevel" priority="10000" index="3"><![CDATA[
-~ If we're a familiar, and we're close, give our master a skill bonus
-if (#isfamiliarwithin1mile[]) then
-  master.child[skSenseMot].field[Bonus].value += 3
-  endif]]></eval>
-    <eval phase="First" priority="1000">#skillbonus[skPercep] += 6
-#skillbonus[skStealth] -= 8
-hero.child[ArmorClass].field[tACNatural].value -=1
+      ~ If we're a familiar, and we're close, give our master a skill bonus
+      if (#isfamiliarwithin1mile[]) then
+        master.child[skSenseMot].field[Bonus].value += 3
+      endif]]></eval>
+    <eval phase="First" priority="1000"><![CDATA[
+      ~ Set skill bonuses &
+      #skillbonus[skPercep] += 6
+      #skillbonus[skStealth] -= 8
+      hero.child[ArmorClass].field[tACNatural].value -=1
 
-perform delete[Alignment.?]
-perform master.pulltags[Alignment.?]
-perform forward[Alignment.?]</eval>
-    </thing>
-  <thing id="rAstralC1" name="Astral Construct I" compset="Race">
-    <fieldval field="rHitDice" value="1"/>
-    <fieldval field="rSTR" value="5"/>
-    <fieldval field="rDEX" value="5"/>
-    <fieldval field="rWIS" value="1"/>
-    <fieldval field="rEnviron" value="Any"/>
-    <fieldval field="rOrgan" value="Solitary"/>
-    <fieldval field="rTreasure" value="None"/>
-    <fieldval field="rSpace" value="5"/>
-    <fieldval field="rReach" value="5"/>
-    <fieldval field="rAC" value="5"/>
-    <fieldval field="rHPStart" value="5"/>
-    <fieldval field="rGiveSpec" value="1"/>
-    <fieldval field="shortname" value="Astral Construct"/>
-    <usesource source="pPsiUn"/>
-    <tag group="HasType" tag="tpConstAst"/>
-    <tag group="RaceType" tag="Animal"/>
-    <tag group="CompIs" tag="cArcFamil"/>
-    <tag group="CompList" tag="AstralCons" name="Astral Construct"/>
-    <tag group="RaceSize" tag="Small11"/>
-    <tag group="Alignment" tag="NeutralLC"/>
-    <tag group="Alignment" tag="NeutralGE"/>
-    <tag group="NoScore" tag="aCON"/>
-    <tag group="NoScore" tag="aINT"/>
-    <tag group="AllowRCust" tag="MenuA" name="Menu A"/>
-    <bootstrap thing="tpConstAst"></bootstrap>
-    <bootstrap thing="wSlam">
-      <autotag group="wMain" tag="1d4_4"/>
-      <autotag group="Helper" tag="NatPrimary"/>
-      </bootstrap>
+      perform delete[Alignment.?]
+      perform master.pulltags[Alignment.?]
+      perform forward[Alignment.?]]]></eval>
     </thing>
   <thing id="tpConstAst" name="Construct (Astral)" description="A construct is an animated object or artificially created creature.\n\n{b}Traits{/b}: A construct possesses the following traits (unless otherwise noted in a creature&apos;s entry).\n* No Constitution score. Any DCs or other statistics that rely on a Constitution score treat a construct as having a score of 10 (no bonus or penalty).\n* Immunity to all mind-affecting effects (charms, compulsions, morale effects, patterns, and phantasms).\n* Immunity to bleed, disease, death effects, necromancy effects, paralysis, poison, sleep effects, and stunning.\n* Cannot heal damage on its own, but often can be repaired via exposure to a certain kind of effect (see the creature&apos;s description for details) or through the use of the Craft Construct feat. Constructs can also be healed through spells such as make whole. A construct with the Good healing special quality still benefits from that quality.\n* Not subject to ability damage, ability drain, fatigue, exhaustion, energy drain, or nonlethal damage.\n* Immunity to any effect that requires a Fortitude save (unless the effect also works on objects, or is harmless).\n* Not at risk of death from massive damage. Immediately destroyed when reduced to 0 hit points or less.\n* A construct cannot be raised or resurrected.\n* A construct is hard to destroy, and gains bonus hit points based on size, as shown on the following table. Construct Size Bonus Hit Points Fine ? Diminutive ? Tiny ? Small 10 Medium 20 Large 30 Huge 40 Gargantuan 60 Colossal 80\n* Proficient with its natural weapons only, unless generally humanoid in form, in which case proficient with any weapon mentioned in its entry.\n* Proficient with no armor.\n* Constructs do not breathe, eat, or sleep." compset="Type">
     <fieldval field="tpHDSides" value="10"/>
     <usesource source="pPsiUn"/>
-    <tag group="cAttack" tag="Good" name="Fast" abbrev="Fast"/>
+    <tag group="cAttack" tag="Good"/>
     <tag group="Type" tag="tpConst"/>
-    <tag group="NotLiving" tag="Construct" name="Construct" abbrev="Construct"/>
+    <tag group="NotLiving" tag="Construct"/>
     <bootstrap thing="xImmBleed">
       <containerreq phase="First" priority="600" name="Bootstrap Type Abilities"><![CDATA[
         (HasType.tpConstPsi | OverType.tpConstPsi) & !NoTypeAbil.tpConstPsi]]>
@@ -1190,15 +1162,75 @@ perform forward[Alignment.?]</eval>
         </containerreq>
       </bootstrap>
     </thing>
-  <thing id="rcMnuABuff" name="Buff" description="The astral construct gains an extra 5 hit points." compset="RaceCustom">
-    <fieldval field="abValue" value="5"/>
-    <usesource source="pPsiUn"/>
-    <tag group="AbilType" tag="Extra"/>
-    <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
-    <eval phase="Final" priority="1000">herofield[tHP].value += field[abValue].value</eval>
+  <thing id="raPUAstCon" name="Astral Construct" description="When manifesting the astral construct power, the manifester assembles the desired creature from a menu of choices, as specified in the construct’s statistics block. A manifester can always substitute two choices from a lesser menu for one of its given abilities. Multiple selections of the same menu choice do not stack unless the ability specifically notes that stacking is allowed.\n\nSome menu choices grant an astral construct the ability to manifest specific powers as psi-like abilities. Unless using the ability is a free action, an astral construct manifesting such a power does so as a standard action that provokes attacks of opportunity. All such powers have a manifester level equal to the astral construct’s Hit Dice or the creator’s manifester level, whichever is lower.\n\nAn astral construct does not need to meet the prerequisites for a feat granted by a menu choice.\n\n{b}Note:{/b} To work correctl in HL the Menu choices have been broken down into a point buy system.  This allows for selecting different combinations of abilities correctly.\nMenu A - 1 Point abilities\nMenu B - 2 Point abilities\nMenu C - 4 Point abilities" compset="RaceSpec" summary="Menu A - 1 Point abilities; Menu B - 2 Point abilities; Menu C - 4 Point abilities">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="25000" index="1"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If no bonus ability choices then get out now!
+      doneif (hero.tagis[Psionics.AstConMenu] = 0)
+
+      ~ Increase the number of Menu Ability Choices by the
+      ~ the number of tags. In addition only increase based on
+      ~ the highest menu letter.
+      ~ Menu A is 1 per tag
+      If (root.tagis[AllowRCust.PUMenuA] = 1) Then
+        root.field[rGiveSpec].value += 1 * hero.tagcount[Psionics.AstConMenu]
+
+      ~..Menu B is 2 per tag
+      ElseIf (root.tagis[AllowRCust.PUMenuB] = 1) Then
+        root.field[rGiveSpec].value += 2 * hero.tagcount[Psionics.AstConMenu]
+
+      ~..Menu C is 4 per tag
+      ElseIf (root.tagis[AllowRCust.PUMenuC] = 1) Then
+        root.field[rGiveSpec].value += 4 * hero.tagcount[Psionics.AstConMenu]
+      Endif]]></eval>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Setup live name to include the allowed Menu letters
+      field[livename].text = field[thingname].text & " (Menu " & root.tagabbrevs[AllowRCust.PUMenu?,","] & ")"
+
+      ~ Setup custom ability name
+      root.field[rSpecSing].text = "(Menu " & root.tagabbrevs[AllowRCust.PUMenu?," or "] & ") abilities"]]></eval>
     </thing>
-  <thing id="rAstralC2" name="Astral Construct II" compset="Race">
+  <thing id="rAstralC1" name="Astral Construct 1" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Race">
+    <fieldval field="rHitDice" value="1"/>
+    <fieldval field="rSTR" value="5"/>
+    <fieldval field="rDEX" value="5"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rEnviron" value="Any"/>
+    <fieldval field="rOrgan" value="Solitary"/>
+    <fieldval field="rTreasure" value="None"/>
+    <fieldval field="rSpace" value="5"/>
+    <fieldval field="rReach" value="5"/>
+    <fieldval field="rAC" value="5"/>
+    <fieldval field="rHPStart" value="5"/>
+    <fieldval field="rGiveSpec" value="1"/>
+    <fieldval field="shortname" value="Astral Construct"/>
+    <fieldval field="srcPageNum" value="444"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
+    <usesource source="pPsiUn"/>
+    <tag group="CompIs" tag="cArcFamil"/>
+    <tag group="CompList" tag="AstralCons" name="Astral Construct"/>
+    <tag group="RaceSize" tag="Small11"/>
+    <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="Alignment" tag="NeutralGE"/>
+    <tag group="NoScore" tag="aCON"/>
+    <tag group="NoScore" tag="aINT"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="RaceType" tag="Animal"/>
+    <tag group="HasType" tag="tpConstAst"/>
+    <bootstrap thing="tpConstAst"></bootstrap>
+    <bootstrap thing="raPUAstCon"></bootstrap>
+    <bootstrap thing="wSlam">
+      <autotag group="wMain" tag="1d4_4"/>
+      <autotag group="Helper" tag="NatPrimary"/>
+      </bootstrap>
+    </thing>
+  <thing id="rAstralC2" name="Astral Construct 2" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Race">
     <fieldval field="rDEX" value="5"/>
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rEnviron" value="Any"/>
@@ -1213,24 +1245,28 @@ perform forward[Alignment.?]</eval>
     <fieldval field="rAC" value="6"/>
     <fieldval field="rSpeed" value="40"/>
     <fieldval field="rHPStart" value="11"/>
+    <fieldval field="srcPageNum" value="444"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
     <usesource source="pPsiUn"/>
     <tag group="Alignment" tag="NeutralGE"/>
     <tag group="NoScore" tag="aCON"/>
     <tag group="NoScore" tag="aINT"/>
-    <tag group="AllowRCust" tag="MenuA" name="Menu A"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="RaceSize" tag="Medium0"/>
     <tag group="HasType" tag="tpConstAst"/>
     <tag group="RaceType" tag="Animal"/>
     <tag group="CompIs" tag="cArcFamil"/>
     <tag group="CompList" tag="AstralCons" name="Astral Construct"/>
     <tag group="Alignment" tag="NeutralLC"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="tpConstAst"></bootstrap>
+    <bootstrap thing="raPUAstCon"></bootstrap>
     <bootstrap thing="wSlam">
       <autotag group="wMain" tag="1d4_4"/>
       <autotag group="Helper" tag="NatPrimary"/>
       </bootstrap>
     </thing>
-  <thing id="rAstralC3" name="Astral Construct III" compset="Race">
+  <thing id="rAstralC3" name="Astral Construct 3" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Race">
     <fieldval field="rDEX" value="5"/>
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rEnviron" value="Any"/>
@@ -1245,6 +1281,8 @@ perform forward[Alignment.?]</eval>
     <fieldval field="rHPStart" value="16"/>
     <fieldval field="rSTR" value="11"/>
     <fieldval field="rAC" value="8"/>
+    <fieldval field="srcPageNum" value="444"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
     <usesource source="pPsiUn"/>
     <tag group="RaceSize" tag="Medium0"/>
     <tag group="HasType" tag="tpConstAst"/>
@@ -1252,17 +1290,19 @@ perform forward[Alignment.?]</eval>
     <tag group="CompIs" tag="cArcFamil"/>
     <tag group="CompList" tag="AstralCons" name="Astral Construct"/>
     <tag group="Alignment" tag="NeutralLC"/>
-    <tag group="AllowRCust" tag="MenuA" name="Menu A"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="Alignment" tag="NeutralGE"/>
     <tag group="NoScore" tag="aCON"/>
     <tag group="NoScore" tag="aINT"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="tpConstAst"></bootstrap>
+    <bootstrap thing="raPUAstCon"></bootstrap>
     <bootstrap thing="wSlam">
       <autotag group="wMain" tag="1d4_4"/>
       <autotag group="Helper" tag="NatPrimary"/>
       </bootstrap>
     </thing>
-  <thing id="rAstralC4" name="Astral Construct IV" compset="Race">
+  <thing id="rAstralC4" name="Astral Construct 4" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Race">
     <fieldval field="rDEX" value="5"/>
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rEnviron" value="Any"/>
@@ -1277,6 +1317,8 @@ perform forward[Alignment.?]</eval>
     <fieldval field="rHPStart" value="27"/>
     <fieldval field="rSTR" value="15"/>
     <fieldval field="rAC" value="10"/>
+    <fieldval field="srcPageNum" value="444"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
     <usesource source="pPsiUn"/>
     <tag group="RaceSize" tag="Medium0"/>
     <tag group="HasType" tag="tpConstAst"/>
@@ -1284,18 +1326,20 @@ perform forward[Alignment.?]</eval>
     <tag group="CompIs" tag="cArcFamil"/>
     <tag group="CompList" tag="AstralCons" name="Astral Construct"/>
     <tag group="Alignment" tag="NeutralLC"/>
-    <tag group="AllowRCust" tag="MenuA" name="Menu A"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="Alignment" tag="NeutralGE"/>
     <tag group="NoScore" tag="aCON"/>
     <tag group="NoScore" tag="aINT"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="tpConstAst"></bootstrap>
+    <bootstrap thing="raPUAstCon"></bootstrap>
     <bootstrap thing="wSlam">
       <autotag group="wMain" tag="1d4_4"/>
       <autotag group="Helper" tag="NatPrimary"/>
       </bootstrap>
     </thing>
-  <thing id="rAstralC5" name="Astral Construct V" compset="Race">
+  <thing id="rAstralC5" name="Astral Construct 5" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Race">
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rEnviron" value="Any"/>
     <fieldval field="rOrgan" value="Solitary"/>
@@ -1310,6 +1354,8 @@ perform forward[Alignment.?]</eval>
     <fieldval field="rSTR" value="19"/>
     <fieldval field="rAC" value="13"/>
     <fieldval field="rDEX" value="3"/>
+    <fieldval field="srcPageNum" value="444"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
     <usesource source="pPsiUn"/>
     <tag group="HasType" tag="tpConstAst"/>
     <tag group="RaceType" tag="Animal"/>
@@ -1320,9 +1366,11 @@ perform forward[Alignment.?]</eval>
     <tag group="NoScore" tag="aCON"/>
     <tag group="NoScore" tag="aINT"/>
     <tag group="RaceSize" tag="Large1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="tpConstAst"></bootstrap>
+    <bootstrap thing="raPUAstCon"></bootstrap>
     <bootstrap thing="xDamRdMag">
       <assignval field="abValue" value="5"/>
       </bootstrap>
@@ -1332,7 +1380,7 @@ perform forward[Alignment.?]</eval>
       <autotag group="Value" tag="2"/>
       </bootstrap>
     </thing>
-  <thing id="rAstralC6" name="Astral Construct VI" compset="Race">
+  <thing id="rAstralC6" name="Astral Construct 6" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Race">
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rEnviron" value="Any"/>
     <fieldval field="rOrgan" value="Solitary"/>
@@ -1347,19 +1395,23 @@ perform forward[Alignment.?]</eval>
     <fieldval field="rSTR" value="23"/>
     <fieldval field="rAC" value="15"/>
     <fieldval field="rDEX" value="3"/>
+    <fieldval field="srcPageNum" value="444"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
     <usesource source="pPsiUn"/>
     <tag group="HasType" tag="tpConstAst"/>
     <tag group="RaceType" tag="Animal"/>
     <tag group="CompIs" tag="cArcFamil"/>
     <tag group="CompList" tag="AstralCons" name="Astral Construct"/>
     <tag group="Alignment" tag="NeutralLC"/>
-    <tag group="AllowRCust" tag="MenuA" name="Menu A"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="Alignment" tag="NeutralGE"/>
     <tag group="NoScore" tag="aCON"/>
     <tag group="NoScore" tag="aINT"/>
     <tag group="RaceSize" tag="Large1"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="tpConstAst"></bootstrap>
+    <bootstrap thing="raPUAstCon"></bootstrap>
     <bootstrap thing="xDamRdMag">
       <assignval field="abValue" value="10"/>
       </bootstrap>
@@ -1369,7 +1421,7 @@ perform forward[Alignment.?]</eval>
       <autotag group="Value" tag="2"/>
       </bootstrap>
     </thing>
-  <thing id="rAstralC7" name="Astral Construct VII" compset="Race">
+  <thing id="rAstralC7" name="Astral Construct 7" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Race">
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rEnviron" value="Any"/>
     <fieldval field="rOrgan" value="Solitary"/>
@@ -1384,20 +1436,24 @@ perform forward[Alignment.?]</eval>
     <fieldval field="rDEX" value="3"/>
     <fieldval field="rHPStart" value="81"/>
     <fieldval field="rGiveSpec" value="4"/>
+    <fieldval field="srcPageNum" value="444"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
     <usesource source="pPsiUn"/>
     <tag group="Alignment" tag="NeutralLC"/>
-    <tag group="AllowRCust" tag="MenuA" name="Menu A"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="Alignment" tag="NeutralGE"/>
     <tag group="NoScore" tag="aCON"/>
     <tag group="NoScore" tag="aINT"/>
     <tag group="RaceSize" tag="Large1"/>
     <tag group="RaceType" tag="Animal"/>
     <tag group="HasType" tag="tpConstAst"/>
-    <tag group="AllowRCust" tag="MenuB" name="Menu B"/>
-    <tag group="AllowRCust" tag="MenuC" name="Menu C"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="CompIs" tag="cArcFamil"/>
     <tag group="CompList" tag="AstralCons"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="tpConstAst"></bootstrap>
+    <bootstrap thing="raPUAstCon"></bootstrap>
     <bootstrap thing="wSlam">
       <autotag group="wMain" tag="1d8_6"/>
       <autotag group="Helper" tag="NatPrimary"/>
@@ -1407,7 +1463,7 @@ perform forward[Alignment.?]</eval>
       <assignval field="abValue" value="10"/>
       </bootstrap>
     </thing>
-  <thing id="rAstralC8" name="Astral Construct VIII" compset="Race">
+  <thing id="rAstralC8" name="Astral Construct 8" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Race">
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rEnviron" value="Any"/>
     <fieldval field="rOrgan" value="Solitary"/>
@@ -1422,20 +1478,24 @@ perform forward[Alignment.?]</eval>
     <fieldval field="rDEX" value="3"/>
     <fieldval field="rHPStart" value="81"/>
     <fieldval field="rGiveSpec" value="4"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
+    <fieldval field="srcPageNum" value="444"/>
     <usesource source="pPsiUn"/>
-    <tag group="Alignment" tag="NeutralLC"/>
-    <tag group="AllowRCust" tag="MenuA" name="Menu A"/>
     <tag group="Alignment" tag="NeutralGE"/>
     <tag group="NoScore" tag="aCON"/>
     <tag group="NoScore" tag="aINT"/>
     <tag group="RaceSize" tag="Large1"/>
     <tag group="RaceType" tag="Animal"/>
     <tag group="HasType" tag="tpConstAst"/>
-    <tag group="AllowRCust" tag="MenuB" name="Menu B"/>
-    <tag group="AllowRCust" tag="MenuC" name="Menu C"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="CompIs" tag="cArcFamil"/>
     <tag group="CompList" tag="AstralCons"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Alignment" tag="NeutralLC"/>
     <bootstrap thing="tpConstAst"></bootstrap>
+    <bootstrap thing="raPUAstCon"></bootstrap>
     <bootstrap thing="wSlam">
       <autotag group="wMain" tag="1d8_6"/>
       <autotag group="Helper" tag="NatPrimary"/>
@@ -1445,7 +1505,7 @@ perform forward[Alignment.?]</eval>
       <assignval field="abValue" value="15"/>
       </bootstrap>
     </thing>
-  <thing id="rAstralC9" name="Astral Construct IX" compset="Race">
+  <thing id="rAstralC9" name="Astral Construct 9" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Race">
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rEnviron" value="Any"/>
     <fieldval field="rOrgan" value="Solitary"/>
@@ -1460,20 +1520,24 @@ perform forward[Alignment.?]</eval>
     <fieldval field="rDEX" value="1"/>
     <fieldval field="rSpeed" value="50"/>
     <fieldval field="rGiveSpec" value="8"/>
+    <fieldval field="srcPageNum" value="444"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
     <usesource source="pPsiUn"/>
     <tag group="RaceSize" tag="Huge2"/>
     <tag group="RaceType" tag="Animal"/>
     <tag group="HasType" tag="tpConstAst"/>
-    <tag group="AllowRCust" tag="MenuB" name="Menu B"/>
-    <tag group="AllowRCust" tag="MenuC" name="Menu C"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="CompIs" tag="cArcFamil"/>
     <tag group="CompList" tag="AstralCons"/>
     <tag group="NoScore" tag="aINT"/>
     <tag group="Alignment" tag="NeutralLC"/>
-    <tag group="AllowRCust" tag="MenuA" name="Menu A"/>
     <tag group="Alignment" tag="NeutralGE"/>
     <tag group="NoScore" tag="aCON"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="tpConstAst"></bootstrap>
+    <bootstrap thing="raPUAstCon"></bootstrap>
     <bootstrap thing="xDamRdMag">
       <assignval field="abValue" value="15"/>
       </bootstrap>
@@ -1483,11 +1547,19 @@ perform forward[Alignment.?]</eval>
       <autotag group="Value" tag="2"/>
       </bootstrap>
     </thing>
+  <thing id="rcMnuABuff" name="Buff" description="The astral construct gains an extra 5 hit points." compset="RaceCustom">
+    <fieldval field="abValue" value="5"/>
+    <usesource source="pPsiUn"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
+    <eval phase="Final" priority="1000">herofield[tHP].value += field[abValue].value</eval>
+    </thing>
   <thing id="rcMnuACele" name="Celerity" description="The astral construct&apos;s land speed is increased by 10 feet." compset="RaceCustom">
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <eval phase="Final">~ Add to our base speed.
 hero.child[Speed].field[tSpeed].value += field[abValue].value</eval>
@@ -1496,7 +1568,7 @@ hero.child[Speed].field[tSpeed].value += field[abValue].value</eval>
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <bootstrap thing="fCleave">
       <autotag group="thing" tag="skipprereq"/>
@@ -1506,7 +1578,7 @@ hero.child[Speed].field[tSpeed].value += field[abValue].value</eval>
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <tag group="AbilType" tag="Extra"/>
     <bootstrap thing="xFly">
       <autotag group="Maneuver" tag="Average"/>
@@ -1517,7 +1589,7 @@ hero.child[Speed].field[tSpeed].value += field[abValue].value</eval>
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <eval phase="Final">~ Add deflection bonus to AC.
 hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].field[tACDeflect].value, 1)</eval>
@@ -1525,7 +1597,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
   <thing id="rcMnuAFly" name="Fly" description="The astral construct has physical wings and a fly speed of 20 feet (average)." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <bootstrap thing="xFly">
       <autotag group="Maneuver" tag="Average"/>
@@ -1536,7 +1608,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <bootstrap thing="fImpBull">
       <autotag group="thing" tag="skipprereq"/>
@@ -1545,7 +1617,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
   <thing id="rcMnuAINA" name="Improved Slam Attack" description="The astral construct gains the Improved Natural Attack feat." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <bootstrap thing="fImpNatAtt">
       <autotag group="thing" tag="skipprereq"/>
@@ -1555,7 +1627,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
   <thing id="rcMnuAMobi" name="Mobility" description="The astral construct gains the Mobility feat." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <bootstrap thing="fMobility">
       <autotag group="thing" tag="skipprereq"/>
@@ -1564,7 +1636,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
   <thing id="rcMnuAPwrA" name="Power Attack" description="The astral construct gains the Power Attack feat." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <bootstrap thing="fPowerAtt">
       <autotag group="thing" tag="skipprereq"/>
@@ -1573,7 +1645,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
   <thing id="rcMnuResF" name="Resistance (Fire)" description="The astral construct gains resistance 5 against Fire." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="SpecUp"/>
     <eval phase="First">#applyresist[xDamRsFire, 5]</eval>
@@ -1581,7 +1653,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
   <thing id="rcMnuASwim" name="Swim" description="The astral construct is streamlined and shark like, and gains a swim speed of 30 feet." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <bootstrap thing="xSwim">
       <autotag group="Value" tag="30"/>
       </bootstrap>
@@ -1589,13 +1661,13 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
   <thing id="rcMnuATrip" name="Trip" description="If the astral construct hits with a slam attack, it can attempt to trip the opponent as a free action without provoking attacks of opportunity. If the attempt fails, the opponent cannot react to trip the astral construct." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     </thing>
   <thing id="rcMunAResC" name="Resistance (Cold)" description="The astral construct gains resistance 5 against Cold." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="SpecUp"/>
     <eval phase="First">#applyresist[xDamRsCold, 5]</eval>
@@ -1603,7 +1675,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
   <thing id="rcMnuAResA" name="Resistance (Acid)" description="The astral construct gains resistance 5 against Acid." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="SpecUp"/>
     <eval phase="First">#applyresist[xDamRsAcid, 5]</eval>
@@ -1611,7 +1683,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
   <thing id="rcMnuAResE" name="Resistance (Electricity)" description="The astral construct gains resistance 5 against Electricity." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="SpecUp"/>
     <eval phase="First">#applyresist[xDamRsElec, 5]</eval>
@@ -1619,7 +1691,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
   <thing id="rcMnuAResS" name="Resistance (Sonic)" description="The astral construct gains resistance 5 against Sonic." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="MenuA"/>
+    <tag group="AllowRCust" tag="PUMenuA"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="SpecUp"/>
     <eval phase="First">#applyresist[xDamRsSoni, 5]</eval>
@@ -1628,7 +1700,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <eval phase="First" priority="20000">hero.child[aSTR].field[aNormMod].value -= 2
 hero.child[aDEX].field[aNormMod].value += 2
 
@@ -1641,7 +1713,7 @@ call SizeChange</eval>
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <tag group="AbilType" tag="Extra"/>
     <eval phase="First" priority="20000">hero.child[aSTR].field[aNormMod].value -= 2
 hero.child[aDEX].field[aNormMod].value += 2
@@ -1655,7 +1727,7 @@ call SizeChange</eval>
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[foreach pick in hero from BaseWep where "!thingid.wTouch & !thingid.wRay"
   perform eachpick.assign[Helper.ExtraHigh]
   nexteach
@@ -1670,14 +1742,14 @@ if (herofield[tSize].value > 0) then
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <tag group="AbilType" tag="Extra"/>
     </thing>
   <thing id="rcMnuBDefl" name="Heavy Deflection" description="The astral construct gains a +4 deflection bonus to Armor Class." compset="RaceCustom">
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <tag group="AbilType" tag="Extra"/>
     <eval phase="Final">~ Add deflection bonus to AC.
 hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].field[tACDeflect].value, 4)</eval>
@@ -1687,14 +1759,14 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <eval phase="Final" priority="1000">herofield[tHP].value += field[abValue].value</eval>
     </thing>
   <thing id="rcMnuBImpC" name="Improved Critical" description="The astral construct gains the Improved Critical feat with its slam attacks." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <bootstrap thing="fImpCrit">
       <autotag group="thing" tag="skipprereq"/>
       <autotag group="Target" tag="wSlam"/>
@@ -1704,7 +1776,7 @@ hero.child[ArmorClass].field[tACDeflect].value = maximum(hero.child[ArmorClass].
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <tag group="Helper" tag="SpecUp"/>
     <eval phase="Final">var myVal as number
 myVal = 0
@@ -1718,12 +1790,12 @@ myVal +=3
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     </thing>
   <thing id="rcMnuBSwim" name="Improved Swim" description="The astral construct is streamlined and shark like, and gains a swim speed of 60 feet." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <bootstrap thing="xSwim">
       <autotag group="Value" tag="60"/>
       </bootstrap>
@@ -1732,7 +1804,7 @@ myVal +=3
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <tag group="AbilType" tag="Extra"/>
     <eval phase="First" priority="20000">hero.child[aSTR].field[aNormMod].value += 4</eval>
     </thing>
@@ -1740,19 +1812,19 @@ myVal +=3
     <fieldval field="abValue" value="10"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <tag group="AbilType" tag="Extra"/>
     </thing>
   <thing id="rcMnuBPoun" name="Pounce" description="If the astral construct charges a foe, it can make a full attack." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <tag group="AbilType" tag="Extra"/>
     </thing>
   <thing id="rcMnuBSmit" name="Smite" description="Once per day the astral construct can choose one target to focus on, dealing additional damage. The astral construct deals extra damage equal to its Hit Dice to this target until the target is dead, the astral construct&apos;s duration is destroyed, expired, or dimissed, or the manifester who summoned it rests to regain daily power points." compset="RaceCustom">
     <fieldval field="trkMax" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="User" tag="Tracker"/>
     <tag group="CustomCost" tag="2"/>
@@ -1761,7 +1833,7 @@ myVal +=3
   <thing id="rcMnuBTram" name="Trample" description="As a standard action during its turn each round, a Large or larger astral construct can literally run over an opponent at least one size smaller than itself. It merely has to move over the opponent to deal bludgeoning damage equal to 1d8 + its Str modifier. The target can attempt a Reflex save (DC 10 + 1/2 astral construct&apos;s Hit Dice + astral construct&apos;s Str modifier) to negate the damage, or it can instead choose to make an attack of opportunity at a –4 penalty." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="MenuB"/>
+    <tag group="AllowRCust" tag="PUMenuB"/>
     <tag group="AbilType" tag="Extra"/>
     <exprreq message="Large+ size creature required."><![CDATA[herofield[tSize].value > 0]]></exprreq>
     </thing>
@@ -1769,7 +1841,7 @@ myVal +=3
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="4"/>
     <tag group="AbilType" tag="Extra"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <bootstrap thing="rBlindSi">
       <autotag group="Value" tag="60"/>
       </bootstrap>
@@ -1777,7 +1849,7 @@ myVal +=3
   <thing id="rcMnuCConc" name="Concussion" description="The astral construct can manifest concussion blast (manifester level 7th) as a free action once per round." compset="RaceCustom">
     <fieldval field="trkMax" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="AbilType" tag="SpellLike"/>
     <tag group="Usage" tag="Round"/>
     <tag group="CustomCost" tag="4"/>
@@ -1787,12 +1859,12 @@ myVal +=3
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     </thing>
   <thing id="rcMnuCDimS" name="Dimension Slide" description="The astral construct can manifest dimension slide (manifester level equal to Hit Dice) as a move action once per round." compset="RaceCustom">
     <fieldval field="trkMax" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="AbilType" tag="SpellLike"/>
     <tag group="Usage" tag="Round"/>
     <tag group="CustomCost" tag="4"/>
@@ -1801,7 +1873,7 @@ myVal +=3
   <thing id="rcMnuCEneB" name="Energy Bolt" description="The astral construct can manifest energy bolt (manifester level 8th) as a standard action once per round. The creator&apos;s active energy type determines the type of energy used. Kineticists are not restricted to an active energy type when choosing this menu option." compset="RaceCustom">
     <fieldval field="trkMax" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="AbilType" tag="SpellLike"/>
     <tag group="Usage" tag="Round"/>
     <tag group="CustomCost" tag="4"/>
@@ -1811,7 +1883,7 @@ myVal +=3
     <usesource source="pPsiUn"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <eval phase="Final">var myVal as number
 myVal = 0
 myVal = hero.childfound[xDamRdMag].field[abValue].value
@@ -1824,14 +1896,14 @@ myVal +=6
     <fieldval field="abValue" value="30"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="AbilType" tag="Extra"/>
     <eval phase="Final" priority="1000">herofield[tHP].value += field[abValue].value</eval>
     </thing>
   <thing id="rcMnuCInvi" name="Natural Invisibility" description="The astral construct is constantly invisible, even when attacking. This ability is inherent and not subject to the {i}invisibility purge{/i} spell." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="AbilType" tag="Super"/>
     </thing>
   <thing id="rcMnuCPRes" name="Power Resistance" description="You gain power resistance equal to 10 + 1/2 your Hit Dice." compset="RaceCustom" uniqueness="useronce">
@@ -1840,7 +1912,7 @@ myVal +=6
     <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
     <tag group="RaReplace" tag="raAaDay" name="Daylight" abbrev="Daylight"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <bootstrap thing="xPwrRes"></bootstrap>
     <eval phase="PostLevel" priority="10000"><![CDATA[
       doneif (tagis[Helper.SpcDisable] <> 0)
@@ -1853,13 +1925,13 @@ myVal +=6
   <thing id="rcMnuCRend" name="Rend" description="The astral construct makes claw attacks instead of slam attacks (it deals the same amount of damage as it would with its slam damage, but does slashing damage instead of bludgeoning damage). An astral construct that hits the same opponent with two claw attacks in the same round rends its foe, which deals extra damage equal to 2d6 + 1-1/2 times its Str modifier." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="AbilType" tag="Extra"/>
     </thing>
   <thing id="rcMnuCSpri" name="Spring Attack" description="The astral construct gains the Spring Attack feat." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="AbilType" tag="Extra"/>
     <bootstrap thing="fSpringAtt">
       <autotag group="thing" tag="skipprereq"/>
@@ -1868,7 +1940,7 @@ myVal +=6
   <thing id="rcMnuCWhir" name="Whirlwind Attack" description="The astral construct gains the Whirlwind Attack feat." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="MenuC"/>
+    <tag group="AllowRCust" tag="PUMenuC"/>
     <tag group="AbilType" tag="Extra"/>
     <bootstrap thing="fWhirlwind">
       <autotag group="thing" tag="skipprereq"/>
@@ -3404,4 +3476,57 @@ doneif (tagis[Helper.SpcDisable] <> 0)
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
+
+  <thing id="minPUAstC1" name="Astral Construct 1" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Minion" stacking="never">
+    <usesource source="pPsiUn"/>
+    <tag group="gType" tag="PUPsionics"/>
+    <tag group="gType" tag="PUAstrCons"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <minion id="PUAstrCons">
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="rAstralC1"></bootstrap>
+      </minion>
+    </thing>
+  <thing id="minPUAstC2" name="Astral Construct 2" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Minion" stacking="never">
+    <usesource source="pPsiUn"/>
+    <tag group="gType" tag="PUPsionics"/>
+    <tag group="gType" tag="PUAstrCons"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <minion id="PUAstrCons">
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="rAstralC2"></bootstrap>
+      </minion>
+    </thing>
+  <thing id="minPUAstC3" name="Astral Construct 3" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Minion" stacking="never">
+    <usesource source="pPsiUn"/>
+    <tag group="gType" tag="PUPsionics"/>
+    <tag group="gType" tag="PUAstrCons"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <minion id="PUAstrCons">
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="rAstralC3"></bootstrap>
+      </minion>
+    </thing>
+  <thing id="minPUAstC4" name="Astral Construct 4" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Minion" stacking="never">
+    <usesource source="pPsiUn"/>
+    <tag group="gType" tag="PUPsionics"/>
+    <tag group="gType" tag="PUAstrCons"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <minion id="PUAstrCons">
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="rAstralC4"></bootstrap>
+      </minion>
+    </thing>
+  <thing id="minPUAstC5" name="Astral Construct 5" description="Astral constructs are brought into being by the metacreativity power {i}astral construct{/i}. They are formed from raw ectoplasm (a portion of the astral medium drawn into the Material Plane). The power points spent by the construct’s creator during the manifestation of the power determine the level of the astral construct created. However, even astral constructs of the same level vary somewhat from each other, depending on the whims of their creators." compset="Minion" stacking="never">
+    <usesource source="pPsiUn"/>
+    <tag group="gType" tag="PUPsionics"/>
+    <tag group="gType" tag="PUAstrCons"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <minion id="PUAstrCons">
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="rAstralC5"></bootstrap>
+      </minion>
+    </thing>
+
+
   </document>

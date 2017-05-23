@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+  <thing id="cPWaAncPri" name="Ancestral Path" description="The focus of those that follow the ancestral path is on the spirits of those that came before. They listen to their whispers and draw guidance from them.\n\n{b}Powers:{/b} {i}guidance of the ancestors{/i}, {i}ward the mind{/i}\n\n{b}Skills:{/b} Autohypnosis, Heal, Knowledge (history)\n\n{b}Bonus Class Skill:{/b} Knowledge (history)\n\n{b}Errata:{/b} Weaken Bonds was never in the final cut of the book. Weaken Bonds was replaced by Ward of the Mind." compset="PUPsyPath" summary="You are a follower of the Ancestral Path." uniqueness="useronce">
+    <usesource source="srcPUAuSev"/>
+    <tag group="PathSkill" tag="skPUAhypno"/>
+    <tag group="PathSkill" tag="skHeal"/>
+    <tag group="PathSkill" tag="skKnowHist"/>
+    <tag group="ClassSkill" tag="skKnowHist"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaAncTra"></bootstrap>
+    <bootstrap thing="cPWaManAnc"></bootstrap>
+    <bootstrap thing="puGuidAnc1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="puWardMin1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    </thing>
+  <thing id="cPWaAncTra" name="Trance (Ancestral Path)" description="Beginning at 3rd level, while maintaining psionic focus, you gain a +1 insight bonus to Armor Class against incorporeal attacks, a +2 competence bonus on Knowledge checks, and a +1 competence bonus on manifester level checks. These bonuses increase by 1 for every four psychic warrior levels thereafter." compset="ClSpecial" summary="With psionic focus, you get benefits vs. incorporeal and on manifesting.">
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="SbNameApp" tag="AppValue"/>
+    <tag group="SbNameApp" tag="SignAppVal"/>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &     
+      Call PsyWarTrMa]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set the level bonus
+      field[abValue].value += 1
+      If (field[xTotalLev].value >= 7) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 11) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 15) Then
+        field[abValue].value += 1
+      Endif
+      If (field[xTotalLev].value >= 19) Then
+        field[abValue].value += 1
+      Endif
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ If Not psionically focused get out now
+      doneif (v_focus <> 1)
+
+      ~ If not active get out now
+      doneif (field[abilActive].value <> 1)
+
+      ~ Give situational bonus to AC
+      #situational[hero.child[ArmorClass], signed(field[abValue].value + 1) & " situational vs. incorporeal", field[thingname].text]
+
+      ~ Give competence bonus to Knowledge skills
+      #applybonus[atrBonComp, hero.childfound[AllKnow], field[abValue].value + 1]]]></eval>
+    </thing>
+  <thing id="cPWaManAnc" name="Maneuver (Ancestral Path)" description="Beginning at 3rd level, you can expend your psionic focus as a free action when making a skill check or Will save to roll two dice, choosing either result. At 13th level, you may instead roll three dice and choose one." compset="ClSpecial" summary="Expend psionic focus to roll extra dice on skill checks or Will saves.">
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abText" value="dice"/>
+    <tag group="abAction" tag="Free"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="LvNamePar" tag="AppText"/>
+    <tag group="LvNamePar" tag="AppValue"/>
+    <tag group="SbNamePar" tag="AppText"/>
+    <tag group="SbNamePar" tag="AppValue"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+     ~ Setup this Maneuver or Trance for the Psy Warrior &
+     Call PsyWarTrMa]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0) 
+
+      if (field[xTotalLev].value >= 13) then
+        field[abValue].value += 1
+      endif]]></eval>
+    </thing>
+  <thing id="cPWaAncPat" name="Shackler Path" description="The focus of shackler is on dominance and power, exploiting the spirit world for personal gain.\n\n{b}Powers:{/b} {i}guidance of the ancestors{/i}, {i}ward the mind{/i}\n\n{b}Skills:{/b} Autohypnosis, Intimidate, Knowledge (religion)\n\n{b}Bonus Class Skill:{/b} Knowledge (religion)" compset="PUPsyPath" summary="You are a follower of the Shackler Path." uniqueness="useronce">
+    <usesource source="srcPUAuSev"/>
+    <tag group="SpecSource" tag="arPUShack"/>
+    <tag group="PathSkill" tag="skKnowRel"/>
+    <tag group="PathSkill" tag="skPUAhypno"/>
+    <tag group="PathSkill" tag="skIntim"/>
+    <tag group="ClassSkill" tag="skKnowRel"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPWaShaTra"></bootstrap>
+    <bootstrap thing="cPWaManSha"></bootstrap>
+    <bootstrap thing="puWardMin1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <bootstrap thing="puGuidAnc1">
+      <autotag group="PsyWarrior" tag="PathPower"/>
+      </bootstrap>
+    <eval phase="First">~ Setup the Psychic Warrior Path      Call PsyWarPath</eval>
+    </thing>
+  <thing id="cPWaShaTra" name="Trance (Shackler Path)" description="Beginning at 3rd level, while maintaining psionic focus, the shackler may, as a free action once per round, attempt to use Intimidate to demoralize any creature he successfully hits, ignoring any immunity. At 4th level, he gains a +2 bonus on checks made to demoralize incorporeal creatures. This bonus increases by 1 for every four shackler levels thereafter. If the shackler successfully demoralizes an incorporeal creature, he may ignore its incorporeal ability for as long as it is affected." compset="ClSpecial" summary="Gain benefits to Intimidate, especially vs incoproreal.">
+    <fieldval field="abValue" value="3"/>
+    <tag group="abAction" tag="PUManFocus" name="Maintain Psionic Focus" abbrev="Maintain Psionic Focus"/>
+    <tag group="abCategory" tag="PUPsyWarTr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set the level bonus
+      field[abValue].value += round(field[xTotalLev].value / 4, 0, -1)
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ If Not psionically focused get out now
+      doneif (v_focus <> 1)
+
+      ~ If not active get out now
+      doneif (field[abilActive].value <> 1)
+
+      ~ Give situational bonus to Intimidate
+      #situational[hero.childfound[skIntim], signed(field[abValue].value) & " vs. incorporeal", field[thingname].text]]]></eval>
+    <eval phase="First" priority="10000"><![CDATA[      
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    </thing>
+  <thing id="cPWaManSha" name="Maneuver (Shackler Path)" description="Beginning at 3rd level, the shackler can attach spiritual shackles to an enemy. As a free action, when he successfully hits an enemy with a melee attack, the shackler can expend his psionic focus to cause the enemy to suffer a -2 penalty on attack rolls and be unable to move more than 10 feet from the shackler for a number of rounds equal to the shackler&apos;s class level. The creature may attempt to escape as a standard action on its turn by succeeding at a Will save (DC 10 + 1/2 the shackler&apos;s class level + the shackler&apos;s Charisma modifier). While this effect is active, spectral shackles and chains appear, visibly connecting the shackler and his target. A shackler may attempt to use Intimidate to demoralize a creature shackled to him in this way as a swift action. The shackler may only have one creature shackled to him in this way at a time. At 8th level and every four shackler levels thereafter, the shackler may shackle one additional target, affecting a maximum of five creatures at the same time at 20th level." compset="ClSpecial" summary="Expend psionic focus to make an attack limit enemy movement.">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abText" value="creatures"/>
+    <tag group="abAction" tag="Free"/>
+    <tag group="abAction" tag="PUExpFocus" name="Expend Psionic Focus" abbrev="Expend Psionic Focus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="SbNamePar" tag="IncDC"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="LvNamePar" tag="AppText"/>
+    <tag group="LvNamePar" tag="AppValue"/>
+    <tag group="SbNamePar" tag="AppText"/>
+    <tag group="SbNamePar" tag="AppValue"/>
+    <tag group="abCategory" tag="PUPsyWarMa"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ Setup this Maneuver or Trance for the Psy Warrior &
+      Call PsyWarTrMa]]></eval>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += round(maximum(field[xTotalLev].value - 8, 0) / 4, 0, -1)]]></eval>
+    </thing>
+  </document>
