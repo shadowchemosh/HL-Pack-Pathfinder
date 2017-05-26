@@ -533,22 +533,6 @@
         validif (#BAB[] >= 13)]]></validate>
       </prereq>
     </thing>
-  <thing id="fPWBuckPro" name="Buckler Shield Proficiency" description="You are trained in how to properly use a buckler.\n\n{b}Benefit{/b}: When you use a tower shield, the shield&apos;s armor check penalty only applies to Strength and Dexterity-based skills.\n\n{b}Normal{/b}: A character using a shield with which he is not proficient takes the shield&apos;s armor check penalty on attack rolls and on all skill checks that involve moving, including Ride." compset="Feat" summary="You can use a tower shield and suffer only the standard penalties." uniqueness="useronce">
-    <fieldval field="shortname" value="Buckler Proficiency"/>
-    <usesource source="srcPathOfW"/>
-    <tag group="Helper" tag="Helper"/>
-    <tag group="Helper" tag="ProfGroup" name="ProfGroup" abbrev="ProfGroup"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="5000"><![CDATA[
-      ~ If we're disabled, do nothing
-      doneif (tagis[Helper.FtDisable] <> 0)
-
-      ~ Make us proficient with bucklers
-      ~ TO-DO do we need a foreach loop to make us Proficient with Buckler???
-      foreach pick in hero from BaseArmor where "IsArmor.shBuckler"
-         perform eachpick.assign[Helper.Proficient]
-      nexteach]]></eval>
-    </thing>
   <thing id="fPWDiscExp" name="Discipline Expertise" description="You are quite adept at the use of your available discipline's associated skills.\n\n{b}Benefit:{/b} Choose a class you have at least one level in. You gain a +2 competence bonus to checks with the skills associated with maneuvers available to that class." compset="Feat" summary="+2 bonus to skills associated to class disciplines" uniqueness="useronce">
     <fieldval field="usrCandid1" value="component.Configure &amp; PathOfWar.Config"/>
     <fieldval field="abValue" value="2"/>
@@ -556,15 +540,16 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="fCategory" tag="General"/>
     <tag group="ChooseSrc1" tag="Hero"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ If we're disabled, do nothing
-doneif (tagis[Helper.FtDisable] <> 0)
-~ stop now if class configurable not chosen
-doneif (field[usrChosen1].ischosen = 0)
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ stop now if class configurable not chosen
+      doneif (field[usrChosen1].ischosen = 0)
 
-~ Get associated skill for each discipline, and apply the competence bonus
-foreach pick in hero from BaseSkill where field[usrChosen1].chosen.tagids[Discipline.?,"|"]
-  #applybonus[BonComp, eachpick, field[abValue].value]
-nexteach]]></eval>
+      ~ Get associated skill for each discipline, and apply the competence bonus
+      foreach pick in hero from BaseSkill where field[usrChosen1].chosen.tagids[Discipline.?,"|"]
+        #applybonus[BonComp, eachpick, field[abValue].value]
+      nexteach]]></eval>
     </thing>
   <thing id="fPWDiscMst" name="Discipline Mastery" description="You've learned to use certain skills in reference to your martial ability with practiced ease.\n\n{b}Prerequisites:{/b} 8 or more ranks in a discipline's associated skill.\n\n{b}Benefit:{/b}  You may take 10 on skill checks made with any associated skill of a discipline you possess (with 8 or more ranks) without increasing the time needed to make the check, even if combat or distractions would otherwise prevent you from doing so." compset="Feat" summary="Always take 10 with discipline skills, with no increase in time needed" uniqueness="useronce">
     <comment><![CDATA[This feat's pre-reqs script refers to its thingid, so if you change the thingid you need to update that script to match.]]></comment>
