@@ -4693,4 +4693,22 @@
       ~ Increase/Decrease Sanity Edge value
       herofield[tSanEdge].value += field[pAdjust].value]]></eval>
     </thing>
+  <thing id="pS2EqWeigh" name="Equipment, Weight" description="Select this adjustment to increase/decrease the weight of a piece of equipment (gear, magic, weapon or armor).  In example you could change the weight of Rope from 10lbs to 5lbs using this adjustment." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.MyGear &amp; !(Helper.Static|thingid.mNatural)"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="OthAdjCat" tag="Equipment"/>
+    <eval phase="PreLevel" priority="1000"><![CDATA[
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ adjust the weight of the gear item
+      field[pChosen].chosen.field[gWeight].value += field[pAdjust].value
+
+      ~ Make sure 0 is as low of a value as we go
+      field[pChosen].chosen.field[gWeight].value = maximum(field[pChosen].chosen.field[gWeight].value,0)]]></eval>
+    </thing>
   </document>
