@@ -34,8 +34,8 @@
     </thing>
   <thing id="rcS2HullLo" name="Hull" description="A Hull Location is Colossal, and has a hardness of 5 and 150 hit points. The standard hull is sized for non-specialized vessels. Most ships use the standard hull but you can purchase other types on the {b}&quot;Gear&quot;{/b} tab.\n\nThe Armor Class of a ship’s Hull Location is 10 + your ship’s Dexterity bonus + your ship’s armor bonus.\n\n{B}Note:{/b} This hull location will disable itself once it has zero hit points. Please type in the hull location identifier to help keep track of its location in your ship." compset="RaceCustom" summary="A single hull location of your ship.">
     <comment>1 = Hardness
-2 = 
-3 = 
+2 =
+3 =
 4 = Base AC</comment>
     <fieldval field="abValue" value="5"/>
     <fieldval field="trkMax" value="150"/>
@@ -157,7 +157,7 @@ field[livename].text = field[name].text & " (" & tagnames[Maneuver.?] & " " & si
 ~ Set Summary text
 field[abSumm].text = signed(field[abValue2].value) & " to all maneuver skill checks."]]></eval>
     <eval phase="Final"><![CDATA[
-~ Calculate the Rating and Bonus/Penalty  
+~ Calculate the Rating and Bonus/Penalty
 If (#attrvalue[aDEX] >= 19) Then
    field[abValue].value += 5
 Elseif (#attrvalue[aDEX] >= 14) Then
@@ -184,7 +184,7 @@ Endif
 ~ Include manual adjustment
 field[abValue].value += field[actUser].value
 
-~ Calculate the Rating and Bonus/Penalty  
+~ Calculate the Rating and Bonus/Penalty
 If (field[abValue].value >= 5) Then
    perform assign[Maneuver.Perfect]
    field[abValue2].value += 10
@@ -693,24 +693,25 @@ Endif]]></eval>
     <tag group="EquipType" tag="Metal"/>
     <tag group="Helper" tag="FixSizeDmg"/>
     </thing>
-  <thing id="gS2HullBro" name="Hull Type, Broad" description="{b}Cost Per Hull Location:{/b} +3,000gp\n{b}Special:{/b} Str +4, -1 maneuverability rating\n\nThis wide hull slows a vessel, but its reinforced interior increases its strength (and therefore its carrying capacity). This increased capacity comes at the cost of maneuverability in the water.\n\n{b}Note:{/b} The cost in gold will be calculated after you add to your ship." compset="Gear" summary="This wide hull slows a vessel, but its reinforced interior increases its strength (and therefore its carrying capacity). This increased capacity comes at the cost of maneuverability in the water.">
+  <thing id="gS2HullBro" name="Hull Type, Broad" description="{b}Cost Per Hull Location:{/b} +3,000gp\n{b}Special:{/b} Str +4, Dex -4, -1 maneuverability rating\n\nThis wide hull slows a vessel, but its reinforced interior increases its strength (and therefore its carrying capacity). This increased capacity comes at the cost of maneuverability in the water.\n\n{b}Note:{/b} The cost in gold will be calculated after you add to your ship." compset="Gear" summary="This wide hull slows a vessel, but its reinforced interior increases its strength (and therefore its carrying capacity). This increased capacity comes at the cost of maneuverability in the water.">
     <fieldval field="gWeight" value="3000"/>
     <usesource source="srcFASB"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="gType" tag="Transport"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreLevel" priority="10500">~ +4 to Strength
-hero.child[aSTR].field[Bonus].value += 4
-~ 0 to Dexterity
-hero.child[aDEX].field[Bonus].value += 0
-~ 0 to Speed
-hero.child[Speed].field[tSpeed].value += 0
-~ -1 to Manuever Rating
-#value[raS2ManRat] += -1
+    <eval phase="PreLevel" priority="10500"><![CDATA[
+      ~ +4 to Strength &
+      hero.child[aSTR].field[Bonus].value += 4
+      ~ -4 to Dexterity
+      hero.child[aDEX].field[Bonus].value += -4
+      ~ 0 to Speed
+      hero.child[Speed].field[tSpeed].value += 0
+      ~ -1 to Manuever Rating
+      #value[raS2ManRat] += -1
 
-~ Calc Cost
-field[gCost].value += hero.tagcount[FaSB.Hull] * 3000</eval>
+      ~ Calc Cost
+      field[gCost].value += hero.tagcount[FaSB.Hull] * 3000]]></eval>
     </thing>
   <thing id="gS2HullSta" name="Hull Type, Standard" description="{b}Cost Per Hull Location:{/b} +2,400gp\n{b}Special:{/b} Str +0, speed +0\n\nThe standard hull is sized for non-specialized vessels. Most ships use the standard hull.\n\n{b}Note:{/b} The cost in gold will be calculated after you add to your ship." compset="Gear" summary="The standard hull is sized for non-specialized vessels.">
     <fieldval field="gWeight" value="3000"/>
@@ -719,51 +720,53 @@ field[gCost].value += hero.tagcount[FaSB.Hull] * 3000</eval>
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="gType" tag="Transport"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreLevel" priority="10500">~ +0 to Strength
-hero.child[aSTR].field[Bonus].value += 0
-~ 0 to Dexterity
-hero.child[aDEX].field[Bonus].value += 0
-~ 0 to Speed
-hero.child[Speed].field[tSpeed].value += 0
-~ 0 to Manuever Rating
-#value[raS2ManRat] += 0
+    <eval phase="PreLevel" priority="10500"><![CDATA[
+      ~ +0 to Strength &
+      hero.child[aSTR].field[Bonus].value += 0
+      ~ +0 to Dexterity
+      hero.child[aDEX].field[Bonus].value += 0
+      ~ +0 to Speed
+      hero.child[Speed].field[tSpeed].value += 0
+      ~ +0 to Manuever Rating
+      #value[raS2ManRat] += 0
 
-~ Calc Cost
-field[gCost].value += hero.tagcount[FaSB.Hull] * 2400</eval>
+      ~ Calc Cost
+      field[gCost].value += hero.tagcount[FaSB.Hull] * 2400]]></eval>
     </thing>
-  <thing id="gS2HullSle" name="Hull Type, Sleek" description="{b}Cost Per Hull Location:{/b} +3,000gp\n{b}Special:{/b} Str -4, +1 maneuverability rating\n\nThis streamlined hull increases a vessel&apos;s maneuverability, but its smaller cross-section reduces strength.\n\n{b}Note:{/b} The cost in gold will be calculated after you add to your ship." compset="Gear" summary="This streamlined hull increases a vessel&apos;s maneuverability, but its smaller cross-section reduces strength.">
+  <thing id="gS2HullSle" name="Hull Type, Sleek" description="{b}Cost Per Hull Location:{/b} +3,000gp\n{b}Special:{/b} Str -4, Dex +4, +1 maneuverability rating\n\nThis streamlined hull increases a vessel&apos;s maneuverability, but its smaller cross-section reduces strength.\n\n{b}Note:{/b} The cost in gold will be calculated after you add to your ship." compset="Gear" summary="This streamlined hull increases a vessel&apos;s maneuverability, but its smaller cross-section reduces strength.">
     <fieldval field="gWeight" value="1500"/>
     <usesource source="srcFASB"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="gType" tag="Transport"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PreLevel" priority="10500">~ +0 to Strength
-hero.child[aSTR].field[Penalty].value += -4
-~ 0 to Dexterity
-hero.child[aDEX].field[Bonus].value += 0
-~ 0 to Speed
-hero.child[Speed].field[tSpeed].value += 0
-~ -1 to Manuever Rating
-#value[raS2ManRat] += -1
+    <eval phase="PreLevel" priority="10500"><![CDATA[
+      ~ -4 to Strength &
+      hero.child[aSTR].field[Penalty].value += -4
+      ~ +4 to Dexterity
+      hero.child[aDEX].field[Bonus].value += 0
+      ~ 0 to Speed
+      hero.child[Speed].field[tSpeed].value += 0
+      ~ +1 to Manuever Rating
+      #value[raS2ManRat] += 1
 
-~ Calc Cost
-field[gCost].value += hero.tagcount[FaSB.Hull] * 3000</eval>
+      ~ Calc Cost
+      field[gCost].value += hero.tagcount[FaSB.Hull] * 3000]]></eval>
     </thing>
   <thing id="raS2SpdOvr" name="Speed, Overland" description="Your first Rigging Location allows you to move at a rate of 2 miles per hour; each additional Rigging Location increases that speed by 1/2 mile per hour. For example, a ship with 4 Rigging Locations has an overland movement speed of 3-1/2 miles per hour, or 84 miles per 24 hours.\n\n{b}Note:{/b} To be more nautical I changed the wording to use knots and nautical miles (NM).  1 Knot equals 1.151 MPH and one nautical mile is 1.151 miles." compset="RaceSpec" summary="Overland movement speed.">
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="25000"><![CDATA[
-~ Calc MPH
-field[abValue].value += 2 + ((hero.tagcount[FaSB.Rigging]-1)*.5)
-~ Change to Knots
-field[abValue].value = round(field[abValue].value * 1.151,2,-1)
+      ~ Calc MPH
+      field[abValue].value += 2 + ((hero.tagcount[FaSB.Rigging]-1)*.5)
+      ~ Change to Knots
+      field[abValue].value = round(field[abValue].value * 1.151,2,-1)
 
-~ Calc 24 hrs speed
-field[abValue2].value += round(field[abValue].value * 24,2,-1)
+      ~ Calc 24 hrs speed
+      field[abValue2].value += round(field[abValue].value * 24,2,-1)
 
-~ Set the live name value
-field[livename].text = field[name].text & " (" & field[abValue].value & " knot " & field[abValue2].value & " NM per 24hrs)"]]></eval>
+      ~ Set the live name value
+      field[livename].text = field[name].text & " (" & field[abValue].value & " knot " & field[abValue2].value & " NM per 24hrs)"]]></eval>
     </thing>
   <thing id="gS2RigSilk" name="Rigging Materials, Silk Ropes" description="{b}Weight Per Location:{/b} 3/4 of original\n{B}Hardness:{/b} 4\n{b}HP:{/b} 100\nThese ropes reduce the weight of your Rigging Locations by 75% but cost more than standard hemp ropes." compset="Gear">
     <fieldval field="gCost" value="1500"/>
@@ -775,19 +778,19 @@ field[livename].text = field[name].text & " (" & field[abValue].value & " knot "
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="GearNoSize"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-~ If we have not chosen then get out now
-doneif (field[usrChosen1].ischosen <> 1)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
 
-~ Hit Points
-field[usrChosen1].chosen.field[trkMax].value = 100
-~ Weight
-field[usrChosen1].chosen.field[abValue].value *= .75
-~ Hardness
-field[usrChosen1].chosen.field[abValue2].value = 4
-~ AC
-field[usrChosen1].chosen.field[abValue3].value += 0
-~ Add material name
-field[usrChosen1].chosen.field[livename].text = field[usrChosen1].chosen.field[name].text & ", Silk"]]></eval>
+      ~ Hit Points
+      field[usrChosen1].chosen.field[trkMax].value = 100
+      ~ Weight
+      field[usrChosen1].chosen.field[abValue].value *= .75
+      ~ Hardness
+      field[usrChosen1].chosen.field[abValue2].value = 4
+      ~ AC
+      field[usrChosen1].chosen.field[abValue3].value += 0
+      ~ Add material name
+      field[usrChosen1].chosen.field[livename].text = field[usrChosen1].chosen.field[name].text & ", Silk"]]></eval>
     </thing>
   <thing id="gS2ShArSca" name="Ship Armor, Scale" description="{b}Armor Bonus:{/b} +5\n\nScale plating involves layering smaller iron plates in a pattern very similar to a dragon&apos;s scales. Each individual plate (roughly 1 foot per side) doesn&apos;t offer much protection on its own, but when layered and reinforced with other plates it offers stronger protection than link armor. Installing scale plating requires more labor than link armor, and so the cost is slightly higher." compset="Gear" summary="Scale plating involves layering smaller iron plates in a pattern very similar to a dragon&apos;s scales. Each individual plate (roughly 1 foot per side) doesn&apos;t offer much protection on its own, but when layered and reinforced with other plates it offers">
     <fieldval field="gCost" value="1750"/>
@@ -800,11 +803,11 @@ field[usrChosen1].chosen.field[livename].text = field[usrChosen1].chosen.field[n
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="Helper" tag="ShowSpec"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-~ If we have not chosen then get out now
-doneif (field[usrChosen1].ischosen <> 1)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
 
-~ AC
-field[usrChosen1].chosen.field[abValue4].value += 5]]></eval>
+      ~ AC
+      field[usrChosen1].chosen.field[abValue4].value += 5]]></eval>
     </thing>
   <thing id="gS2ShArLnk" name="Ship Armor, Link" description="{b}Armor Bonus:{/b} +3\n\nMuch like a chain shirt for a PC, this style of armor involves a bevy of interlinking chains, which are then bolted to the side of the Hull Location. Link armor is the easiest to manufacture and install, but provides the least amount of protection of the various armor types." compset="Gear" summary="Much like a chain shirt for a PC, this style of armor involves a bevy of interlinking chains, which are then bolted to the side of the Hull Location. Link armor is the easiest to manufacture and install, but provides the least amount of protection of">
     <fieldval field="gCost" value="1000"/>
@@ -817,11 +820,11 @@ field[usrChosen1].chosen.field[abValue4].value += 5]]></eval>
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="Helper" tag="ShowSpec"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-~ If we have not chosen then get out now
-doneif (field[usrChosen1].ischosen <> 1)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
 
-~ AC
-field[usrChosen1].chosen.field[abValue4].value += 3]]></eval>
+      ~ AC
+      field[usrChosen1].chosen.field[abValue4].value += 3]]></eval>
     </thing>
   <thing id="gS2ShArIrP" name="Ship Armor, Iron Plates" description="{b}Armor Bonus:{/b} +8\n\nThe strongest - and heaviest - of the armor options, iron plating involves bolting massive iron plates directly to the side of the Hull Location. The sheer weight of the plates requires specialized booms to lift into place, increasing the cost to produce and install this armor." compset="Gear" summary="The strongest - and heaviest - of the armor options, iron plating involves bolting massive iron plates directly to the side of the Hull Location. The sheer weight of the plates requires specialized booms to lift into place, increasing the cost to pro">
     <fieldval field="gCost" value="2250"/>
@@ -834,11 +837,11 @@ field[usrChosen1].chosen.field[abValue4].value += 3]]></eval>
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="Helper" tag="ShowSpec"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-~ If we have not chosen then get out now
-doneif (field[usrChosen1].ischosen <> 1)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
 
-~ AC
-field[usrChosen1].chosen.field[abValue4].value += 8]]></eval>
+      ~ AC
+      field[usrChosen1].chosen.field[abValue4].value += 8]]></eval>
     </thing>
   <thing id="gS2ShArSIP" name="Ship Armor, Sculpted Iron Plates" description="{b}Armor Bonus:{/b} +8\n\nThese specially crafted plates provide a ship with the same defense as standard iron plates, but are instead shaped in such a way as to make the ship appear more fearsome. For example, you could opt to sculpt your plates so that your ship appears to be a dragon." compset="Gear" summary="These specially crafted plates provide a ship with the same defense as standard iron plates, but are instead shaped in such a way as to make the ship appear more fearsome. For example, you could opt to sculpt your plates so that your ship appears to">
     <fieldval field="gCost" value="10000"/>
@@ -851,11 +854,11 @@ field[usrChosen1].chosen.field[abValue4].value += 8]]></eval>
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="Helper" tag="ShowSpec"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-~ If we have not chosen then get out now
-doneif (field[usrChosen1].ischosen <> 1)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
 
-~ AC
-field[usrChosen1].chosen.field[abValue4].value += 8]]></eval>
+      ~ AC
+      field[usrChosen1].chosen.field[abValue4].value += 8]]></eval>
     </thing>
   <thing id="gS2ShArDIP" name="Ship Armor, Deflective Iron Plates" description="{b}Armor Bonus:{/b} +8\n\nThese iron plates are shaped in such a way as to deflect cannonballs away from the ship. In addition to the standard armor bonus provided by the plates, they also grant a +1 deflection bonus to the armor class of the Hull Location they protect." compset="Gear" summary="These iron plates are shaped in such a way as to deflect cannonballs away from the ship. In addition to the standard armor bonus provided by the plates, they also grant a +1 deflection bonus to the armor class of the Hull Location they protect.">
     <fieldval field="gCost" value="6500"/>
@@ -868,19 +871,19 @@ field[usrChosen1].chosen.field[abValue4].value += 8]]></eval>
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="Helper" tag="ShowSpec"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
-~ If we have not chosen then get out now
-doneif (field[usrChosen1].ischosen <> 1)
+      ~ If we have not chosen then get out now
+      doneif (field[usrChosen1].ischosen <> 1)
 
-~ AC
-field[usrChosen1].chosen.field[abValue4].value += 9]]></eval>
+      ~ AC
+      field[usrChosen1].chosen.field[abValue4].value += 9]]></eval>
     </thing>
   <thing id="raS2ShipTy" name=" Ship Type" description="Use this to fill in the ship type (ie sailing ship, Sargavan fishing hooker)." compset="RaceSpec">
     <tag group="User" tag="NeedDomain"/>
     <tag group="User" tag="OptDomain"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="First" priority="600"><![CDATA[      
-~set our ship's type to our own name
-hero.findchild[BaseRace].field[livename].text = field[domDomain].text]]></eval>
+    <eval phase="First" priority="600"><![CDATA[
+      ~set our ship's type to our own name
+      hero.findchild[BaseRace].field[livename].text = field[domDomain].text]]></eval>
     </thing>
   <thing id="rS2FasBShp" name="Fire as She Bears, Ship" description="This is not a race or creature.  Its a non-living ship that can be used to build a ship based on the FGG rules &quot;Fire as She Bears&quot;.  As the ship has strength, dexterity, CMB, and CMD scores it was easiest in Hero Lab to build it as a Creature instead of as Equipment.\n\nThe Gear tab is where you can find &quot;Ship Armor&quot;, Special Materials for the hull, and silk ropes for the rigging.\n\nThe Weapons tab has weapons like Rams, Cannons, Gun Powder, and ammo for the cannons." compset="Race">
     <fieldval field="rSpecSing" value="Hull Location"/>
@@ -917,37 +920,39 @@ hero.findchild[BaseRace].field[livename].text = field[domDomain].text]]></eval>
     <bootstrap thing="raS2HullNu"></bootstrap>
     <bootstrap thing="stS2FaSBSh"></bootstrap>
     <bootstrap thing="tpS2Ship"></bootstrap>
-    <eval phase="First" priority="10000" index="2">~ Calculate speed as 2 + Rigging Locations
-hero.child[Speed].field[tSpeed].value += hero.tagcount[FaSB.Rigging]
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Calculate speed as 2 + Rigging Locations &
+      hero.child[Speed].field[tSpeed].value += hero.tagcount[FaSB.Rigging]
 
-~ If we have no rigging locations we have speed zero
-If (hero.tagcount[FaSB.Rigging] = 0) Then
-   hero.child[Speed].field[tSpeed].value = 0
-Endif</eval>
+      ~ If we have no rigging locations we have speed zero
+      If (hero.tagcount[FaSB.Rigging] = 0) Then
+         hero.child[Speed].field[tSpeed].value = 0
+      Endif]]></eval>
     <eval phase="Final" priority="25000" index="3"><![CDATA[
-~ Force Mod Speed to be same as base speed
-hero.child[Speed].field[tSpeedMod].value = hero.child[Speed].field[tSpeed].value
+      ~ Force Mod Speed to be same as base speed
+      hero.child[Speed].field[tSpeedMod].value = hero.child[Speed].field[tSpeed].value
 
-#situational[hero.child[svFort],"Captain's base save value",""]
-#situational[hero.child[svWill],"Captain's base save value",""]
-#situational[hero.child[svRef],"Captain's base save value -2",""]]]></eval>
-    <eval phase="First">~ Strength (Str) = 30 + the number of Hull Locations. 
-~ A ship’s Strength will be further modified by whether 
-~ you opted to build with Sleek (–4) or Broad (+4) Hulls.
-field[rSTR].value += 20 + hero.tagcount[FaSB.Hull]
+      #situational[hero.child[svFort],"Captain's base save value",""]
+      #situational[hero.child[svWill],"Captain's base save value",""]
+      #situational[hero.child[svRef],"Captain's base save value -2",""]]]></eval>
+    <eval phase="First"><![CDATA[
+      ~ Strength (Str) = 30 + the number of Hull Locations. &
+      ~ A ship’s Strength will be further modified by whether
+      ~ you opted to build with Sleek (-4) or Broad (+4) Hulls.
+      field[rSTR].value += 20 + hero.tagcount[FaSB.Hull]
 
-~ Dexterity (Dex) = 10 + the number of Rigging Locations 
-~ - the number of Hull Locations.
-field[rDEX].value += hero.tagcount[FaSB.Rigging] - hero.child[raS2HullNu].field[domDomain].text
+      ~ Dexterity (Dex) = 10 + the number of Rigging Locations
+      ~ - the number of Hull Locations.
+      field[rDEX].value += hero.tagcount[FaSB.Rigging] - hero.child[raS2HullNu].field[domDomain].text
 
-~ Hide Unarmed Strike weapon always
-perform hero.child[wUnarmed].assign[Hide.Weapon]
+      ~ Hide Unarmed Strike weapon always
+      perform hero.child[wUnarmed].assign[Hide.Weapon]
 
-~ Hide skills when exported to statblock
-perform hero.child[skBluff].assign[Hide.Statblock]
-perform hero.child[skDiplo].assign[Hide.Statblock]
-perform hero.child[skDisguise].assign[Hide.Statblock]
-perform hero.child[skIntim].assign[Hide.Statblock]</eval>
+      ~ Hide skills when exported to statblock
+      perform hero.child[skBluff].assign[Hide.Statblock]
+      perform hero.child[skDiplo].assign[Hide.Statblock]
+      perform hero.child[skDisguise].assign[Hide.Statblock]
+      perform hero.child[skIntim].assign[Hide.Statblock]]]></eval>
     </thing>
   <thing id="gS2BroaRud" name="Broad Rudder" description="A wide rudder makes a ship more nimble, granting a +1 bonus on all Profession (sailor) checks to maneuver the vessel.\n\n{i}Requirements{/i}: Craft (ships) DC 16" compset="Gear">
     <fieldval field="gCost" value="500"/>
@@ -961,57 +966,58 @@ perform hero.child[skIntim].assign[Hide.Statblock]</eval>
       <containerreq phase="First" priority="2000">!IsRace.rS2FasBShp</containerreq>
       </bootstrap>
     <eval phase="First" priority="1000" index="2"><![CDATA[
-~ Add weight to siege engines for Fire as She Bears
-~ Loop through all the siege engines
-foreach pick in hero from BaseWep where "wClass.Siege"
-  ~ Light Ballista
-  If (eachpick.tagis[thingid.wBallistLt] <> 0) Then
-    eachpick.field[gWeight].value += 250
-  ~ Heavy Ballista
-  ElseIf (eachpick.tagis[thingid.wBallistHv] <> 0) Then
-    eachpick.field[gWeight].value += 500
-  ~ Gate Breaker Ballista
-  ElseIf (eachpick.tagis[thingid.wBallisGB] <> 0) Then
-    eachpick.field[gWeight].value += 1000
-  ~ Light Catapult
-  ElseIf (eachpick.tagis[thingid.wCatapulLt] <> 0) Then
-    eachpick.field[gWeight].value += 250
-  ~ Standard Catapult
-  ElseIf (eachpick.tagis[thingid.wCatapulSt] <> 0) Then
-    eachpick.field[gWeight].value += 500
-  ~ Heavy Catapult
-  ElseIf (eachpick.tagis[thingid.wCatapulHv] <> 0) Then
-    eachpick.field[gWeight].value += 1000
-  ~ Cannon, Fiend's Mouth
-  ElseIf (eachpick.tagis[thingid.wCannFiend] <> 0) Then
-    eachpick.field[gWeight].value += 2500
-  ~ Firedrake
-  ElseIf (eachpick.tagis[thingid.wFiredrake] <> 0) Then
-    eachpick.field[gWeight].value += 250
-  ~ Springal, Arrow
-  ElseIf (eachpick.tagis[thingid.wSpringArr] <> 0) Then
-    eachpick.field[gWeight].value += 250
-  ~ Springal, Arrow
-  ElseIf (eachpick.tagis[thingid.wSpringRoc] <> 0) Then
-    eachpick.field[gWeight].value += 300
-  ~ UC Cannon
-  ElseIf (eachpick.tagis[thingid.wCannon] <> 0) Then
-    eachpick.field[gWeight].value += 2000
-  Endif
-  ~ Make it so that a Siege engin can be equipped so it can get 
-  ~ rolled on the iPad.
-  perform eachpick.assign[Helper.AllEqBoth]
-nexteach]]></eval>
-    <eval phase="Final" priority="25000"><![CDATA[~ Navel Tatics added to Profession Sailor
-#appenddesc[skProfSail,"{B}NAVAL TACTICS - Fire as She Bears{/B}{br} MANEUVER / DC / SPEED USED{br} {b}Sudden Slow{/b}, 15, varies{br} {b}Sudden Acceleration{/b}, 15, varies{br} {b}45 Degree Turn{/b}, 15, 2{br} {b}90 Degree Turn{/b}, 20, 3{br} {b}180 Degree Turn{/b}, 30, 4{br} {b}Harness Furious Wind{/b}, 20, n/a{br}"]]]></eval>
+      ~ Add weight to siege engines for Fire as She Bears
+      ~ Loop through all the siege engines
+      foreach pick in hero from BaseWep where "wClass.Siege"
+        ~ Light Ballista
+        If (eachpick.tagis[thingid.wBallistLt] <> 0) Then
+          eachpick.field[gWeight].value += 250
+        ~ Heavy Ballista
+        ElseIf (eachpick.tagis[thingid.wBallistHv] <> 0) Then
+          eachpick.field[gWeight].value += 500
+        ~ Gate Breaker Ballista
+        ElseIf (eachpick.tagis[thingid.wBallisGB] <> 0) Then
+          eachpick.field[gWeight].value += 1000
+        ~ Light Catapult
+        ElseIf (eachpick.tagis[thingid.wCatapulLt] <> 0) Then
+          eachpick.field[gWeight].value += 250
+        ~ Standard Catapult
+        ElseIf (eachpick.tagis[thingid.wCatapulSt] <> 0) Then
+          eachpick.field[gWeight].value += 500
+        ~ Heavy Catapult
+        ElseIf (eachpick.tagis[thingid.wCatapulHv] <> 0) Then
+          eachpick.field[gWeight].value += 1000
+        ~ Cannon, Fiend's Mouth
+        ElseIf (eachpick.tagis[thingid.wCannFiend] <> 0) Then
+          eachpick.field[gWeight].value += 2500
+        ~ Firedrake
+        ElseIf (eachpick.tagis[thingid.wFiredrake] <> 0) Then
+          eachpick.field[gWeight].value += 250
+        ~ Springal, Arrow
+        ElseIf (eachpick.tagis[thingid.wSpringArr] <> 0) Then
+          eachpick.field[gWeight].value += 250
+        ~ Springal, Arrow
+        ElseIf (eachpick.tagis[thingid.wSpringRoc] <> 0) Then
+          eachpick.field[gWeight].value += 300
+        ~ UC Cannon
+        ElseIf (eachpick.tagis[thingid.wCannon] <> 0) Then
+          eachpick.field[gWeight].value += 2000
+        Endif
+        ~ Make it so that a Siege engin can be equipped so it can get
+        ~ rolled on the iPad.
+        perform eachpick.assign[Helper.AllEqBoth]
+      nexteach]]></eval>
+    <eval phase="Final" priority="25000"><![CDATA[
+      ~ Navel Tatics added to Profession Sailor
+      #appenddesc[skProfSail,"{B}NAVAL TACTICS - Fire as She Bears{/B}{br} MANEUVER / DC / SPEED USED{br} {b}Sudden Slow{/b}, 15, varies{br} {b}Sudden Acceleration{/b}, 15, varies{br} {b}45 Degree Turn{/b}, 15, 2{br} {b}90 Degree Turn{/b}, 20, 3{br} {b}180 Degree Turn{/b}, 30, 4{br} {b}Harness Furious Wind{/b}, 20, n/a{br}"]]]></eval>
     <eval phase="Final" priority="50000" index="3"><![CDATA[
-var bonus as number
-bonus = hero.childfound[skKnowEng].field[skTotal].value
-~ Add weight to siege engines for Fire as She Bears
-~ Loop through all the siege engines
-foreach pick in hero from BaseWep where "thingid.wCatapulLt|thingid.wCatapulSt|thingid.wCatapulHv"
-  eachpick.field[wRanAtk].value = bonus + eachpick.field[wAttBonus].value
-nexteach]]></eval>
+      var bonus as number
+      bonus = hero.childfound[skKnowEng].field[skTotal].value
+      ~ Add weight to siege engines for Fire as She Bears
+      ~ Loop through all the siege engines
+      foreach pick in hero from BaseWep where "thingid.wCatapulLt|thingid.wCatapulSt|thingid.wCatapulHv"
+        eachpick.field[wRanAtk].value = bonus + eachpick.field[wAttBonus].value
+      nexteach]]></eval>
     </thing>
   <thing id="gS2ConWePo" name="Concealed Weapon Port" description="The ship&apos;s belowdecks area undergoes major reconstruction in order to house Large direct-fire siege engines, such as light ballistae or cannons, if they are in use in the campaign. A concealed weapon port can only be recognized on a successful DC 15 Perception check. Each concealed port reduces a ship&apos;s cargo capacity by 2 tons, in addition to the space required by the weapon itself.\n\n{i}Requirements{/i}: Craft (ships) DC 16" compset="Gear">
     <fieldval field="gCost" value="100"/>
@@ -1282,7 +1288,7 @@ Endif
 ~ If we have the guage then give bonus
 If (field[abilActive].value <> 0) Then
   #situational[hero.child[Initiative],"+2 circumstance bonus on Naval Initiative checks","Getting the Gauge"]
-  ~ Give a +1 Circumstance bonus to siege engines  
+  ~ Give a +1 Circumstance bonus to siege engines
   foreach pick in hero from BaseWep where "wClass.Siege"
     eachpick.field[atrModCirc].value += 1
   nexteach
