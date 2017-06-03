@@ -390,27 +390,16 @@
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     </thing>
   <thing id="cPUMPoPool" name="Potent Pool" description="Choose one of your manifesting classes. You gain four bonus power points. These power points stack with bonus power points from all other sources. You can take this ability once for each level of powers you can manifest of the chosen class.\n\nFor example, if you are a 9th level psion, you can choose this ability five times. Each time beyond the first, you gain a number of power points equal to the previous time plus 8. These additional power points are cumulative. For example, the second time you take this ability, you gain 12 additional power points, for a total of 20; the third time an additional 20 power points, for a total of 40, and so on.\n\nNote: Progression is: 4, 12, 20, 28, 36, 44, 52, 60, 68, 76\nTotals: 4, 16, 36, 64, 100, 144, 196, 256, 316" compset="CustomSpec">
-    <fieldval field="usrCandid1" value="CasterSrc.Psionic"/>
     <usesource source="srcMyPsi"/>
-    <tag group="fShowWhat" tag="Classes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="Helper" tag="Mythic"/>
-    <tag group="ChooseSrc1" tag="Hero"/>
-    <eval phase="PostAttr" priority="21000"><![CDATA[
-     ~ If we've been Disabled, get out now
-      doneif (tagis[Helper.SpcDisable] <> 0)
-      ~ If nothing is chosen, get out now
-      doneif (field[usrChosen1].ischosen = 0)
-
-      ~ Calculate the bonus with a base 4 point plus 8 more for each
-      ~ additional time this ability was taken.
-      #resmax[resPowerPt] += 4 + (8 * (hero.tagcount[Ability.cPUMPoPool] - 1))]]></eval>
+    <bootstrap thing="xPUMPoPool"></bootstrap>
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     <prereq message="You can take this ability once for each level of powers you can manifest of the chosen class.">
       <validate><![CDATA[
     var allowed as number
-    allowed = maximum(1,hero.childfound[cPUMPoPool].field[usrChosen1].chosen.field[cPsiLevMax].value)
+    allowed = maximum(1,hero.childfound[xPUMPoPool].field[usrChosen1].chosen.field[cPsiLevMax].value)
 
    ~ if we're a pick, then there must be cPsiLevMax
    ~ or fewer copies of this ability
@@ -761,5 +750,24 @@
     <usesource source="srcMyPsi"/>
     <tag group="Usage" tag="Day"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="xPUMPoPool" name="Potent Pool" description="Choose your class" compset="CustomSpec" uniqueness="unique">
+    <fieldval field="usrCandid1" value="CasterSrc.Psionic"/>
+    <usesource source="srcMyPsi"/>
+    <tag group="fShowWhat" tag="Classes"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="SpecSource" tag="mypPUOvrMi"/>
+    <eval phase="PostAttr" priority="21000"><![CDATA[
+     ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If nothing is chosen, get out now
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Calculate the bonus with a base 4 point plus 8 more for each
+      ~ additional time this ability was taken.
+      #resmax[resPowerPt] += 4 + (8 * (hero.tagcount[Ability.cPUMPoPool] - 1))]]></eval>
     </thing>
   </document>
