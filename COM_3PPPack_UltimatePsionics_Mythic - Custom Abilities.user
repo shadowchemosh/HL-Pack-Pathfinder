@@ -170,7 +170,7 @@
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="cPUMDurPwr" name="Durable Powers" description="When determining the duration of psionic powers you manifest, treat your manifester level as 4 higher. This does not affect any other variables of the power, such as range or the amount of power points you can spend augmenting the effect.  \n\n{b}Note:{/b} This ability is not yet implemented." compset="CustomSpec" uniqueness="useronce">
+  <thing id="cPUMDurPwr" name="Durable Powers" description="When determining the duration of psionic powers you manifest, treat your manifester level as 4 higher. This does not affect any other variables of the power, such as range or the amount of power points you can spend augmenting the effect.  \n\n{b}Note:{/b} Hero Lab does not perform level based calculations on power/spell parameters" compset="CustomSpec" uniqueness="useronce">
     <usesource source="srcMyPsi"/>
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="Helper" tag="Mythic"/>
@@ -193,11 +193,12 @@
       perform field[usrChosen1].chosen.setfocus]]></eval>
     </thing>
   <thing id="cPUMEnhItm" name="Enhance Psionic Items" description="Your mythic presence enhances the power of certain psionic items. Add half your tier to the manifester level of psionic tattoos, power stones, psicrowns, and dorjes you use. When using a psicrown or dorje, you may activate the item by expending one use of mythic power instead of one of the dorje’s charges or psicrown’s power points." compset="CustomSpec" uniqueness="useronce">
+    <comment>Developer Note: Psionic Items do not have a manifester level field.  Will need to modify Psionic Equipment User file Prior to implementation.</comment>
     <usesource source="srcMyPsi"/>
-    <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="Helper" tag="Mythic"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="mypPUOvrMi"/>
     </thing>
   <thing id="cPUMExUnd" name="Expansive Understanding" description="Add one new power known from any power list per mythic tier. If your tier goes up, add a new power. Expend one use of mythic power to change one of these powers." compset="CustomSpec" uniqueness="useronce">
     <fieldval field="usrCandid1" value="component.Class &amp; Psionics.Class"/>
@@ -336,6 +337,8 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="Helper" tag="Mythic"/>
+    <eval phase="PostLevel" priority="10000">~ Subtract 10 from Psychic Enervation value
+    #value[cWldPsyEne] -= 10</eval>
     <exprreq message="Psychic Enervation class feature required."><![CDATA[#hasability[cWldPsyEne] <> 0]]></exprreq>
     </thing>
   <thing id="cPUMSuffPs" name="Suffused With Psionics" description="You require no food, water, or sleep. If you have abilities or class features that require rest before they can be regained, you can choose to regain them once per day by spending 1 hour in uninterrupted meditation. If you are 3rd tier or higher, you can expend one use of mythic power in order to also not need to breathe for 24 hours." compset="CustomSpec" uniqueness="useronce">
@@ -352,7 +355,7 @@
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="Helper" tag="Mythic"/>
     </thing>
-  <thing id="cPUMTrPsiC" name="Transformative Psicrystal" description="Your psicrystal is able to assume the shape of a single masterwork amulet, ring, staff, wand, or weapon. While it’s in this form, treat the psicrystal as an intelligent magic item with the psicrystal’s mental ability scores but no magical abilities. You can add magical enhancements, intelligent item powers, and intelligent item senses as if you possessed the appropriate crafting feat. (For example, if your psicrystal transforms into a staff, you could craft it into an intelligent staff of fire as if you possessed the Craft Staff feat.) You must still pay for enhancements as normal.\n\nAs a standard action, the psicrystal can transform into and out of its item form and does so in such a way that you can have it immediately equipped when the transformation is complete. While in item form, your psicrystal retains its original hit points, but gains the hardness of the item it transforms into. If your psicrystal takes enough points of damage in item form to become broken, it automatically reverts to its psicrystal form and cannot change to item form again until it is healed to its maximum hit point total.  You must have a psicrystal to select this path ability." compset="CustomSpec" uniqueness="useronce">
+  <thing id="cPUMTrPsiC" name="Transformative Psicrystal" description="Your psicrystal is able to assume the shape of a single masterwork amulet, ring, staff, wand, or weapon. While it’s in this form, treat the psicrystal as an intelligent magic item with the psicrystal’s mental ability scores but no magical abilities. You can add magical enhancements, intelligent item powers, and intelligent item senses as if you possessed the appropriate crafting feat. (For example, if your psicrystal transforms into a staff, you could craft it into an intelligent staff of fire as if you possessed the Craft Staff feat.) You must still pay for enhancements as normal.\n\nAs a standard action, the psicrystal can transform into and out of its item form and does so in such a way that you can have it immediately equipped when the transformation is complete. While in item form, your psicrystal retains its original hit points, but gains the hardness of the item it transforms into. If your psicrystal takes enough points of damage in item form to become broken, it automatically reverts to its psicrystal form and cannot change to item form again until it is healed to its maximum hit point total.  You must have a psicrystal to select this path ability.\n\nNote: This ability is implemented by creating a custom magic item that corresponds to the description (above)." compset="CustomSpec" uniqueness="useronce">
     <usesource source="srcMyPsi"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -371,7 +374,7 @@
     #skillbonus[skDisguise] += 10]]></eval>
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     </thing>
-  <thing id="cPUMMyPsPw" name="Mythic Psionic Power" description="You have a pool of psionic power you can draw upon for manifesting mythic powers. Up to twice per day, you can use this power to manifest a mythic power without expending any uses of mythic power. You can select this ability up to three times; each time you do, you gain two additional uses of this ability per day." compset="CustomSpec">
+  <thing id="cPUMMyPsPw" name="Mythic Psionic Power" description="You have a pool of psionic power you can draw upon for manifesting mythic powers. Up to twice per day, you can use this power to manifest a mythic power without expending any uses of mythic power. You can select this ability up to three times; each time you do, you gain two additional uses of this ability per day." compset="CustomSpec" maxlimit="3">
     <usesource source="srcMyPsi"/>
     <tag group="AbilType" tag="PsiLike"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -388,16 +391,29 @@
     hero.childfound[trkPUMPsiP].field[trkMax].value += 2]]></eval>
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     </thing>
-  <thing id="cPUMPoPool" name="Potent Pool" description="Choose one of your manifesting classes. You gain four bonus power points. These power points stack with bonus power points from all other sources. You can take this ability once for each level of powers you can manifest of the chosen class.\n\nFor example, if you are a 9th level psion, you can choose this ability five times. Each time beyond the first, you gain a number of power points equal to the previous time plus 8. These additional power points are cumulative. For example, the second time you take this ability, you gain 12 additional power points, for a total of 20; the third time an additional 20 power points, for a total of 40, and so on.\n\nNote: Progression is: 4, 12, 20, 28, 36, 44, 52, 60, 68, 76\nTotals: 4, 16, 36, 64, 100, 144, 196, 256, 316\n\n{b}Note:{/b} This ability is not yet implemented." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not completely Implemented.</comment>
-    <fieldval field="usrCandid1" value="CasterSrc.Psionic"/>
+  <thing id="cPUMPoPool" name="Potent Pool" description="Choose one of your manifesting classes. You gain four bonus power points. These power points stack with bonus power points from all other sources. You can take this ability once for each level of powers you can manifest of the chosen class.\n\nFor example, if you are a 9th level psion, you can choose this ability five times. Each time beyond the first, you gain a number of power points equal to the previous time plus 8. These additional power points are cumulative. For example, the second time you take this ability, you gain 12 additional power points, for a total of 20; the third time an additional 20 power points, for a total of 40, and so on.\n\nNote: Progression is: 4, 12, 20, 28, 36, 44, 52, 60, 68, 76\nTotals: 4, 16, 36, 64, 100, 144, 196, 256, 316" compset="CustomSpec">
     <usesource source="srcMyPsi"/>
-    <tag group="fShowWhat" tag="Classes"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="Helper" tag="Mythic"/>
-    <bootstrap thing="aPUMPoPool"></bootstrap>
+    <bootstrap thing="xPUMPoPool"></bootstrap>
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
+    <prereq message="You can take this ability once for each level of powers you can manifest of the chosen class.">
+      <validate><![CDATA[
+    var allowed as number
+    allowed = maximum(1,hero.childfound[xPUMPoPool].field[usrChosen1].chosen.field[cPsiLevMax].value)
+
+   ~ if we're a pick, then there must be cPsiLevMax
+   ~ or fewer copies of this ability
+   if (@ispick <> 0) then
+     validif (tagcount[Ability.cPUMPoPool] <= allowed)
+   ~ otherwise, look for fewer, since we're adding this
+   else
+     validif (tagcount[Ability.cPUMPoPool] < allowed)
+   endif
+
+   @message = "You may not have more than " & allowed & " copies of this ability."]]></validate>
+      </prereq>
     </thing>
   <thing id="cPUMPsiMta" name="Psionic Metamastery" description="As a swift action, you can expend one use of mythic power and pick any one metapsionic feat you know that does not increase the power point cost of a power. For the next 10 rounds, you can apply this metapsionic feat  to any psionic power you manifest without needing to expend psionic focus, or if you have taken this ability multiple times, without increasing the power point cost. You can also use this ability on a psionic power you manifest from a power stone, psicrown, or dorje. You can’t have more than one use of this ability active at a time. If you use this ability again, any previous use immediately ends (though this doesn’t affect powers already manifested). You can select this ability more than once. Each time you select this ability, the metapsionic feat chosen can increase the power point cost by 2 additional power points, to a maximum of 6.\n\n{b}Note:{/b} This ability is not yet implemented." compset="CustomSpec" uniqueness="useronce">
     <comment>Not implemented</comment>
@@ -409,7 +425,6 @@
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     </thing>
   <thing id="cPUMPsyTsu" name="Psychic Tsunami" description="You generate crashing waves of psychic force that shatter objects around you.  By expending one use of mythic power, you generate a 30-ft. aura that assaults non-magical objects within range (except for those upon your person). This aura lasts a number of rounds equal to your tier and causes 5 points of force damage per tier to each object affected for each round they are exposed to the effect, and ignores any hardness objects may possess. This aura damages all objects and structures indiscriminately, though if you maintain your psionic focus while this effect is ongoing, you can exempt structures or specific creatures and any objects they possess from the power of your aura.\nAdditionally, creatures moving toward you while your aura is in effect find it more difficult to approach you and move as though moving through difficult terrain." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not implemented</comment>
     <usesource source="srcMyPsi"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -418,7 +433,6 @@
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     </thing>
   <thing id="cPUMPyMael" name="Pyrokinetic Maelstrom" description="You summon a swirling mass of psionic fire. You can expend one use of mythic power to attack each creature within 30 ft. with a wreath of green fire. Creatures suffer 2d6 fire damage per mythic tier you possess. A successful Reflex save (DC 10 + your mythic tier + your Charisma modifier) halves the damage. If so desired, unattended flammable objects are also set alight." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not implemented</comment>
     <usesource source="srcMyPsi"/>
     <tag group="AbilType" tag="PsiLike"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -427,7 +441,6 @@
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     </thing>
   <thing id="cPUMRavTim" name="Ravaging Time" description="When you are affected by time stop or similar effects that alter your time relative to the manifester’s, you can expend one use of mythic power to take a standard action during the effect." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not implemented</comment>
     <usesource source="srcMyPsi"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -435,8 +448,7 @@
     <tag group="Helper" tag="Mythic"/>
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     </thing>
-  <thing id="cPUMRinfCo" name="Reinforced Collective" description="Your collective is reinforced by your mythic power. Any powers you manifest over the collective through the use of spirit of the many add your tier rank when subjected to dispel checks. You must have the spirit of the many class feature to select this ability.\n\n{b}Note:{/b} This ability is not yet implemented." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not implemented</comment>
+  <thing id="cPUMRinfCo" name="Reinforced Collective" description="Your collective is reinforced by your mythic power. Any powers you manifest over the collective through the use of spirit of the many add your tier rank when subjected to dispel checks. You must have the spirit of the many class feature to select this ability." compset="CustomSpec" uniqueness="useronce">
     <usesource source="srcMyPsi"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -445,7 +457,6 @@
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     </thing>
   <thing id="cPUMBTele" name="Block Telepathy" description="As an immediate action, you can spend one use of mythic power to gain immunity to mind-affecting effects for one round.\n\n{b}Note:{/b} This ability is not yet implemented." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not implemented</comment>
     <usesource source="srcMyPsi"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -454,24 +465,26 @@
     <exprreq message="Mythic Tier 6 or greater required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
     </thing>
   <thing id="cPUMEnMon" name="Enthrall Monster" description="You can exert your will over the minds of lesser beings. You can expend one use of mythic power to manifest mind control on any type of creature for a number of days equal to your mythic tier.\n\n{b}Note:{/b} This ability is not yet implemented." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not implemented</comment>
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="AbilType" tag="PsiLike"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="Mythic"/>
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
     </thing>
-  <thing id="cPUMTelekM" name="Telekinetic Mastery" description="You can use your telekinetic powers to catch and hurl massive objects. You expend one use of mythic power to exert telekinetic influence over all nearby objects. You gain rock throwing, rock catching and a deflection bonus to your AC equal to your mythic tier. You do not need free hands to use either rock throwing or rock catching. Treat your size category as one larger than your actual size for purposes of this power. You gain these bonuses for a number of minutes equal to your mythic tier.\n\n{b}Note:{/b} This ability is not yet implemented." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not implemented</comment>
+  <thing id="cPUMTelekM" name="Telekinetic Mastery" description="You can use your telekinetic powers to catch and hurl massive objects. You expend one use of mythic power to exert telekinetic influence over all nearby objects. You gain rock throwing, rock catching and a deflection bonus to your AC equal to your mythic tier. You do not need free hands to use either rock throwing or rock catching. Treat your size category as one larger than your actual size for purposes of this power. You gain these bonuses for a number of minutes equal to your mythic tier." compset="CustomSpec" uniqueness="useronce">
     <usesource source="srcMyPsi"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="Helper" tag="Mythic"/>
+    <bootstrap thing="raRockThro"></bootstrap>
+    <bootstrap thing="raRockCat"></bootstrap>
+    <eval phase="PostLevel" priority="10000">
+    ~ Add Deflection bonus to AC equal to Mythic Tier
+    hero.child[ArmorClass].field[tACDeflect].value = hero.child[ArmorClass].field[tACDeflect].value + #tiereffect[]</eval>
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
     </thing>
-  <thing id="cPUMThrall" name="Thrall" description="Your influence is so great that no creature can resist your will. When a creature makes an additional saving throw (not an initial saving throw) against one of your mind-affecting powers or abilities, you can expend one use of your mythic power to make them automatically fail that save.  Non-mythic attempts to dispel your mind-affecting powers or abilities automatically fail.\n\n{b}Note:{/b} This ability is not yet implemented." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not implemented</comment>
+  <thing id="cPUMThrall" name="Thrall" description="Your influence is so great that no creature can resist your will. When a creature makes an additional saving throw (not an initial saving throw) against one of your mind-affecting powers or abilities, you can expend one use of your mythic power to make them automatically fail that save.  Non-mythic attempts to dispel your mind-affecting powers or abilities automatically fail." compset="CustomSpec" uniqueness="useronce">
     <usesource source="srcMyPsi"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -486,6 +499,14 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpecSource" tag="mypPUOvrMi"/>
     <tag group="Helper" tag="Mythic"/>
+    <tag group="LvNamePar" tag="AppValue"/>
+    <eval phase="PostLevel" priority="10000">
+    ~ Calculate CMB 
+    ~ + Mtyhic Tier
+    ~ using Maximum of Int/Wis/Cha
+    var MaxStat as Number
+    MaxStat = maximum(#value[aINT],#value[aWIS])
+    field[abValue].value = maximum(MaxStat,#value[aCHA]) + #tiereffect[]</eval>
     <exprreq message="Mythic Tier 3 required."><![CDATA[#tierprereq[] >= 6]]></exprreq>
     </thing>
   <thing id="cPUMFavShB" name="Favored Shot" description="You add a competence bonus to all damage rolls with your favored weapon group equal to your mythic tier. Expend one use of mythic power to deal maximum damage on one ranged attack. You must have the favored weapon group class feature to select this ability." compset="CustomSpec" summary="Competence bonus to ranged damage with selected weapon group." uniqueness="useronce">
@@ -587,8 +608,7 @@
       #value3[cPUDisPatt] += #tiereffect[]]]></eval>
     <exprreq message="Disrupt Pattern Class Feature Required"><![CDATA[#hasability[cPUDisPatt] <> 0]]></exprreq>
     </thing>
-  <thing id="cPUMTelPry" name="Telekinetic Parry" description="You can use your telekinetic power to block an incoming attack. As an immediate action, you can expend one use of mythic power to make a parry attempt to protect one creature within 30 feet of you. To resolve this, make an attack roll at your full base attack bonus plus your Charisma modifier. If you exceed the attack roll of your opponent, the attack automatically misses. You must have a power point pool to select this ability.\n\n{b}Note:{/b} This ability is not yet implemented." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not implemented</comment>
+  <thing id="cPUMTelPry" name="Telekinetic Parry" description="You can use your telekinetic power to block an incoming attack. As an immediate action, you can expend one use of mythic power to make a parry attempt to protect one creature within 30 feet of you. To resolve this, make an attack roll at your full base attack bonus plus your Charisma modifier. If you exceed the attack roll of your opponent, the attack automatically misses. You must have a power point pool to select this ability." compset="CustomSpec" uniqueness="useronce">
     <usesource source="srcMyPsi"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="SpecSource" tag="mypGuard"/>
@@ -694,7 +714,7 @@
     <exprreq message="Form MInd Blade Class ability required."><![CDATA[#hasability[cSknMindBl] <> 0]]></exprreq>
     </thing>
   <thing id="cPUMMyMan" name="Mythic Manifesting" description="You can learn a number of mythic powers equal to your tier and can expend mythic power when manifesting them to enhance the results. To select a mythic power, you must have it on your list of powers known. Every time you gain a new tier, you can select an additional mythic power. You can take this ability up to three times. Each additional time you take it, you can select an additional number of powers equal to your tier and you gain one additional mythic power whenever you gain a tier.\n\n{b}Note:{/b} This ability is not yet implemented." compset="CustomSpec" uniqueness="useronce">
-    <comment>Not Yet Implemented</comment>
+    <comment>Not Yet Implemented - Requires basic Hero Lab implementation of Mythic Powers by LW.</comment>
     <fieldval field="usrCandid1" value="component.Class &amp; Psionics.Class"/>
     <usesource source="srcMyPsi"/>
     <tag group="SpecSource" tag="mypAll"/>
@@ -734,20 +754,28 @@
     <exprreq message="Mythic Tier 3 Required."><![CDATA[#tierprereq[] >= 3]]></exprreq>
     <exprreq message="Power Point Pool Required."><![CDATA[#resmax[resPowerPt] <> 0]]></exprreq>
     </thing>
-  <thing id="aPUMPoPool" name="Potent Pool" compset="Ability" uniqueness="useronce">
-    <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="PostLevel" priority="9000"><![CDATA[
+  <thing id="trkPUMPsiP" name="Mythic Psionic Power" description="You have a pool of psionic power you can draw upon for manifesting mythic powers." compset="Tracker" uniqueness="unique">
+    <usesource source="srcMyPsi"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="xPUMPoPool" name="Potent Pool" description="Choose your class" compset="CustomSpec" uniqueness="unique">
+    <fieldval field="usrCandid1" value="CasterSrc.Psionic"/>
+    <usesource source="srcMyPsi"/>
+    <tag group="fShowWhat" tag="Classes"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="Mythic"/>
+    <tag group="SpecSource" tag="mypPUOvrMi"/>
+    <eval phase="PostAttr" priority="21000"><![CDATA[
      ~ If we've been Disabled, get out now
       doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If nothing is chosen, get out now
+      doneif (field[usrChosen1].ischosen = 0)
 
       ~ Calculate the bonus with a base 4 point plus 8 more for each
       ~ additional time this ability was taken.
       #resmax[resPowerPt] += 4 + (8 * (hero.tagcount[Ability.cPUMPoPool] - 1))]]></eval>
-    </thing>
-  <thing id="trkPUMPsiP" name="Mythic Psionic Power" compset="Tracker" uniqueness="useronce">
-    <usesource source="srcMyPsi"/>
-    <tag group="Usage" tag="Day"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="User" tag="Tracker"/>
     </thing>
   </document>
