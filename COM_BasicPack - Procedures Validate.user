@@ -11,7 +11,7 @@
       July 12, 2012
       -HaveSpell and CntMartWea are meant to be used in a "Pre-Req" script only.
       -Added the new procedure "HaveSpell" to test if a character has access to a specific spell ID.
-      -Added the new procedure "CntMartWea" to count the number of martial weapon proficiencies a character has. 
+      -Added the new procedure "CntMartWea" to count the number of martial weapon proficiencies a character has.
       ]]>
     </info_history>
   </fileinfo>
@@ -28,11 +28,10 @@
 
     var HaveSpell as number
     var SpellID as string
-    var s2search as string
     var s2classes as string
-    var X as number
+    var s2X as number
     ~ Init fields here
-    X = 0
+    s2X = 0
     HaveSpell = 0
 
     ~ Add thingid to the spell id passed us
@@ -45,41 +44,21 @@
        ~ only do anything if we a spell with classes
        if (eachthing.tagis[sClass.?] <> 0) then
           ~ if loop counter not zero then add a seperator between strings
-          if ( X <> 0) then
+          if ( s2X <> 0) then
              ~ add a seperator between each loop
              s2classes &= "|"
-          endif    
+          endif
           ~ Build a search sting of all class tags
           s2classes = eachthing.tagids[sClass.?,"|"]
           ~ increment loop counter
-          X += 1
+          s2X += 1
        endif
     nexteach
 
-    ~ Get the classes that are valid for the spell ID(s) passed to us
-    foreach pick in hero where SpellID
-       ~ only do anything if we a spell with classes
-       if (eachpick.tagis[sClass.?] <> 0) then
-          ~ if loop counter not zero then add a seperator between strings
-          if ( X <> 0) then
-             ~ add a seperator between each loop
-             s2classes &= "|"
-          endif    
-          ~ Build a search sting of all class tags
-          s2classes = eachpick.tagids[sClass.?,"|"]
-          ~ increment loop counter
-          X += 1
-       endif
-    nexteach
-
-    ~ replace the sClass tags with thingid tag groups
-    s2search = replace(s2classes,"sClass","thingid",0)
-
-    ~ Loop through classes and see if we have one of the classes
-    ~ valid for casting CLW spells
-    foreach pick in hero where s2search
-       HaveSpell = 1
-    nexteach
+    ~ Find the first class helper that matches to the spell classes
+    If (hero.findchild[BaseClHelp,s2classes].field[cTotalLev].value <> 0) Then
+      HaveSpell = 1
+    Endif
     ]]>
   </procedure>
 
@@ -101,7 +80,7 @@
     CntMartWea = 0
     X = 0
 
-    ~ Loop through all racial Weapon Familiarity things 
+    ~ Loop through all racial Weapon Familiarity things
     ~ that are not replaced/disabled
     foreach pick in hero where "Helper.WeaponFam & !Helper.SpcReplace"
        ~ only do anything if we have actually Weapon Proficiencies
@@ -110,7 +89,7 @@
           if ( X <> 0) then
              ~ add a seperator between each loop
              s2search &= "|"
-          endif    
+          endif
           ~ Build a search sting of all weapon tags
           s2search &= eachpick.tagids[WepProf.?,"|"]
           ~ increment loop counter
@@ -154,12 +133,12 @@
     ~ This procedure tests if suite of armor already has a specific type of material
     var X1HaveMate as number
     X1HaveMate = 0
-    
+
     ~ If not a pick then we are valid
     if (@ispick <> 1) then
       X1HaveMate = 1
     endif
-    
+
     ~ If we are a not a custom armor we are valid
     if (tagis[portal.mMagChoose] <> 1) then
       X1HaveMate = 1
