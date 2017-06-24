@@ -5,33 +5,31 @@
     <info_author><![CDATA[
       Tim Shadow
       Email: ShadowChemosh@yahoo.com
-    ]]>
-    </info_author>
-    <info_history><![CDATA[
-      July 12, 2012
-      -HaveSpell and CntMartWea are meant to be used in a "Pre-Req" script only.
-      -Added the new procedure "HaveSpell" to test if a character has access to a specific spell ID.
-      -Added the new procedure "CntMartWea" to count the number of martial weapon proficiencies a character has.
       ]]>
-    </info_history>
+    </info_author>
   </fileinfo>
 
-
   <procedure id="HaveSpell" scripttype="validate"><![CDATA[
-    ~ This procedure tests if a character has a specific spell and sets the valid field
+    ~ This procedure checks to see if the past in spells exist on
+    ~ any of the characters class spell list. If it does this
+    ~ returns HaveSpell variable with a 1 for TRUE.
     ~ ===How to use this Procedure===
     ~ var SpellID as String
     ~ var HaveSpell as number
     ~ SpellID = "spCureLig1"
     ~ Call HaveSpell
     ~ @valid = HaveSpell
+    ~ Example two many spells being checked
+    ~ var SpellID as String
+    ~ var HaveSpell as number
+    ~ SpellID = "spSummMon1|spSummMon2|spSummMon3|spSummMon4|spSummMon5|spSummMon6|spSummMon7|spSummMon8|spSummMon9|spSummNat1|spSummNat2|spSummNat3|spSummNat4|spSummNat5|spSummNat6|spSummNat7|spSummNat8|spSummNat9"
+    ~ Call HaveSpell
+    ~ @valid = HaveSpell
 
     var HaveSpell as number
     var SpellID as string
     var s2classes as string
-    var s2X as number
     ~ Init fields here
-    s2X = 0
     HaveSpell = 0
 
     ~ Add thingid to the spell id passed us
@@ -41,24 +39,26 @@
 
     ~ Get the classes that are valid for the spell ID(s) passed to us
     foreach thing in BaseSpell where SpellID
-       ~ only do anything if we a spell with classes
-       if (eachthing.tagis[sClass.?] <> 0) then
-          ~ if loop counter not zero then add a seperator between strings
-          if ( s2X <> 0) then
-             ~ add a seperator between each loop
-             s2classes &= "|"
-          endif
-          ~ Build a search sting of all class tags
-          s2classes = eachthing.tagids[sClass.?,"|"]
-          ~ increment loop counter
-          s2X += 1
-       endif
-    nexteach
+      ~ Once we are valid no reason to keep checking classes.
+      ~ But no "Leave" or iter commands exist here to get me
+      ~ out of the foreach loop. =(
+      If (HaveSpell = 0) Then
 
-    ~ Find the first class helper that matches to the spell classes
-    If (hero.findchild[BaseClHelp,s2classes].field[cTotalLev].value <> 0) Then
-      HaveSpell = 1
-    Endif
+         ~ only do anything if we are a spell with classes
+         if (eachthing.tagis[sClass.?] <> 0) then
+
+            ~ Build a search string of all class tags
+            s2classes = eachthing.tagids[sClass.?,"|"]
+
+            ~ Find the first class helper that matches to the spell classes
+            If (hero.findchild[BaseClHelp,s2classes].field[cTotalLev].value <> 0) Then
+              HaveSpell = 1
+            Endif
+
+         Endif
+
+      Endif
+    nexteach
     ]]>
   </procedure>
 
