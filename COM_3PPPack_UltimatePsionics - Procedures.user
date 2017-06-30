@@ -240,15 +240,28 @@
     ~                   added to a the mind blade the name gets chopped.
     ~                   So we reset it here.
     ~ Should run at Render/99999999 and run on the "Weapon, Magic" pick
+    ~ NOTE: We are now being used on both Mind Blades and Mind Armor
+    ~       gear items.
 
-    ~ If we are masterwork we have to reset the name as it gets lost
-    If (tagis[EquipType.Masterwork] <> 0) Then
-       ~ Reset the live name as it gets destroyed
-       field[livename].text &= " " & tagnames[MindBlade.?]
+    ~ Armor
+    If (tagis[EquipType.Armor] = 1) Then
+
+      If (field[BonEnhance].value <> 0) Then
+        ~ Reset the live name as it gets destroyed
+        field[livename].text &= " " & tagnames[MindBlade.Armor?]
+      Endif
+
+    ~..Weapons
+    Else
+      ~ If we are masterwork we have to reset the name as it gets lost
+      If (tagis[EquipType.Masterwork] <> 0) Then
+         ~ Reset the live name as it gets destroyed
+         field[livename].text &= " " & tagnames[MindBlade.?]
+      Endif
+
+      ~ Remove Tracker
+      perform delete[User.Tracker]
     Endif
-
-    ~ Remove Tracker
-    perform delete[User.Tracker]
     ]]>
   </procedure>
 
