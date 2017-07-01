@@ -1869,7 +1869,7 @@ foreach pick in hero from BaseWep where "IsWeapon.wMindBlade"
   <thing id="arPUCuthrt" name="Cutthroat" description="With the ability to create a blade from thin air, soulknives can be extremely effective assassins. Cutthroat soulknives work to be even better at infiltration as well as how to perfectly place strikes against their opponents." compset="ClassVary" uniqueness="unique">
     <fieldval field="srcPageNum" value="280"/>
     <fieldval field="srcBookInf" value="Ultimate Psionics"/>
-    <arrayval field="cvBonFtMod" index="0" value="-1"/>
+    <fieldval field="cvSkillPts" value="6"/>
     <arrayval field="cvBonFtMod" index="1" value="-1"/>
     <arrayval field="cvBonFtMod" index="2" value="-1"/>
     <arrayval field="cvBonFtMod" index="3" value="-1"/>
@@ -1889,39 +1889,161 @@ foreach pick in hero from BaseWep where "IsWeapon.wMindBlade"
     <arrayval field="cvBonFtMod" index="17" value="-1"/>
     <arrayval field="cvBonFtMod" index="18" value="-1"/>
     <arrayval field="cvBonFtMod" index="19" value="-1"/>
+    <arrayval field="cvBonFtMod" index="0" value="-1"/>
     <usesource source="pPsiUn"/>
-    <tag group="fDisable" tag="fArmShield"/>
     <tag group="ClVaryName" tag="AppParen"/>
     <tag group="AbReplace" tag="cSknPsyStr"/>
     <tag group="fDisable" tag="fArmMedium"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <bootstrap thing="cPUCunning">
-      <autotag group="ClSpecWhen" tag="2"/>
-      </bootstrap>
+    <tag group="fDisable" tag="fArmShield"/>
     <bootstrap thing="cPUCovTrai">
       <autotag group="ClSpecWhen" tag="1"/>
       </bootstrap>
-    <bootstrap thing="cSneakAtt">
-      <containerreq phase="First" priority="2500">Hero.PsiFocus</containerreq>
-      <autotag group="ClSpecWhen" tag="3"/>
+    <bootstrap thing="cPUCunning">
+      <autotag group="ClSpecWhen" tag="2"/>
       </bootstrap>
-    <bootstrap thing="cSneakAtt">
-      <containerreq phase="First" priority="2500">Hero.PsiFocus</containerreq>
+    <bootstrap thing="cPUCunning">
       <autotag group="ClSpecWhen" tag="6"/>
       </bootstrap>
-    <bootstrap thing="cSneakAtt">
-      <containerreq phase="First" priority="2500">Hero.PsiFocus</containerreq>
+    <bootstrap thing="cPUCunning">
       <autotag group="ClSpecWhen" tag="10"/>
       </bootstrap>
-    <bootstrap thing="cSneakAtt">
-      <containerreq phase="First" priority="2500">Hero.PsiFocus</containerreq>
+    <bootstrap thing="cPUCunning">
       <autotag group="ClSpecWhen" tag="14"/>
       </bootstrap>
-    <bootstrap thing="cSneakAtt">
-      <containerreq phase="First" priority="2500">Hero.PsiFocus</containerreq>
+    <bootstrap thing="cPUCunning">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cSknPUSnAt">
+      <autotag group="ClassVary" tag="arPUCuthrt"/>
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cSknPUSnAt">
+      <autotag group="ClassVary" tag="arPUCuthrt"/>
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cSknPUSnAt">
+      <autotag group="ClassVary" tag="arPUCuthrt"/>
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cSknPUSnAt">
+      <autotag group="ClassVary" tag="arPUCuthrt"/>
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cSknPUSnAt">
+      <autotag group="ClassVary" tag="arPUCuthrt"/>
       <autotag group="ClSpecWhen" tag="18"/>
       </bootstrap>
     <link linkage="varies" thing="cHelpSkn"/>
+    </thing>
+  <thing id="cPUCunning" name="Cunning" description="A cutthroat of 2nd level gains a +1 competence bonus on Bluff and Stealth skill checks made while maintaining psionic focus.  Furthermore, Bluff is a class skill for the cutthroat. At 6th level and every four soulknife levels thereafter, this bonus increases by 1 (to\na maximum of +5 at 18th level).\n  The cutthroat can expend his psionic focus to double this bonus for a single Bluff or Stealth skill check.\n  This ability replaces the bonus feat gained at first level." compset="ClSpecial">
+    <fieldval field="abValue" value="1"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="abAction" tag="PUManFocus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & field[xIndex].value
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " " & field[abValue].value
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ make Bluff class skill
+      #makeclassskill[skBluff]
+
+      ~ check if Psi-focused
+      var v_focus as number
+      call PUPsiFocus
+      ~ If not psionically focused get out now!
+      doneif (v_focus = 0)
+
+      ~ Bonus to Bluff and Stealth
+      #applybonus[BonComp,hero.childfound[skBluff],field[abValue].value]
+      #applybonus[BonComp,hero.childfound[skStealth],field[abValue].value]]]></eval>
+    </thing>
+  <thing id="cPUCovTrai" name="Covert Training" description="A cutthroat gains 6 skill points + a number of skill points equal to his Intelligence modifier at each level, instead of the normal 4 skill points + Intelligence modifier at each level. This ability replaces the medium armor proficiency and shield proficiency normally gained by soulknives." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cSknPUSnAt" name="Sneak Attack" description="A cutthroat of 3rd level gains the sneak attack ability as a rogue of half his soulknife level (rounded down) as long as he is maintaining psionic focus. If a character already has sneak attack from another class, the levels from the classes that grant sneak attack stack to determine the effective rogue level for the sneak attack’s extra damage dice (so a soulknife 3/rogue 1 has a +1d6 sneak attack like a 2nd-level rogue, a soulknife 8/rogue 1 has a +3d6 sneak attack like a 5thlevel rogue, and so on). \n\nThis ability replaces psychic strike." compset="ClSpecial" summary="Gain Sneak Attack damage as long as you maintain psionic focus.">
+    <fieldval field="abValue2" value="6"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000" index="1"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ If we have "Sneak Attack" from other classes then disable
+      ~ hide ourself and increase the base Sneak Attack class
+      ~ ability.
+      doneif (hero.tagis[Ability.cSneakAtt] = 0)
+
+      ~ Disable/hide ourself
+      perform assign[Helper.SpecUp]
+      perform assign[Helper.SpcDisable]
+
+      ~ check if Psi-focused
+      var v_focus as number
+      call PUPsiFocus
+      ~ If psionically focused get out now!
+      doneif (v_focus = 0)
+
+      ~ Increase base sneak attack dice
+      #value[cSneakAtt] += field[xCount].value
+      ]]></eval>
+    <eval phase="PostLevel" priority="12000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ check if Psi-focused
+      var v_focus as number
+      call PUPsiFocus
+      ~ If psionically focused get out now!
+      doneif (v_focus = 1)
+
+      ~ Disable the activation button
+      perform assign[Helper.ChgDisab1]
+      ]]></eval>
+    <eval phase="PostLevel" priority="15000" index="3"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & signed(field[xIndex].value) & "d" & field[abValue2].value
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value) & "d" & field[abValue2].value
+      field[actName].text = field[livename].text
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+      ~ And now, add our extra damage
+      doneif (field[abilActive].value = 0)
+
+      var sneakDam as string
+      sneakDam = field[abValue].value & "d" & field[abValue2].value
+      if (field[abValue3].value <> 0) then
+        sneakDam &= signed(field[abValue3].value)
+      endif
+
+      foreach pick in hero from BaseWep
+        #extradamage[eachpick, " plus " & sneakDam & " sneak attack",field[thingname].text]
+      nexteach]]></eval>
     </thing>
   <thing id="arPUFerlHt" name="Feral Heart" description="{i}{b}Not fully implemented{/i}{/b}\nMind over matter is usually viewed to be the domain of the psion, the disciplined mind ruling over the body. Yet powerful feral instincts are also part of the mind, and when these instincts are born inside one with psionic potential, a feral heart is born. Their mind reforms their\nbodies, often into bestial forms, giving rise to many misconceptions about them being werewolves." compset="ClassVary" uniqueness="unique">
     <fieldval field="srcPageNum" value="281"/>
