@@ -1736,6 +1736,83 @@ foreach pick in hero from BaseWep where "IsWeapon.wMindBlade"
       </bootstrap>
     <link linkage="varies" thing="cHelpSkn"/>
     </thing>
+  <thing id="cGiBPUMani" name="Manifesting" description="At 3rd level, a gifted blade gains the ability to manifest a small number of psionic powers, which are drawn from the gifted blade power list.\n\nA gifted blade chooses his powers from the gifted blade power list. At 3rd level, a gifted blade knows one gifted blade power of your choice. He learns new powers as indicated on Table: The Gifted Blade. A gifted blade can manifest any power that has a power point cost equal to or lower than his manifester level. The total number of powers a gifted blade can manifest per day is limited only by his daily power points.\n\nA gifted blade never needs to prepare powers ahead of time; he draws them from his mind when needed. When a gifted blade recovers his daily power points after resting, he may choose to rotate one or more powers he knows for new ones. These powers must always be chosen from the gifted blade power list, and the maximum number of powers the gifted blade may know at any one time in this fashion is listed on Table: The Gifted Blade. If a gifted blade learns a power through other means, such as the Expanded Knowledge feat, the Mental Power blade skill, or {i}psychic chirurgery{/i}, this power is known in addition to his normal powers. He may never exchange it for another power from the gifted blade list when he chooses his powers known, and it doesn&apos;t count against his limit of powers known at any one time.\n\nThe Difficulty Class for saving throws against gifted blade powers is 10 + the power&apos;s level + the gifted blade&apos;s Wisdom modifier.\n\nThrough 2nd level, a gifted blade has no manifester level. At 3rd level and higher, a gifted blade&apos;s manifester level is equal to his soulknife level - 2.\n\nA gifted blade gains the ability to learn 1st-level powers at 3rd level. Every four levels thereafter (7th, 11th, etc), a gifted blade gains the ability to master more complex powers, up to 4th level powers at level 15.\n\nTo learn or manifest a power, a gifted blade must have a Wisdom score of at least 10 + the power&apos;s level.\n\nA gifted blade&apos;s ability to manifest powers is limited by the power points he has available. His base daily allotment of power points is given on Table: Gifted Blade.{br}{br}In addition, he receives bonus power points per day if he has a high Wisdom score. His race may also provide bonus power points per day, as may certain feats and items. If a gifted blade has power points from a different class, those points are pooled together and usable to manifest powers from either class.\n\nThis ability replaces psychic strike. The gifted blade never gains the psychic strike class feature." compset="ClSpecial" summary="You have a reduced ML equal to ML-2.">
+    <fieldval field="abValue" value="-2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="1500"><![CDATA[
+      ~we're earlier than the normal test for whether we've reached the correct level, so we'll recreate that test here
+      doneif (root.linkage[varies].field[cTotalLev].value + field[xExtraLev].value + field[xEffectLev].value < tagvalue[ClSpecWhen.?])
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set hero.Psionic as at this level we are now a full Psionic Character with a ML
+      call SetHeroPsi]]></eval>
+    <eval phase="PostAttr" priority="10001" index="2"><![CDATA[
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we have our ML adjustment level is zero then, get out now
+      doneif (field[abValue].value = 0)
+
+      ~ NOTES on abValue Fields:
+      ~ abValue - Holds the amount to adjust the ML. If zero
+      ~           this script does not run
+      ~ abValue2 - Holds the calculated value for the number of
+      ~            Hero.Manifester tags to put back on the hero.
+      var iX as number
+      var PP as number
+
+      ~ CHANGE CLASS VALUES
+      ~-------------------------------
+
+      ~ Check to see if we are bootstrapped to an Archetype?
+      if (root.islinkage[varies] <> 0) then
+        ~ Adjust our archetype ML field values down by 2
+        root.linkage[varies].field[cMagicLev].value += field[abValue].value
+        root.linkage[varies].field[cMagicLev].value = maximum(root.linkage[varies].field[cMagicLev].value,0)
+        root.linkage[varies].field[cCasterLev].value += field[abValue].value
+        root.linkage[varies].field[cCasterLev].value = maximum(root.linkage[varies].field[cCasterLev].value,0)
+      ~..We are bootstrapped directly to a class
+      else
+        ~ Adjust our class ML field values down by 2
+        root.field[cMagicLev].value += field[abValue].value
+        root.field[cCasterLev].value += field[abValue].value
+      endif
+
+      ~ CHANGE HERO TAGS
+      ~-------------------------------
+
+      ~ Count number of Manifester tags and then subtract out two of them. We
+      ~ Need to know how many tags to put back on to the hero as delete[] removes
+      ~ all tags and we just wish to remove 2.
+      field[abValue2].value += hero.tagcount[Hero.Manifester] + field[abValue].value
+      perform hero.delete[Hero.Manifester]
+      perform hero.delete[Psionics.Class]
+
+      ~ Loop and apply our adjusted number of Manifester tags back to hero
+      while (iX < field[abValue2].value)
+        iX += 1
+        perform hero.assign[Hero.Manifester]
+        perform hero.assign[Psionics.Class]
+      loop
+
+      ~ CHANGE POWER POINT RESERVE
+      ~-------------------------------
+
+      perform hero.findchild[BaseAttr,root.tagids[PsiAttr.?]].setfocus
+      ~ If setfocus failed then get out now!
+      doneif (state.isfocus = 0)
+
+      ~ HL still calculated our PP attribute bonus using our full level
+      ~ so we need to re-calculate the value and then remove it.
+      PP = focus.field[aModBonus].value * root.linkage[varies].field[cTotalLev].value * .5
+      PP = round(PP,0,-1)
+      #resmax[resPowerPt] -= PP
+      ~ Calculate our correct PP Reserve for our current ML add it to our
+      ~ Power Point Reserve total.
+      PP = focus.field[aModBonus].value * root.linkage[varies].field[cMagicLev].value * .5
+      PP = round(PP,0,-1)
+      #resmax[resPowerPt] += PP]]></eval>
+    </thing>
   <thing id="arPUArmBld" name="Armored Blade" description="Although most soulknives choose to focus their psionic energy into weapons they can wield, some have chosen to channel their energy into a more defensive form, creating armor to protect themselves as well as the weapons to strike at their enemies." compset="ClassVary" uniqueness="unique">
     <fieldval field="srcPageNum" value="279"/>
     <fieldval field="srcBookInf" value="Ultimate Psionics"/>
