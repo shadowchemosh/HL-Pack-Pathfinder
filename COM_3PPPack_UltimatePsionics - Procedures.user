@@ -235,6 +235,10 @@
     ]]>
   </procedure>
 
+
+  <!-- ****************************************************************** -->
+  <!-- Soulknife Mind Blade helper procedures                             -->
+  <!-- ****************************************************************** -->
   <procedure id="NameMindBl" context="pick"><![CDATA[
     ~ Name Mind Blade - As we are running custom after a Item Power is
     ~                   added to a the mind blade the name gets chopped.
@@ -246,8 +250,8 @@
     ~ Armor
     If (tagis[EquipType.Armor] = 1) Then
 
+      ~ Reset the live name as it gets destroyed
       If (field[BonEnhance].value <> 0) Then
-        ~ Reset the live name as it gets destroyed
         field[livename].text &= " " & tagnames[MindBlade.Armor?]
       Endif
 
@@ -255,12 +259,52 @@
     Else
       ~ If we are masterwork we have to reset the name as it gets lost
       If (tagis[EquipType.Masterwork] <> 0) Then
-         ~ Reset the live name as it gets destroyed
-         field[livename].text &= " " & tagnames[MindBlade.?]
+
+        ~ If we have item powers add their names
+        If (hero.tagis[MindBlade.w?] = 1) Then
+          field[livename].text &= " " & hero.tagnames[MindBlade.w?," "]
+        Endif
+
+        field[livename].text &= " " & tagnames[MindBlade.?]
+
+      ~..Not masterwork so just add the weapon powers
+      Else
+        ~ If we have item powers add their names
+        If (hero.tagis[MindBlade.w?] = 1) Then
+          field[livename].text &= " " & hero.tagnames[MindBlade.w?," "] & " " & tagnames[MindBlade.?]
+        Endif
       Endif
 
       ~ Remove Tracker
       perform delete[User.Tracker]
+    Endif
+    ]]>
+  </procedure>
+
+  <procedure id="MndBlItPow" context="pick"><![CDATA[
+    ~ Mind Blade Item Powers
+    ~  This procedures runs on each magic mind blade. It checks the hero
+    ~  for specific tags and if found it mimics the specific power. This
+    ~  prevents the need of foreach loops running on archetype/blade skills.
+
+    ~ Armor
+    If (tagis[EquipType.Armor] = 1) Then
+
+      done
+
+    ~..Weapons
+    Else
+
+      ~ Agile weapon property
+      If (hero.tagis[MindBlade.wAgile] = 1) Then
+        perform assign[DamageOpt.aDEX]
+        perform assign[DescInfo.ipAgile]
+      Endif
+
+      ~ Finesse weapon property
+      If (hero.tagis[MindBlade.Finesse] = 1) Then
+        perform assign[Helper.Finesse]
+      Endif
     Endif
     ]]>
   </procedure>
