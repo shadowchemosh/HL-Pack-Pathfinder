@@ -2610,4 +2610,64 @@ hero.child[svWill].field[Bonus].value += field[abValue].value]]></eval>
 
       #trkmax[cPUVitTraW] += field[abValue].value]]></eval>
     </thing>
+  <thing id="fcPUGnoAeg" name="Gnome Aegis" description="Gain +1/2 to Damage Reduction / cold iron." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ DR/cold iron"/>
+    <fieldval field="abValue5" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rGnome"/>
+    <tag group="FavClass" tag="cPUAegis"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10100"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      ~ Apply Cold Iron DR
+      #applydr[xDamRdIron, field[abValue].value]]]></eval>
+    </thing>
+  <thing id="fcPUGnoPsi" name="Gnome Psion" description="Choose one discipline talent gained at 1st level. Add 1/3 to the number of power points that power is treated as being augmented by. This is an exception to the rule that discipline talents cannot be augmented.\n\n{b}Note{/b}: To select a different talent to increase add another Favored Class Option." compset="FavClass">
+    <fieldval field="fcName" value="+1/3 augment talent"/>
+    <fieldval field="abValue5" value="3"/>
+    <fieldval field="usrCandid1" value="component.BasePower &amp; Helper.Secondary"/>
+    <usesource source="pPsiUn"/>
+    <tag group="FavClass" tag="cPUPsion"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="IsRace" tag="rGnome"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+     
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Set some helpful augmentation text
+      field[usrChosen1].chosen.field[DescAppend].text = "{b}+1/3 Augment Talent:{/b}" & signed(field[abValue].value) & " augmented"]]></eval>
+    </thing>
+  <thing id="fcPUGnoTac" name="Gnome Tactician" description="The tactician gains 1 psionic talent." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1 psionic talent"/>
+    <fieldval field="abValue5" value="1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rGnome"/>
+    <tag group="FavClass" tag="cPUTactici"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      hero.childfound[cHelpPU4].field[cPsiSPowMa].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUGnoVit" name="Gnome Vitalist" description="Treat the gnome’s vitalist level as +1/2 for the purposes of Vitalist’s Touch." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ lvl to Vitalist’s Touch"/>
+    <fieldval field="abValue5" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="FavClass" tag="cPUVitalis"/>
+    <tag group="IsRace" tag="rGnome"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      ~ Increase the Vitalist's Touch effective level
+      hero.findchild[Ability,"abCategory.PUVitTouch"].field[xExtraLev].value += field[abValue].value]]></eval>
+    </thing>
   </document>
