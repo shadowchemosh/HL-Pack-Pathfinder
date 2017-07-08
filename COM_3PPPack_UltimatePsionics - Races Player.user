@@ -2699,7 +2699,7 @@ hero.child[svWill].field[Bonus].value += field[abValue].value]]></eval>
         eachpick.field[sCL].value += field[abValue].value
       nexteach]]></eval>
     </thing>
-  <thing id="fcPUHElSlk" name="Hal-Elf Soulknife" description="Add +1 to the soulknife’s CMD against disarm or overrun attempts." compset="FavClass" uniqueness="unique">
+  <thing id="fcPUHElSlk" name="Half-Elf Soulknife" description="Add +1 to the soulknife’s CMD against disarm or overrun attempts." compset="FavClass" uniqueness="unique">
     <fieldval field="fcName" value="+1 CMD vs disarm/overrun"/>
     <fieldval field="abValue5" value="1"/>
     <usesource source="pPsiUn"/>
@@ -2796,5 +2796,45 @@ hero.child[svWill].field[Bonus].value += field[abValue].value]]></eval>
 
       ~ Add Plus Damage
       #value3[cSknPsyStr] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUHlfCry" name="Halfling Cryptic" description="Add +1/2 on Disable Device checks." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+½ Disable Device"/>
+    <fieldval field="abValue5" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="FavClass" tag="cPUCryptic"/>
+    <tag group="IsRace" tag="rHalfling"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      #skillbonus[skDisable] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUHlfSlk" name="Halfling Soulknife" description="Add +1 to the soulknife’s CMD when resisting a grapple or trip." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1 CMD vs grapple/trip"/>
+    <fieldval field="abValue5" value="1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rHalfling"/>
+    <tag group="FavClass" tag="cSoulknife"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      hero.child[manGrapple].field[cmdBonus].value += field[abValue].value
+      hero.child[manTrip].field[cmdBonus].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUHlfVit" name="Halfling Vitalist" description="The vitalist gains 1 psionic talent." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1 psionic talent"/>
+    <fieldval field="abValue5" value="1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="FavClass" tag="cPUVitalis"/>
+    <tag group="IsRace" tag="rHalfling"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      hero.childfound[cHelpPU5].field[cPsiSPowMa].value += field[abValue].value]]></eval>
     </thing>
   </document>
