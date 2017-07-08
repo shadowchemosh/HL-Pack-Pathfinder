@@ -1469,7 +1469,12 @@
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Psionic"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostLevel" priority="1000">hero.childfound[cPUReconfi].field[abValue].value += 1</eval>
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~ Increase daily use by 1
+      #trkmax[cPUReconfi] += 1]]></eval>
     <exprreq message="Reconfigure class feature required."><![CDATA[#hasability[cPUReconfi] <> 0]]></exprreq>
     <exprreq message="Astral Suit class feature required."><![CDATA[#hasability[cPUAstSuit] <> 0]]></exprreq>
     </thing>
@@ -2867,7 +2872,8 @@ validif (hero.tagcount[Hero.Manifester] >= 3)]]></validate>
         V_NewLvl = 20
       endif
       ~ Set Aegis Customization Points
-      Call PUSetAegCP]]></eval>
+      Call PUSetAegCP]]>
+      <after name="Set Aegis Base Points"/></eval>
     <exprreq message="Invigorating Suit class ability required."><![CDATA[#hasability[cPUInvigSu] <> 0]]></exprreq>
     </thing>
   <thing id="fPUKillVit" name="Killer&apos;s Vitality" description="You are skilled with stealing the health of those you strike.\n\n{b}Prerequisite:{/b} Soulthief method, sneak attack +1d6 \n\n{b}Benefit:{/b} Any time you make a successful sneak attack against a living creature, you can expend your psionic focus to gain 3 temporary hit points per die of sneak attack dealt. You can divide these temporary hit points between yourself and members of your collective in any\nratio.\n\n{b}Special:{/b} If your attack reduces the target to fewer than 0 hit points, you gain double the temporary hit points." compset="Feat" summary="You are skilled with stealing the health of those you strike." uniqueness="useronce">
