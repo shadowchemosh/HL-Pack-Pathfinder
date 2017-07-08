@@ -4612,24 +4612,25 @@ field[CustDesc].text = "Shadow Twin (" & field[abValue].value & "')"]]></eval>
   <thing id="cPUTerConN" name="Concealed Nightmare" description="The dread gains a shroud of materializing fears around her while using the nightmare form terror, giving her concealment (20% miss chance). The dread must be at least 14th level and have the Nightmare Form terror to select this option. This terror is used when Nightmare Form is activated and does not take a separate use of terrors to activate." compset="CustomSpec" uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="User" tag="Activation"/>
-    <eval phase="PreAttr" priority="1000" index="2"><![CDATA[if (field[abilActive].value <> 0) then
-   ~Activate Concealment condition
-   perform hero.assign[Condition.pstConceal]
-endif]]></eval>
-    <eval phase="Final"><![CDATA[if (hero.tagis[Ability.cPUTerCon2] <> 0) then
-   perform this.assign[Helper.SpecUp]
-else
-   perform this.assign[User.Activation]
-endif]]></eval>
+    <eval phase="PreAttr" priority="1000" index="2"><![CDATA[
+      if (field[abilActive].value <> 0) then
+      ~Activate Concealment condition
+        perform hero.assign[Condition.pstConceal]
+      endif]]></eval>
+    <eval phase="Final"><![CDATA[
+      if (hero.tagis[Ability.cPUTerCon2] <> 0) then
+         perform this.assign[Helper.SpecUp]
+      else
+         perform this.assign[User.Activation]
+      endif]]></eval>
     <prereq message="Dread level 14 or higher required for this Terror">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[
+        var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
         validif (levels >= 14)]]></validate>
       </prereq>
     <prereq message="Nightmare Form terror required.">
@@ -4640,6 +4641,7 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="User" tag="Activation"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <eval phase="PostLevel" priority="10000">~ If not activated get out now!
       doneif (field[abilActive].value = 0)
 
@@ -4664,6 +4666,7 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="User" tag="Activation"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="StandardDC" tag="aCHA"/>
     <prereq message="Dread level 16 or higher required for this Terror">
       <validate><![CDATA[        var classcheck as string
@@ -4680,14 +4683,13 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="User" tag="Activation"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <prereq message="Dread level 12 or higher required for this Terror">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[
+        var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
         validif (levels >= 12)]]></validate>
       </prereq>
     <prereq message="Nightmare Form terror required.">
@@ -4698,14 +4700,13 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="User" tag="Activation"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <prereq message="Dread level 8 or higher required for this Terror">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[
+        var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
         validif (levels >= 8)]]></validate>
       </prereq>
     </thing>
@@ -4713,15 +4714,14 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="User" tag="Activation"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="StandardDC" tag="aCHA"/>
     <prereq message="Dread level 8 or higher required for this Terror">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[
+        var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
         validif (levels >= 8)]]></validate>
       </prereq>
     </thing>
@@ -4729,6 +4729,7 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="User" tag="Activation"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <prereq message="Dread level 4 or higher required for this Terror">
       <validate><![CDATA[        var classcheck as string
@@ -4746,14 +4747,17 @@ endif]]></eval>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="User" tag="Activation"/>
     <tag group="StandardDC" tag="aCHA"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     </thing>
   <thing id="cPUTerInvG" name="Invigorating Fear" description="If the dread’s reduces an enemy to 0 or fewer hit points this round, she gains temporary hit points equal to her Charisma modifier." compset="CustomSpec" summary="Gain temporary HP is reduce enemy to 0 or fewer HP." uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     </thing>
   <thing id="cPUTerLinF" name="Lingering Fear" description="The dread’s attack causes a lingering fear in the target which prevents rest for one day unless it makes a successful Will save (DC 10 + 1/2 the dread’s class level + the dread’s Charisma modifier). Inability to rest means the target cannot regain spells or power points, nor heal normally. For each 2 power points spent, this fear lingers for an additional day. This is a mind-affecting fear effect. The dread must be at least 10th level to select this option." compset="CustomSpec" summary="Target becomes unable to rest for 1 day (+1 day/2pp) if they fail a WillSave." uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="User" tag="Activation"/>
     <tag group="StandardDC" tag="aCHA"/>
     <prereq message="Dread level 10 or higher required">
@@ -4801,13 +4805,11 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <prereq message="Dread level 4 or higher required for this terror">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[
+        var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
         validif (levels >= 4)]]></validate>
       </prereq>
     </thing>
@@ -4816,13 +4818,11 @@ endif]]></eval>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="StandardDC" tag="aCHA"/>
     <prereq message="Dread level 4 or higher required for this terror">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[
+        var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
         validif (levels >= 4)]]></validate>
       </prereq>
     </thing>
@@ -4833,11 +4833,8 @@ endif]]></eval>
       <validate><![CDATA[
         var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
         validif (levels >= 10)]]></validate>
       </prereq>
     </thing>
@@ -4861,31 +4858,32 @@ endif]]></eval>
   <thing id="cPUTerOvFe" name="Overwhelming Fear" description="The dread’s next attack stuns her target with overwhelming fear if the attack is successful. The target must make a Fortitude saving throw (DC 10 + 1/2 the dread’s class level + the dread’s Charisma modifier) or cower for 1 round. If the attack misses, the effect is wasted. This is mind-affecting fear effect." compset="CustomSpec" summary="Target cowers for 1 round if they fail a Fort Save." uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="User" tag="Activation"/>
     <tag group="StandardDC" tag="aCHA"/>
     </thing>
   <thing id="cPUTerPara" name="Paranoia" description="The dread’s attack causes the target to become intensely paranoid, making it fear even its friends. The target must make a Will save (DC 10 + 1/2 the dread’s class level + the dread’s Charisma modifier) or treat all creatures as enemies. The target reacts violently to anyone who approaches and will use the most efficient means of disposing the enemy. The target also attempts a save against all effects he could, unless he makes a successful Spellcraft check to identify the effect. This condition lasts for 1 minute per dread level. This is a mind-affecting fear effect. The dread must be at least 14th level to select this option." compset="CustomSpec" summary="Target treats all creatures as enemies for 1 min/level if they fail a Will Save." uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="User" tag="Activation"/>
     <tag group="StandardDC" tag="aCHA"/>
     </thing>
   <thing id="cPUTerPNF" name="Persistent Nightmare Form" description="The dread can maintain her Nightmare Form inside areas of Null Psionics or dead magic areas. The dread must be at least 18th level and have the Nightmare Form terror to select this option." compset="CustomSpec" uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="User" tag="Activation"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <prereq message="Nightmare Form terror required.">
       <validate><![CDATA[validif (#hasability[cPUTerNFor] <> 0)]]></validate>
       </prereq>
     <prereq message="Dread level 18 or higher required for this Terror">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[
+        var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
         validif (levels >= 18)]]></validate>
       </prereq>
     </thing>
@@ -4893,14 +4891,13 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="User" tag="Activation"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <prereq message="Dread level 10 or higher required for this Terror">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[
+        var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
         validif (levels >= 10)]]></validate>
       </prereq>
     <prereq message="Mindlock terror required.">
@@ -4911,14 +4908,13 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
     <tag group="User" tag="Activation"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <prereq message="Dread level 10 or higher required for this Terror">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[
+        var classcheck as string
         var levels as number
-
         classcheck = "Dread"
-
         call PUPreReqs
-
         validif (levels >= 10)]]></validate>
       </prereq>
     <prereq message="Nightmare Form terror required.">
@@ -4928,6 +4924,7 @@ endif]]></eval>
   <thing id="cPUTerSick" name="Sickening Fear" description="The dread’s attack causes the target to become sickened unless it makes a successful Fortitude save (DC 10 + 1/2 the dread’s class level + the dread’s Charisma modifier). This effect lasts for 1d6 rounds. This is mind-affecting fear effect. For every additional power point spent, the target also takes 1 point of damage per round the effect lasts. The dread must be at least 6th level to select this option." compset="CustomSpec" summary="Target becomes sickened for 1d6 rounds if they fail a Fort Save." uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="User" tag="Activation"/>
     <tag group="StandardDC" tag="aCHA"/>
     <tag group="abSave" tag="FortNeg"/>
@@ -4945,6 +4942,7 @@ endif]]></eval>
   <thing id="cPUTerSoul" name="Soul-chilling Fear" description="The dread’s attack creates a conduit between her own subconscious and the mind of her target. The target must make a Will save (DC 10 + 1/2 the dread’s class level + the dread’s Charisma modifier) or gain 1 negative level. This is a mind-affecting fear effect. For every 3 power points spent, the target gains 1 additional negative level. The dread must be at least 12th level to select this option." compset="CustomSpec" summary="Target gains 1 negative level (+1 / 3PP spent) if they fail a Will Save." uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="User" tag="Activation"/>
     <tag group="StandardDC" tag="aCHA"/>
     <prereq message="Dread level 12 or higher required">
@@ -4961,6 +4959,7 @@ endif]]></eval>
   <thing id="cPUTerStea" name="Steal Essence" description="The dread’s next devastating touch attack works as a conduit between the target’s subconscious and her own, turning some of the damage she does into healing energy, reinvigorating the dread. She heals an amount of damage equal to the damage she deals with her Devastating Touch. The dread must be at least 8th level to select this option." compset="CustomSpec" summary="Damage dealt with your Devastating Touch attack heals you in addition." uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="User" tag="Activation"/>
     <prereq message="Dread level 8 or higher required">
       <validate><![CDATA[        var classcheck as string
@@ -4976,6 +4975,7 @@ endif]]></eval>
   <thing id="cPUTerTerr" name="Terrified Escape" description="The dread’s attack causes the target to flee from the dread on its next turn unless it makes a successful Will save (DC 10 + 1/2 the dread’s class level + the dread’s Charisma modifier). This is a mind-affecting fear effect." compset="CustomSpec" summary="Target flees if they fail a Will Save." uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="User" tag="Activation"/>
     <tag group="StandardDC" tag="aCHA"/>
     <tag group="abSave" tag="WillNeg"/>
@@ -4983,6 +4983,7 @@ endif]]></eval>
   <thing id="cPUTerWeak" name="Weakening Fear" description="The dread’s attack causes the target to be fatigued for one round per dread level unless it makes a successful Will save (DC 10 + 1/2 the dread’s class level + the dread’s Charisma modifier). This is a mind-affecting fear effect. This terror has no effect on a creature that is already fatigued. Unlike with normal fatigue, the effect ends as soon as the terror’s duration expires." compset="CustomSpec" summary="Target becomes fatigued for 1 round/level if they fail a Fort Save." uniqueness="unique">
     <usesource source="pPsiUn"/>
     <tag group="SpecSource" tag="cHelpPU2"/>
+    <tag group="Activated" tag="PUTerrorAt"/>
     <tag group="User" tag="Activation"/>
     <tag group="StandardDC" tag="aCHA"/>
     <tag group="abSave" tag="WillNeg"/>

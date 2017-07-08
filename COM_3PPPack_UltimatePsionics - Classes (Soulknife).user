@@ -212,27 +212,14 @@
     </thing>
   <thing id="cSknPsyStr" name="Psychic Strike" description="As a move action, a soulknife of 3rd level or higher can imbue his mind blade with destructive psychic energy. This effect deals an extra 1d8 points of damage on any attack he wishes to activate it on (as long as the attack is made with his mind blade). A soulknife may hold the charge as long as he likes without discharging. It does not go off on any attack unless he chooses to use it, and the charge is not wasted if an attack misses. Mindless creatures are immune to this damage, although non-mindless creatures immune to mind-affecting effects are affected by this damage as normal. (Unlike the rogue&apos;s sneak attack, the psychic strike is not precision damage and can affect creatures otherwise immune to extra damage from critical hits or more than 30 feet away.)\n\nA mind blade deals this extra damage only once when this ability is called upon, but a soulknife can imbue his mind blade with psychic energy again by taking another move action. Additionally, he may recharge it as a swift action by expending his psionic focus.{br}{br}Once a soulknife has prepared his blade for a psychic strike, it holds the extra energy until it is used (whether the attack is successful or not). Even if the soulknife drops the mind blade (or it otherwise dissipates, such as when it is thrown), it is still imbued with psychic energy when the soulknife next materializes it.{br}{br}If the soulknife forms his mind blade into two weapons, he may imbue each mind blade with psychic strike as normal. If he reshapes his mind blade into a single weapon form, the additional psychic strike imbued into the additional weapon is lost.{br}{br}At every four levels thereafter (7th, 11th, etc), the extra damage from a soulknife&apos;s psychic strike increases by 1d8." compset="ClSpecial" summary="Add destructive psychic energy to your mindblade.">
     <fieldval field="abValue2" value="8"/>
-    <tag group="Helper" tag="UseOwnLev" name="UseOwnLev" abbrev="UseOwnLev"/>
+    <tag group="Helper" tag="UseOwnLev"/>
     <tag group="AbilType" tag="Super"/>
-    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
+    <tag group="SpecType" tag="Attack"/>
     <tag group="User" tag="Activation"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="abAction" tag="Move"/>
     <tag group="abAction" tag="Swift"/>
-    <eval phase="PostLevel" priority="20000"><![CDATA[
-      ~ If we're not shown, just get out now
-      doneif (tagis[Helper.ShowSpec] <> 1)
-      ~ if we've been disabled, get out now
-      doneif (tagis[Helper.SpcDisable] <> 0)
-      ~ If not active then get out now
-      doneif (field[abilActive].value <> 1)
-
-      ~ Find all Mindblade weapons and add extra damage
-      foreach pick in hero from BaseWep where "IsWeapon.wMindBlade"
-        ~ Set the extra damage onto our mind blade weapon
-        #extradamage[eachpick,signed(field[abValue].value) & "d" & field[abValue2].value & " psy",field[name].text]
-      nexteach]]></eval>
-    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+    <eval phase="PostLevel" priority="10000"><![CDATA[
       ~Set the list name
       field[listname].text = field[thingname].text & " " & signed(field[xIndex].value) & "d" & field[abValue2].value
 
@@ -241,9 +228,31 @@
       ~ if we've been disabled, get out now
       doneif (tagis[Helper.SpcDisable] <> 0)
 
+      ~ Set the number of dice
       field[abValue].value += field[xCount].value
-      field[livename].text = field[thingname].text & " " & signed(field[abValue].value) & "d" & field[abValue2].value
-      field[abSumm].text = signed(field[abValue].value) & "d" & field[abValue2].value & " to your mind blade damage."]]></eval>
+
+      ~ Build damage text here and store it in abText5
+      ~ so outside scripts can access the damage.
+      ~ No plus damage
+      If (field[abValue3].value = 0) Then
+
+        field[abText5].text = signed(field[abValue].value) & "d" & field[abValue2].value
+
+      ~.. Build with a Plus damage
+      Else
+        field[abText5].text = signed(field[abValue].value) & "d" & field[abValue2].value & signed(field[abValue3].value)
+      Endif
+
+      field[livename].text = field[thingname].text & " " & field[abText5].text
+      field[abSumm].text = field[abText5].text & " to your mind blade damage."
+
+      ~ If not active then get out now
+      doneif (field[abilActive].value <> 1)
+
+      ~ Display Psychic Strike damage on the mind blades
+      perform hero.assign[MindBlade.PsyStrike]
+
+      ]]></eval>
     </thing>
   <thing id="cSknBSAltB" name="Alter Mind Blade" description="The soulknife gains the ability to shape her mind blade into different weapon forms. She may change her blade&apos;s form to the light weapon, one-handed weapon, or two-handed weapon forms any time she forms her mind blade. Additionally, the soulknife may choose to form her mind blade into a one-handed weapon and a light weapon instead of two light weapons." compset="CustomSpec" summary="You can reshape your mind blade any time you form it" uniqueness="useronce">
     <usesource source="pPsiUn"/>
@@ -2858,6 +2867,9 @@
     <eval phase="PostAttr" priority="10000" index="3"><![CDATA[
       ~ Give a damage bonus from Wis &
       field[dmrBonus].value += #attrmod[aWIS]]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagWeapon">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="wCompLong">
@@ -2991,6 +3003,9 @@
       ~ Correct the Mind Blade name that gets chopped when any
       ~ item power is added. &
       call NameMindBl]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagWeapon">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="wMndBltLng">
@@ -3018,6 +3033,9 @@
       ~ Correct the Mind Blade name that gets chopped when any
       ~ item power is added. &
       call NameMindBl]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagWeapon">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="wMndBltMed">
@@ -3045,6 +3063,9 @@
       ~ Correct the Mind Blade name that gets chopped when any
       ~ item power is added. &
       call NameMindBl]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagWeapon">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="wMndBltSht">
@@ -3071,6 +3092,9 @@
       ~ Correct the Mind Armor name that gets chopped when any
       ~ item power is added. &
       call NameMindBl]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagArmor">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="arChainShr">
@@ -3097,6 +3121,9 @@
       ~ Correct the Mind Armor name that gets chopped when any
       ~ item power is added. &
       call NameMindBl]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagArmor">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="arChain">
@@ -3123,6 +3150,9 @@
       ~ Correct the Mind Armor name that gets chopped when any
       ~ item power is added. &
       call NameMindBl]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagArmor">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="arSplint">
@@ -3153,6 +3183,9 @@
       ~ Correct the Mind Blade name that gets chopped when any
       ~ item power is added. &
       call NameMindBl]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagWeapon">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="wUnarmed">
@@ -3198,6 +3231,9 @@
       ~ Correct the Mind Blade name that gets chopped when any
       ~ item power is added. &
       call NameMindBl]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagWeapon">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="wPUFormCla">
@@ -3243,6 +3279,9 @@
       ~ Correct the Mind Blade name that gets chopped when any
       ~ item power is added. &
       call NameMindBl]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagWeapon">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="wPUFormBit">
@@ -3316,6 +3355,9 @@
     <eval phase="PreLevel" priority="5000"><![CDATA[
       ~ Call Magic Armor Gizmo &
       Call iMagArmor]]></eval>
+    <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
+      ~ Setup the Mind Blade item powers &
+      call MndBlItPow]]></eval>
     <child entity="gMagArmor">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="mPUMindShi">

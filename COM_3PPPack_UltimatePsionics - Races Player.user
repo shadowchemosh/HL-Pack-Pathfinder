@@ -2739,4 +2739,62 @@ hero.child[svWill].field[Bonus].value += field[abValue].value]]></eval>
 
       hero.childfound[cHelpWld].field[cPsiSPowMa].value += field[abValue].value]]></eval>
     </thing>
+  <thing id="fcPUHOrWil" name="Half-Orc Wilder" description="The wilder gains 1 psionic talent." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1 psionic talent"/>
+    <fieldval field="abValue5" value="1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rHalfOrc"/>
+    <tag group="FavClass" tag="cWilder"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      hero.childfound[cHelpWld].field[cPsiSPowMa].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUHOrPsW" name="Half-Orc Psychic Warrior" description="Add 1 to the half-orc’s power points per day." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1 power points"/>
+    <fieldval field="abValue5" value="1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rHalfOrc"/>
+    <tag group="FavClass" tag="cPUPsiWar"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      ~ Increase our total amount of Power Points
+      #resmax[resPowerPt] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUHOrDre" name="Half-Orc Dread" description="Add +1/3 to weapon damage when channeling a terror through a weapon attack." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+⅓ dmg terror"/>
+    <fieldval field="abValue5" value="3"/>
+    <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rHalfOrc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="FavClass" tag="cPUDread"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      ~ If a terror attack not activated get out now!
+      doneif (hero.tagis[Activated.PUTerrorAt] = 0)
+
+      ~ Increase our damage
+      #value2[cPUDevaTou] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="fcPUHOrSkn" name="Half-Orc Soulknife" description="Add +1/2 to the soulknife’s psychic strike damage." compset="FavClass" uniqueness="unique">
+    <fieldval field="fcName" value="+1/2 psychic strike"/>
+    <fieldval field="abValue5" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="IsRace" tag="rHalfOrc"/>
+    <tag group="FavClass" tag="cSoulknife"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Calculate the FCB Bonus &
+      field[abValue].value += round(field[fcCount].value/field[abValue5].value, 0, -1)
+
+      ~ Add Plus Damage
+      #value3[cSknPsyStr] += field[abValue].value]]></eval>
+    </thing>
   </document>

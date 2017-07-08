@@ -311,6 +311,11 @@
         perform assign[DescInfo.cSknBSRend]
         #extracrit[this,"+1d6 bleed","Rending Blades"]
       Endif
+
+      ~ Psychic Strike damage
+      If (hero.tagis[MindBlade.PsyStrike] = 1) Then
+        #extradamage[this, hero.childfound[cSknPsyStr].field[abText5].text & " psy", "Psychic Strike"]
+      Endif
     Endif
     ]]>
   </procedure>
@@ -340,6 +345,28 @@
     #applybonus[atrBonEnh,this,1]
     ]]>
   </procedure>
+
+
+  <procedure id="PsyStrDmg1" context="pick"><![CDATA[
+    ~ Psychic Strike Damage
+    ~ Build the dice damage for the soulknife's psychic strke.
+    ~ abValue  - Number of Dice
+    ~ abValue2 - Dice Size
+    ~ abValue3 - Plus Damage
+    var PsyStrDmg as string
+
+    ~ No plus damage
+    If (field[abValue3].value = 0) Then
+
+      PsyStrDmg = signed(field[abValue].value) & "d" & field[abValue2].value
+
+    ~.. Build with a Plus damage
+    Else
+      PsyStrDmg = signed(field[abValue].value) & "d" & field[abValue2].value & signed(field[abValue3].value)
+    Endif
+    ]]>
+  </procedure>
+
 
   <procedure id="PUPreReqs" scripttype="validate"><![CDATA[
     ~ IN: classcheck
