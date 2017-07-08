@@ -212,13 +212,13 @@
     <arrayval field="S2Array" index="17" value="23"/>
     <arrayval field="S2Array" index="18" value="25"/>
     <arrayval field="S2Array" index="19" value="26"/>
-    <eval phase="PostLevel" priority="600" name="Set Aegis Base Points"><![CDATA[
+    <eval phase="PostLevel" priority="600" name="Set Aegis Base Points">
       ~ Set abValue for backwards compatiblity
       field[abValue].value += field[S2ClsLevel].value
       field[S2AryLevel].value = field[S2ClsLevel].value - 1
 
       ~ Set base customization points into Value Three
-      field[abValue3].value += field[S2Array].arrayvalue[field[S2AryLevel].value]]]></eval>
+      field[abValue3].value += field[S2Array].arrayvalue[field[S2AryLevel].value]</eval>
     </thing>
   <thing id="cPUAstrRep" name="Astral Repair" description="An aegis is capable of repairing mundane items, restoring 2 hit points of damage to the touched item as a standard action usable at will. If the object has the broken condition, this condition is removed if the object is restored to at least half its original hit points. All of the pieces of an object must be present for this ability to function. This ability has no effect on objects that have been warped or otherwise transmuted, but it can still repair damage done to such items." compset="ClSpecial">
     <fieldval field="abValue" value="2"/>
@@ -464,4 +464,513 @@
 
       hero.childfound[cPUReconfi].field[DescAppend].text = "{b}" & field[thingname].text & ":{/b} Spend two daily uses of reconfigure ability, to alter all of the customizations on his astral suit."]]></eval>
     </thing>
+  <thing id="rcPUaSkin" name="Astral Skin" description="When formed in this way, an astral suit resembles a {i}psychoactive skin{/i}. Forming an astral suit into this form takes a swift action. The aegis gains no armor bonus from his astral suit when worn in this fashion, but he gains the following free customizations: speed (2), nimble. At 2nd level, the aegis gains the evasion customization as a free customization when the astral suit is in astral skin form. At 12th level, the aegis gains the improved evasion customization as a free customization when the astral suit is in astral skin form. An astral suit in this form does not count as any type of armor, but does count as a {i}psychoactive skin{/i} and follows all the rules of a {i}psychoactive skin{/i}." compset="RaceCustom" summary="AC +0; Free customizations: speed (2), nimble.">
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="rcPUaSpeed">
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaSpeed">
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaNimbl">
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaEvade">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 2]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaIEvad">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 12]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+      ~ Set tags on hero &
+      perform hero.assign[Custom.HasAstSkin]
+      perform hero.assign[Custom.ASChosen]]]></eval>
+    </thing>
+  <thing id="rcPUaSpeed" name="Speed" description="The aegis&apos;s base land speed is increased by 5 feet. This customization can be selected up to five times.{br}{br}Its effects stack." compset="RaceCustom" summary="Increase speed by +5ft.">
+    <fieldval field="abValue" value="5"/>
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="SpecType" tag="Movement"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set Helper.FirstCopy &
+      call X1SetFirst]]></eval>
+    <eval phase="PostLevel" priority="10050" index="2"><![CDATA[
+      ~ If we are not the first copy, get out now! &
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ Set feet bonus into first value
+      field[abValue].value += field[abValue5].value * 5
+      field[abSumm].text = "Increase land speed by " & signed(field[abValue].value) & " ft while wearing astral suit."
+
+      ~ If not wearing astral suit, get out now!
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      ~ Bonus to Speed
+      hero.child[Speed].field[tSpeed].value += field[abValue].value]]></eval>
+    <prereq message="You may not have more than 5 copies of this ability.">
+      <validate><![CDATA[
+        if (@ispick <> 0) then
+          validif (tagcount[HasAbility.rcPUaSpeed] <= 5)
+
+        ~ otherwise, look for fewer, since we're adding this
+        else
+          validif (tagcount[HasAbility.rcPUaSpeed] < 5)
+        endif]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcPUaNimbl" name="Nimble" description="The aegis gains a +2 enhancement bonus to Dexterity while he is wearing his astral suit. This customization can be selected a second time beginning at 5th level, and a third time starting at 10th level. Each subsequent time it is taken, the enhancement bonus to Dexterity is increased by +2." compset="RaceCustom" summary="+2 enhancement bonus to Dexterity while wearing astral suit.">
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set Helper.FirstCopy &
+      call X1SetFirst
+
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+
+      ~ Using OverCrit tags for getting this ability "free"
+      perform hero.pushtags[OverCrit.?]]]></eval>
+    <eval phase="PostLevel" priority="10050" index="2"><![CDATA[
+      ~ If we are not the first copy, get out now!
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ Bonus is 2 times the number of times this ability has
+      ~ been taken.
+      field[abValue].value += field[abValue5].value * 2
+      field[livename].text = field[thingname].text & " (" & signed(field[abValue].value) & " Dex)"
+      field[abSumm].text = signed(field[abValue].value) & " enhancement bonus to Dexterity while wearing astral suit."
+
+      ~ If we're not wearing astral suit, get out now!
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      ~ Increase Dex bonus
+      #enhancementbonus[hero.child[aDEX], field[abValue].value]]]></eval>
+    <prereq message="">
+      <validate><![CDATA[
+        var allowed as number
+        var taken as number
+        allowed = 1
+        ~ At level 5 can take this again
+        If (#levelcount[Aegis] >= 5) Then
+          allowed += 1
+        Endif
+        ~ At level 10 can take this again
+        If (#levelcount[Aegis] >= 10) Then
+          allowed += 1
+        Endif
+
+        ~ Count the number of times manually added
+        taken = tagcount[HasAbility.rcPUaNimbl] - tagcount[OverCrit.rcPUaNimbl]
+
+        ~ if we're a pick, then there must be 3 or fewer copies of
+        ~ this ability
+        If (@ispick <> 0) Then
+          validif (taken <= allowed)
+
+        ~ otherwise, look for fewer, since we're adding this
+        Else
+          validif (taken < allowed)
+        Endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability."]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcPUaEvade" name="Evasion" description="As long as the aegis is wearing the astral suit, if the aegis is subjected to an attack that normally allows a Reflex save for half damage, he takes no damage if he makes a successful saving throw. The aegis must be at least 2nd level before selecting this customization." compset="RaceCustom" uniqueness="useronce" summary="Gain evasion ability while wearing astral suit.">
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raEvasion">
+      <containerreq phase="First" priority="500"><![CDATA[Custom.WearAstS]]></containerreq>
+      </bootstrap>
+    <prereq message="Aegis level 2+ required.">
+      <validate><![CDATA[
+        var classcheck as string
+        var levels as number
+        classcheck = "Aegis"
+        call PUPreReqs
+        validif (levels >= 2)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcPUaArmor" name="Astral Armor" description="When formed into astral armor, an astral suit resembles masterwork chainmail and is treated as such for all mechanical purposes. Should the aegis be wearing armor when forming his astral suit in this fashion, the astral suit encloses the armor and the aegis gains the benefits of only his astral suit and not that from his armor, even if his armor would confer better benefits. Forming an astral suit into this form takes a move action. The aegis gains the following free customizations: brawn, improved damage. At 2nd level, the aegis gains the flexible suit customization as a free customization when the astral suit is in astral armor form. At 8th level, the astral suit resembles and is treated as a masterwork breastplate for all mechanical purposes." compset="RaceCustom" uniqueness="useronce" summary="Chainmail/Breastplate; Free customizations: brawn, improved damage.">
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="rcPUaImDmg">
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaBrawn">
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaFlexS">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 2]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="mPUAstArCh">
+      <containerreq phase="First" priority="100"><![CDATA[count:Custom.AegisLvls < 8 & Custom.WearAstS]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="mPUAstArBr">
+      <containerreq phase="First" priority="100"><![CDATA[count:Custom.AegisLvls >= 8 & Custom.WearAstS]]></containerreq>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+      ~ Set tags on hero &
+      perform hero.assign[Custom.HasAstSkin]
+      perform hero.assign[Custom.ASChosen]]]></eval>
+    </thing>
+  <thing id="mPUAstArCh" name="Astral Chainmail" description="When formed into astral armor, an astral suit resembles masterwork chainmail and is treated as such for all mechanical purposes. Should the aegis be wearing armor when forming his astral suit in this fashion, the astral suit encloses the armor and the aegis gains the benefits of only his astral suit and not that from his armor, even if his armor would confer better benefits. Forming an astral suit into this form takes a move action." compset="Armor">
+    <fieldval field="gWeight" value="40"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Custom" tag="AstArmor"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ArmorCateg" tag="Gauntlets"/>
+    <tag group="ArmorCateg" tag="Slows"/>
+    <tag group="ArmorCheck" tag="5"/>
+    <tag group="ArmorClass" tag="Medium"/>
+    <tag group="ArmorMaxDx" tag="2"/>
+    <tag group="ArmorAC" tag="6"/>
+    <tag group="ArmorArcFl" tag="30"/>
+    <tag group="Helper" tag="AlwaysMast"/>
+    <tag group="Helper" tag="AutoEquip"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="20000"><![CDATA[
+      ~ Apply astral suit bonuses &
+      call PUAstBonus]]></eval>
+    </thing>
+  <thing id="mPUAstArBr" name="Astral Breastplate" description="When formed into astral armor, an astral suit resembles masterwork breastplate and is treated as such for all mechanical purposes. Should the aegis be wearing armor when forming his astral suit in this fashion, the astral suit encloses the armor and the aegis gains the benefits of only his astral suit and not that from his armor, even if his armor would confer better benefits. Forming an astral suit into this form takes a move action." compset="Armor">
+    <fieldval field="gWeight" value="30"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Custom" tag="AstArmor"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ArmorCateg" tag="Slows"/>
+    <tag group="ArmorCheck" tag="4"/>
+    <tag group="ArmorClass" tag="Medium"/>
+    <tag group="ArmorMaxDx" tag="3"/>
+    <tag group="ArmorAC" tag="6"/>
+    <tag group="ArmorArcFl" tag="25"/>
+    <tag group="Helper" tag="AutoEquip"/>
+    <tag group="Helper" tag="AlwaysMast"/>
+    <tag group="Helper" tag="MatCstSuit"/>
+    <tag group="Helper" tag="PieceUpMat"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="20000"><![CDATA[
+      ~ Apply astral suit bonuses &
+      call PUAstBonus]]></eval>
+    </thing>
+  <thing id="rcPUaImDmg" name="Improved Damage" description="The aegis&apos;s melee attacks deal additional damage. If wielding a two-handed weapon, the aegis deals 3 additional points of damage on a successful hit. If wielding a one-handed weapon, the aegis deals 2 additional points of damage on a successful hit. If wielding a light weapon, the aegis deals 1 additional point of damage on a successful hit. If dual-wielding, each weapon is affected separately." compset="RaceCustom" uniqueness="useronce" summary="Gain a dmg bonus based on weapon type.">
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      ~ Set focus to the Damage helper pick
+      perform hero.childfound[Damage].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ Give damage bonus based on weapon type
+      focus.field[tDamLight].value += 1
+      focus.field[tDamOne].value += 2
+      focus.field[tDamTwo].value += 3]]></eval>
+    </thing>
+  <thing id="rcPUaBrawn" name="Brawn" description="The aegis gains a +2 enhancement bonus to Strength while he is wearing his astral suit. This customization can be selected a second time beginning at 5th level, and a third time starting at 10th level. Each subsequent time it is taken, the enhancement bonus to Strength is increased by +2." compset="RaceCustom" summary="+2 enhancement bonus to Strength while wearing astral suit.">
+
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set Helper.FirstCopy &
+      call X1SetFirst
+
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+
+      ~ Using OverCrit tags for getting this ability "free"
+      perform hero.pushtags[OverCrit.?]]]></eval>
+    <eval phase="PostLevel" priority="10050" index="2"><![CDATA[
+      ~ If we are not the first copy, get out now!
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ Bonus is 2 times the number of times this ability has
+      ~ been taken.
+      field[abValue].value += field[abValue5].value * 2
+      field[livename].text = field[thingname].text & " (" & signed(field[abValue].value) & " Str)"
+      field[abSumm].text = signed(field[abValue].value) & " enhancement bonus to Strength while wearing astral suit."
+
+      ~ If we're not wearing astral suit, get out now!
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      ~ Increase Str bonus
+      #enhancementbonus[hero.child[aSTR], field[abValue].value]]]></eval>
+    <prereq message="">
+      <validate><![CDATA[
+        var allowed as number
+        var taken as number
+        allowed = 1
+        ~ At level 5 can take this again
+        If (#levelcount[Aegis] >= 5) Then
+          allowed += 1
+        Endif
+        ~ At level 10 can take this again
+        If (#levelcount[Aegis] >= 10) Then
+          allowed += 1
+        Endif
+
+        ~ Count the number of times manually added
+        taken = tagcount[HasAbility.rcPUaBrawn] - tagcount[OverCrit.rcPUaBrawn]
+
+        ~ if we're a pick, then there must be 3 or fewer copies of
+        ~ this ability
+        If (@ispick <> 0) Then
+          validif (taken <= allowed)
+
+        ~ otherwise, look for fewer, since we're adding this
+        Else
+          validif (taken < allowed)
+        Endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability."]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcPUaFlexS" name="Flexible Suit" description="The aegis&apos;s armor check penalty is reduced by 1 (to a minimum of 0). The aegis may also sleep in his astral suit without becoming fatigued, if he was not already able to do so (such as if in astral skin form)." compset="RaceCustom" uniqueness="useronce" summary="Astral suit armor check penalty is reduced by 1 (to a minimum of 0).">
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rcPUaJugge" name="Astral Juggernaut" description="When formed into astral juggernaut, an astral suit resembles masterwork half-plate and is treated as such for all mechanical purposes. Should the aegis be wearing armor when forming his astral suit in this fashion, the astral suit encloses the armor and the aegis gains the benefits of only his astral suit and not that from his armor, even if his armor would confer better benefits. Forming an astral suit into this form takes a full-round action. The aegis gains the following free customizations: fortification, hardy. At 2nd level, the aegis gains the stalwart customization as a free customization when the astral suit is in astral juggernaut form. At 7th level, the astral suit resembles and is treated as masterwork full plate for all mechanical purposes." compset="RaceCustom" uniqueness="useronce" summary="Half-Plate/Full Plate; Free customizations: fortification, hardy.">
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="rcPUaForti">
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaHardy">
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaStalw">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 2]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="mPUAstArFP">
+      <containerreq phase="First" priority="100"><![CDATA[count:Custom.AegisLvls >= 7 & Custom.WearAstS]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="mPUAstArHP">
+      <containerreq phase="First" priority="100"><![CDATA[count:Custom.AegisLvls < 7 & Custom.WearAstS]]></containerreq>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+      ~ Set tags on hero &
+      perform hero.assign[Custom.HasAstSkin]
+      perform hero.assign[Custom.ASChosen]]]></eval>
+    </thing>
+  <thing id="mPUAstArFP" name="Astral Full plate" description="When formed into astral juggernaut, an astral suit resembles masterwork full plate and is treated as such for all mechanical purposes. Should the aegis be wearing armor when forming his astral suit in this fashion, the astral suit encloses the armor and the aegis gains the benefits of only his astral suit and not that from his armor, even if his armor would confer better benefits. Forming an astral suit into this form takes a full-round action." compset="Armor">
+    <fieldval field="gWeight" value="50"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Custom" tag="AstArmor"/>
+    <tag group="ArmorAC" tag="9"/>
+    <tag group="ArmorCateg" tag="Gauntlets"/>
+    <tag group="ArmorCateg" tag="Slows"/>
+    <tag group="ArmorCheck" tag="6"/>
+    <tag group="ArmorClass" tag="Heavy"/>
+    <tag group="ArmorMaxDx" tag="1"/>
+    <tag group="ArmorArcFl" tag="35"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="Helper" tag="AutoEquip"/>
+    <tag group="Helper" tag="AlwaysMast"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="20000"><![CDATA[
+      ~ Apply astral suit bonuses &
+      call PUAstBonus]]></eval>
+    </thing>
+  <thing id="mPUAstArHP" name="Astral Half-plate" description="When formed into astral juggernaut, an astral suit resembles masterwork half-plate and is treated as such for all mechanical purposes. Should the aegis be wearing armor when forming his astral suit in this fashion, the astral suit encloses the armor and the aegis gains the benefits of only his astral suit and not that from his armor, even if his armor would confer better benefits. Forming an astral suit into this form takes a full-round action." compset="Armor">
+    <fieldval field="gWeight" value="50"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Custom" tag="AstArmor"/>
+    <tag group="ArmorAC" tag="8"/>
+    <tag group="ArmorCateg" tag="Gauntlets"/>
+    <tag group="ArmorCateg" tag="Slows"/>
+    <tag group="ArmorCheck" tag="7"/>
+    <tag group="ArmorClass" tag="Heavy"/>
+    <tag group="ArmorMaxDx" tag="0"/>
+    <tag group="ArmorArcFl" tag="40"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="Helper" tag="AlwaysMast"/>
+    <tag group="Helper" tag="AutoEquip"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="20000"><![CDATA[
+      ~ Apply astral suit bonuses &
+      call PUAstBonus]]></eval>
+    </thing>
+  <thing id="rcPUaForti" name="Fortification" description="The aegis gains 25% chance to negate critical hits or sneak attacks (so damage is rolled normally instead). This does not stack with armor with the same special ability. This ability can be selected again starting at 8th level and at 12th level, increasing the chance to negate critical hits or sneak attacks by an additional 25% for every additional time it is taken." compset="RaceCustom" summary="25% chance to negate critical hits or sneak attacks.">
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set Helper.FirstCopy &
+      call X1SetFirst
+
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+
+      ~ Using OverCrit tags for getting this ability "free"
+      perform hero.pushtags[OverCrit.?]]]></eval>
+    <eval phase="PostLevel" priority="10050" index="2"><![CDATA[
+      ~ If we are not the first copy, get out now!
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ Bonus is 2 times the number of times this ability has
+      ~ been taken.
+      field[abValue].value += field[abValue5].value * 25
+      field[livename].text = field[thingname].text & " (" & field[abValue].value & " %)"
+      field[abSumm].text = field[abValue].value & "% chance to negate critical hits or sneak attacks."
+
+      ~ If we're not wearing astral suit, get out now!
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      ~ Apply Fortification to hero
+      #applyfort[field[abValue].value]]]></eval>
+    <prereq message="">
+      <validate><![CDATA[
+        var allowed as number
+        var taken as number
+        allowed = 1
+        ~ At level 5 can take this again
+        If (#levelcount[Aegis] >= 8) Then
+          allowed += 1
+        Endif
+        ~ At level 10 can take this again
+        If (#levelcount[Aegis] >= 12) Then
+          allowed += 1
+        Endif
+
+        ~ Count the number of times manually added
+        taken = tagcount[HasAbility.rcPUaForti] - tagcount[OverCrit.rcPUaForti]
+
+        ~ if we're a pick, then there must be 3 or fewer copies of
+        ~ this ability
+        If (@ispick <> 0) Then
+          validif (taken <= allowed)
+
+        ~ otherwise, look for fewer, since we're adding this
+        Else
+          validif (taken < allowed)
+        Endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability."]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcPUaHardy" name="Hardy" description="The aegis gains a +2 enhancement bonus to Constitution while he is wearing his astral suit. This customization can be selected a second time beginning at 5th level, and a third time starting at 10th level. Each subsequent time it is taken, the enhancement bonus to Constitution is increased by +2." compset="RaceCustom" summary="+2 enhancement bonus to Constitution while wearing astral suit.">
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set Helper.FirstCopy &
+      call X1SetFirst
+
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+
+      ~ Using OverCrit tags for getting this ability "free"
+      perform hero.pushtags[OverCrit.?]]]></eval>
+    <eval phase="PostLevel" priority="10050" index="2"><![CDATA[
+      ~ If we are not the first copy, get out now!
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ Bonus is 2 times the number of times this ability has
+      ~ been taken.
+      field[abValue].value += field[abValue5].value * 2
+      field[livename].text = field[thingname].text & " (" & signed(field[abValue].value) & " Con)"
+      field[abSumm].text = signed(field[abValue].value) & " enhancement bonus to Constitution while wearing astral suit."
+
+      ~ If we're not wearing astral suit, get out now!
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      ~ Increase Dex bonus
+      #enhancementbonus[hero.child[aCON], field[abValue].value]]]></eval>
+    <prereq message="">
+      <validate><![CDATA[
+        var allowed as number
+        var taken as number
+        allowed = 1
+        ~ At level 5 can take this again
+        If (#levelcount[Aegis] >= 5) Then
+          allowed += 1
+        Endif
+        ~ At level 10 can take this again
+        If (#levelcount[Aegis] >= 10) Then
+          allowed += 1
+        Endif
+
+        ~ Count the number of times manually added
+        taken = tagcount[HasAbility.rcPUaHardy] - tagcount[OverCrit.rcPUaHardy]
+
+        ~ if we're a pick, then there must be 3 or fewer copies of
+        ~ this ability
+        If (@ispick <> 0) Then
+          validif (taken <= allowed)
+
+        ~ otherwise, look for fewer, since we're adding this
+        Else
+          validif (taken < allowed)
+        Endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability."]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcPUaStalw" name="Stalwart" description="As long as the aegis is wearing the astral suit, if the aegis is subjected to an attack that normally allows a Fortitude or Will save for a reduced or partial effect, he ignores the effect if he makes a successful saving throw.{br}{br}The aegis must be at least 2nd level before selecting this customization." compset="RaceCustom" uniqueness="useronce" summary="Ignore partial effects when making a Fort/Will save.">
+    <fieldval field="abText5" value="If save allows for a reduced or partial effect, then ignore the effect if you successfully save."/>
+    <usesource source="pPsiUn"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      ~ Add situational notes to Will/Fort saves &
+      #situational[hero.childfound[svWill],field[abText5].text,field[name].text]
+      #situational[hero.childfound[svFort],field[abText5].text,field[name].text]
+      ]]></eval>
+    <prereq message="Aegis level 2+ required.">
+      <validate><![CDATA[
+        var classcheck as string
+        var levels as number
+        classcheck = "Aegis"
+        call PUPreReqs
+        validif (levels >= 2)]]></validate>
+      </prereq>
+    </thing>
+
+
   </document>

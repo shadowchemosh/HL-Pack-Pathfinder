@@ -116,6 +116,43 @@
     ]]>
   </procedure>
 
+  <!-- =================================================================== -->
+  <!-- Set Helper.FirstCopy on to the correct Custom Special               -->
+  <!-- =================================================================== -->
+  <procedure id="X1SetFirst" scripttype="eval"><![CDATA[
+    ~ Custom Specials don't normally get Helper.FirstCopy tag. Using this
+    ~ procedure will set a Helper.FirstCopy onto the first custom special
+    ~ in the list. In addition Non-1st copies will get Helper.SpecUp tag to
+    ~ NOT display on the Specials Tab.
+
+    ~ Note; abValue5 will contain the "number" of copies on the hero.
+
+    ~ See if a quickfind has been created by another copy of this ability
+    perform quickfind.setfocus
+
+    ~ If we didn't find a redirction, we're the first copy of this ability to run this script,
+    ~ so we'll make ourselves the FirstCopy.
+    If (state.isfocus = 0) Then
+      perform quickadd
+      perform assign[Helper.FirstCopy]
+
+      ~ Set initial count value
+      field[abValue5].value += 1
+
+    ~ otherwise, redirct hero.child[] to the FirstCopy, and make us an upgrade
+    Else
+
+      ~ Focus to our first copy
+      perform focus.redirect
+
+      ~ Increase count value by 1
+      focus.field[abValue5].value += 1
+
+      ~ Don't show ourself
+      perform assign[Helper.SpecUp]
+    Endif
+    ]]>
+  </procedure>
 
 
 
