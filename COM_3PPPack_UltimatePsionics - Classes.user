@@ -4588,18 +4588,6 @@ field[CustDesc].text = "Shadow Twin (" & field[abValue].value & "')"]]></eval>
     <tag group="abAction" tag="PUManFocus"/>
     <tag group="abAction" tag="Standard"/>
     </thing>
-  <thing id="rcPUaDarkv" name="Darkvision" description="The aegis gains darkvision out to a range of 60 feet." compset="RaceCustom" uniqueness="useronce">
-    <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="SpecType" tag="Sense"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <bootstrap thing="raDarkVis">
-      <containerreq phase="First" priority="500"><![CDATA[count:hero#Custom.WearAstS <> 0]]></containerreq>
-      <assignval field="abValue" value="60"/>
-      </bootstrap>
-    </thing>
   <thing id="rcPUaEnerR" name="Energy Resistance" description="The aegis gains resist 5 against his active energy type. This resistance increases by 5 for every 5 levels the aegis possesses, to a maximum of 15 at 10th level. This customization can be selected multiple times. Each time beyond the first, the aegis selects an energy type (cold, electricity, fire, or sonic) to gain resistance to, in addition to his active energy type. If the aegis&apos;s active energy type is the same as one he has selected, the effects do not stack." compset="RaceCustom">
     <fieldval field="usrCandid1" value="component.SelectHelp &amp; Selection.Energy &amp; (BloodEner.Cold|BloodEner.Elec|BloodEner.Fire|BloodEner.Sonic)"/>
     <usesource source="pPsiUn"/>
@@ -4764,11 +4752,21 @@ else
     <tag group="CustomCost" tag="1"/>
     <tag group="AllowRCust" tag="cfgPUAstSu"/>
     </thing>
-  <thing id="rcPUaRngAt" name="Ranged Attack" description="The aegis gains the ability to propel a non-psionic crystal, formed from the astral suit, at a target as a ranged attack that deals 1d8 points of piercing damage and has a range increment of 30 ft. This attack can be used as part of a full attack, including using this attack for each attack in the full attack." compset="RaceCustom">
+  <thing id="cPUEneBlst" name="Energy Blast" description="Starting at 4th level, the aegis gains the energy blast customization when his psicrystal is consumed by the astral suit. This ability replaces one of the customization points normally gained at 4th level." compset="ClSpecial">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="AbilType" tag="PsiLike"/>
+    <bootstrap thing="rcPUaEneBl">
+      <containerreq phase="First" priority="500"><![CDATA[(count:hero#Custom.PcrySub + count:hero#Custom.WearAstS = 2) & (count:Classes.Aegis >= 4)]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Decrease aegis customization points
+      #value2[cPUAegHelp] -=1]]></eval>
     </thing>
   <thing id="rcPUaRetal" name="Retaliate" description="The aegis gains the ability as an immediate action and by expending psionic focus to make a melee attack against an enemy that has successfully hit him with a melee attack. This counts as an attack of opportunity and the aegis must be able to reach the enemy. An aegis must be at least 8th level before selecting this customization." compset="RaceCustom" uniqueness="useronce">
     <usesource source="pPsiUn"/>
@@ -7331,22 +7329,6 @@ perform hero.findchild[BaseClSpec,"thingid.cPUReconfi & SpecSource.cHelpPU0 & Cl
       <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 3]]></containerreq>
       <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
-    </thing>
-  <thing id="cPUEneBlst" name="Energy Blast" description="Starting at 4th level, the aegis gains the energy blast customization when his psicrystal is consumed by the astral suit. This ability replaces one of the customization points normally gained at 4th level." compset="ClSpecial">
-    <usesource source="pPsiUn"/>
-    <tag group="AbilType" tag="PsiLike"/>
-    <bootstrap thing="rcPUaEneBl">
-      <containerreq phase="First" priority="500"><![CDATA[(count:hero#Custom.PcrySub + count:hero#Custom.WearAstS = 2) & (count:Classes.Aegis >= 4)]]></containerreq>
-      <autotag group="CustTaken" tag="cfgPUAstSu"/>
-      </bootstrap>
-    <eval phase="PostLevel" priority="10000"><![CDATA[
-      ~ If we're not shown, just get out now
-      doneif (tagis[Helper.ShowSpec] <> 1)
-      ~ if we've been disabled, get out now
-      doneif (tagis[Helper.SpcDisable] <> 0)
-
-      ~ Decrease aegis customization points
-      #value2[cPUAegHelp] -=1]]></eval>
     </thing>
   <thing id="rcPUaEmBl" name="Empowered Blast" description="The aegis can spend power points to increase the damage of his energy blast attack. Once per round, before making an attack using the energy blast customization, the aegis can spend up to his class level in power points as a free action, to gain +1d6 damage for every 1 power point spent. An attack that misses is wasted. The aegis must be at least 4th level and have the energy blast and ranged attack customizations before selecting this customization." compset="RaceCustom" uniqueness="useronce">
     <usesource source="pPsiUn"/>
