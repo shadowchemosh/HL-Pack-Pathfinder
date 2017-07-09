@@ -3533,9 +3533,34 @@
       ~ If nothing chosen, get out now
       doneif (field[pChosen].ischosen <> 1)
 
+      ~ Custom wand set focus to the gizmo BaseSpell Pick
+      If (field[pChosen].chosen.tagis[thingid.sCustomWnd] = 1) Then
+        perform field[pChosen].chosen.gizmo.findchild[BaseSpell].setfocus
+
+      ~ Custom potion set focus to the gizmo BaseSpell Pick
+      ElseIf (field[pChosen].chosen.tagis[thingid.sCustomPot] = 1) Then
+        perform field[pChosen].chosen.gizmo.findchild[BaseSpell].setfocus
+
+      ~ Custom scroll so loop though all the gizmo BaseSpell Pick
+      ElseIf (field[pChosen].chosen.tagis[thingid.sCustomScr] = 1) Then
+        foreach pick in field[pChosen].chosen.gizmo from BaseSpell
+          perform eachpick.delete[Helper.NoPathSoc]
+          perform eachpick.assign[Helper.CoreCampOK]
+        nexteach
+        done
+
+      ~ Normal gear set focus to Pick
+      Else
+        perform field[pChosen].chosen.setfocus
+      Endif
+
+      ~ If no focus set just get out now!
+      doneif (state.isfocus = 0)
+
       ~ Remove the not valid for PFS tag
-      perform field[pChosen].chosen.delete[Helper.NoPathSoc]
-      perform field[pChosen].chosen.assign[Helper.CoreCampOK]]]></eval>
+      perform focus.delete[Helper.NoPathSoc]
+      ~ Add OK for Core PFS tag
+      perform focus.assign[Helper.CoreCampOK]]]></eval>
     <eval phase="Render" priority="999999999" index="2"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
