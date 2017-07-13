@@ -2849,31 +2849,23 @@ validif (hero.tagcount[Hero.Manifester] >= 3)]]></validate>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="NoPathSoc"/>
-    <eval phase="PostLevel" priority="650"><![CDATA[
+    <eval phase="PostLevel" priority="11900" name="Student of the Astral Suit"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] = 1)
+      perform hero.childfound[cPUAegHelp].setfocus
+      ~ If Aegis Suit helper isn't live get out now!
+      doneif (state.isfocus = 0)
+      ~ If our effective level is already equal to or higher
+      ~ than our total level then nothing to do.
+      doneif (focus.field[S2ClsLevel].value >= #totallevelcount[])
 
-      ~ If Aegis isn't active get out now!
-      doneif (hero.childlives[cHelpPU0] = 0)
-
-      var V_CurrLvl as number
-      var V_NewLvl as number
-
-      ~ Increase aegis suit for purposes of customization points.
-      ~ As technically we need 3 levels of Aegis to legitimately attain this
-      ~ PrC, we really shouldn't need to start checking Aegis levels before
-      ~ 3 and combined levels before 4, but just in case...
-      V_CurrLvl = #levelcount[PUMetafrg] + #levelcount[Aegis]
-      V_NewLvl = V_CurrLvl + 4
-      if (V_NewLvl > #totallevelcount[]) then
-        V_NewLvl = #totallevelcount[]
-      endif
-      if (V_NewLvl > 20) then
-        V_NewLvl = 20
-      endif
-      ~ Set Aegis Customization Points
-      Call PUSetAegCP]]>
-      <after name="Set Aegis Base Points"/></eval>
+      ~ Increase the effective level of the Aegis Suit to a maximum of
+      ~ 4 levels. The timing here is "VERY" important as we are running
+      ~ just before the calcs on the cPUAegHelp run so we should have
+      ~ all other effective class levels already added into the S2ClsLevel
+      ~ field.
+      focus.field[S2ClsLevel].value += minimum(#totallevelcount[] - focus.field[S2ClsLevel].value, 4)]]>
+      <before name="Set Aegis Base Points"/></eval>
     <exprreq message="Invigorating Suit class ability required."><![CDATA[#hasability[cPUInvigSu] <> 0]]></exprreq>
     </thing>
   <thing id="fPUKillVit" name="Killer&apos;s Vitality" description="You are skilled with stealing the health of those you strike.\n\n{b}Prerequisite:{/b} Soulthief method, sneak attack +1d6 \n\n{b}Benefit:{/b} Any time you make a successful sneak attack against a living creature, you can expend your psionic focus to gain 3 temporary hit points per die of sneak attack dealt. You can divide these temporary hit points between yourself and members of your collective in any\nratio.\n\n{b}Special:{/b} If your attack reduces the target to fewer than 0 hit points, you gain double the temporary hit points." compset="Feat" summary="You are skilled with stealing the health of those you strike." uniqueness="useronce">
