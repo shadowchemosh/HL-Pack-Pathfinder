@@ -1,29 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document signature="Hero Lab Data">
   <loadonce key="COM_BasicPack_ShadowChemosh - Skills"/>
-  <fileinfo>
-    <info_author><![CDATA[
-      Author:  Tim Shadow
-      Email: shadowchemosh@yahoo.com
-      File Name changed from PFRPG_Adjustments_Concentration.user => COM_BasicPack_ShadowChemosh - Skills.user]]></info_author>
-    <info_history>January 29, 2015 - Tim Shadow
-      -Added Helper.CoreCampOK to the core classes concentration skills.    
-
-      August 29, 2014 - Tim Shadow
-      -Added ACG Classes to the list of conentration skills.
-
-      June 29, 2014 - Tim Shadow
-      -Pulled from Shadow d20 house rules and merged into the Adjustments addon.</info_history>
-    </fileinfo>
-  <thing id="skS2concPa" name="Concentration: Paladin" description="To cast a spell, you must concentrate. If something interrupts your concentration while you&apos;re casting, you must make a concentration check or lose the spell. When you make a concentration check, you roll d20 and add your caster level and the ability score modifier used to determine bonus spells of the same type. clerics, druids, and rangers add their Wisdom modifier. Bards, paladins, and sorcerers  add their Charisma modifier. Finally, wizards add their Intelligence modifier. The more distracting the interruption and the higher the level of the spell you are trying to cast, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the spell just as if you had cast it to no effect.\n\n{b}Cast defensively{/b} 15 + double spell level\n{b}Injured while casting{/b} 10 + damage dealt + spell level\n{b}Continuous damage while casting{/b} 10 + 1/2 damage dealt + spell level\n{b}Affected by a non-damaging spell while casting{/b} DC of the spell + spell level\n{b}Grappled or pinned while casting{/b} 10 + grappler&apos;s CMB + spell level\n{b}Vigorous motion while casting{/b} 10 + spell level\n{b}Violent motion while casting{/b} 15 + spell level\n{b}Extremely violent motion while casting{/b} 20 + spell level\n{b}Wind with rain or sleet while casting{/b} 5 + spell level\n{b}Wind with hail and debris while casting{/b} 10 + spell level\n{b}Weather caused by spell{/b} see spell\n{b}Entangled while casting{/b} 15 + spell level" compset="Skill" uniqueness="unique">
+  <thing id="skS2ClSr" name="CL vs SR" description="Caster level modifier added to a d20 to overcome Spell Resistance.\n\n{B}NOTE:{/b} This skill is auto-calculated and you should NOT put ranks into as it will have no affect." compset="Skill" uniqueness="unique">
     <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <tag group="Helper" tag="ClassSkill"/>
+    <tag group="AdjSkill" tag="CLvsSR"/>
+    <link linkage="skillattr" thing="aINT"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ We are not a real skill so we don't want to have an ability
+      ~ linked to us.
+      perform delete[SkillAbil.?]]]></eval>
+    <eval phase="Render" priority="10" index="2"><![CDATA[
+      ~ Total any SR bonuses with Max Caster Level to set the
+      ~ sub-skills total bonus. &
+      field[skTotal].value += herofield[tOverSplRs].value + herofield[tMaxCaster].value
+
+      ~ Calculte External Skill Total from Parent skill
+      call S2CalcClSr]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Sub-skills can&apos;t have ranks.">~ Error if user put any ranks into this skill.
+      validif (field[skRanks].value = 0)
+
+      hero.panelvalid[skills] = 0</evalrule>
+    </thing>
+  <thing id="skS2concCl" name="Concentration: Cleric" description="To cast a spell, you must concentrate. If something interrupts your concentration while you&apos;re casting, you must make a concentration check or lose the spell. When you make a concentration check, you roll d20 and add your caster level and the ability score modifier used to determine bonus spells of the same type. clerics, druids, and rangers add their Wisdom modifier. Bards, paladins, and sorcerers  add their Charisma modifier. Finally, wizards add their Intelligence modifier. The more distracting the interruption and the higher the level of the spell you are trying to cast, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the spell just as if you had cast it to no effect.\n\n{b}Cast defensively{/b} 15 + double spell level\n{b}Injured while casting{/b} 10 + damage dealt + spell level\n{b}Continuous damage while casting{/b} 10 + 1/2 damage dealt + spell level\n{b}Affected by a non-damaging spell while casting{/b} DC of the spell + spell level\n{b}Grappled or pinned while casting{/b} 10 + grappler&apos;s CMB + spell level\n{b}Vigorous motion while casting{/b} 10 + spell level\n{b}Violent motion while casting{/b} 15 + spell level\n{b}Extremely violent motion while casting{/b} 20 + spell level\n{b}Wind with rain or sleet while casting{/b} 5 + spell level\n{b}Wind with hail and debris while casting{/b} 10 + spell level\n{b}Weather caused by spell{/b} see spell\n{b}Entangled while casting{/b} 15 + spell level" compset="Skill" uniqueness="unique">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="CoreCampOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AdjSkill" tag="Concent"/>
     <tag group="Helper" tag="ExtraSkill"/>
+    <link linkage="skillattr" thing="aWIS"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpClr"
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
+    </thing>
+  <thing id="skS2concPa" name="Concentration: Paladin" description="To cast a spell, you must concentrate. If something interrupts your concentration while you&apos;re casting, you must make a concentration check or lose the spell. When you make a concentration check, you roll d20 and add your caster level and the ability score modifier used to determine bonus spells of the same type. clerics, druids, and rangers add their Wisdom modifier. Bards, paladins, and sorcerers  add their Charisma modifier. Finally, wizards add their Intelligence modifier. The more distracting the interruption and the higher the level of the spell you are trying to cast, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the spell just as if you had cast it to no effect.\n\n{b}Cast defensively{/b} 15 + double spell level\n{b}Injured while casting{/b} 10 + damage dealt + spell level\n{b}Continuous damage while casting{/b} 10 + 1/2 damage dealt + spell level\n{b}Affected by a non-damaging spell while casting{/b} DC of the spell + spell level\n{b}Grappled or pinned while casting{/b} 10 + grappler&apos;s CMB + spell level\n{b}Vigorous motion while casting{/b} 10 + spell level\n{b}Violent motion while casting{/b} 15 + spell level\n{b}Extremely violent motion while casting{/b} 20 + spell level\n{b}Wind with rain or sleet while casting{/b} 5 + spell level\n{b}Wind with hail and debris while casting{/b} 10 + spell level\n{b}Weather caused by spell{/b} see spell\n{b}Entangled while casting{/b} 15 + spell level" compset="Skill" uniqueness="unique">
+    <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aCHA"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -39,15 +73,15 @@
     </thing>
   <thing id="skS2concSo" name="Concentration: Sorcerer" description="To cast a spell, you must concentrate. If something interrupts your concentration while you&apos;re casting, you must make a concentration check or lose the spell. When you make a concentration check, you roll d20 and add your caster level and the ability score modifier used to determine bonus spells of the same type. clerics, druids, and rangers add their Wisdom modifier. Bards, paladins, and sorcerers  add their Charisma modifier. Finally, wizards add their Intelligence modifier. The more distracting the interruption and the higher the level of the spell you are trying to cast, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the spell just as if you had cast it to no effect.\n\n{b}Cast defensively{/b} 15 + double spell level\n{b}Injured while casting{/b} 10 + damage dealt + spell level\n{b}Continuous damage while casting{/b} 10 + 1/2 damage dealt + spell level\n{b}Affected by a non-damaging spell while casting{/b} DC of the spell + spell level\n{b}Grappled or pinned while casting{/b} 10 + grappler&apos;s CMB + spell level\n{b}Vigorous motion while casting{/b} 10 + spell level\n{b}Violent motion while casting{/b} 15 + spell level\n{b}Extremely violent motion while casting{/b} 20 + spell level\n{b}Wind with rain or sleet while casting{/b} 5 + spell level\n{b}Wind with hail and debris while casting{/b} 10 + spell level\n{b}Weather caused by spell{/b} see spell\n{b}Entangled while casting{/b} 15 + spell level" compset="Skill" uniqueness="unique">
     <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="CoreCampOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AdjSkill" tag="Concent"/>
     <tag group="Helper" tag="ExtraSkill"/>
-    <tag group="Helper" tag="CoreCampOK"/>
     <link linkage="skillattr" thing="aCHA"/>
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -61,15 +95,15 @@
     </thing>
   <thing id="skS2concWi" name="Concentration: Wizard" description="To cast a spell, you must concentrate. If something interrupts your concentration while you&apos;re casting, you must make a concentration check or lose the spell. When you make a concentration check, you roll d20 and add your caster level and the ability score modifier used to determine bonus spells of the same type. clerics, druids, and rangers add their Wisdom modifier. Bards, paladins, and sorcerers  add their Charisma modifier. Finally, wizards add their Intelligence modifier. The more distracting the interruption and the higher the level of the spell you are trying to cast, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the spell just as if you had cast it to no effect.\n\n{b}Cast defensively{/b} 15 + double spell level\n{b}Injured while casting{/b} 10 + damage dealt + spell level\n{b}Continuous damage while casting{/b} 10 + 1/2 damage dealt + spell level\n{b}Affected by a non-damaging spell while casting{/b} DC of the spell + spell level\n{b}Grappled or pinned while casting{/b} 10 + grappler&apos;s CMB + spell level\n{b}Vigorous motion while casting{/b} 10 + spell level\n{b}Violent motion while casting{/b} 15 + spell level\n{b}Extremely violent motion while casting{/b} 20 + spell level\n{b}Wind with rain or sleet while casting{/b} 5 + spell level\n{b}Wind with hail and debris while casting{/b} 10 + spell level\n{b}Weather caused by spell{/b} see spell\n{b}Entangled while casting{/b} 15 + spell level" compset="Skill" uniqueness="unique">
     <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="CoreCampOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AdjSkill" tag="Concent"/>
     <tag group="Helper" tag="ExtraSkill"/>
-    <tag group="Helper" tag="CoreCampOK"/>
     <link linkage="skillattr" thing="aINT"/>
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -83,15 +117,15 @@
     </thing>
   <thing id="skS2concBa" name="Concentration: Bard" description="To cast a spell, you must concentrate. If something interrupts your concentration while you&apos;re casting, you must make a concentration check or lose the spell. When you make a concentration check, you roll d20 and add your caster level and the ability score modifier used to determine bonus spells of the same type. clerics, druids, and rangers add their Wisdom modifier. Bards, paladins, and sorcerers  add their Charisma modifier. Finally, wizards add their Intelligence modifier. The more distracting the interruption and the higher the level of the spell you are trying to cast, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the spell just as if you had cast it to no effect.\n\n{b}Cast defensively{/b} 15 + double spell level\n{b}Injured while casting{/b} 10 + damage dealt + spell level\n{b}Continuous damage while casting{/b} 10 + 1/2 damage dealt + spell level\n{b}Affected by a non-damaging spell while casting{/b} DC of the spell + spell level\n{b}Grappled or pinned while casting{/b} 10 + grappler&apos;s CMB + spell level\n{b}Vigorous motion while casting{/b} 10 + spell level\n{b}Violent motion while casting{/b} 15 + spell level\n{b}Extremely violent motion while casting{/b} 20 + spell level\n{b}Wind with rain or sleet while casting{/b} 5 + spell level\n{b}Wind with hail and debris while casting{/b} 10 + spell level\n{b}Weather caused by spell{/b} see spell\n{b}Entangled while casting{/b} 15 + spell level" compset="Skill" uniqueness="unique">
     <usesource source="srcS2Adjus"/>
-    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AdjSkill" tag="Concent"/>
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aCHA"/>
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -105,15 +139,15 @@
     </thing>
   <thing id="skS2concDr" name="Concentration: Druid" description="To cast a spell, you must concentrate. If something interrupts your concentration while you&apos;re casting, you must make a concentration check or lose the spell. When you make a concentration check, you roll d20 and add your caster level and the ability score modifier used to determine bonus spells of the same type. clerics, druids, and rangers add their Wisdom modifier. Bards, paladins, and sorcerers  add their Charisma modifier. Finally, wizards add their Intelligence modifier. The more distracting the interruption and the higher the level of the spell you are trying to cast, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the spell just as if you had cast it to no effect.\n\n{b}Cast defensively{/b} 15 + double spell level\n{b}Injured while casting{/b} 10 + damage dealt + spell level\n{b}Continuous damage while casting{/b} 10 + 1/2 damage dealt + spell level\n{b}Affected by a non-damaging spell while casting{/b} DC of the spell + spell level\n{b}Grappled or pinned while casting{/b} 10 + grappler&apos;s CMB + spell level\n{b}Vigorous motion while casting{/b} 10 + spell level\n{b}Violent motion while casting{/b} 15 + spell level\n{b}Extremely violent motion while casting{/b} 20 + spell level\n{b}Wind with rain or sleet while casting{/b} 5 + spell level\n{b}Wind with hail and debris while casting{/b} 10 + spell level\n{b}Weather caused by spell{/b} see spell\n{b}Entangled while casting{/b} 15 + spell level" compset="Skill" uniqueness="unique">
     <usesource source="srcS2Adjus"/>
-    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AdjSkill" tag="Concent"/>
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aWIS"/>
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -135,7 +169,7 @@
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -156,7 +190,7 @@
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -177,7 +211,7 @@
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -198,7 +232,7 @@
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -219,34 +253,12 @@
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
       var S2_Class as string
       S2_Class = "cHelpSum"
-      call S2CalcConc]]></eval>
-    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder.">~ Error if user put any ranks into this skill.
-      validif (field[skRanks].value = 0)
-      ~ Error out the skills panel
-      hero.panelvalid[skills] = 0</evalrule>
-    </thing>
-  <thing id="skS2concCl" name="Concentration: Cleric" description="To cast a spell, you must concentrate. If something interrupts your concentration while you&apos;re casting, you must make a concentration check or lose the spell. When you make a concentration check, you roll d20 and add your caster level and the ability score modifier used to determine bonus spells of the same type. clerics, druids, and rangers add their Wisdom modifier. Bards, paladins, and sorcerers  add their Charisma modifier. Finally, wizards add their Intelligence modifier. The more distracting the interruption and the higher the level of the spell you are trying to cast, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the spell just as if you had cast it to no effect.\n\n{b}Cast defensively{/b} 15 + double spell level\n{b}Injured while casting{/b} 10 + damage dealt + spell level\n{b}Continuous damage while casting{/b} 10 + 1/2 damage dealt + spell level\n{b}Affected by a non-damaging spell while casting{/b} DC of the spell + spell level\n{b}Grappled or pinned while casting{/b} 10 + grappler&apos;s CMB + spell level\n{b}Vigorous motion while casting{/b} 10 + spell level\n{b}Violent motion while casting{/b} 15 + spell level\n{b}Extremely violent motion while casting{/b} 20 + spell level\n{b}Wind with rain or sleet while casting{/b} 5 + spell level\n{b}Wind with hail and debris while casting{/b} 10 + spell level\n{b}Weather caused by spell{/b} see spell\n{b}Entangled while casting{/b} 15 + spell level" compset="Skill" uniqueness="unique">
-    <usesource source="srcS2Adjus"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="CoreCampOK"/>
-    <tag group="AdjSkill" tag="Concent"/>
-    <tag group="Helper" tag="ExtraSkill"/>
-    <link linkage="skillattr" thing="aWIS"/>
-    <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
-      call S2CalcConc</eval>
-    <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
-      ~ skill total field. We also add any Bonus values so that
-      ~ the Skill Adjustment Bonus will work with these
-      ~ concentration skills.
-      var S2_Class as string
-      S2_Class = "cHelpClr"
       call S2CalcConc]]></eval>
     <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder.">~ Error if user put any ranks into this skill.
       validif (field[skRanks].value = 0)
@@ -262,7 +274,7 @@
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -281,7 +293,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aINT"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -302,7 +314,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aINT"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -323,7 +335,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aCHA"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -344,7 +356,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aCHA"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -365,7 +377,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aWIS"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -388,7 +400,7 @@
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -409,7 +421,7 @@
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -428,7 +440,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aWIS"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -452,7 +464,7 @@
     <eval phase="First" priority="10000" index="2">~ Do initial setup of the concentraion skill
       call S2CalcConc</eval>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -464,28 +476,6 @@
       ~ Error out the skills panel
       hero.panelvalid[skills] = 0</evalrule>
     </thing>
-  <thing id="skS2ClSr" name="CL vs SR" description="Caster level modifier added to a d20 to overcome Spell Resistance.\n\n{B}NOTE:{/b} This skill is auto-calculated and you should NOT put ranks into as it will have no affect." compset="Skill" uniqueness="unique">
-    <usesource source="srcS2Adjus"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="ExtraSkill"/>
-    <tag group="Helper" tag="ClassSkill"/>
-    <tag group="AdjSkill" tag="CLvsSR"/>
-    <link linkage="skillattr" thing="aINT"/>
-    <eval phase="First" priority="10000"><![CDATA[
-      ~ We are not a real skill so we don't want to have an ability
-      ~ linked to us.
-      perform delete[SkillAbil.?]]]></eval>
-    <eval phase="Render" priority="10" index="2">~ Total any SR bonuses with Max Caster Level to set the sub-skills
-      ~ total bonus
-      field[skTotal].value += herofield[tOverSplRs].value + herofield[tMaxCaster].value
-
-      ~ Calculte External Skill Total from Parent skill
-      call S2CalcClSr</eval>
-    <evalrule phase="Validation" priority="5000" message="Sub-skills can&apos;t have ranks.">~ Error if user put any ranks into this skill.
-      validif (field[skRanks].value = 0)
-
-      hero.panelvalid[skills] = 0</evalrule>
-    </thing>
   <thing id="skS2ConKin" name="Concentration: Kineticist" description="To cast a spell, you must concentrate. If something interrupts your concentration while you&apos;re casting, you must make a concentration check or lose the spell. When you make a concentration check, you roll d20 and add your caster level and the ability score modifier used to determine bonus spells of the same type. clerics, druids, and rangers add their Wisdom modifier. Bards, paladins, and sorcerers  add their Charisma modifier. Finally, wizards add their Intelligence modifier. The more distracting the interruption and the higher the level of the spell you are trying to cast, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the spell just as if you had cast it to no effect.\n\n{b}Cast defensively{/b} 15 + double spell level\n{b}Injured while casting{/b} 10 + damage dealt + spell level\n{b}Continuous damage while casting{/b} 10 + 1/2 damage dealt + spell level\n{b}Affected by a non-damaging spell while casting{/b} DC of the spell + spell level\n{b}Grappled or pinned while casting{/b} 10 + grappler&apos;s CMB + spell level\n{b}Vigorous motion while casting{/b} 10 + spell level\n{b}Violent motion while casting{/b} 15 + spell level\n{b}Extremely violent motion while casting{/b} 20 + spell level\n{b}Wind with rain or sleet while casting{/b} 5 + spell level\n{b}Wind with hail and debris while casting{/b} 10 + spell level\n{b}Weather caused by spell{/b} see spell\n{b}Entangled while casting{/b} 15 + spell level" compset="Skill" uniqueness="unique">
     <usesource source="srcS2Adjus"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -493,7 +483,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aCON"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -505,7 +495,7 @@
       call S2CalcConc]]></eval>
     <eval phase="PostAttr" priority="25000" index="3"><![CDATA[
      ~ The Kineticist is not a "real" caster class from HL point of
-     ~ view. Meaning it has no Base Concentration and attribute 
+     ~ view. Meaning it has no Base Concentration and attribute
      ~ values to pull. So do that here manually
      field[Bonus].value += hero.childfound[cHelpKin].field[cTotalLev].value + #attrmod[aCON]]]></eval>
     <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
@@ -521,7 +511,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aCHA"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -544,7 +534,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aCHA"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -554,7 +544,7 @@
     <eval phase="First" priority="10000" index="2"><![CDATA[
       ~ Do initial setup of the concentraion skill &
       call S2CalcConc]]></eval>
-    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[      
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
       ~ Error if user put any ranks into this skill. &
       validif (field[skRanks].value = 0)
       ~ Error out the skills panel
@@ -567,7 +557,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aINT"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -577,7 +567,7 @@
     <eval phase="First" priority="10000" index="2"><![CDATA[
       ~ Do initial setup of the concentraion skill &
       call S2CalcConc]]></eval>
-    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[      
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
       ~ Error if user put any ranks into this skill. &
       validif (field[skRanks].value = 0)
       ~ Error out the skills panel
@@ -590,7 +580,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aINT"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -600,7 +590,7 @@
     <eval phase="First" priority="10000" index="2"><![CDATA[
       ~ Do initial setup of the concentraion skill &
       call S2CalcConc]]></eval>
-    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[      
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
       ~ Error if user put any ranks into this skill. &
       validif (field[skRanks].value = 0)
       ~ Error out the skills panel
@@ -613,7 +603,7 @@
     <tag group="Helper" tag="ExtraSkill"/>
     <link linkage="skillattr" thing="aWIS"/>
     <eval phase="Final" priority="999999999"><![CDATA[
-      ~ Calculate the total concentration and place it in the 
+      ~ Calculate the total concentration and place it in the
       ~ skill total field. We also add any Bonus values so that
       ~ the Skill Adjustment Bonus will work with these
       ~ concentration skills.
@@ -623,7 +613,7 @@
     <eval phase="First" priority="10000" index="2"><![CDATA[
       ~ Do initial setup of the concentraion skill &
       call S2CalcConc]]></eval>
-    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[      
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
       ~ Error if user put any ranks into this skill. &
       validif (field[skRanks].value = 0)
       ~ Error out the skills panel
