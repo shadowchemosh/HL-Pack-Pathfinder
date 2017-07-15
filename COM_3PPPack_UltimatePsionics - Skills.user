@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document signature="Hero Lab Data">
   <loadonce key="COM_3PPPack_UltimatePsionics - Skills"/>
-  <fileinfo>
-    <info_author>TCArknight</info_author>
-    </fileinfo>
   <thing id="skPUAhypno" name="Autohypnosis" description="You have trained your mind to gain mastery over your body and the mind&apos;s own deepest capabilities.\n\n{b}Check:{/b} The DC and the effect of a successful check depend on the task you attempt.\n\n{b}Task: DC{/b}\nIgnore caltrop wound: 18\nMemorize: 15\nResist dying: 15\nResist fear: Fear effect DC\nTolerate poison: Poison&apos;s DC\nWillpower: 20\n\n{b}Ignore Caltrop Wound:{/b} If you are wounded by stepping on a caltrop, your speed is reduced to one-half normal. A successful Autohypnosis check removes this movement penalty. The wound doesn’t go away—it is just ignored through self-persuasion.\n\n{b}Memorize:{/b} You can attempt to memorize a long string of numbers, a long passage of verse, or some other particularly difficult piece of information (but you can’t memorize magical writing or similarly exotic scripts). Each successful check allows you to memorize a single page of text (up to 800 words), numbers, diagrams, or sigils (even if you don’t recognize their meaning). If a document is longer than one page, you can make additional checks for each additional page. You always retain this information; however, you can recall it only with another successful Autohypnosis check.\n\n{b}Resist Dying:{/b} You can attempt to subconsciously prevent yourself from dying. If you have negative hit points and are losing hit points (at 1 per round, 1 per hour), you can substitute a DC 15 Autohypnosis check for your Constitution check to see if you become stable. If the check is successful, you stop losing hit points (you do not gain any hit points, however, as a result of the check). You can substitute this check for the Constitution check in later rounds if you are initially unsuccessful.\n\n{b}Resist Fear:{/b} In response to any fear effect, you make a saving throw normally. If you fail the saving throw, you can make an Autohypnosis check on your next round even while overcome by fear. If your Autohypnosis check meets or beats the DC for the fear effect, you may make an additional Will save with a +4 competence bonus to shrug off the fear. On a failed check, the fear affects you normally, and you gain no further attempts to shrug off that particular fear effect.\n\n{b}Tolerate Poison:{/b} You can attempt to resist the effect of any standard poison. Every time you make a saving throw against the poison, you make an Autohypnosis check. If your Autohypnosis check exceeds the DC of the poison, you receive a +4 competence bonus on your saving throw against the poison. This skill has no effect on the initial saving throw against poison.\n\n{b}Willpower:{/b} If reduced to 0 hit points (disabled), you can make an Autohypnosis check. If successful, you can take a standard action while at 0 hit points without taking 1 point of damage (or any other action the DM deems strenuous, including some free actions such as casting a quickened spell). You must make a check for each strenuous action you want to take. A failed Autohypnosis check in this circumstance carries no direct penalty— you can choose not to take the strenuous action and thus avoid the hit point loss. If you do so anyway, you drop to –1 hit points, as normal when disabled.\n\n{b}Action:{/b} Typically none. Making an Autohypnosis check usually doesn’t require an action; it is either a free action (when attempted reactively) or part of another action (when attempted actively).\n\n{b}Try Again:{/b} Yes, for memorize and willpower uses, though a success doesn’t cancel the effects of a previous failure. No for the other uses." compset="Skill" uniqueness="useronce">
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="TrainOnly"/>
@@ -37,5 +34,189 @@
     <bootstrap thing="skPUKnwPsi"></bootstrap>
     <containerreq phase="First" priority="100">source.PUConsSkil</containerreq>
     <link linkage="skillattr" thing="aINT"/>
+    </thing>
+  <thing id="skPUconcAe" name="Concentration: Aegis" description="To manifest a power, you must concentrate. If something interrupts your concentration while you&apos;re manifesting, you must make a concentration check or lose the power. When you make a concentration check, you roll d20 and add your manifester level and the ability score modifier used to determine bonus powers of the same type. The more distracting the interruption and the higher the level of the power you are trying to manifest, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the power just as if you had manifest it to no effect.\n\n{b}Manifest defensively{/b} 15 + double power level\n{b}Injured while manifesting{/b} 10 + damage dealt + power level\n{b}Continuous damage while manifesting{/b} 10 + 1/2 damage dealt + power level\n{b}Affected by a non-damaging power while manifesting{/b} DC of the power + power level\n{b}Grappled or pinned while manifesting{/b} 10 + grappler&apos;s CMB + power level\n{b}Vigorous motion while manifesting{/b} 10 + power level\n{b}Violent motion while manifesting{/b} 15 + power level\n{b}Extremely violent motion while manifesting{/b} 20 + power level\n{b}Wind with rain or sleet while manifesting{/b} 5 + power level\n{b}Wind with hail and debris while manifesting{/b} 10 + power level\n{b}Weather caused by power{/b} see power\n{b}Entangled while manifesting{/b} 15 + power level" compset="Skill" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="skillattr" thing="aINT"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpPU0"
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
+    </thing>
+  <thing id="skPUconcCr" name="Concentration: Cryptic" description="To manifest a power, you must concentrate. If something interrupts your concentration while you&apos;re manifesting, you must make a concentration check or lose the power. When you make a concentration check, you roll d20 and add your manifester level and the ability score modifier used to determine bonus powers of the same type. The more distracting the interruption and the higher the level of the power you are trying to manifest, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the power just as if you had manifest it to no effect.\n\n{b}Manifest defensively{/b} 15 + double power level\n{b}Injured while manifesting{/b} 10 + damage dealt + power level\n{b}Continuous damage while manifesting{/b} 10 + 1/2 damage dealt + power level\n{b}Affected by a non-damaging power while manifesting{/b} DC of the power + power level\n{b}Grappled or pinned while manifesting{/b} 10 + grappler&apos;s CMB + power level\n{b}Vigorous motion while manifesting{/b} 10 + power level\n{b}Violent motion while manifesting{/b} 15 + power level\n{b}Extremely violent motion while manifesting{/b} 20 + power level\n{b}Wind with rain or sleet while manifesting{/b} 5 + power level\n{b}Wind with hail and debris while manifesting{/b} 10 + power level\n{b}Weather caused by power{/b} see power\n{b}Entangled while manifesting{/b} 15 + power level" compset="Skill" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="skillattr" thing="aINT"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpPU1"
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
+    </thing>
+  <thing id="skPUconcDr" name="Concentration: Dread" description="To manifest a power, you must concentrate. If something interrupts your concentration while you&apos;re manifesting, you must make a concentration check or lose the power. When you make a concentration check, you roll d20 and add your manifester level and the ability score modifier used to determine bonus powers of the same type. The more distracting the interruption and the higher the level of the power you are trying to manifest, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the power just as if you had manifest it to no effect.\n\n{b}Manifest defensively{/b} 15 + double power level\n{b}Injured while manifesting{/b} 10 + damage dealt + power level\n{b}Continuous damage while manifesting{/b} 10 + 1/2 damage dealt + power level\n{b}Affected by a non-damaging power while manifesting{/b} DC of the power + power level\n{b}Grappled or pinned while manifesting{/b} 10 + grappler&apos;s CMB + power level\n{b}Vigorous motion while manifesting{/b} 10 + power level\n{b}Violent motion while manifesting{/b} 15 + power level\n{b}Extremely violent motion while manifesting{/b} 20 + power level\n{b}Wind with rain or sleet while manifesting{/b} 5 + power level\n{b}Wind with hail and debris while manifesting{/b} 10 + power level\n{b}Weather caused by power{/b} see power\n{b}Entangled while manifesting{/b} 15 + power level" compset="Skill" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="skillattr" thing="aINT"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpPU2"
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
+    </thing>
+  <thing id="skPUconcMa" name="Concentration: Marksman" description="To manifest a power, you must concentrate. If something interrupts your concentration while you&apos;re manifesting, you must make a concentration check or lose the power. When you make a concentration check, you roll d20 and add your manifester level and the ability score modifier used to determine bonus powers of the same type. The more distracting the interruption and the higher the level of the power you are trying to manifest, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the power just as if you had manifest it to no effect.\n\n{b}Manifest defensively{/b} 15 + double power level\n{b}Injured while manifesting{/b} 10 + damage dealt + power level\n{b}Continuous damage while manifesting{/b} 10 + 1/2 damage dealt + power level\n{b}Affected by a non-damaging power while manifesting{/b} DC of the power + power level\n{b}Grappled or pinned while manifesting{/b} 10 + grappler&apos;s CMB + power level\n{b}Vigorous motion while manifesting{/b} 10 + power level\n{b}Violent motion while manifesting{/b} 15 + power level\n{b}Extremely violent motion while manifesting{/b} 20 + power level\n{b}Wind with rain or sleet while manifesting{/b} 5 + power level\n{b}Wind with hail and debris while manifesting{/b} 10 + power level\n{b}Weather caused by power{/b} see power\n{b}Entangled while manifesting{/b} 15 + power level" compset="Skill" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="skillattr" thing="aINT"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpPU3"
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
+    </thing>
+  <thing id="skPUconcPW" name="Concentration: Psychic Warrior" description="To manifest a power, you must concentrate. If something interrupts your concentration while you&apos;re manifesting, you must make a concentration check or lose the power. When you make a concentration check, you roll d20 and add your manifester level and the ability score modifier used to determine bonus powers of the same type. The more distracting the interruption and the higher the level of the power you are trying to manifest, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the power just as if you had manifest it to no effect.\n\n{b}Manifest defensively{/b} 15 + double power level\n{b}Injured while manifesting{/b} 10 + damage dealt + power level\n{b}Continuous damage while manifesting{/b} 10 + 1/2 damage dealt + power level\n{b}Affected by a non-damaging power while manifesting{/b} DC of the power + power level\n{b}Grappled or pinned while manifesting{/b} 10 + grappler&apos;s CMB + power level\n{b}Vigorous motion while manifesting{/b} 10 + power level\n{b}Violent motion while manifesting{/b} 15 + power level\n{b}Extremely violent motion while manifesting{/b} 20 + power level\n{b}Wind with rain or sleet while manifesting{/b} 5 + power level\n{b}Wind with hail and debris while manifesting{/b} 10 + power level\n{b}Weather caused by power{/b} see power\n{b}Entangled while manifesting{/b} 15 + power level" compset="Skill" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="skillattr" thing="aINT"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpPWa"
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
+    </thing>
+  <thing id="skPUconcPs" name="Concentration: Psion" description="To manifest a power, you must concentrate. If something interrupts your concentration while you&apos;re manifesting, you must make a concentration check or lose the power. When you make a concentration check, you roll d20 and add your manifester level and the ability score modifier used to determine bonus powers of the same type. The more distracting the interruption and the higher the level of the power you are trying to manifest, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the power just as if you had manifest it to no effect.\n\n{b}Manifest defensively{/b} 15 + double power level\n{b}Injured while manifesting{/b} 10 + damage dealt + power level\n{b}Continuous damage while manifesting{/b} 10 + 1/2 damage dealt + power level\n{b}Affected by a non-damaging power while manifesting{/b} DC of the power + power level\n{b}Grappled or pinned while manifesting{/b} 10 + grappler&apos;s CMB + power level\n{b}Vigorous motion while manifesting{/b} 10 + power level\n{b}Violent motion while manifesting{/b} 15 + power level\n{b}Extremely violent motion while manifesting{/b} 20 + power level\n{b}Wind with rain or sleet while manifesting{/b} 5 + power level\n{b}Wind with hail and debris while manifesting{/b} 10 + power level\n{b}Weather caused by power{/b} see power\n{b}Entangled while manifesting{/b} 15 + power level" compset="Skill" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="skillattr" thing="aINT"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpPsi"
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
+    </thing>
+  <thing id="skPUconcTa" name="Concentration: Tactician" description="To manifest a power, you must concentrate. If something interrupts your concentration while you&apos;re manifesting, you must make a concentration check or lose the power. When you make a concentration check, you roll d20 and add your manifester level and the ability score modifier used to determine bonus powers of the same type. The more distracting the interruption and the higher the level of the power you are trying to manifest, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the power just as if you had manifest it to no effect.\n\n{b}Manifest defensively{/b} 15 + double power level\n{b}Injured while manifesting{/b} 10 + damage dealt + power level\n{b}Continuous damage while manifesting{/b} 10 + 1/2 damage dealt + power level\n{b}Affected by a non-damaging power while manifesting{/b} DC of the power + power level\n{b}Grappled or pinned while manifesting{/b} 10 + grappler&apos;s CMB + power level\n{b}Vigorous motion while manifesting{/b} 10 + power level\n{b}Violent motion while manifesting{/b} 15 + power level\n{b}Extremely violent motion while manifesting{/b} 20 + power level\n{b}Wind with rain or sleet while manifesting{/b} 5 + power level\n{b}Wind with hail and debris while manifesting{/b} 10 + power level\n{b}Weather caused by power{/b} see power\n{b}Entangled while manifesting{/b} 15 + power level" compset="Skill" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="skillattr" thing="aINT"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpPU4"
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
+    </thing>
+  <thing id="skPUconcVi" name="Concentration: Vitalist" description="To manifest a power, you must concentrate. If something interrupts your concentration while you&apos;re manifesting, you must make a concentration check or lose the power. When you make a concentration check, you roll d20 and add your manifester level and the ability score modifier used to determine bonus powers of the same type. The more distracting the interruption and the higher the level of the power you are trying to manifest, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the power just as if you had manifest it to no effect.\n\n{b}Manifest defensively{/b} 15 + double power level\n{b}Injured while manifesting{/b} 10 + damage dealt + power level\n{b}Continuous damage while manifesting{/b} 10 + 1/2 damage dealt + power level\n{b}Affected by a non-damaging power while manifesting{/b} DC of the power + power level\n{b}Grappled or pinned while manifesting{/b} 10 + grappler&apos;s CMB + power level\n{b}Vigorous motion while manifesting{/b} 10 + power level\n{b}Violent motion while manifesting{/b} 15 + power level\n{b}Extremely violent motion while manifesting{/b} 20 + power level\n{b}Wind with rain or sleet while manifesting{/b} 5 + power level\n{b}Wind with hail and debris while manifesting{/b} 10 + power level\n{b}Weather caused by power{/b} see power\n{b}Entangled while manifesting{/b} 15 + power level" compset="Skill" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="skillattr" thing="aINT"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpPU5"
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
     </thing>
   </document>
