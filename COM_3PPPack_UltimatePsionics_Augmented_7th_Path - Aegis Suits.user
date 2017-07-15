@@ -9,56 +9,61 @@
     <bootstrap thing="rcPUaPwrR">
       <autotag group="CustTaken" tag="cfgPUAstSu"/>
       </bootstrap>
-    <bootstrap thing="rcPUaImpAr">
-      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 10]]></containerreq>
-      <autotag group="CustTaken" tag="cfgPUAstSu"/>
-      </bootstrap>
-    <bootstrap thing="rcPUaImpAr">
-      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 10]]></containerreq>
-      <autotag group="CustTaken" tag="cfgPUAstSu"/>
-      </bootstrap>
-    <bootstrap thing="mPUAuAstHi">
-      <containerreq phase="First" priority="100">count:hero#Custom.WearAstS = 1</containerreq>
-      </bootstrap>
-    <bootstrap thing="rcPUaEnerR">
-      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 2]]></containerreq>
-      <autotag group="CustTaken" tag="cfgPUAstSu"/>
-      </bootstrap>
     <bootstrap thing="rcPUAuPres">
       <autotag group="CustTaken" tag="cfgPUAstSu"/>
       </bootstrap>
-    <eval phase="First">
-      ~ Reduce cost of bootstrapped Customizations
-      hero.childfound[cfgPUAstSu].field[cfgSpent2].value -= 4
-      perform forward[Custom.HasAstSkin]
-      perform forward[Custom.ASChosen]</eval>
+    <bootstrap thing="rcPUaEnerR">
+      <containerreq phase="First" priority="500"><![CDATA[count:Custom.AegisLvls >= 2]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaImpAr">
+      <containerreq phase="First" priority="500"><![CDATA[count:Custom.AegisLvls >= 10]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaImpAr">
+      <containerreq phase="First" priority="500"><![CDATA[count:Custom.AegisLvls >= 10]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="mPUAuAstHi">
+      <containerreq phase="First" priority="100">Custom.WearAstS</containerreq>
+      </bootstrap>
+    <eval phase="First"><![CDATA[
+      ~ Set tags on hero &
+      perform hero.assign[Custom.HasAstSkin]
+      perform hero.assign[Custom.ASChosen]
+
+      ~ Reduce number of customization points
+      #value2[cPUAegHelp] += -4
+      ]]></eval>
     <exprreq message="Animist archetype required."><![CDATA[#hasarchetype[arPUAnimis] <> 0]]></exprreq>
     </thing>
-  <thing id="mPUAuAstHi" name="Astral Mantle" description="Hide armor is made from the tanned skin of particularly thick-hided beasts, stitched with either multiple overlapping layers of crude leather or exterior pieces of leather stuffed with padding or fur. Damage to the armor is typically repaired by restitching gashes or adding new pieces of hide, giving the most heavily used suits a distinctively patchwork quality." compset="Armor">
+  <thing id="mPUAuAstHi" name="Astral Mantle" description="When formed into astral mantle, an astral suit resembles masterwork hide armor and is treated as such for all mechanical purposes. While the animist maintains his psionic focus, he can move at normal speed while wearing his astral mantle. Should the animist be wearing armor when forming his astral suit in this fashion, the astral suit encloses the armor and the animist gains the benefits of only his astral suit and not those of his armor, even if his armor would confer better benefits. Forming his astral suit into this form takes a move action." compset="Armor">
     <fieldval field="gWeight" value="40"/>
     <usesource source="srcPUAuSev"/>
+    <tag group="Custom" tag="AstArmor"/>
+    <tag group="ArmorAC" tag="4"/>
+    <tag group="ArmorArcFl" tag="20"/>
+    <tag group="ArmorGroup" tag="arBbnTrPri"/>
+    <tag group="EquipType" tag="Hide"/>
     <tag group="ArmorCateg" tag="Slows"/>
     <tag group="ArmorCheck" tag="3"/>
     <tag group="ArmorClass" tag="Medium"/>
     <tag group="ArmorMaxDx" tag="4"/>
-    <tag group="Custom" tag="AstArmor"/>
     <tag group="Helper" tag="AlwaysMast"/>
     <tag group="Helper" tag="AutoEquip"/>
     <tag group="Helper" tag="Helper"/>
     <tag group="Helper" tag="Proficient"/>
-    <tag group="ArmorAC" tag="4"/>
-    <tag group="ArmorArcFl" tag="20" name="20" abbrev="20"/>
-    <tag group="ArmorGroup" tag="arBbnTrPri"/>
-    <tag group="EquipType" tag="Hide"/>
-    <tag group="Helper" tag="NoPathSoc"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="10000">
+    <eval phase="PreLevel" priority="10000"><![CDATA[
       var v_focus as number
       call PUPsiFocus
-
-      ~ If the hero does not have Psionic Focus, do nothing
+      ~ If the hero does not have Psionic Focus, do nothing &
       doneif (v_focus = 0)
+
       perform delete[ArmorCateg.Slows]
-      perform delete[ArmorArcFl.20]</eval>
+      perform delete[ArmorArcFl.20]]]></eval>
+    <eval phase="PostLevel" priority="20000" index="2"><![CDATA[
+      ~ Apply astral suit bonuses &
+      call PUAstBonus]]></eval>
     </thing>
   </document>
