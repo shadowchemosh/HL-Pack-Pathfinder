@@ -65,6 +65,9 @@
     <bootstrap thing="PUClassFnd"></bootstrap>
     <bootstrap thing="PU0lvlPowe"></bootstrap>
     <bootstrap thing="PUGiftBlad"></bootstrap>
+    <bootstrap thing="abPUActEne">
+      <containerreq phase="First" priority="3000"><![CDATA[Hero.Psionic]]></containerreq>
+    </bootstrap>
 
     <bootstrap thing="zPUArtiste"></bootstrap>
     <bootstrap thing="zPUBully"></bootstrap>
@@ -378,7 +381,28 @@
       #resmax[resPowerPt] += field[abValue2].value]]></eval>
     </thing>
 
+  <thing id="abPUActEne" name=" Active Energy Type" description="The current selected type of energy (cold, electricity, fire, or sonic). Most psionic powers with the [Energy] descriptor deal damage based on the active energy type. Kineticists may change their active energy type freely, and wilders may temporarily change their active energy type during a wild surge; otherwise, a psionic character may change his active energy type when gaining psionic focus. The psionic character need not maintain psionic focus to maintain an active energy type."
+  summary="Lets you set your psionic active energy type."
+  compset="Ability"
+  uniqueness="unique">
+    <fieldval field="usrCandid1" value="component.SelectHelp &amp; Psionics.PsiActEne"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ if nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen = 0)
 
+      ~ Set the energy type on the hero
+      perform field[usrChosen1].chosen.forward[PsiActEne.?]
+      ]]></eval>
+    </thing>
+
+
+  <!-- ***************************************************************************************  -->
+  <!-- Archetype Headers                                                                        -->
+  <!-- ***************************************************************************************  -->
   <thing id="arHdPUPsi" name="Psion" compset="ClassVary" uniqueness="unique" isshowonly="yes">
     <comment><![CDATA[This is a helper object for the "Psion" class header.]]></comment>
     <link linkage="varies" thing="cHelpPsi"/>
@@ -442,5 +466,16 @@
     from double taking the Gifted Blade archetype.
    -->
   <preclude id="arPUGiftBl" source="srcGiftBla"/>
+
+  <!-- Add tags to the standard Energy Selection Helpers for Psionic Active Energy Type -->
+  <extthing thing="selEnCold"  group="Psionics" tag="PsiActEne"/> <!-- For building the custom expression -->
+  <extthing thing="selEnElec"  group="Psionics" tag="PsiActEne"/>
+  <extthing thing="selEnFire"  group="Psionics" tag="PsiActEne"/>
+  <extthing thing="selEnSonic" group="Psionics" tag="PsiActEne"/>
+  <!-- These tags will get pushed to the Hero -->
+  <extthing thing="selEnCold"  group="PsiActEne" tag="Cold"/>
+  <extthing thing="selEnElec"  group="PsiActEne" tag="Elec"/>
+  <extthing thing="selEnFire"  group="PsiActEne" tag="Fire"/>
+  <extthing thing="selEnSonic" group="PsiActEne" tag="Sonic"/>
 
   </document>
