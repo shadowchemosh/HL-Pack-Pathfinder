@@ -4588,61 +4588,6 @@ field[CustDesc].text = "Shadow Twin (" & field[abValue].value & "')"]]></eval>
     <tag group="abAction" tag="PUManFocus"/>
     <tag group="abAction" tag="Standard"/>
     </thing>
-  <thing id="rcPUaEnerR" name="Energy Resistance" description="The aegis gains resist 5 against his active energy type. This resistance increases by 5 for every 5 levels the aegis possesses, to a maximum of 15 at 10th level. This customization can be selected multiple times. Each time beyond the first, the aegis selects an energy type (cold, electricity, fire, or sonic) to gain resistance to, in addition to his active energy type. If the aegis&apos;s active energy type is the same as one he has selected, the effects do not stack." compset="RaceCustom">
-    <fieldval field="usrCandid1" value="component.SelectHelp &amp; Selection.Energy &amp; (BloodEner.Cold|BloodEner.Elec|BloodEner.Fire|BloodEner.Sonic)"/>
-    <usesource source="pPsiUn"/>
-    <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="SpecType" tag="Resist"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="ChooseSrc1" tag="Thing"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <eval phase="PostLevel" priority="1000"><![CDATA[
-      ~ If we're not wearling the Astral Suit, get out now
-      doneif (hero.tagcount[Custom.WearAstS] = 0)
-
-      ~if nothing's been selected, there's nothing we can do
-      doneif (field[usrChosen1].ischosen = 0)
-
-      if (field[usrChosen1].chosen.tagis[BloodEner.Cold] <> 0) then
-        #applyresist[xDamRsCold, field[abValue].value]
-      elseif (field[usrChosen1].chosen.tagis[BloodEner.Elec] <> 0) then
-        #applyresist[xDamRsElec, field[abValue].value]
-      elseif (field[usrChosen1].chosen.tagis[BloodEner.Fire] <> 0) then
-        #applyresist[xDamRsFire, field[abValue].value]
-      elseif (field[usrChosen1].chosen.tagis[BloodEner.Sonic] <> 0) then
-        #applyresist[xDamRsSoni, field[abValue].value]
-      endif]]></eval>
-    <eval phase="PostLevel" priority="900" index="2">var res as number
-      res = round(#levelcount[Aegis]/5,0,-1)*5
-      res = minimum(res,10)
-      res += 5
-      field[abValue].value += res</eval>
-    </thing>
-  <thing id="rcPUaExArL" name="Extra Arms, Lesser" description="The aegis&apos;s astral suit has an extra pair of arms with limited function. Each arm can hold, but not use, any one item that can normally be held in one hand. Items held in this way count toward the aegis&apos;s carrying capacity. The aegis can retrieve any item held by his extra arms as a swift action. The aegis does not gain any mechanical benefit from items held by these arms, such as a shield bonus to armor class." compset="RaceCustom" uniqueness="useronce">
-    <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    </thing>
-  <thing id="rcPUaHardS" name="Hardened Strikes" description="The aegis is considered to be armed even when unarmed, does not provoke attacks of opportunity when making unarmed strikes, and his unarmed strikes deal lethal damage. In addition, the aegis&apos;s unarmed strikes can deal slashing or piercing damage, chosen at the time the customization is selected, instead of bludgeoning damage." compset="RaceCustom" uniqueness="useronce">
-    <arrayval field="usrArray" index="0" value="Slashing"/>
-    <arrayval field="usrArray" index="1" value="Piercing"/>
-    <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="CustomCost" tag="2"/>
-    <tag group="Helper" tag="Secondary"/>
-    <eval phase="First" priority="1000"><![CDATA[~ If we're not wearling the Astral Suit, get out now
-doneif (hero.tagcount[Custom.WearAstS] = 0)
-
-perform hero.childfound[wUnarmed].delete[wSpecial.Nonlethal]
-
-if (compare(field[usrSelect].text,"Slashing") <> 0) then
-  perform hero.childfound[wUnarmed].assign[wType.S]
-elseif (compare(field[usrSelect].text,"Piercing") <> 0) then
-  perform hero.childfound[wUnarmed].assign[wType.P]
-endif]]></eval>
-    </thing>
   <thing id="rcPUaHarPS" name="Harness Power Stone" description="The aegis can manifest a single 1st-level power from a power stone stored in his power stone repository as if it were a known power, with an effective manifester level of 1. This effective manifester level does not make an aegis eligible for feats and prestige classes requiring a manifester level, nor does it allow him to activate other power stones without a Use Magic Device check. The aegis may manifest the chosen power as many times as his power point pool will allow, but changing to a different power (either within the same power stone, or within another power stone in the repository) requires a move action and flushes the old power from the power stone (so power stones with multiple powers lose one power, but the rest are unaffected; power stones with only a single power are flushed and dissolved). If this customization is lost or removed, any applicable attuned power is flushed from the power stone. The aegis must be at least 3rd level and have the Power Stone Repository customization to select this customization. This customization may be selected a second time beginning at 5th level; doing so allows the aegis to manifest a second 1st-level power from a power stone (either a second stone, or a second power in an already-selected stone). The aegis may freely alternate between these two powers (or any others gained via Harness Power Stone customizations) when manifesting, but trading out either power for a new power flushes out the sacrificed power as usual." compset="RaceCustom">
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="Secondary"/>
@@ -4707,12 +4652,6 @@ else
         call PUPreReqs
         validif (levels >= 5)]]></validate>
       </prereq>
-    </thing>
-  <thing id="rcPUaPwrSR" name="Power Stone Repository" description="The aegis may absorb power stones into his astral suit, causing them to appear and disappear whenever the suit does. The aegis may choose to have the absorbed power stones visible (much like embedded gems), or may decide to keep any or all of them concealed. The aegis may store one power stone per class level in this fashion; adding or removing a power stone takes 1 minute per stone (any power stone that is completely flushed and powerless dissolves immediately and is not counted against the aegis&apos;s limit).{br}{br}The aegis may activate any power stone stored in his repository as if he were holding it in hand; this follows all of the standard rules for using power stones, except the aegis gets a bonus equal to the number of stored power stones to any Use Magic Device checks he makes for this purpose. If the aegis loses this customization for any reason, any power stones stored in the astral suit are inert but unharmed until removed or this customization is regained." compset="RaceCustom">
-    <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     </thing>
   <thing id="rcPUaPsiAt" name="Psionic Attacks" description="The aegis&apos;s astral suit encompasses his melee attacks. All of the aegis&apos;s melee attacks are treated as if they were magic for the purpose of overcoming damage reduction. In addition, any melee weapons wielded by the aegis are treated as masterwork if they are not already." compset="RaceCustom" uniqueness="useronce">
     <usesource source="pPsiUn"/>
@@ -4883,43 +4822,6 @@ hero.child[xClimb].field[abValue].value = maximum(hero.child[xClimb].field[abVal
     <tag group="Helper" tag="Secondary"/>
     <tag group="CustomCost" tag="2"/>
     <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    </thing>
-  <thing id="rcPUaIEneR" name="Energy Resistance, Improved" description="The energy resistance gained from the Energy Resistance customization doubles. The aegis must have the Energy Resistance customization and be at least 6th level to select this customization." compset="RaceCustom">
-    <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <eval phase="PostLevel" priority="950"><![CDATA[
-      ~ If we're not wearling the Astral Suit, get out now
-      doneif (hero.tagcount[Custom.WearAstS] = 0)
-
-      var val as number
-      val = hero.child[rcPUaEnerR].field[abValue].value
-      hero.child[rcPUaEnerR].field[abValue].value += val]]></eval>
-    <exprreq message="Energy Resistance customization required."><![CDATA[#hasability[rcPUaEnerR] <> 0]]></exprreq>
-    <prereq message="Aegis level 6+ required.">
-      <validate><![CDATA[
-        var classcheck as string
-        var levels as number
-        classcheck = "Aegis"
-        call PUPreReqs
-        validif (levels >= 6)]]></validate>
-      </prereq>
-    </thing>
-  <thing id="rcPUaExtAr" name="Extra Arms" description="The extra arms on the aegis&apos;s astral suit gain improved functionality. The aegis gains a +2 circumstance bonus to Climb checks and CMD against grapple attempts for each extra arm that is not holding anything. In addition, one of the arms can wield and use a light or one-handed weapon, a shield, or any other item that can be used with one hand. Attacks made with this additional arm suffer a -2 penalty to attack rolls in addition to any penalties for using two weapons.{br}{br}These extra arms do not grant any additional attacks, only alternate arms with which to make the standard attacks. The aegis must be at least 5th level and have the Lesser Extra Arms customization before selecting this customization." compset="RaceCustom" uniqueness="useronce">
-    <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <exprreq message="Extra Arms, Lesser customization required."><![CDATA[#hasability[rcPUaExArL] <> 0]]></exprreq>
-    <prereq message="Aegis level 5+ required.">
-      <validate><![CDATA[
-        var classcheck as string
-        var levels as number
-        classcheck = "Aegis"
-        call PUPreReqs
-        validif (levels >= 5)]]></validate>
-      </prereq>
     </thing>
   <thing id="rcPUaFligh" name="Flight" description="The aegis uses psychokinetic energy to gain a fly speed equal to its base speed. The aegis&apos;s maneuverability depends on his size. Medium or smaller aegii have good maneuverability. Large aegii have average maneuverability, while Huge aegii have poor maneuverability. For 2 additional customization points, the aegis&apos;s maneuverability increases to perfect. The aegis&apos;s fly speed can be increased by spending additional customization points, gaining a 20-foot increase to fly speed for each additional point spent. The aegis must be at least 5th level before selecting this customization." compset="RaceCustom">
     <usesource source="pPsiUn"/>
@@ -5197,22 +5099,6 @@ doneif (hero.tagcount[Custom.WearAstS] = 0)
     <tag group="CustomCost" tag="3"/>
     <tag group="AllowRCust" tag="cfgPUAstSu"/>
     </thing>
-  <thing id="rcPUaExArG" name="Extra Arms, Greater" description="The extra arms on the aegis&apos;s astral suit function at nearly the same capacity as his normal arms. Each arm can now wield or use a light or one-handed weapon, shield, or any other item that he could normally use. Alternatively, the aegis can use one or both arms when wielding a two-handed weapon, possibly allowing him to wield a pair of two-handed weapons. The circumstance bonus on Climb checks and CMD against grapple attempts increases to +3 per extra arm that is not holding anything. The aegis must be 8th level and have the Extra Arms and Lesser Extra Arms customizations before selecting this customization." compset="RaceCustom" uniqueness="useronce">
-    <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <exprreq message="Extra Arms, Lesser customization required."><![CDATA[#hasability[rcPUaExArL] <> 0]]></exprreq>
-    <exprreq message="Extra Arms customization required."><![CDATA[#hasability[rcPUaExtAr] <> 0]]></exprreq>
-    <prereq message="Aegis level 8+ required.">
-      <validate><![CDATA[
-        var classcheck as string
-        var levels as number
-        classcheck = "Aegis"
-        call PUPreReqs
-        validif (levels >= 8)]]></validate>
-      </prereq>
-    </thing>
   <thing id="rcPUaFrigh" name="Frightful Presence" description="The aegis makes his astral suit unsettling to his foes, gaining the frightful presence ability. The aegis can activate this ability as part of an offensive action, such as a charge or attack. Opponents within 30 feet of the aegis must make a Will save or become shaken for 3d6 rounds. The DC of this save is equal to 10 + 1/2 the aegis&apos;s class level + the aegis&apos;s Charisma modifier. If the aegis has at least 4 more Hit Dice than an opponent, that opponent becomes frightened instead. Foes with more HD than the aegis are immune to this effect. The aegis must be at least 11th level before selecting this customization." compset="RaceCustom" uniqueness="useronce">
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="Secondary"/>
@@ -5322,21 +5208,6 @@ foreach pick in hero from BaseWep where "!Helper.NatAttSpec & !wGroup.Natural"
         classcheck = "Aegis"
         call PUPreReqs
         validif (levels >= 11)]]></validate>
-      </prereq>
-    </thing>
-  <thing id="rcPUaEnerI" name="Energy Immunity" description="The aegis gains immunity to his active energy type as long as he is wearing his astral suit.{br}{br}The aegis must be at least 15th level before selecting this customization." compset="RaceCustom">
-    <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="fShowWhat" tag="Energy"/>
-    <prereq message="Aegis level 15+ required.">
-      <validate><![CDATA[
-        var classcheck as string
-        var levels as number
-        classcheck = "Aegis"
-        call PUPreReqs
-        validif (levels >= 15)]]></validate>
       </prereq>
     </thing>
   <thing id="rcPUaExPas" name="Extra Passenger" description="The aegis can carry one creature of the same size or smaller as the aegis&apos;s base size (powers and effects that increase the aegis&apos;s size do not allow him to carry larger creatures, although Increased Size and Improved Increased Size customizations do allow the aegis to carry larger passengers). The carried creature is treated as if it has total concealment and he gains the damage reduction of the astral suit, as well as any environmental customization options, such as that granted from the Energy Resistance or Underwater Breath customization. The creature carried using this ability remains adjacent to the aegis and moves with the aegis&apos;s move actions. A creature can be loaded and unloaded into the astral suit as a free action by the aegis, but the creature can take no actions until its next turn.{br}{br}The aegis must be at least 11th level before selecting this customization." compset="RaceCustom" uniqueness="useronce">
@@ -7329,37 +7200,6 @@ perform hero.findchild[BaseClSpec,"thingid.cPUReconfi & SpecSource.cHelpPU0 & Cl
       <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 3]]></containerreq>
       <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
-    </thing>
-  <thing id="rcPUaEmBl" name="Empowered Blast" description="The aegis can spend power points to increase the damage of his energy blast attack. Once per round, before making an attack using the energy blast customization, the aegis can spend up to his class level in power points as a free action, to gain +1d6 damage for every 1 power point spent. An attack that misses is wasted. The aegis must be at least 4th level and have the energy blast and ranged attack customizations before selecting this customization." compset="RaceCustom" uniqueness="useronce">
-    <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="SpecType" tag="Sense"/>
-    <exprreq message="Energy Blast customization required."><![CDATA[#hasability[rcPUaEneBl] <> 0]]></exprreq>
-    <exprreq message="Ranged Attack customization required."><![CDATA[#hasability[rcPUaRngAt] <> 0]]></exprreq>
-    <prereq message="Aegis level 4+ required.">
-      <validate><![CDATA[
-        var classcheck as string
-        var levels as number
-        classcheck = "Aegis"
-        call PUPreReqs
-        validif (levels >= 4)]]></validate>
-      </prereq>
-    </thing>
-  <thing id="rcPUaEneBl" name="Energy Blast" description="The ranged attack gained from the ranged attack customization becomes imbued with psionic energy. The attack is now treated as a ranged touch attack and instead deals 1d6 points of damage of your active energy type, but requires a standard action to use and cannot be used as part of a full attack. This effect can be turned on or off as a move action. The aegis must be at least 4th level and have the ranged attack customization before selecting this customization." compset="RaceCustom" uniqueness="useronce">
-    <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
-    <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <prereq message="Aegis level 4+ required.">
-      <validate><![CDATA[
-        var classcheck as string
-        var levels as number
-        classcheck = "Aegis"
-        call PUPreReqs
-        validif (levels >= 4)]]></validate>
-      </prereq>
     </thing>
   <thing id="rcPUaIRngA" name="Improved Ranged Attack" description="The damage of the aegis&apos;s ranged attack ability increases by an additional 1d8 points of piercing damage for every five class levels the aegis has. If the aegis is using the energy blast customization, the additional damage is instead 1d6 points of damage of your active energy type for every five class levels. The aegis must be at least 5th level and have the ranged attack customization before selecting this customization." compset="RaceCustom" uniqueness="useronce">
     <usesource source="pPsiUn"/>
