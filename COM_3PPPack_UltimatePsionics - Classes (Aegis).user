@@ -497,7 +497,6 @@
       perform hero.assign[Custom.ASChosen]]]></eval>
     </thing>
   <thing id="rcPUaSpeed" name="Speed" description="The aegis&apos;s base land speed is increased by 5 feet. This customization can be selected up to five times.{br}{br}Its effects stack." compset="CustomSpec" summary="Increase speed by +5ft.">
-    <fieldval field="abValue" value="5"/>
     <usesource source="pPsiUn"/>
     <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="Secondary"/>
@@ -508,13 +507,12 @@
       ~ Set Helper.FirstCopy &
       call X1SetFirst]]></eval>
     <eval phase="PostLevel" priority="10050" index="2"><![CDATA[
-      ~ If we are not the first copy, get out now! &
-      doneif (tagis[Helper.FirstCopy] = 0)
-
       ~ Set feet bonus into first value
-      field[abValue].value += field[abValue5].value * 5
+      field[abValue].value += maximum(field[abValue5].value * 5, 5)
       field[abSumm].text = "Increase land speed by " & signed(field[abValue].value) & " ft while wearing astral suit."
 
+      ~ If we are not the first copy, get out now! &
+      doneif (tagis[Helper.FirstCopy] = 0)
       ~ If not wearing astral suit, get out now!
       doneif (hero.tagcount[Custom.WearAstS] = 0)
 
@@ -767,11 +765,12 @@
       </prereq>
     </thing>
   <thing id="rcPUaFlexS" name="Flexible Suit" description="The aegis&apos;s armor check penalty is reduced by 1 (to a minimum of 0). The aegis may also sleep in his astral suit without becoming fatigued, if he was not already able to do so (such as if in astral skin form)." compset="CustomSpec" summary="Astral suit armor check penalty is reduced by 1 (to a minimum of 0)." uniqueness="useronce">
+    <comment>This ability is fully implemented. The procedure PUAstBonus handles the bonus logic.</comment>
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="CustomCost" tag="1"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     </thing>
   <thing id="rcPUaJugge" name="Astral Juggernaut" description="When formed into astral juggernaut, an astral suit resembles masterwork half-plate and is treated as such for all mechanical purposes. Should the aegis be wearing armor when forming his astral suit in this fashion, the astral suit encloses the armor and the aegis gains the benefits of only his astral suit and not that from his armor, even if his armor would confer better benefits. Forming an astral suit into this form takes a full-round action. The aegis gains the following free customizations: fortification, hardy. At 2nd level, the aegis gains the stalwart customization as a free customization when the astral suit is in astral juggernaut form. At 7th level, the astral suit resembles and is treated as masterwork full plate for all mechanical purposes." compset="RaceCustom" summary="Half-Plate/Full Plate; Free customizations: fortification, hardy." uniqueness="useronce">
     <usesource source="pPsiUn"/>
@@ -1385,20 +1384,13 @@
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="rcPUaImpAr" name="Improved Armor" description="The astral suit thickens and strengthens, increasing the aegis&apos;s Armor bonus by +1. This customization can be taken once for every five levels the aegis possesses and stacks with any Armor bonus granted from the astral suit itself. The aegis must be at least 5th level before selecting this customization." compset="CustomSpec" summary="Astral Suit AC bonus increases by 1.">
+    <comment>This ability is fully implemented. The procedure PUAstBonus handles the bonus logic.</comment>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
     <tag group="CustomCost" tag="1"/>
     <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <prereq message="Aegis level 5+ required.">
-      <validate><![CDATA[
-        var classcheck as string
-        var levels as number
-        classcheck = "Aegis"
-        call PUPreReqs
-        validif (levels >= 5)]]></validate>
-      </prereq>
+    <tag group="Helper" tag="Secondary"/>
     <prereq message="">
       <validate><![CDATA[
         var allowed as number
@@ -1421,6 +1413,14 @@
         endif
 
         @message = "You may not have more than " & allowed & " copies of this ability."]]></validate>
+      </prereq>
+    <prereq message="Aegis level 5+ required.">
+      <validate><![CDATA[
+        var classcheck as string
+        var levels as number
+        classcheck = "Aegis"
+        call PUPreReqs
+        validif (levels >= 5)]]></validate>
       </prereq>
     </thing>
   <thing id="rcPUaPsiAt" name="Psionic Attacks" description="The aegis&apos;s astral suit encompasses his melee attacks. All of the aegis&apos;s melee attacks are treated as if they were magic for the purpose of overcoming damage reduction. In addition, any melee weapons wielded by the aegis are treated as masterwork if they are not already." compset="CustomSpec" summary="Melee weapons are treated as magic and MW." uniqueness="useronce">
@@ -1492,5 +1492,4 @@
         validif (levels >= 8)]]></validate>
       </prereq>
     </thing>
-
   </document>
