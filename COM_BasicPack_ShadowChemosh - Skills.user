@@ -619,4 +619,27 @@
       ~ Error out the skills panel
       hero.panelvalid[skills] = 0]]></evalrule>
     </thing>
+  <thing id="skS2ConUnS" name="Concentration: Summoner (Unchained)" description="To cast a spell, you must concentrate. If something interrupts your concentration while you&apos;re casting, you must make a concentration check or lose the spell. When you make a concentration check, you roll d20 and add your caster level and the ability score modifier used to determine bonus spells of the same type. clerics, druids, and rangers add their Wisdom modifier. Bards, paladins, and sorcerers  add their Charisma modifier. Finally, wizards add their Intelligence modifier. The more distracting the interruption and the higher the level of the spell you are trying to cast, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the spell just as if you had cast it to no effect.\n\n{b}Cast defensively{/b} 15 + double spell level\n{b}Injured while casting{/b} 10 + damage dealt + spell level\n{b}Continuous damage while casting{/b} 10 + 1/2 damage dealt + spell level\n{b}Affected by a non-damaging spell while casting{/b} DC of the spell + spell level\n{b}Grappled or pinned while casting{/b} 10 + grappler&apos;s CMB + spell level\n{b}Vigorous motion while casting{/b} 10 + spell level\n{b}Violent motion while casting{/b} 15 + spell level\n{b}Extremely violent motion while casting{/b} 20 + spell level\n{b}Wind with rain or sleet while casting{/b} 5 + spell level\n{b}Wind with hail and debris while casting{/b} 10 + spell level\n{b}Weather caused by spell{/b} see spell\n{b}Entangled while casting{/b} 15 + spell level" compset="Skill" uniqueness="unique">
+    <usesource source="srcS2Adjus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <link linkage="skillattr" thing="aCHA"/>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpSumUn"
+      call S2CalcConc]]></eval>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill. &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
+    </thing>
   </document>
