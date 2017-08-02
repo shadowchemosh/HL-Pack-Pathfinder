@@ -4,194 +4,82 @@
   <fileinfo>
     <info_author>Tim Shadow</info_author>
     <info_history><![CDATA[
-May 24, 2013 - Tim Shadow
--Fixed the array of values used for Natural Armor it was incorrect.
--Added in the #extradamage[] macro instead of changing the live name.
--Set the magi citem slots on the dragon to be "Quadruped (Claws/paws)" rules from the Animal Archive.
+      August 1, 2017 - Tim Shadow
+      -Major re-write of the class and abilities.
+      -Fixed issue where the Dragon Steed Type was no longer becoming live for minions.
 
-January 27, 2012 - Tim Shadow
--Removed accidently left in debug statments.
-    
-v1.1 - July 8, 2011 - Tim Shadow
--FIX: Removed Acid Weapon adjustment so we don't clash with other d20pfsrd .user file add-ons.
+      May 24, 2013 - Tim Shadow
+      -Fixed the array of values used for Natural Armor it was incorrect.
+      -Added in the #extradamage[] macro instead of changing the live name.
+      -Set the magi citem slots on the dragon to be "Quadruped (Claws/paws)" rules from the Animal Archive.
 
-v1.0 - Released June 8, 2011 - Tim Shadow
--First version released to the community.
+      January 27, 2012 - Tim Shadow
+      -Removed accidently left in debug statments.
 
-3/17/2011
--Created new]]></info_history>
+      v1.1 - July 8, 2011 - Tim Shadow
+      -FIX: Removed Acid Weapon adjustment so we don't clash with other d20pfsrd .user file add-ons.
+
+      v1.0 - Released June 8, 2011 - Tim Shadow
+      -First version released to the community.
+
+      3/17/2011
+      -Created new]]></info_history>
     </fileinfo>
-  <thing id="cDragonrid" name="Dragonrider" description="Dragonriders are heroic figures with the power to bond with dragons, gaining lifelong steeds, companions and allies. This bond is more than simply a close friendship, it is a mystic connection between dragonrider and dragon, creating a permanent link fueled by the arcane power inherent to all true dragons.\n\n{b}Role{/b}: Dragonriders are fair combatants, though they tend to stay away from heavy armors as it restricts their ability to cast spells and maximize their skill riding a dragon. Though they cannot match a dedicated fighter&apos;s skill or a barbarian&apos;s fury in battle, a dragonrider often needs only survive long enough for their steed&apos;s fiery breath to end any opposition they face. Dragonriders often focus on ranged combat, both to maximize the mobility they enjoy on dragonback, and to keep them away from the heaviest front-line fighting.\n\n{b}Alignment{/b}: Though a dragonrider may be of any alignment, he may only bond to dragons within one step of his alignment.\n\n{b}Note:{/b} Dragon Steeds are located on the {i}Other{/i} tab as a free mininon. Once added the steed will auto level based on the Dragonrider class levels." compset="ClassLevel" maxlimit="20">
-    <usesource source="sggDragRid"/>
-    <tag group="ClassType" tag="Normal"/>
-    <bootstrap thing="cHelpDRR"></bootstrap>
-    <link linkage="helper" thing="cHelpDRR"/>
-    </thing>
-  <thing id="cDrrMartWe" name="Martial Weapons" description="A dragonrider is proficient with all simple weapons, plus any one martial melee weapon and one martial ranged weapon." compset="ClSpecial">
-    <fieldval field="usrCandid2" value="component.BaseWep &amp; !Helper.NoSelect &amp; !component.Specific &amp; !wCategory.Ammunition &amp; (wCategory.RangeThrow &amp; wProfReq.Martial | wCategory.RangeProj &amp; wProfReq.Martial)"/>
-    <fieldval field="usrCandid1" value="component.BaseWep &amp; !Helper.NoSelect &amp; !component.Specific &amp; !wCategory.Ammunition &amp; (wCategory.Melee &amp; wProfReq.Martial)"/>
-    <tag group="ChooseSrc2" tag="Thing"/>
-    <tag group="ChooseSrc1" tag="Thing"/>
-    <eval phase="PreLevel" priority="4000"><![CDATA[~ If we've not chosen anything, get out
-doneif (field[usrChosen1].ischosen = 0)
-~ If we've not chosen anything, get out
-doneif (field[usrChosen2].ischosen = 0)
+  <procedure id="3PDrStSkl" context="pick"><![CDATA[
+    ~ Calculate the Dragon steeds skill points &
+    ~ Timing PostAttr/500
+    #resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]]]></procedure>
+  <procedure id="3PDrStMain" context="pick"><![CDATA[
+    ~ Calculate the Dragon steeds breath weapon and other values
+    ~ Timing First/490 BEFORE the Bonus Hit Dice bootstrap conditions run
+    var S2_Focus as number
 
-var id as string
-id = field[usrChosen1].chosen.idstring
-perform field[usrChosen1].chosen.forward[WepProf.?]
-foreach pick in hero where "IsWeapon." & id
-    perform eachpick.assign[Broadcast.WepProf]
-nexteach
+    ~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+    #value[raSgDrFocu] = S2_Focus
 
-var id2 as string
-id2 = field[usrChosen2].chosen.idstring
-perform field[usrChosen2].chosen.forward[WepProf.?]
-foreach pick in hero where "IsWeapon." & id2
-    perform eachpick.assign[Broadcast.WepProf]
-nexteach]]></eval>
-    </thing>
-  <thing id="cDrrSteed" name="Bonded Dragon Steed" description="A dragonrider has a mystic bond with a youthful true dragon, a bond that guarantees the dragons loyalty to the rider (as long as it is treated with respect), and allows the dragonrider to tap into some of the bonded steed&apos;s arcane power. A character that starts as a dragonrider at 1st level is assumed to have already bonded with a dragon of his choice. A character multiclassing into dragonrider is approached by a dragon as a prospective bonded mount within 30 days. The bond causes the dragon to grow slightly in size, and drives it to gain power as its dragonrider gains experience, rather than as it gains age categories. Many of a dragon&apos;s normal powers (spell-like abilities, spellcasting, unlimited breath weapon use) are either suspended or modified as the arcane power that drives them is used to fuel the bond between dragonrider and dragon mount. This bond, once forged, ends only if both rider and steed decide to end it, or if one is killed and not resurrected in a timely fashion.\n\nA bonded dragon can carry it&apos;s rider as soon as it is the same size category as its rider, assuming it&apos;s strength is great enough to bear the rider and his gear. Dragons&apos; carrying capacity is modified for their size as normal creatures, and as bonded dragon steeds they can fly (at full speed) even if heavily encumbered. A dragon can carry two creatures one size smaller than it, four creatures two sizes smaller, and sixteen creatures three or more sizes smaller (all assuming it has the Strength to do so).\n\n{b}Note:{/b} Dragon Steeds are located on the {i}Other{/i} tab as a free mininon. Once added the steed will auto level based on the Dragonrider class levels." compset="ClSpecial">
-    <fieldval field="shortname" value="Steed"/>
-    <tag group="AbilType" tag="Extra"/>
-    <eval phase="First" priority="450">~ Set the Level of the hero so the correct HD can be 
-~ added to the Steed
-field[abValue].value += #levelcount[Dragonrid]</eval>
-    </thing>
-  <thing id="anSgBlkDra" name="Black Dragon" compset="AnimalComp">
-    <fieldval field="rNumHands" value="0"/>
-    <arrayval field="anCON" index="0" value="3"/>
-    <arrayval field="anCON" index="7" value="4"/>
-    <arrayval field="anDEX" index="0" value="6"/>
-    <arrayval field="anDEX" index="7" value="-2"/>
-    <arrayval field="anINT" index="0" value="-2"/>
-    <arrayval field="anWIS" index="0" value="1"/>
-    <arrayval field="anCHA" index="0" value="-2"/>
-    <arrayval field="anSizeMod" index="7" value="1"/>
-    <arrayval field="anSizeMod" index="15" value="3"/>
-    <arrayval field="anSTR" index="0" value="1"/>
-    <arrayval field="anSTR" index="7" value="8"/>
-    <arrayval field="anSTR" index="15" value="8"/>
-    <arrayval field="anSpeed" index="0" value="50"/>
-    <arrayval field="anSpeed" index="7" value="60"/>
-    <arrayval field="anSpeed" index="15" value="70"/>
-    <usesource source="sggDragRid"/>
-    <tag group="RaceSize" tag="Medium0"/>
-    <tag group="Helper" tag="NotHum" name="NotHum" abbrev="NotHum"/>
-    <tag group="BloodEner" tag="Acid"/>
-    <tag group="HasType" tag="tpSgDragon"/>
-    <tag group="CompList" tag="cHelpDRR"/>
-    <tag group="Alignment" tag="Chaotic"/>
-    <tag group="Alignment" tag="Evil"/>
-    <bootstrap thing="tpSgDragon"></bootstrap>
-    <bootstrap thing="zSggDrrNat"></bootstrap>
-    <bootstrap thing="zSggDrrStr"></bootstrap>
-    <bootstrap thing="xFly">
-      <autotag group="Maneuver" tag="Clumsy"/>
-      <autotag group="Value" tag="40"/>
-      </bootstrap>
-    <bootstrap thing="xImmAcid"></bootstrap>
-    <bootstrap thing="raLowLight"></bootstrap>
-    <bootstrap thing="raSgDrFocu"></bootstrap>
-    <bootstrap thing="xSwim"></bootstrap>
-    <bootstrap thing="raDarkVis"></bootstrap>
-    <bootstrap thing="zSggDrrInt"></bootstrap>
-    <bootstrap thing="xScent"></bootstrap>
-    <bootstrap thing="wBite">
-      <autotag group="wMain" tag="1d6_5"/>
-      </bootstrap>
-    <bootstrap thing="wClaw">
-      <autotag group="wMain" tag="1d4_4"/>
-      <autotag group="Value" tag="2"/>
-      </bootstrap>
-    <bootstrap thing="raBlaSwamS">
-      <containerreq phase="First" priority="502"><![CDATA[fieldval:anCompLev >= 8]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="raBlaWateB">
-      <containerreq phase="First" priority="502"><![CDATA[fieldval:anCompLev >= 8]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="raSgAcidBi">
-      <containerreq phase="First" priority="502"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="xSplRs"></bootstrap>
-    <eval phase="First" priority="5000"><![CDATA[~Set init focus to Move action
-#value[raSgDrFocu] = 3
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
+    ~ Set animal companion level based off the Steed Class ability
+    ~ this is so the bootstrap Bonus HD work correctly.
+    field[anCompLev].value += master.hero.childfound[cDrrSteed].field[abValue].value
 
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
+    ~ Set Steed Natural Armor
+    #value[zSggDrrNat] = field[anCompLev].value
+    ~ Set Steed Str/Con bonus
+    #value[zSggDrrStr] = field[anCompLev].value
+    ~ Set Steed Int/Cha bonus
+    #value[zSggDrrInt] = field[anCompLev].value
+    ~ Set Dragon Steed Breath weapon Companion Level
+    #value4[raSgSteedB] = field[anCompLev].value
 
-~ Give SR at 16th level
-If (field[anCompLev].value >= 16) then
-   #applysr[field[anCompLev].value+5]
-Endif
+    ~ Get dragon's steed breath weapon shape & energy type
+    perform hero.childfound[raSgSteedB].pulltags[BreathShp.?]
+    perform hero.childfound[raSgSteedB].pulltags[RGDrrEner.?]
 
-~ Set natural armor bonus for this dragon
-hero.child[ArmorClass].field[tACNatural].value += 3
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   #applydr[xDamRdMag,5]
-   #applyvalue[xFly,50]
-   #applyvalue[raDarkVis,120]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   #applydr[xDamRdMag,10]
-   #applyvalue[xFly,60]
-   #applyvalue[xSwim,50]
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
-    <eval phase="First" priority="250" index="2"><![CDATA[~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
-    <prereq message="Wrong alignment to bond to this dragon.">
-      <validate><![CDATA[validif (isminion = 0)
-~ If master is Lawful or Good can't bond this dragon
-validif (master.tagis[Alignment.Good] + master.tagis[Alignment.Lawful] = 0)]]></validate>
-      </prereq>
-    </thing>
+    ~ Set Breath Weapon values onto the Dragonrider Class Helper
+    If (master.childlives[cHelpDRR] <> 0) then
+      ~ Set breath weapon energy type & shape (line/cone)
+      perform master.child[cHelpDRR].pushtags[RGDrrEner.?]
+      perform master.child[cHelpDRR].pushtags[BreathShp.?]
+    Endif]]></procedure>
   <thing id="tpSgDragon" name="Dragon Steed" description="A dragon is a reptile-like creature, usually winged, with magical or unusual abilities.\n\n{b}Traits{/b}: A dragon possesses the following traits (unless otherwise noted in a creature&apos;s entry).\n* Darkvision 60 feet and low-light vision.\n* Immunity to magic sleep effects and paralysis effects.\n* Proficient with its natural weapons only.\n* Proficient with no armor.\n* Dragons breathe, eat, and sleep." compset="Type">
     <fieldval field="tpSkillPts" value="4"/>
     <fieldval field="tpHDSides" value="12"/>
     <usesource source="sggDragRid"/>
-    <tag group="ClassSkill" tag="skPercep" name="Perception" abbrev="Perception"/>
-    <tag group="ClassSkill" tag="skStealth" name="Stealth" abbrev="Stealth"/>
-    <tag group="ClassSkill" tag="skSurvival" name="Survival" abbrev="Survival"/>
-    <tag group="ClassSkill" tag="skSwim" name="Swim" abbrev="Swim"/>
-    <tag group="SaveGood" tag="svFort" name="Fortitude Save" abbrev="Fortitude Save"/>
-    <tag group="SaveGood" tag="svRef" name="Reflex Save" abbrev="Reflex Save"/>
-    <tag group="SaveGood" tag="svWill" name="Will Save" abbrev="Will Save"/>
-    <tag group="cAttack" tag="Good" name="Fast" abbrev="Fast"/>
-    <tag group="ClassSkill" tag="skClimb" name="Climb" abbrev="Climb"/>
-    <tag group="ClassSkill" tag="skFly" name="Fly" abbrev="Fly"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassSkill" tag="skPercep"/>
+    <tag group="ClassSkill" tag="skStealth"/>
+    <tag group="ClassSkill" tag="skSurvival"/>
+    <tag group="ClassSkill" tag="skSwim"/>
+    <tag group="SaveGood" tag="svFort"/>
+    <tag group="SaveGood" tag="svRef"/>
+    <tag group="SaveGood" tag="svWill"/>
+    <tag group="cAttack" tag="Good"/>
+    <tag group="ClassSkill" tag="skClimb"/>
+    <tag group="ClassSkill" tag="skFly"/>
     <tag group="ClassSkill" tag="skAcrobat"/>
     <tag group="ClassSkill" tag="skEscape"/>
-    <tag group="ClassSkill" tag="skIntim" name="Intimidate" abbrev="Intimidate"/>
+    <tag group="ClassSkill" tag="skIntim"/>
     <tag group="Type" tag="tpDragon"/>
-    <bootstrap thing="raDarkVis">
-      <containerreq phase="First" priority="600" name="Bootstrap Type Abilities"><![CDATA[
-        (HasType.tpSgDragon | OverType.tpSgDragon) & !NoTypeAbil.tpSgDragon]]>
-        <after name="Activate Normal Type"/>
-        </containerreq>
-      </bootstrap>
+    <tag group="HasType" tag="tpDragon"/>
     <bootstrap thing="xImmSleep">
       <containerreq phase="First" priority="600" name="Bootstrap Type Abilities"><![CDATA[
         (HasType.tpSgDragon | OverType.tpSgDragon) & !NoTypeAbil.tpSgDragon]]>
@@ -205,7 +93,8 @@ validif (master.tagis[Alignment.Good] + master.tagis[Alignment.Lawful] = 0)]]></
         </containerreq>
       </bootstrap>
     <bootstrap thing="xScent">
-      <containerreq phase="First" priority="600" name="Bootstrap Type Abilities"><![CDATA[  (HasType.tpSgDragon | OverType.tpSgDragon) & !NoTypeAbil.tpSgDragon]]>
+      <containerreq phase="First" priority="600" name="Bootstrap Type Abilities"><![CDATA[
+        (HasType.tpSgDragon | OverType.tpSgDragon) & !NoTypeAbil.tpSgDragon]]>
         <after name="Activate Normal Type"/>
         </containerreq>
       </bootstrap>
@@ -215,704 +104,19 @@ validif (master.tagis[Alignment.Good] + master.tagis[Alignment.Lawful] = 0)]]></
         <after name="Activate Normal Type"/>
         </containerreq>
       </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <containerreq phase="First" priority="600" name="Bootstrap Type Abilities"><![CDATA[
+        (HasType.tpSgDragon | OverType.tpSgDragon) & !NoTypeAbil.tpSgDragon]]>
+        <after name="Activate Normal Type"/>
+        </containerreq>
+      </bootstrap>
     </thing>
-  <thing id="raSgDrFocu" name="Focus:" description="For the dragon to take any other action in a typical encounter, the dragonrider must establish a mystic focus. Each dragon steed lists the kind of action required each round for a dragonrider to establish this focus, and focus lasts until the beginning of the dragonrider&apos;s next turn. For the most powerful true dragons, it may take a dragonrider a standard action to establish focus. As the dragonrider and his dragon steed gain levels, the amount of time required to establish focus is reduced, going from a standard action to a move action, a move action to a swift action, and a swift action to a free action action. A dragonrider must be within 30 feet of his steed to establish focus.\n\nOnce focus is established, the dragon is free to act however the dragonrider wishes. The dragon steed can use its breath weapon, make double moves, engage in melee attacks, and generally take whatever actions the dragonrider instructs. As the mystic focus establishes a mental bond between the dragonrider and his dragon steed, no vocal communication is required between the two while the mystic focus is in effect." compset="RaceSpec" uniqueness="unique">
+  <thing id="cDragonrid" name="Dragonrider" description="Dragonriders are heroic figures with the power to bond with dragons, gaining lifelong steeds, companions and allies. This bond is more than simply a close friendship, it is a mystic connection between dragonrider and dragon, creating a permanent link fueled by the arcane power inherent to all true dragons.\n\n{b}Role{/b}: Dragonriders are fair combatants, though they tend to stay away from heavy armors as it restricts their ability to cast spells and maximize their skill riding a dragon. Though they cannot match a dedicated fighter&apos;s skill or a barbarian&apos;s fury in battle, a dragonrider often needs only survive long enough for their steed&apos;s fiery breath to end any opposition they face. Dragonriders often focus on ranged combat, both to maximize the mobility they enjoy on dragonback, and to keep them away from the heaviest front-line fighting.\n\n{b}Alignment{/b}: Though a dragonrider may be of any alignment, he may only bond to dragons within one step of his alignment.\n\n{b}Note:{/b} Dragon Steeds are located on the {i}Other{/i} tab as a free mininon. Once added the steed will auto level based on the Dragonrider class levels." compset="ClassLevel" maxlimit="20">
     <usesource source="sggDragRid"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    <eval phase="Final" priority="20000"><![CDATA[var action as string
-~ Correctly set the type of action
-If (field[abValue].value = 1) then
-   action = " Full-Round"
-ElseIf (field[abValue].value = 2) then
-   action = " Standard"
-ElseIf (field[abValue].value = 3) then
-   action = " Move"
-ElseIf (field[abValue].value = 4) then
-   action = " Swift"
-ElseIf (field[abValue].value = 5) then
-   action = " Free"
-Endif
-~ Set focus name into livename
-field[livename].text = field[thingname].text & action]]></eval>
-    </thing>
-  <thing id="cDrrLink" name="Link" description="A dragonrider and his bonded dragon steed always know the direction to each other, and are aware of any conditions the other is suffering." compset="ClSpecial">
-    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
-    </thing>
-  <thing id="zSggDrrNat" name="Dragon Steed Natural Armor" description="This ability will calculate the natural armor bonus for a dragon steed." compset="Ability">
-    <usesource source="sggDragRid"/>
-    <eval phase="PostAttr" priority="10000">~ Calc adjustment to Natural armor for each animal compnion level
-If (field[abValue].value = 1) then
-    field[abValue2].value = 0
-elseif (field[abValue].value = 2) then
-    field[abValue2].value = 1
-elseif (field[abValue].value = 3) then
-    field[abValue2].value = 2
-elseif (field[abValue].value = 4) then
-    field[abValue2].value = 2
-elseif (field[abValue].value = 5) then
-    field[abValue2].value = 3
-elseif (field[abValue].value = 6) then
-    field[abValue2].value = 4
-elseif (field[abValue].value = 7) then
-    field[abValue2].value = 5
-elseif (field[abValue].value = 8) then
-    field[abValue2].value = 6
-elseif (field[abValue].value = 9) then
-    field[abValue2].value = 6
-elseif (field[abValue].value = 10) then
-    field[abValue2].value = 7
-elseif (field[abValue].value = 11) then
-    field[abValue2].value = 8
-elseif (field[abValue].value = 12) then
-    field[abValue2].value = 8
-elseif (field[abValue].value = 13) then
-    field[abValue2].value = 9
-elseif (field[abValue].value = 14) then
-    field[abValue2].value = 10
-elseif (field[abValue].value = 15) then
-    field[abValue2].value = 11
-elseif (field[abValue].value = 16) then
-    field[abValue2].value = 12
-elseif (field[abValue].value = 17) then
-    field[abValue2].value = 12
-elseif (field[abValue].value = 18) then
-    field[abValue2].value = 13
-elseif (field[abValue].value = 19) then
-    field[abValue2].value = 14
-elseif (field[abValue].value = 20) then
-    field[abValue2].value = 15
-endif
-~ Give bonus to Natural Armor
-hero.child[ArmorClass].field[tACNatural].value += field[abValue2].value</eval>
-    </thing>
-  <thing id="zSggDrrStr" name="Dragon Steed Str/Con Bonus" description="This ability will calculate the Str/Con bonus for a dragon steed." compset="Ability" uniqueness="unique">
-    <usesource source="sggDragRid"/>
-    <eval phase="PreAttr" priority="10000"><![CDATA[~ Calc the bonus for each animal compnion level
-If (field[abValue].value = 1) then
-    field[abValue2].value = 0
-elseif (field[abValue].value = 2) then
-    field[abValue2].value = 0
-elseif (field[abValue].value = 3) then
-    field[abValue2].value = 1
-elseif (field[abValue].value = 4) then
-    field[abValue2].value = 1
-elseif (field[abValue].value = 5) then
-    field[abValue2].value = 1
-elseif (field[abValue].value = 6) then
-    field[abValue2].value = 2
-elseif (field[abValue].value = 7) then
-    field[abValue2].value = 2
-elseif (field[abValue].value = 8) then
-    field[abValue2].value = 3
-elseif (field[abValue].value = 9) then
-    field[abValue2].value = 3
-elseif (field[abValue].value = 10) then
-    field[abValue2].value = 3
-elseif (field[abValue].value = 11) then
-    field[abValue2].value = 4
-elseif (field[abValue].value = 12) then
-    field[abValue2].value = 4
-elseif (field[abValue].value = 13) then
-    field[abValue2].value = 5
-elseif (field[abValue].value = 14) then
-    field[abValue2].value = 5
-elseif (field[abValue].value = 15) then
-    field[abValue2].value = 5
-elseif (field[abValue].value = 16) then
-    field[abValue2].value = 6
-elseif (field[abValue].value = 17) then
-    field[abValue2].value = 6
-elseif (field[abValue].value = 18) then
-    field[abValue2].value = 7
-elseif (field[abValue].value = 19) then
-    field[abValue2].value = 7
-elseif (field[abValue].value = 20) then
-    field[abValue2].value = 7
-endif
-~ Give bonus Str
-hero.child[aSTR].field[aNormMod].value += field[abValue2].value
-~ Give bonus to Con
-hero.child[aCON].field[aNormMod].value += field[abValue2].value
-
-~ 8th Level advancement
-If (field[abValue].value >= 8) Then
-   hero.child[aSTR].field[aNormMod].value += 8
-   hero.child[aCON].field[aNormMod].value += 4
-   hero.child[aDEX].field[aNormMod].value += -2
-Endif
-~ 16th Level advancement
-If (field[abValue].value >= 16) Then
-   hero.child[aSTR].field[aNormMod].value += 8
-   hero.child[aCON].field[aNormMod].value += 4
-   hero.child[aDEX].field[aNormMod].value += -2
-Endif]]></eval>
-    </thing>
-  <thing id="zSggDrrInt" name="Dragon Steed Int/Cha Bonus" description="This ability will calculate the Int/Cha bonus for a dragon steed." compset="Ability" uniqueness="unique">
-    <usesource source="sggDragRid"/>
-    <tag group="Custom" tag="sggLine" name="Breath Weapon,Line" abbrev="Line"/>
-    <tag group="Custom" tag="sggCone" name="Breath Weapon,Cone" abbrev="Cone"/>
-    <eval phase="PreAttr" priority="10000">~ Calc the bonus for each animal compnion level
-If (field[abValue].value = 1) then
-    field[abValue2].value = 0
-elseif (field[abValue].value = 2) then
-    field[abValue2].value = 0
-elseif (field[abValue].value = 3) then
-    field[abValue2].value = 1
-elseif (field[abValue].value = 4) then
-    field[abValue2].value = 1
-elseif (field[abValue].value = 5) then
-    field[abValue2].value = 1
-elseif (field[abValue].value = 6) then
-    field[abValue2].value = 2
-elseif (field[abValue].value = 7) then
-    field[abValue2].value = 2
-elseif (field[abValue].value = 8) then
-    field[abValue2].value = 2
-elseif (field[abValue].value = 9) then
-    field[abValue2].value = 3
-elseif (field[abValue].value = 10) then
-    field[abValue2].value = 3
-elseif (field[abValue].value = 11) then
-    field[abValue2].value = 3
-elseif (field[abValue].value = 12) then
-    field[abValue2].value = 4
-elseif (field[abValue].value = 13) then
-    field[abValue2].value = 4
-elseif (field[abValue].value = 14) then
-    field[abValue2].value = 4
-elseif (field[abValue].value = 15) then
-    field[abValue2].value = 5
-elseif (field[abValue].value = 16) then
-    field[abValue2].value = 5
-elseif (field[abValue].value = 17) then
-    field[abValue2].value = 5
-elseif (field[abValue].value = 18) then
-    field[abValue2].value = 6
-elseif (field[abValue].value = 19) then
-    field[abValue2].value = 6
-elseif (field[abValue].value = 20) then
-    field[abValue2].value = 6
-endif
-~ Give bonus to Int
-hero.child[aINT].field[aNormMod].value += field[abValue2].value
-~ Give bonus to Cha
-hero.child[aCHA].field[aNormMod].value += field[abValue2].value</eval>
-    </thing>
-  <thing id="raSgAcidBi" name="Acidic Bite" description="A black dragon&apos;s bite deals an additional 2d6 points of acid damage." compset="RaceSpec">
-    <usesource source="sggDragRid"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
-    <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
-    <eval phase="Final" priority="25000"><![CDATA[
-~ Change bite to display the +2d6 info
-#extradamage[hero.childfound[wBite],"+2d6 Acid",field[name].text]]]></eval>
-    </thing>
-  <thing id="cDrrLowLig" name="Low-Light Vision" description="As the bond between dragonrider and dragon strengthens, it eventually grants the dragonrider some of his steeds amazing senses. At 2nd level, the dragonrider gains low-light vision. If the dragonrider already has natural low-light vision, the range of his low-light is doubled (allowing him to see four times as far as normal in dim or shadowy conditions)." compset="ClSpecial">
-    <tag group="AbilType" tag="Extra"/>
-    <eval phase="Final" priority="5000"><![CDATA[~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
-
-~ If we already have racial low-light its 4x
-If (hero.childlives[raLowLight] = 1) Then
-   field[livename].text = field[thingname].text & " 4x"
-Else
-   field[livename].text = field[thingname].text & " 2x"
-Endif]]></eval>
-    </thing>
-  <thing id="cDrrResEne" name="Resist Energy" description="Beginning at 3rd level, a dragonrider gains a natural resistance to damage of the same energy type as the damage of his bonded dragon steed&apos;s breath weapon. This begins at energy resistance 5, and increase by 5 every 5 levels, to a maximum of energy resistance 20 at 18th level. The energy resistance is tied to the dragonrider&apos;s current steed - should he change bonded dragons steed to one with a new type of breath weapon damage, his resistance also changes to the new type." compset="ClSpecial">
-    <tag group="AbilType" tag="Super"/>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
-~ If we don't have a Animal companion we are done
-doneif (hero.childlives[cAnimComp] = 0)
-
-~ Apply the correct Energy Reistance based on the dragon steed
-If (hero.childfound[cAnimComp].minion.tagis[BloodEner.Acid] = 1) then
-   #applyresist[xDamRsAcid,field[abValue].value]
-ElseIf (hero.childfound[cAnimComp].minion.tagis[BloodEner.Elec] = 1) then
-   #applyresist[xDamRsElec,field[abValue].value]
-ElseIf (hero.childfound[cAnimComp].minion.tagis[BloodEner.Fire] = 1) then
-   #applyresist[xDamRsFire,field[abValue].value]
-ElseIf (hero.childfound[cAnimComp].minion.tagis[BloodEner.Cold] = 1) then
-   #applyresist[xDamRsCold,field[abValue].value]
-Endif]]></eval>
-    <eval phase="PostLevel" priority="5000" index="2"><![CDATA[~Set the list name
-var list as number
-list = field[xIndex].value * 5
-field[listname].text = field[thingname].text & " " & list
-
-      ~ If we're not shown, just get out now
-      doneif (tagis[Helper.ShowSpec] = 0)
-field[abValue].value += field[xCount].value * 5
-field[livename].text = field[thingname].text & " " & field[abValue].value]]></eval>
-    </thing>
-  <thing id="cDrrSumSte" name="Summon Steed" description="Once per day, as a full round action, a dragonrider may magically call his steed to his side. This ability is the equivalent of a spell of a level equal to one third the dragonrider&apos;s level. The steed immediately appears adjacent to the dragonrider. A dragonrider can use this ability once per day at 4th level, and one additional time per day for every 4 levels thereafter, for a total of five times per day at 19th level." compset="ClSpecial">
-    <tag group="AbilType" tag="SpellLike"/>
-    <tag group="User" tag="Tracker"/>
-    <tag group="Usage" tag="Day"/>
-    <eval phase="PostLevel" priority="5000"><![CDATA[~Set the list name
-field[listname].text = field[thingname].text & " " & field[xIndex].value & "/day"
-
-      ~ If we're not shown, just get out now
-      doneif (tagis[Helper.ShowSpec] = 0)
-field[abValue].value += field[xCount].value
-field[trkMax].value = field[abValue].value]]></eval>
-    </thing>
-  <thing id="cDrrDracTr" name="Draconic Training" description="The unique experience and training a dragonrider receives as part of his time with his bonded dragon steed grants him a bonus feat at 5th level. The feat must be selected from the list below, and the dragonrider must meet all the feat&apos;s prerequisites normally. The dragonrider gains an additional feat at 9th, 12th, and 17th level." compset="ClSpecial">
-    <tag group="Helper" tag="SpecUp"/>
-    </thing>
-  <thing id="cDrrDarkvi" name="Darkvision" description="At 6th level, the senses of the dragonrider are again enhanced by his link to his dragon steed, granting him darkvision to a range of 60 feet. If the dragonrider already has natural darkvision, the range of that vision is increased by 60 feet." compset="ClSpecial">
-    <tag group="AbilType" tag="Extra"/>
-    <tag group="SpecType" tag="Sense"/>
-    <eval phase="Final" priority="5000"><![CDATA[~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
-
-~ If we already have racial darkvision increase by 60ft
-If (hero.childlives[raDarkVis] = 1) Then
-   ~ Increase the racial ability by the amount set in other script
-   hero.child[raDarkVis].field[abValue].value += 60
-Else
-   field[livename].text = field[thingname].text & " (60 feet)"
-Endif]]></eval>
-    </thing>
-  <thing id="cDrrScent" name="Scent" description="At 10th level, the senses of the dragonrider are again enhanced by his link to his dragon steed, granting him the scent ability. For more information on the scent ability, see the Pathfinder Roleplaying Game Bestiary." compset="ClSpecial">
-    <tag group="AbilType" tag="Extra"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <bootstrap thing="xScent">
-      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Dragonrid >= 10]]></containerreq>
-      </bootstrap>
-    </thing>
-  <thing id="cDrrBlinds" name="Blindsense" description="At 14th level, the senses of the dragonrider are again enhanced by his link to his dragon steed, granting him blindsense to a range of 15 feet. If the dragonrider already has natural blindsense, the range of this ability is increased by 15 feet." compset="ClSpecial">
-    <tag group="AbilType" tag="Extra"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <bootstrap thing="rBlindsen">
-      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Dragonrid >= 14]]></containerreq>
-      </bootstrap>
-    <eval phase="PostLevel" priority="10000"><![CDATA[~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
-
-hero.child[rBlindsen].field[abValue].value += 15]]></eval>
-    </thing>
-  <thing id="cDrrSR" name="Spell Resistance" description="Beginning at 16th level a dragonrider gains spell resistance. The SR is equal to 5 + the dragonrider&apos;s level, and is shared by the dragonrider&apos;s bonded dragon steed." compset="ClSpecial">
-    <tag group="AbilType" tag="Super"/>
-    <tag group="SpecType" tag="SR"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <eval phase="PostLevel" priority="5000"><![CDATA[~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
-
-field[abValue].value += 5 + field[xAllLev].value
-#applysr[field[abValue].value]]]></eval>
-    </thing>
-  <thing id="cDrrDragon" name="Dragonform" description="At 20th level the bond between a dragonrider and his dragon is so strong, the dragonrider can actually take the form of a dragon. This ability can be used once per day and acts as the spell {i}form of the dragon III{/i}, but the dragonrider may only take the form of the race of dragon that matches his bonded dragon steed.\n\n{b}Form of the Dragon III{/b}\nThis spell functions as form of the dragon II save that it also allows you to take the form of a Huge chromatic or metallic dragon. You gain the following abilities: a +10 size bonus to Strength, a +8 size bonus to Constitution, a +8 natural armor bonus, fly 120 feet (poor), blindsense 60 feet, darkvision 120 feet, a breath weapon, damage reduction 10/magic, frightful presence (DC equal to the DC for this spell), and immunity to one element (of the same type form of the dragon I grants resistance to). You also gain one bite (2d8), two claws (2d6), two wing attacks (1d8), and one tail slap attack (2d6). You can use the breath weapon as often as you like, but you must wait 1d4 rounds between uses. All breath weapons deal 12d8 points of damage and allow a Reflex save for half damage. Line breath weapons increase to 100-foot lines and cones increase to 50-foot cones." compset="ClSpecial">
-    <fieldval field="trkMax" value="1"/>
-    <fieldval field="actName" value="Form of the Dragon III"/>
-    <tag group="AbilType" tag="SpellLike"/>
-    <tag group="Usage" tag="Day"/>
-    <tag group="User" tag="Activation"/>
-    <tag group="User" tag="Tracker"/>
-    <bootstrap thing="xImmAcid">
-      <containerreq phase="First" priority="500">BloodEner.Acid</containerreq>
-      </bootstrap>
-    <bootstrap thing="xImmFire">
-      <containerreq phase="First" priority="500">BloodEner.Fire</containerreq>
-      </bootstrap>
-    <bootstrap thing="xImmCold">
-      <containerreq phase="First" priority="500">BloodEner.Cold</containerreq>
-      </bootstrap>
-    <bootstrap thing="xImmElec">
-      <containerreq phase="First" priority="500">BloodEner.Elec</containerreq>
-      </bootstrap>
-    <bootstrap thing="wBite">
-      <containerreq phase="First" priority="500"><![CDATA[      fieldval:abilActive <> 0]]></containerreq>
-      <autotag group="wMain" tag="2d8_204"/>
-      </bootstrap>
-    <bootstrap thing="wClaw">
-      <containerreq phase="First" priority="500"><![CDATA[      fieldval:abilActive <> 0]]></containerreq>
-      <autotag group="wMain" tag="2d6_104"/>
-      <autotag group="Value" tag="2"/>
-      </bootstrap>
-    <bootstrap thing="wWing">
-      <containerreq phase="First" priority="500"><![CDATA[      fieldval:abilActive <> 0]]></containerreq>
-      <autotag group="Value" tag="2"/>
-      <autotag group="wMain" tag="1d8_6"/>
-      </bootstrap>
-    <bootstrap thing="wSlam">
-      <containerreq phase="First" priority="500"><![CDATA[      fieldval:abilActive <> 0]]></containerreq>
-      <autotag group="wMain" tag="2d6_104"/>
-      <assignval field="livename" value="Tail Slap"/>
-      </bootstrap>
-    <bootstrap thing="raSgBreath">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0]]></containerreq>
-      </bootstrap>
-    <eval phase="First" priority="20000"><![CDATA[
-~ If we're not enabled, get out now
-doneif (field[abilActive].value = 0)
-
-~ Apply DR 10/magic to the hero
-#applydr[xDamRdMag,10]
-
-~ Set size to Huge regardless of previous size
-field[abValue].value = 2 - herofield[tSize].value
-herofield[tSize].value = 2
-
-~ Increase the size of all our equipment by 1 apart from 
-~ unarmed strike, which changes automatically
-foreach pick in hero from MyGear where "!wCategory.Unarmed & !Helper.GearNoSize"
-   eachpick.field[gSizeMod].value += field[abValue].value
-   ~ Projectile weapons DO NOT do increase damage dice
-   If (eachpick.tagis[wCategory.RangeProj] = 1) then
-       perform eachpick.assign[Helper.DamageDown]
-       perform eachpick.assign[Helper.DamageDown]
-       If (field[abValue].value = 3) Then
-           perform eachpick.assign[Helper.DamageDown]
-       Endif
-   Endif
-nexteach
-
-~change the size of our natural weapons
-~foreach pick in hero from BaseNatWep where "!Helper.NatSizeDmg"
-~   perform eachpick.assign[Helper.DamageUp]
-~nexteach
-      
-~ Bonus to Str and Con
-hero.child[aSTR].field[Bonus].value += 10
-hero.child[aCON].field[Bonus].value += 8
-~ Increase Natural AC by 3
-hero.child[ArmorClass].field[tACNatural].value += 8
-~ Give Fly speed
-#applyvalue[xFly, 120]
-~ Set fly speed to poor
-perform hero.child[xFly].assign[Maneuver.Poor]
-~ Set Blindsense distance of 45 so it adds to the existing 15 to get 
-~ a total of 60
-#applyvalue[rBlindsen, 45]]]></eval>
-    </thing>
-  <thing id="raSgBreath" name="Breath Weapon" description="Some creatures can exhale a cone, line, or cloud of energy or other magical effects. A breath weapon attack usually deals damage and is often based on some type of energy. Breath weapons allow a Reflex save for half damage (DC 10 + 1/2 the breathing creature&apos;s racial HD + the breathing creature&apos;s Con modifier; the exact DC is given in the creature&apos;s descriptive text). A creature is immune to its own breath weapon unless otherwise noted. Some breath weapons allow a Fortitude save or a Will save instead of a Reflex save. Each breath weapon also includes notes on how often it can be used, even if this number is limited in times per day." compset="RaceSpec">
-    <usesource source="sggDragRid"/>
-    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
-    <tag group="StandardDC" tag="aCON" name="Constitution" abbrev="Constitution"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
-    <eval phase="Final" priority="20000"><![CDATA[~ No custom values set then just get out now
-doneif (field[abValue].value = 0)
-
-var effect as string
-var energy as string
-If (field[abValue2].value = 1) then
-   effect = " line of "
-Else
-   effect = " cone of "
-Endif
-
-energy = "(energy)"
-if (root.tagcount[BloodEner.?] <> 0) then
-   energy = root.tagnames[BloodEner.?]
-endif
-
-field[livename].text &= " (" & field[abValue].value & "-foot" & effect & energy & ")"]]></eval>
-    </thing>
-  <thing id="zSGDrrDrui" name="Dragonrider - Druid Multiclassing" description="For a dragonrider multiclassing into druid, sacrificing the druid’s animal companion ability increases the draconic steed’s level by a number equal to the character’s druid level -2, with a minimum of +1 draconic steed level." compset="Simple" uniqueness="unique">
-    <usesource source="sggDragRid"/>
-    <eval phase="First" priority="449">~ If no druid levels just get out
-doneif (#levelcount[Druid] = 0)
-~ If druid animal companion just get out
-doneif (hero.childlives[cAnimComp] = 1)
-
-~ Give a bonus to animal companion based on druid level - 2 min +1
-hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Druid] - 2,1)</eval>
-    </thing>
-  <thing id="minSteeRed" name="Dragon Steed, Red" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
-    <usesource source="sggDragRid"/>
-    <tag group="gType" tag="Mounts" name="Mounts, Pets and Related Gear" abbrev="Mounts"/>
-    <tag group="Helper" tag="NoPathSoc"/>
-    <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
-    <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Good] + tagis[Alignment.Lawful] = 0</exprreq>
-    <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
-      <bootstrap thing="rSGDrrRed"></bootstrap>
-      </minion>
-    </thing>
-  <thing id="rSGDrrRed" name="Dragon Steed, Red" description="This is the Dragonrider class dragon steed mount." compset="Race" uniqueness="unique">
-    <fieldval field="rAC" value="6"/>
-    <fieldval field="rSTR" value="7"/>
-    <fieldval field="rDEX" value="4"/>
-    <fieldval field="rCON" value="5"/>
-    <fieldval field="rWIS" value="1"/>
-    <fieldval field="rSpeed" value="40"/>
-    <usesource source="sggDragRid"/>
-    <tag group="RaceType" tag="Animal"/>
-    <tag group="BloodEner" tag="Fire" name="Fire"/>
-    <tag group="RaceSize" tag="Large1"/>
-    <tag group="HasType" tag="tpSgDragon"/>
-    <tag group="Alignment" tag="Chaotic"/>
-    <tag group="Alignment" tag="Evil"/>
-    <tag group="Helper" tag="NoPathSoc"/>
-    <tag group="Helper" tag="Quadruped"/>
-    <tag group="Helper" tag="NotHum"/>
-    <tag group="SlotSet" tag="selMISQuaC"/>
-    <bootstrap thing="cBonusHD"></bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 2]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 4]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 5]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 6]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 8]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 9]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 10]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 12]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 13]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 14]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 17]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 18]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 20]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="zSggDrrInt"></bootstrap>
-    <bootstrap thing="zSggDrrNat"></bootstrap>
-    <bootstrap thing="zSggDrrStr"></bootstrap>
-    <bootstrap thing="raSgSteedB">
-      <autotag group="Custom" tag="sggCone"/>
-      </bootstrap>
-    <bootstrap thing="raSgDrFocu"></bootstrap>
-    <bootstrap thing="raSgLink"></bootstrap>
-    <bootstrap thing="raSgSharSp">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 2]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="raSgEvasio">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 3]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="raSgDevoti">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 6]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="fMultiAtt">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 11]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="xFly">
-      <autotag group="Maneuver" tag="Clumsy"/>
-      <autotag group="Value" tag="30"/>
-      </bootstrap>
-    <bootstrap thing="wBite">
-      <autotag group="wMain" tag="1d6_5"/>
-      <autotag group="Helper" tag="NatSizeDmg"/>
-      </bootstrap>
-    <bootstrap thing="wClaw">
-      <autotag group="wMain" tag="1d4_4"/>
-      <autotag group="Value" tag="2"/>
-      <autotag group="Helper" tag="NatSizeDmg"/>
-      </bootstrap>
-    <bootstrap thing="xImmFire"></bootstrap>
-    <bootstrap thing="raSgImpEva">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="raSgIncine">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 8]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="raSgFirAur">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="cBonusHD"></bootstrap>
-    <eval phase="PostAttr" priority="500" index="3">~ Calculate the Dragon steeds skill points
-#resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]</eval>
-    <eval phase="First" priority="500" index="2"><![CDATA[~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
-#value[raSgDrFocu] = 2
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
-
-~ Set Dragons breath weapon
-perform pulltags[BloodEner.?]
-perform hero.child[raSgSteedB].pushtags[BloodEner.?]
-~ Set length of breath
-hero.child[raSgSteedB].field[abValue].value = 30
-~ Set die size
-hero.child[raSgSteedB].field[abValue3].value = 8
-~ Set Companion Level
-hero.child[raSgSteedB].field[abValue4].value = field[anCompLev].value
-
-~ Give SR at 16th level
-~If (field[anCompLev].value >= 16) then
-~   #applysr[field[anCompLev].value+5]
-~Endif
-
-~ Set natural armor bonus for this dragon
-~hero.child[ArmorClass].field[tACNatural].value += 3
-
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,5]
-   #applyvalue[xFly,40]
-   #applyvalue[raDarkVis,120]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,10]
-   #applyvalue[xFly,50]
-   ~#applyvalue[xSwim,50]
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
-    <eval phase="First" priority="490"><![CDATA[~ Set animal companion level based off the Steed Class ability
-~ this is so the bootstrap Bonus HD work correctly.
-field[anCompLev].value += master.hero.child[cDrrSteed].field[abValue].value
-
-~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
-    </thing>
-  <thing id="raSgSteedB" name="Breath Weapon" description="Every steed deals one kind of damage, and has either a line or a cone. Each breath weapon allows a Reflex save for half damage, the save DC for a dragon steed’s breath weapon is 10 + one-half steed’s hit dice + steed’s Constitution modifier. A dragon steed may use its breath weapon once every four rounds, not to exceed a total number of uses per day equal to 3 + the steed’s Constitution modifier.\n\nAs the dragon steed gains HD, it’s breath weapon deals more dice of damage and gains additional range." compset="RaceSpec">
-    <usesource source="sggDragRid"/>
-    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
-    <tag group="StandardDC" tag="aCON" name="Constitution" abbrev="Constitution"/>
-    <tag group="Usage" tag="Day"/>
-    <tag group="User" tag="Tracker"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
-    <eval phase="PostAttr" index="2">field[trkMax].value += 3 + hero.child[aCON].field[aModBonus].value</eval>
-    <eval phase="Final" priority="20000"><![CDATA[~ No custom values set then just get out now
-doneif (field[abValue].value = 0)
-
-var effect as string
-var energy as string
-var sDice as string
-var nDice as number
-var breath as number
-
-breath = field[abValue].value
-nDice = 1
-
-If (field[abValue4].value >= 2) Then
-   breath = field[abValue].value * 2
-Endif
-If (field[abValue4].value >= 3) Then
-   nDice = 2
-Endif
-If (field[abValue4].value >= 5) Then
-   nDice = 3
-Endif
-If (field[abValue4].value >= 7) Then
-   breath = field[abValue].value * 3
-Endif
-If (field[abValue4].value >= 8) Then
-   nDice = 4
-Endif
-If (field[abValue4].value >= 10) Then
-   nDice = 5
-Endif
-If (field[abValue4].value >= 12) Then
-   breath = field[abValue].value * 4
-Endif
-If (field[abValue4].value >= 13) Then
-   nDice = 6
-Endif
-If (field[abValue4].value >= 15) Then
-   nDice = 7
-Endif
-If (field[abValue4].value >= 17) Then
-   breath = field[abValue].value * 5
-Endif
-If (field[abValue4].value >= 18) Then
-   nDice = 8
-Endif
-If (field[abValue4].value >= 20) Then
-   nDice = 9
-Endif
-
-sDice =  nDice & "d" & field[abValue3].value
-
-If (tagis[Custom.sggLine] <> 0) then
-   effect = " line of "
-ElseIf (tagis[Custom.sggCone] <> 0) then
-   effect = " cone of "
-Endif
-
-energy = "(energy)"
-if (root.tagcount[BloodEner.?] <> 0) then
-   energy = root.tagnames[BloodEner.?]
-endif
-
-field[livename].text &= " (" & breath & "-ft" & effect & energy & ", " & sDice & ")"]]></eval>
-    </thing>
-  <thing id="raSgLink" name="Link" description="A dragonrider and his bonded dragon steed always know the direction to each other, and are aware of any conditions the other is suffering." compset="RaceSpec">
-    <usesource source="sggDragRid"/>
-    <tag group="AbilType" tag="Extra"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    </thing>
-  <thing id="raSgSharSp" name="Share Spells" description="The dragonrider may cast a spell with a target of &quot;You&quot; on his dragon steed (as a spell with a range of touch) instead of on himself. A dragonrider may cast spells on his dragon steed even if the spells normally do not affect creatures of the steed’s type (dragon). Spells cast in this way must come from a class that grants a dragon steed. This ability does not allow the steed to share abilities that are not spells, even if they function like spells." compset="RaceSpec">
-    <usesource source="sggDragRid"/>
-    <tag group="AbilType" tag="Extra"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    </thing>
-  <thing id="raSgEvasio" name="Evasion" description="When subjected to an attack that normally allows a Reflex save for half damage, a dragon steed takes no damage if it makes a successful saving throw." compset="RaceSpec">
-    <usesource source="sggDragRid"/>
-    <tag group="AbilType" tag="Extra"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    </thing>
-  <thing id="raSgDevoti" name="Devotion" description="A dragon steed gains a +4 morale bonus on Will saves against enchantment spells and effects" compset="RaceSpec">
-    <usesource source="sggDragRid"/>
-    <tag group="AbilType" tag="Extra"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    </thing>
-  <thing id="raSgImpEva" name="Improved Evasion" description="When subjected to an attack that allows a Reflex saving throw for half damage, a dragon steed takes no damage if it makes a successful saving throw and only half damage if the saving throw fails." compset="RaceSpec">
-    <usesource source="sggDragRid"/>
-    <tag group="AbilType" tag="Extra"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    </thing>
-  <thing id="raSgIncine" name="Incinerate" description="A red dragon can incinerate creatures in its fiery breath. A creature reduced to fewer than 0 hit points by its breath weapon must make a Fortitude save (using the breath weapon&apos;s DC). Failure indicates that the creature is reduced to ash. Creatures destroyed in this way can only be restored to life through true resurrection or similar magic." compset="RaceSpec">
-    <usesource source="sggDragRid"/>
-    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
-    <tag group="StandardDC" tag="aCON" name="Constitution" abbrev="Constitution"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
-    <tag group="AbilType" tag="Super"/>
-    </thing>
-  <thing id="raSgFirAur" name="Fire Aura(1d6)" description="An red dragon is surrounded by an aura of intense heat. All creatures within 5 feet take 1d6 points of fire damage at the beginning of the dragon&apos;s turn." compset="RaceSpec">
-    <usesource source="sggDragRid"/>
-    <tag group="SpecType" tag="Attack" name="Attack" abbrev="Attack"/>
-    <tag group="StandardDC" tag="aCON" name="Constitution" abbrev="Constitution"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
-    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassType" tag="Normal"/>
+    <bootstrap thing="cHelpDRR"></bootstrap>
+    <link linkage="helper" thing="cHelpDRR"/>
     </thing>
   <thing id="cHelpDRR" name="Dragonrider" compset="Class" uniqueness="unique">
     <fieldval field="cHDSides" value="10"/>
@@ -1047,7 +251,8 @@ field[livename].text &= " (" & breath & "-ft" & effect & energy & ", " & sDice &
     <arrayval field="cBonFtTot" index="8" value="2"/>
     <arrayval field="cBonFtTot" index="11" value="3"/>
     <arrayval field="cBonFtTot" index="17" value="4"/>
-    <usesource source="sggDragRid" parent="pSGG" name="Dragonrider"/>
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="cWill" tag="Good"/>
     <tag group="Classes" tag="Dragonrid" name="Dragonrider"/>
     <tag group="cAttack" tag="Good"/>
@@ -1177,65 +382,819 @@ field[livename].text &= " (" & breath & "-ft" & effect & energy & ", " & sDice &
     </thing>
   <thing id="zSGDrrCava" name="Dragonrider - Cavalier Multiclassing" description="For a dragonrider multiclassing into cavalier, sacrificing the cavalier’s mount ability increases the draconic steed’s level by a number equal to the character’s cavalier level -2, with a minimum of +1 draconic steed level." compset="Simple" uniqueness="unique">
     <usesource source="sggDragRid"/>
-    <eval phase="First" priority="449">~ If no druid levels just get out
-doneif (#levelcount[Cavalier] = 0)
-~ If Cavalier animal companion just get out
-doneif (hero.childlives[cAnimComp] = 1)
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="449"><![CDATA[
+      ~ If no Cavalier levels just get out &
+      doneif (#levelcount[Cavalier] = 0)
+      ~ If Cavalier animal companion just get out
+      doneif (hero.childlives[cAnimComp] = 1)
 
-~ Give a bonus to animal companion based on Cavalier level - 2 min +1
-hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Cavalier] - 2,1)</eval>
+      ~ Give a bonus to animal companion based on Cavalier level - 2 min +1
+      hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Cavalier] - 2,1)]]></eval>
     </thing>
   <thing id="zSGDrrPala" name="Dragonrider - Paladin Multiclassing" description="For a dragonrider multiclassing into paladin, sacrificing the paladin’s divine bond ability increases the draconic steed’s level by a number equal to half the character’s paladin level, with a minimum of +1 draconic steed level." compset="Simple" uniqueness="unique">
     <usesource source="sggDragRid"/>
-    <eval phase="First" priority="449"><![CDATA[~ If Paladin levels less then 5 just get out
-doneif (#levelcount[Paladin] < 5)
-~ If Paladin animal companion just get out
-doneif (hero.childlives[cAnimComp] = 1)
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="449"><![CDATA[
+      ~ If Paladin levels less then 5 just get out &
+      doneif (#levelcount[Paladin] < 5)
+      ~ If Paladin animal companion just get out
+      doneif (hero.childlives[cAnimComp] = 1)
 
-~ Give a bonus to animal companion based on Paladin level - 2 min +1
-hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Paladin] - 2,1)]]></eval>
+      ~ Give a bonus to animal companion based on Paladin level - 2 min +1
+      hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Paladin] - 2,1)]]></eval>
     </thing>
   <thing id="zSGDrrRang" name="Dragonrider - Ranger Multiclassing" description="For a dragonrider multiclassing into ranger, sacrificing the ranger’s divine bond ability increases the draconic steed’s level by a number equal to half the character’s ranger level, with a minimum of +1 draconic steed level." compset="Simple" uniqueness="unique">
     <usesource source="sggDragRid"/>
-    <eval phase="First" priority="449"><![CDATA[~ If Ranger levels less then 4 just get out
-doneif (#levelcount[Ranger] < 4)
-~ If Paladin animal companion just get out
-doneif (hero.childlives[cAnimComp] = 1)
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="449"><![CDATA[
+      ~ If Ranger levels less then 4 just get out &
+      doneif (#levelcount[Ranger] < 4)
+      ~ If Paladin animal companion just get out
+      doneif (hero.childlives[cAnimComp] = 1)
 
-~ Give a bonus to animal companion based on Ranger level - 2 min +1
-hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Ranger] - 2,1)]]></eval>
+      ~ Give a bonus to animal companion based on Ranger level - 2 min +1
+      hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Ranger] - 2,1)]]></eval>
     </thing>
   <thing id="zSGDrrSorc" name="Dragonrider - Sorcerer Multiclassing" description="For a dragonrider multiclassing into wizard (or arcane bloodline sorcerers), sacrificing the arcane bond ability increases the draconic steed’s level by a number equal to the character’s wizard (or sorcerer) level -2, with a minimum of +1 draconic steed level." compset="Simple" uniqueness="unique">
     <usesource source="sggDragRid"/>
-    <eval phase="First" priority="449">~ If Sorcerer levels 0 just get out
-doneif (#levelcount[Sorcerer] = 0)
-~ If not Sorcerer Arcane Bloodline just get out
-doneif (hero.childlives[cSorArcane] = 0)
-~ If Sorcerer animal companion just get out
-doneif (hero.childlives[cArcFClass] = 1)
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="449"><![CDATA[
+      ~ If Sorcerer levels 0 just get out &
+      doneif (#levelcount[Sorcerer] = 0)
+      ~ If not Sorcerer Arcane Bloodline just get out
+      doneif (hero.childlives[cSorArcane] = 0)
+      ~ If Sorcerer animal companion just get out
+      doneif (hero.childlives[cArcFClass] = 1)
 
-~ Give a bonus to animal companion based on Ranger level - 2 min +1
-hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Sorcerer] - 2,1)</eval>
+      ~ Give a bonus to animal companion based on Ranger level - 2 min +1
+      hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Sorcerer] - 2,1)]]></eval>
     </thing>
   <thing id="zSGDrrWiza" name="Dragonrider - Wizard Multiclassing" description="For a dragonrider multiclassing into wizard (or arcane bloodline sorcerers), sacrificing the arcane bond ability increases the draconic steed’s level by a number equal to the character’s wizard (or sorcerer) level -2, with a minimum of +1 draconic steed level." compset="Simple" uniqueness="unique">
     <usesource source="sggDragRid"/>
-    <eval phase="First" priority="449">~ If Wizard levels 0 just get out
-doneif (#levelcount[Wizard] = 0)
-~ If no Wizard Familiar Bond just get out
-doneif (hero.childlives[cWizFam] = 0)
-~ If Wizard animal companion just get out
-doneif (hero.childlives[cArcFClass] = 1)
-~ Give a bonus to animal companion based on Wizard level - 2 min +1
-hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Wizard] - 2,1)</eval>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="449"><![CDATA[
+      ~ If Wizard levels 0 just get out &
+      doneif (#levelcount[Wizard] = 0)
+      ~ If no Wizard Familiar Bond just get out
+      doneif (hero.childlives[cWizFam] = 0)
+      ~ If Wizard animal companion just get out
+      doneif (hero.childlives[cArcFClass] = 1)
+      ~ Give a bonus to animal companion based on Wizard level - 2 min +1
+      hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Wizard] - 2,1)]]></eval>
     </thing>
-  <thing id="minSteeBla" name="Dragon Steed, Black" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
+  <thing id="zSGDrrDrui" name="Dragonrider - Druid Multiclassing" description="For a dragonrider multiclassing into druid, sacrificing the druid’s animal companion ability increases the draconic steed’s level by a number equal to the character’s druid level -2, with a minimum of +1 draconic steed level." compset="Simple" uniqueness="unique">
     <usesource source="sggDragRid"/>
-    <tag group="gType" tag="Mounts" name="Mounts, Pets and Related Gear" abbrev="Mounts"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="449"><![CDATA[
+      ~ If no druid levels just get out &
+      doneif (#levelcount[Druid] = 0)
+      ~ If druid animal companion just get out
+      doneif (hero.childlives[cAnimComp] = 1)
+
+      ~ Give a bonus to animal companion based on druid level - 2 min +1
+      hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Druid] - 2,1)]]></eval>
+    </thing>
+  <thing id="cDrrMartWe" name="Martial Weapons" description="A dragonrider is proficient with all simple weapons, plus any one martial melee weapon and one martial ranged weapon." compset="ClSpecial">
+    <fieldval field="usrCandid2" value="component.BaseWep &amp; !Helper.NoSelect &amp; !component.Specific &amp; !wCategory.Ammunition &amp; (wCategory.RangeThrow &amp; wProfReq.Martial | wCategory.RangeProj &amp; wProfReq.Martial)"/>
+    <fieldval field="usrCandid1" value="component.BaseWep &amp; !Helper.NoSelect &amp; !component.Specific &amp; !wCategory.Ammunition &amp; (wCategory.Melee &amp; wProfReq.Martial)"/>
+    <tag group="ChooseSrc2" tag="Thing"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <eval phase="PreLevel" priority="4000"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we've not chosen anything, get out
+      doneif (field[usrChosen1].ischosen = 0)
+      ~ If we've not chosen anything, get out
+      doneif (field[usrChosen2].ischosen = 0)
+
+      ~ Set hero tags with weapon proficency tags
+      perform field[usrChosen2].chosen.forward[WepProf.?]
+      perform field[usrChosen1].chosen.forward[WepProf.?]]]></eval>
+    </thing>
+  <thing id="cDrrSteed" name="Bonded Dragon Steed" description="A dragonrider has a mystic bond with a youthful true dragon, a bond that guarantees the dragons loyalty to the rider (as long as it is treated with respect), and allows the dragonrider to tap into some of the bonded steed&apos;s arcane power. A character that starts as a dragonrider at 1st level is assumed to have already bonded with a dragon of his choice. A character multiclassing into dragonrider is approached by a dragon as a prospective bonded mount within 30 days. The bond causes the dragon to grow slightly in size, and drives it to gain power as its dragonrider gains experience, rather than as it gains age categories. Many of a dragon&apos;s normal powers (spell-like abilities, spellcasting, unlimited breath weapon use) are either suspended or modified as the arcane power that drives them is used to fuel the bond between dragonrider and dragon mount. This bond, once forged, ends only if both rider and steed decide to end it, or if one is killed and not resurrected in a timely fashion.\n\nA bonded dragon can carry it&apos;s rider as soon as it is the same size category as its rider, assuming it&apos;s strength is great enough to bear the rider and his gear. Dragons&apos; carrying capacity is modified for their size as normal creatures, and as bonded dragon steeds they can fly (at full speed) even if heavily encumbered. A dragon can carry two creatures one size smaller than it, four creatures two sizes smaller, and sixteen creatures three or more sizes smaller (all assuming it has the Strength to do so).\n\n{b}Note:{/b} Dragon Steeds are located on the {i}Other{/i} tab as a free mininon. Once added the steed will auto level based on the Dragonrider class levels." compset="ClSpecial">
+    <fieldval field="shortname" value="Steed"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="First" priority="450"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set the Level of the hero so the correct HD can be
+      ~ added to the Steed in the bootstrap conditions. &
+      field[abValue].value += #levelcount[Dragonrid]]]></eval>
+    </thing>
+  <thing id="cDrrLink" name="Link" description="A dragonrider and his bonded dragon steed always know the direction to each other, and are aware of any conditions the other is suffering." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cDrrLowLig" name="Low-Light Vision" description="As the bond between dragonrider and dragon strengthens, it eventually grants the dragonrider some of his steeds amazing senses. At 2nd level, the dragonrider gains low-light vision. If the dragonrider already has natural low-light vision, the range of his low-light is doubled (allowing him to see four times as far as normal in dim or shadowy conditions)." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="Final" priority="5000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ If we already have racial low-light its 4x
+      If (hero.childlives[raLowLight] = 1) Then
+         field[livename].text = field[thingname].text & " 4x"
+      Else
+         field[livename].text = field[thingname].text & " 2x"
+      Endif]]></eval>
+    </thing>
+  <thing id="cDrrResEne" name="Resist Energy" description="Beginning at 3rd level, a dragonrider gains a natural resistance to damage of the same energy type as the damage of his bonded dragon steed&apos;s breath weapon. This begins at energy resistance 5, and increase by 5 every 5 levels, to a maximum of energy resistance 20 at 18th level. The energy resistance is tied to the dragonrider&apos;s current steed - should he change bonded dragons steed to one with a new type of breath weapon damage, his resistance also changes to the new type." compset="ClSpecial">
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set the list name
+      var list as number
+      list = field[xIndex].value * 5
+      field[listname].text = field[thingname].text & " " & list
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ 5 resist per bootstrap
+      field[abValue].value += field[xCount].value * 5
+      field[livename].text = field[thingname].text & " " & field[abValue].value
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ Apply the correct Energy Reistance based on the dragon steed
+      If (root.tagis[RGDrrEner.Acid] = 1) then
+         #applyresist[xDamRsAcid,field[abValue].value]
+      ElseIf (root.tagis[RGDrrEner.Elec] = 1) then
+         #applyresist[xDamRsElec,field[abValue].value]
+      ElseIf (root.tagis[RGDrrEner.Fire] = 1) then
+         #applyresist[xDamRsFire,field[abValue].value]
+      ElseIf (root.tagis[RGDrrEner.Cold] = 1) then
+         #applyresist[xDamRsCold,field[abValue].value]
+      Endif]]></eval>
+    </thing>
+  <thing id="cDrrSumSte" name="Summon Steed" description="Once per day, as a full round action, a dragonrider may magically call his steed to his side. This ability is the equivalent of a spell of a level equal to one third the dragonrider&apos;s level. The steed immediately appears adjacent to the dragonrider. A dragonrider can use this ability once per day at 4th level, and one additional time per day for every 4 levels thereafter, for a total of five times per day at 19th level." compset="ClSpecial">
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & field[xIndex].value & "/day"
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " " & field[abValue].value
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      field[trkMax].value = field[abValue].value]]></eval>
+    </thing>
+  <thing id="cDrrDracTr" name="Draconic Training" description="The unique experience and training a dragonrider receives as part of his time with his bonded dragon steed grants him a bonus feat at 5th level. The feat must be selected from the list below, and the dragonrider must meet all the feat&apos;s prerequisites normally. The dragonrider gains an additional feat at 9th, 12th, and 17th level." compset="ClSpecial">
+    <tag group="Helper" tag="SpecUp"/>
+    </thing>
+  <thing id="cDrrDarkvi" name="Darkvision" description="At 6th level, the senses of the dragonrider are again enhanced by his link to his dragon steed, granting him darkvision to a range of 60 feet. If the dragonrider already has natural darkvision, the range of that vision is increased by 60 feet." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="raDarkVis">
+      <containerreq phase="First" priority="1000"><![CDATA[count:Classes.Dragonrid >= 6 & !AbReplace.cDrrDarkvi]]></containerreq>
+      <assignval field="abValue2" value="60"/>
+      </bootstrap>
+    </thing>
+  <thing id="cDrrScent" name="Scent" description="At 10th level, the senses of the dragonrider are again enhanced by his link to his dragon steed, granting him the scent ability. For more information on the scent ability, see the Pathfinder Roleplaying Game Bestiary." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="xScent">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Dragonrid >= 10 & !AbReplace.cDrrScent]]></containerreq>
+      </bootstrap>
+    </thing>
+  <thing id="cDrrBlinds" name="Blindsense" description="At 14th level, the senses of the dragonrider are again enhanced by his link to his dragon steed, granting him blindsense to a range of 15 feet. If the dragonrider already has natural blindsense, the range of this ability is increased by 15 feet." compset="ClSpecial">
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="rBlindsen">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Dragonrid >= 14]]></containerreq>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set or increase blindsense value by 15
+      #value[rBlindsen] += 15]]></eval>
+    </thing>
+  <thing id="cDrrSR" name="Spell Resistance" description="Beginning at 16th level a dragonrider gains spell resistance. The SR is equal to 5 + the dragonrider&apos;s level, and is shared by the dragonrider&apos;s bonded dragon steed." compset="ClSpecial">
+    <fieldval field="abValue" value="5"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="SR"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ SR is 5 + level
+      field[abValue].value += field[xAllLev].value
+      #applysr[field[abValue].value]]]></eval>
+    </thing>
+  <thing id="cDrrDragon" name="Dragonform" description="At 20th level the bond between a dragonrider and his dragon is so strong, the dragonrider can actually take the form of a dragon. This ability can be used once per day and acts as the spell {i}form of the dragon III{/i}, but the dragonrider may only take the form of the race of dragon that matches his bonded dragon steed.\n\n{b}Form of the Dragon III{/b}\nThis spell functions as form of the dragon II save that it also allows you to take the form of a Huge chromatic or metallic dragon. You gain the following abilities: a +10 size bonus to Strength, a +8 size bonus to Constitution, a +8 natural armor bonus, fly 120 feet (poor), blindsense 60 feet, darkvision 120 feet, a breath weapon, damage reduction 10/magic, frightful presence (DC equal to the DC for this spell), and immunity to one element (of the same type form of the dragon I grants resistance to). You also gain one bite (2d8), two claws (2d6), two wing attacks (1d8), and one tail slap attack (2d6). You can use the breath weapon as often as you like, but you must wait 1d4 rounds between uses. All breath weapons deal 12d8 points of damage and allow a Reflex save for half damage. Line breath weapons increase to 100-foot lines and cones increase to 50-foot cones." compset="ClSpecial">
+    <fieldval field="trkMax" value="1"/>
+    <fieldval field="actName" value="Form of the Dragon III"/>
+    <tag group="AbilType" tag="SpellLike"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="User" tag="Tracker"/>
+    <bootstrap thing="xImmAcid">
+      <containerreq phase="First" priority="500">RGDrrEner.Acid</containerreq>
+      </bootstrap>
+    <bootstrap thing="xImmFire">
+      <containerreq phase="First" priority="500">RGDrrEner.Fire</containerreq>
+      </bootstrap>
+    <bootstrap thing="xImmCold">
+      <containerreq phase="First" priority="500">RGDrrEner.Cold</containerreq>
+      </bootstrap>
+    <bootstrap thing="xImmElec">
+      <containerreq phase="First" priority="500">RGDrrEner.Elec</containerreq>
+      </bootstrap>
+    <bootstrap thing="wBite">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0]]></containerreq>
+      <autotag group="wMain" tag="2d8"/>
+      </bootstrap>
+    <bootstrap thing="wClaw">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0]]></containerreq>
+      <autotag group="wMain" tag="2d6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="wWing">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0]]></containerreq>
+      <autotag group="Value" tag="2"/>
+      <autotag group="wMain" tag="1d8"/>
+      </bootstrap>
+    <bootstrap thing="wSlam">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0]]></containerreq>
+      <autotag group="wMain" tag="2d6"/>
+      <assignval field="livename" value="Tail Slap"/>
+      </bootstrap>
+    <bootstrap thing="raSgBreath">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0]]></containerreq>
+      </bootstrap>
+    <eval phase="First" priority="495"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+      ~ Push dragon energy type to the hero
+      perform root.forward[RGDrrEner.?]]]></eval>
+    <eval phase="First" priority="20000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[abilActive].value = 0)
+
+      ~ Apply DR 10/magic to the hero
+      #applydr[xDamRdMag,10]
+
+      ~ Set size to Huge regardless of previous size
+      field[abValue].value = 2 - herofield[tSize].value
+      herofield[tSize].value = 2
+
+      ~ Increase the size of all our equipment by 1 apart from
+      ~ unarmed strike, which changes automatically
+      foreach pick in hero from MyGear where "!wCategory.Unarmed & !Helper.GearNoSize"
+         eachpick.field[gSizeMod].value += field[abValue].value
+         ~ Projectile weapons DO NOT do increase damage dice
+         If (eachpick.tagis[wCategory.RangeProj] = 1) then
+             perform eachpick.assign[Helper.DamageDown]
+             perform eachpick.assign[Helper.DamageDown]
+             If (field[abValue].value = 3) Then
+                 perform eachpick.assign[Helper.DamageDown]
+             Endif
+         Endif
+      nexteach
+
+      ~ Bonus to Str and Con
+      hero.child[aSTR].field[Bonus].value += 10
+      hero.child[aCON].field[Bonus].value += 8
+      ~ Increase Natural AC by 3
+      hero.child[ArmorClass].field[tACNatural].value += 8
+      ~ Give Fly speed
+      #applyvalue[xFly, 120]
+      ~ Set fly speed to poor
+      perform hero.child[xFly].assign[Maneuver.Poor]
+      ~ Set Blindsense distance of 45 so it adds to the existing 15 to get
+      ~ a total of 60
+      #applyvalue[rBlindsen, 45]]]></eval>
+    </thing>
+  <thing id="raSgDrFocu" name="Focus:" description="For the dragon to take any other action in a typical encounter, the dragonrider must establish a mystic focus. Each dragon steed lists the kind of action required each round for a dragonrider to establish this focus, and focus lasts until the beginning of the dragonrider&apos;s next turn. For the most powerful true dragons, it may take a dragonrider a standard action to establish focus. As the dragonrider and his dragon steed gain levels, the amount of time required to establish focus is reduced, going from a standard action to a move action, a move action to a swift action, and a swift action to a free action action. A dragonrider must be within 30 feet of his steed to establish focus.\n\nOnce focus is established, the dragon is free to act however the dragonrider wishes. The dragon steed can use its breath weapon, make double moves, engage in melee attacks, and generally take whatever actions the dragonrider instructs. As the mystic focus establishes a mental bond between the dragonrider and his dragon steed, no vocal communication is required between the two while the mystic focus is in effect." compset="RaceSpec" uniqueness="unique">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Final" priority="20000"><![CDATA[
+      var action as string
+      ~ Correctly set the type of action
+      If (field[abValue].value = 1) then
+         action = " Full-Round"
+      ElseIf (field[abValue].value = 2) then
+         action = " Standard"
+      ElseIf (field[abValue].value = 3) then
+         action = " Move"
+      ElseIf (field[abValue].value = 4) then
+         action = " Swift"
+      ElseIf (field[abValue].value = 5) then
+         action = " Free"
+      Endif
+      ~ Set focus name into livename
+      field[livename].text = field[thingname].text & action]]></eval>
+    </thing>
+  <thing id="zSggDrrNat" name="Dragon Steed Natural Armor" description="This ability will calculate the natural armor bonus for a dragon steed." compset="Ability">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ Calc adjustment to Natural armor for each animal compnion level &
+      If (field[abValue].value = 1) then
+          field[abValue2].value = 0
+      elseif (field[abValue].value = 2) then
+          field[abValue2].value = 1
+      elseif (field[abValue].value = 3) then
+          field[abValue2].value = 2
+      elseif (field[abValue].value = 4) then
+          field[abValue2].value = 2
+      elseif (field[abValue].value = 5) then
+          field[abValue2].value = 3
+      elseif (field[abValue].value = 6) then
+          field[abValue2].value = 4
+      elseif (field[abValue].value = 7) then
+          field[abValue2].value = 5
+      elseif (field[abValue].value = 8) then
+          field[abValue2].value = 6
+      elseif (field[abValue].value = 9) then
+          field[abValue2].value = 6
+      elseif (field[abValue].value = 10) then
+          field[abValue2].value = 7
+      elseif (field[abValue].value = 11) then
+          field[abValue2].value = 8
+      elseif (field[abValue].value = 12) then
+          field[abValue2].value = 8
+      elseif (field[abValue].value = 13) then
+          field[abValue2].value = 9
+      elseif (field[abValue].value = 14) then
+          field[abValue2].value = 10
+      elseif (field[abValue].value = 15) then
+          field[abValue2].value = 11
+      elseif (field[abValue].value = 16) then
+          field[abValue2].value = 12
+      elseif (field[abValue].value = 17) then
+          field[abValue2].value = 12
+      elseif (field[abValue].value = 18) then
+          field[abValue2].value = 13
+      elseif (field[abValue].value = 19) then
+          field[abValue2].value = 14
+      elseif (field[abValue].value = 20) then
+          field[abValue2].value = 15
+      endif
+      ~ Give bonus to Natural Armor
+      hero.child[ArmorClass].field[tACNatural].value += field[abValue2].value]]></eval>
+    </thing>
+  <thing id="zSggDrrStr" name="Dragon Steed Str/Con Bonus" description="This ability will calculate the Str/Con bonus for a dragon steed." compset="Ability" uniqueness="unique">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ Calc the bonus for each animal compnion level.
+      ~ abValue  = Dragon Hit Dice
+      ~ abValue2 = bonus to Str/Con
+      If (field[abValue].value = 1) then
+          field[abValue2].value = 0
+      elseif (field[abValue].value = 2) then
+          field[abValue2].value = 0
+      elseif (field[abValue].value = 3) then
+          field[abValue2].value = 1
+      elseif (field[abValue].value = 4) then
+          field[abValue2].value = 1
+      elseif (field[abValue].value = 5) then
+          field[abValue2].value = 1
+      elseif (field[abValue].value = 6) then
+          field[abValue2].value = 2
+      elseif (field[abValue].value = 7) then
+          field[abValue2].value = 2
+      elseif (field[abValue].value = 8) then
+          field[abValue2].value = 3
+      elseif (field[abValue].value = 9) then
+          field[abValue2].value = 3
+      elseif (field[abValue].value = 10) then
+          field[abValue2].value = 3
+      elseif (field[abValue].value = 11) then
+          field[abValue2].value = 4
+      elseif (field[abValue].value = 12) then
+          field[abValue2].value = 4
+      elseif (field[abValue].value = 13) then
+          field[abValue2].value = 5
+      elseif (field[abValue].value = 14) then
+          field[abValue2].value = 5
+      elseif (field[abValue].value = 15) then
+          field[abValue2].value = 5
+      elseif (field[abValue].value = 16) then
+          field[abValue2].value = 6
+      elseif (field[abValue].value = 17) then
+          field[abValue2].value = 6
+      elseif (field[abValue].value = 18) then
+          field[abValue2].value = 7
+      elseif (field[abValue].value = 19) then
+          field[abValue2].value = 7
+      elseif (field[abValue].value = 20) then
+          field[abValue2].value = 7
+      endif
+      ~ Give bonus Str
+      hero.child[aSTR].field[aNormMod].value += field[abValue2].value
+      ~ Give bonus to Con
+      hero.child[aCON].field[aNormMod].value += field[abValue2].value
+
+      ~ 8th Level advancement
+      If (field[abValue].value >= 8) Then
+         hero.child[aSTR].field[aNormMod].value += 8
+         hero.child[aCON].field[aNormMod].value += 4
+         hero.child[aDEX].field[aNormMod].value += -2
+      Endif
+      ~ 16th Level advancement
+      If (field[abValue].value >= 16) Then
+         hero.child[aSTR].field[aNormMod].value += 8
+         hero.child[aCON].field[aNormMod].value += 4
+         hero.child[aDEX].field[aNormMod].value += -2
+      Endif]]></eval>
+    </thing>
+  <thing id="zSggDrrInt" name="Dragon Steed Int/Cha Bonus" description="This ability will calculate the Int/Cha bonus for a dragon steed." compset="Ability" uniqueness="unique">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ Calc the bonus for each animal compnion level &
+      ~ abValue = Hit Dice
+      ~ abValue2 = Bonus to Int/Cha
+      If (field[abValue].value = 1) then
+          field[abValue2].value = 0
+      elseif (field[abValue].value = 2) then
+          field[abValue2].value = 0
+      elseif (field[abValue].value = 3) then
+          field[abValue2].value = 1
+      elseif (field[abValue].value = 4) then
+          field[abValue2].value = 1
+      elseif (field[abValue].value = 5) then
+          field[abValue2].value = 1
+      elseif (field[abValue].value = 6) then
+          field[abValue2].value = 2
+      elseif (field[abValue].value = 7) then
+          field[abValue2].value = 2
+      elseif (field[abValue].value = 8) then
+          field[abValue2].value = 2
+      elseif (field[abValue].value = 9) then
+          field[abValue2].value = 3
+      elseif (field[abValue].value = 10) then
+          field[abValue2].value = 3
+      elseif (field[abValue].value = 11) then
+          field[abValue2].value = 3
+      elseif (field[abValue].value = 12) then
+          field[abValue2].value = 4
+      elseif (field[abValue].value = 13) then
+          field[abValue2].value = 4
+      elseif (field[abValue].value = 14) then
+          field[abValue2].value = 4
+      elseif (field[abValue].value = 15) then
+          field[abValue2].value = 5
+      elseif (field[abValue].value = 16) then
+          field[abValue2].value = 5
+      elseif (field[abValue].value = 17) then
+          field[abValue2].value = 5
+      elseif (field[abValue].value = 18) then
+          field[abValue2].value = 6
+      elseif (field[abValue].value = 19) then
+          field[abValue2].value = 6
+      elseif (field[abValue].value = 20) then
+          field[abValue2].value = 6
+      endif
+      ~ Give bonus to Int
+      hero.child[aINT].field[aNormMod].value += field[abValue2].value
+      ~ Give bonus to Cha
+      hero.child[aCHA].field[aNormMod].value += field[abValue2].value]]></eval>
+    </thing>
+  <thing id="raSgAcidBi" name="Acidic Bite" description="A black dragon&apos;s bite deals an additional 2d6 points of acid damage." compset="RaceSpec">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Final" priority="25000"><![CDATA[
+      ~ Change bite to display the +2d6 info
+      #extradamage[hero.childfound[wBite],"+2d6 Acid",field[name].text]]]></eval>
+    </thing>
+  <thing id="raSgBreath" name="Breath Weapon" description="Some creatures can exhale a cone, line, or cloud of energy or other magical effects. A breath weapon attack usually deals damage and is often based on some type of energy. Breath weapons allow a Reflex save for half damage (DC 10 + 1/2 the breathing creature&apos;s racial HD + the breathing creature&apos;s Con modifier; the exact DC is given in the creature&apos;s descriptive text). A creature is immune to its own breath weapon unless otherwise noted. You can use the breath weapon as often as you like, but you must wait 1d4 rounds between uses." compset="RaceSpec">
+    <comment>Level 20 Clsss ability.</comment>
+    <fieldval field="abValue3" value="8"/>
+    <fieldval field="abValue2" value="12"/>
+    <usesource source="sggDragRid"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="20000"><![CDATA[
+      ~ Set pointer to Dragonrider class helper
+      perform hero.childfound[cHelpDRR].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ No breath weapon tags then just get out now &
+      doneif (focus.tagis[RGDrrEner.?] = 0)
+      doneif (focus.tagis[BreathShp.?] = 0)
+
+      var effect as string
+      var energy as string
+      var Dice as string
+
+      ~ Lines are 100ft
+      If (focus.tagis[BreathShp.Line] = 1) then
+         effect = " line of "
+         field[abValue].value += 100
+      ~..Cones are 50ft
+      ElseIf (focus.tagis[BreathShp.Cone] = 1) then
+         effect = " cone of "
+         field[abValue].value += 50
+      Endif
+
+      energy = "(energy)"
+      if (focus.tagcount[RGDrrEner.?] <> 0) then
+         energy = focus.tagnames[RGDrrEner.?]
+      endif
+
+      ~ Calc hit dice of damage
+      Dice = field[abValue2].value & "d" & field[abValue3].value
+
+      field[livename].text = field[name].text & " (" & field[abValue].value & "-ft" & effect & energy & ", " & Dice & ")"]]></eval>
+    </thing>
+  <thing id="raSgSteedB" name="Breath Weapon" description="Every steed deals one kind of damage, and has either a line or a cone. Each breath weapon allows a Reflex save for half damage, the save DC for a dragon steed’s breath weapon is 10 + one-half steed’s hit dice + steed’s Constitution modifier. A dragon steed may use its breath weapon once every four rounds, not to exceed a total number of uses per day equal to 3 + the steed’s Constitution modifier.\n\nAs the dragon steed gains HD, it’s breath weapon deals more dice of damage and gains additional range." compset="RaceSpec">
+    <comment>Dragon Steed breath weapon.</comment>
+    <usesource source="sggDragRid"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="20000"><![CDATA[
+      ~ No custom values set then just get out now
+      doneif (field[abValue].value = 0)
+
+      var effect as string
+      var energy as string
+      var sDice as string
+      var nDice as number
+      var breath as number
+
+      breath = field[abValue].value
+      nDice = 1
+
+      If (field[abValue4].value >= 2) Then
+         breath = field[abValue].value * 2
+      Endif
+      If (field[abValue4].value >= 3) Then
+         nDice = 2
+      Endif
+      If (field[abValue4].value >= 5) Then
+         nDice = 3
+      Endif
+      If (field[abValue4].value >= 7) Then
+         breath = field[abValue].value * 3
+      Endif
+      If (field[abValue4].value >= 8) Then
+         nDice = 4
+      Endif
+      If (field[abValue4].value >= 10) Then
+         nDice = 5
+      Endif
+      If (field[abValue4].value >= 12) Then
+         breath = field[abValue].value * 4
+      Endif
+      If (field[abValue4].value >= 13) Then
+         nDice = 6
+      Endif
+      If (field[abValue4].value >= 15) Then
+         nDice = 7
+      Endif
+      If (field[abValue4].value >= 17) Then
+         breath = field[abValue].value * 5
+      Endif
+      If (field[abValue4].value >= 18) Then
+         nDice = 8
+      Endif
+      If (field[abValue4].value >= 20) Then
+         nDice = 9
+      Endif
+
+      sDice =  nDice & "d" & field[abValue3].value
+
+      ~ Breath weapon shape is a Line or Cone?
+      If (tagis[BreathShp.Line] <> 0) then
+         effect = " line of "
+      ElseIf (tagis[BreathShp.Cone] <> 0) then
+         effect = " cone of "
+      Endif
+
+      ~ Set the type of energy based on the dragon
+      energy = "(energy)"
+      if (tagcount[RGDrrEner.?] <> 0) then
+         energy = tagnames[RGDrrEner.?]
+      endif
+
+      field[livename].text = field[name].text & " (" & breath & "-ft" & effect & energy & ", " & sDice & ")"]]></eval>
+    <eval phase="PostAttr" index="2"><![CDATA[
+      ~ Calculate uses per day as 3 + Con &
+      field[trkMax].value += 3 + #attrbonus[aCON]]]></eval>
+    </thing>
+  <thing id="raSgLink" name="Link" description="A dragonrider and his bonded dragon steed always know the direction to each other, and are aware of any conditions the other is suffering." compset="RaceSpec">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raSgSharSp" name="Share Spells" description="The dragonrider may cast a spell with a target of &quot;You&quot; on his dragon steed (as a spell with a range of touch) instead of on himself. A dragonrider may cast spells on his dragon steed even if the spells normally do not affect creatures of the steed’s type (dragon). Spells cast in this way must come from a class that grants a dragon steed. This ability does not allow the steed to share abilities that are not spells, even if they function like spells." compset="RaceSpec">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raSgEvasio" name="Evasion" description="When subjected to an attack that normally allows a Reflex save for half damage, a dragon steed takes no damage if it makes a successful saving throw." compset="RaceSpec">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raSgDevoti" name="Devotion" description="A dragon steed gains a +4 morale bonus on Will saves against enchantment spells and effects" compset="RaceSpec">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raSgImpEva" name="Improved Evasion" description="When subjected to an attack that allows a Reflex saving throw for half damage, a dragon steed takes no damage if it makes a successful saving throw and only half damage if the saving throw fails." compset="RaceSpec">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    </thing>
+  <thing id="raSgIncine" name="Incinerate" description="A red dragon can incinerate creatures in its fiery breath. A creature reduced to fewer than 0 hit points by its breath weapon must make a Fortitude save (using the breath weapon&apos;s DC). Failure indicates that the creature is reduced to ash. Creatures destroyed in this way can only be restored to life through true resurrection or similar magic." compset="RaceSpec">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="raSgFirAur" name="Fire Aura(1d6)" description="An red dragon is surrounded by an aura of intense heat. All creatures within 5 feet take 1d6 points of fire damage at the beginning of the dragon&apos;s turn." compset="RaceSpec">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Attack"/>
+    <tag group="StandardDC" tag="aCON"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="AbilType" tag="Super"/>
+    </thing>
+  <thing id="minSteeRed" name="Dragon Steed, Red" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Mounts"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
     <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Good] + tagis[Alignment.Lawful] = 0</exprreq>
     <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="rSGDrrRed"></bootstrap>
+      <bootstrap thing="tpSgDragon"></bootstrap>
+      </minion>
+    </thing>
+  <thing id="rSGDrrRed" name="Dragon Steed, Red" description="This is the Dragonrider class dragon steed mount." compset="Race" uniqueness="unique">
+    <fieldval field="rAC" value="6"/>
+    <fieldval field="rSTR" value="7"/>
+    <fieldval field="rDEX" value="4"/>
+    <fieldval field="rCON" value="5"/>
+    <fieldval field="rWIS" value="1"/>
+    <fieldval field="rSpeed" value="40"/>
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="RaceSize" tag="Large1"/>
+    <tag group="HasType" tag="tpSgDragon"/>
+    <tag group="Alignment" tag="Chaotic"/>
+    <tag group="Alignment" tag="Evil"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <tag group="Helper" tag="Quadruped"/>
+    <tag group="Helper" tag="NotHum"/>
+    <tag group="SlotSet" tag="selMISQuaC"/>
+    <bootstrap thing="cBonusHD"></bootstrap>
+    <bootstrap thing="cBonusHD"></bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 2]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 4]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 5]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 6]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 8]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 9]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 10]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 12]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 13]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 14]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 17]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 18]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 20]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="zSggDrrInt"></bootstrap>
+    <bootstrap thing="zSggDrrNat"></bootstrap>
+    <bootstrap thing="zSggDrrStr"></bootstrap>
+    <bootstrap thing="raSgSteedB">
+      <autotag group="RGDrrEner" tag="Fire"/>
+      <autotag group="BreathShp" tag="Cone"/>
+      <assignval field="abValue" value="30"/>
+      <assignval field="abValue3" value="8"/>
+      </bootstrap>
+    <bootstrap thing="raSgDrFocu"></bootstrap>
+    <bootstrap thing="raSgLink"></bootstrap>
+    <bootstrap thing="xFly">
+      <autotag group="Maneuver" tag="Clumsy"/>
+      <autotag group="Value" tag="30"/>
+      </bootstrap>
+    <bootstrap thing="wBite">
+      <autotag group="wMain" tag="1d6_5"/>
+      <autotag group="Helper" tag="NatSizeDmg"/>
+      </bootstrap>
+    <bootstrap thing="wClaw">
+      <autotag group="wMain" tag="1d4_4"/>
+      <autotag group="Value" tag="2"/>
+      <autotag group="Helper" tag="NatSizeDmg"/>
+      </bootstrap>
+    <bootstrap thing="xImmFire"></bootstrap>
+    <bootstrap thing="raSgImpEva">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raSgIncine">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 8]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raSgFirAur">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
+      </bootstrap>
+    <eval phase="First" priority="490"><![CDATA[
+      ~ Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+      var S2_Focus as number
+      S2_Focus = 2
+      ~ Initial Setup of Dragon Steed
+      call 3PDrStMain
+
+      ~ 8th level improvments
+      If (field[anCompLev].value >= 8) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,5]
+         #applyvalue[xFly,40]
+         #applyvalue[raDarkVis,120]
+         #value[raSgDrFocu] += 1
+      Endif
+      ~ 16th level improvments
+      If (field[anCompLev].value >= 16) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,10]
+         #applyvalue[xFly,50]
+         #value[raSgDrFocu] += 1
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="500" index="2"><![CDATA[
+      ~ Calculate the Dragon steeds skill points &
+      call 3PDrStSkl]]></eval>
+    </thing>
+  <thing id="minSteeBla" name="Dragon Steed, Black" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Mounts"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
+    <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Good] + tagis[Alignment.Lawful] = 0</exprreq>
+    <minion id="Mount">
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="tpSgDragon"></bootstrap>
       <bootstrap thing="rSGDrrBlck"></bootstrap>
       </minion>
     </thing>
@@ -1249,6 +1208,7 @@ hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Wizard] -
     <fieldval field="rINT" value="-2"/>
     <fieldval field="rCHA" value="-2"/>
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="RaceSize" tag="Medium0"/>
     <tag group="HasType" tag="tpSgDragon"/>
     <tag group="Alignment" tag="Chaotic"/>
@@ -1256,8 +1216,6 @@ hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Wizard] -
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="Quadruped"/>
     <tag group="Helper" tag="NotHum"/>
-    <tag group="BloodEner" tag="Acid" name="Acid"/>
-    <tag group="RaceType" tag="Animal"/>
     <tag group="SlotSet" tag="selMISQuaC"/>
     <bootstrap thing="cBonusHD"></bootstrap>
     <bootstrap thing="cBonusHD">
@@ -1306,7 +1264,10 @@ hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Wizard] -
     <bootstrap thing="zSggDrrNat"></bootstrap>
     <bootstrap thing="zSggDrrStr"></bootstrap>
     <bootstrap thing="raSgSteedB">
-      <autotag group="Custom" tag="sggLine"/>
+      <autotag group="RGDrrEner" tag="Acid"/>
+      <autotag group="BreathShp" tag="Line"/>
+      <assignval field="abValue" value="30"/>
+      <assignval field="abValue3" value="6"/>
       </bootstrap>
     <bootstrap thing="raSgDrFocu"></bootstrap>
     <bootstrap thing="raSgLink"></bootstrap>
@@ -1349,66 +1310,33 @@ hero.childfound[cDrrSteed].field[abValue].value += maximum(#levelcount[Wizard] -
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
       </bootstrap>
     <bootstrap thing="cBonusHD"></bootstrap>
-    <eval phase="First" priority="490"><![CDATA[~ Set animal companion level based off the Steed Class ability
-~ this is so the bootstrap Bonus HD work correctly.
-field[anCompLev].value += master.hero.child[cDrrSteed].field[abValue].value
+    <eval phase="First" priority="490"><![CDATA[
+      ~ Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+      var S2_Focus as number
+      S2_Focus = 3
+      ~ Initial Setup of Dragon Steed
+      call 3PDrStMain
 
-~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
-    <eval phase="PostAttr" priority="500" index="3">~ Calculate the Dragon steeds skill points
-#resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]</eval>
-    <eval phase="First" priority="500" index="2"><![CDATA[~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
-#value[raSgDrFocu] = 3
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
-
-~ Set Dragons breath weapon
-perform pulltags[BloodEner.?]
-perform hero.child[raSgSteedB].pushtags[BloodEner.?]
-~ Set length of breath
-hero.child[raSgSteedB].field[abValue].value = 30
-~ Set die size
-hero.child[raSgSteedB].field[abValue3].value = 6
-~ Set Companion Level
-hero.child[raSgSteedB].field[abValue4].value = field[anCompLev].value
-
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,5]
-   #applyvalue[xFly,50]
-   #applyvalue[raDarkVis,120]
-   #applyvalue[xSwim,40]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,10]
-   #applyvalue[xFly,60]
-   #applyvalue[xSwim,50]
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
+      ~ 8th level improvments
+      If (field[anCompLev].value >= 8) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,5]
+         #applyvalue[xFly,50]
+         #applyvalue[raDarkVis,120]
+         #applyvalue[xSwim,40]
+         #value[raSgDrFocu] += 1
+      Endif
+      ~ 16th level improvments
+      If (field[anCompLev].value >= 16) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,10]
+         #applyvalue[xFly,60]
+         #applyvalue[xSwim,50]
+         #value[raSgDrFocu] += 1
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="500" index="2"><![CDATA[
+      ~ Calculate the Dragon steeds skill points &
+      call 3PDrStSkl]]></eval>
     </thing>
   <thing id="rSGDrrBlue" name="Dragon Steed, Blue" description="This is the Dragonrider class dragon steed mount." compset="Race" uniqueness="unique">
     <fieldval field="rAC" value="5"/>
@@ -1418,14 +1346,13 @@ Endif]]></eval>
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rCHA" value="-2"/>
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="RaceSize" tag="Medium0"/>
     <tag group="HasType" tag="tpSgDragon"/>
     <tag group="Alignment" tag="Evil"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="Quadruped"/>
     <tag group="Helper" tag="NotHum"/>
-    <tag group="BloodEner" tag="Elec" name="Electricity"/>
-    <tag group="RaceType" tag="Animal"/>
     <tag group="Alignment" tag="Lawful"/>
     <tag group="SlotSet" tag="selMISBipC"/>
     <bootstrap thing="cBonusHD">
@@ -1474,7 +1401,10 @@ Endif]]></eval>
     <bootstrap thing="zSggDrrNat"></bootstrap>
     <bootstrap thing="zSggDrrStr"></bootstrap>
     <bootstrap thing="raSgSteedB">
-      <autotag group="Custom" tag="sggLine"/>
+      <autotag group="RGDrrEner" tag="Elec"/>
+      <autotag group="BreathShp" tag="Line"/>
+      <assignval field="abValue" value="30"/>
+      <assignval field="abValue3" value="4"/>
       </bootstrap>
     <bootstrap thing="raSgDrFocu"></bootstrap>
     <bootstrap thing="raSgLink"></bootstrap>
@@ -1515,75 +1445,44 @@ Endif]]></eval>
       </bootstrap>
     <bootstrap thing="cBonusHD"></bootstrap>
     <bootstrap thing="cBonusHD"></bootstrap>
-    <eval phase="PostAttr" priority="500" index="3">~ Calculate the Dragon steeds skill points
-#resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]</eval>
-    <eval phase="First" priority="500" index="2"><![CDATA[~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
-#value[raSgDrFocu] = 3
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
+    <eval phase="First" priority="490"><![CDATA[
+      ~ Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+      var S2_Focus as number
+      S2_Focus = 3
+      ~ Initial Setup of Dragon Steed
+      call 3PDrStMain
 
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
-
-~ Set Dragons breath weapon
-perform pulltags[BloodEner.?]
-perform hero.child[raSgSteedB].pushtags[BloodEner.?]
-~ Set length of breath
-hero.child[raSgSteedB].field[abValue].value = 30
-~ Set die size
-hero.child[raSgSteedB].field[abValue3].value = 4
-~ Set Companion Level
-hero.child[raSgSteedB].field[abValue4].value = field[anCompLev].value
-
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,5]
-   #applyvalue[xFly,50]
-   #applyvalue[raDarkVis,120]
-   #applyvalue[xBurrow,10]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,10]
-   #applyvalue[xFly,60]
-   #applyvalue[xBurrow,20]
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
-    <eval phase="First" priority="490"><![CDATA[~ Set animal companion level based off the Steed Class ability
-~ this is so the bootstrap Bonus HD work correctly.
-field[anCompLev].value += master.hero.child[cDrrSteed].field[abValue].value
-
-~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
+      ~ 8th level improvments
+      If (field[anCompLev].value >= 8) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,5]
+         #applyvalue[xFly,50]
+         #applyvalue[raDarkVis,120]
+         #applyvalue[xBurrow,10]
+         #value[raSgDrFocu] += 1
+      Endif
+      ~ 16th level improvments
+      If (field[anCompLev].value >= 16) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,10]
+         #applyvalue[xFly,60]
+         #applyvalue[xBurrow,20]
+         #value[raSgDrFocu] += 1
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="500" index="2"><![CDATA[
+      ~ Calculate the Dragon steeds skill points &
+      call 3PDrStSkl]]></eval>
     </thing>
   <thing id="minSteeBlu" name="Dragon Steed, Blue" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
     <usesource source="sggDragRid"/>
-    <tag group="gType" tag="Mounts" name="Mounts, Pets and Related Gear" abbrev="Mounts"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Mounts"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
     <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Good] + tagis[Alignment.Chaotic] = 0</exprreq>
     <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="tpSgDragon"></bootstrap>
       <bootstrap thing="rSGDrrBlue"></bootstrap>
       </minion>
     </thing>
@@ -1595,8 +1494,7 @@ Endif]]></eval>
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rSpeed" value="40"/>
     <usesource source="sggDragRid"/>
-    <tag group="RaceType" tag="Animal"/>
-    <tag group="BloodEner" tag="Acid" name="Acid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="RaceSize" tag="Large1"/>
     <tag group="HasType" tag="tpSgDragon"/>
     <tag group="Alignment" tag="Evil"/>
@@ -1651,7 +1549,10 @@ Endif]]></eval>
     <bootstrap thing="zSggDrrNat"></bootstrap>
     <bootstrap thing="zSggDrrStr"></bootstrap>
     <bootstrap thing="raSgSteedB">
-      <autotag group="Custom" tag="sggCone"/>
+      <autotag group="RGDrrEner" tag="Acid"/>
+      <autotag group="BreathShp" tag="Cone"/>
+      <assignval field="abValue" value="15"/>
+      <assignval field="abValue3" value="8"/>
       </bootstrap>
     <bootstrap thing="raSgDrFocu"></bootstrap>
     <bootstrap thing="raSgLink"></bootstrap>
@@ -1698,84 +1599,45 @@ Endif]]></eval>
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
       </bootstrap>
     <bootstrap thing="cBonusHD"></bootstrap>
-    <eval phase="First" priority="500" index="2"><![CDATA[~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
-#value[raSgDrFocu] = 2
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
+    <eval phase="First" priority="490"><![CDATA[
+      ~ Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+      var S2_Focus as number
+      S2_Focus = 2
+      ~ Initial Setup of Dragon Steed
+      call 3PDrStMain
 
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
-
-~ Set Dragons breath weapon
-perform pulltags[BloodEner.?]
-perform hero.child[raSgSteedB].pushtags[BloodEner.?]
-~ Set length of breath
-hero.child[raSgSteedB].field[abValue].value = 15
-~ Set die size
-hero.child[raSgSteedB].field[abValue3].value = 8
-~ Set Companion Level
-hero.child[raSgSteedB].field[abValue4].value = field[anCompLev].value
-
-~ Give SR at 16th level
-~If (field[anCompLev].value >= 16) then
-~   #applysr[field[anCompLev].value+5]
-~Endif
-
-~ Set natural armor bonus for this dragon
-~hero.child[ArmorClass].field[tACNatural].value += 3
-
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,5]
-   #applyvalue[xFly,40]
-   hero.child[Speed].field[tSpeed].value += 10
-   #applyvalue[raDarkVis,120]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,10]
-   #applyvalue[xFly,50]
-   hero.child[Speed].field[tSpeed].value += 10
-   #applyvalue[xSwim,40]
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
-    <eval phase="First" priority="490"><![CDATA[~ Set animal companion level based off the Steed Class ability
-~ this is so the bootstrap Bonus HD work correctly.
-field[anCompLev].value += master.hero.child[cDrrSteed].field[abValue].value
-
-~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
-    <eval phase="PostAttr" priority="500" index="3">~ Calculate the Dragon steeds skill points
-#resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]</eval>
+      ~ 8th level improvments
+      If (field[anCompLev].value >= 8) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,5]
+         #applyvalue[xFly,40]
+         hero.child[Speed].field[tSpeed].value += 10
+         #applyvalue[raDarkVis,120]
+         #value[raSgDrFocu] += 1
+      Endif
+      ~ 16th level improvments
+      If (field[anCompLev].value >= 16) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,10]
+         #applyvalue[xFly,50]
+         hero.child[Speed].field[tSpeed].value += 10
+         #applyvalue[xSwim,40]
+         #value[raSgDrFocu] += 1
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="500" index="2"><![CDATA[
+      ~ Calculate the Dragon steeds skill points &
+      call 3PDrStSkl]]></eval>
     </thing>
   <thing id="minSteeGre" name="Dragon Steed, Green" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
     <usesource source="sggDragRid"/>
-    <tag group="gType" tag="Mounts" name="Mounts, Pets and Related Gear" abbrev="Mounts"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Mounts"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
     <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Good] + tagis[Alignment.Chaotic] = 0</exprreq>
     <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="tpSgDragon"></bootstrap>
       <bootstrap thing="rSGDrrGree"></bootstrap>
       </minion>
     </thing>
@@ -1789,14 +1651,13 @@ Endif]]></eval>
     <fieldval field="rINT" value="-4"/>
     <fieldval field="rCHA" value="-4"/>
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="RaceSize" tag="Small11"/>
     <tag group="HasType" tag="tpSgDragon"/>
     <tag group="Alignment" tag="Evil"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="Quadruped"/>
     <tag group="Helper" tag="NotHum"/>
-    <tag group="BloodEner" tag="Cold" name="Cold"/>
-    <tag group="RaceType" tag="Animal"/>
     <tag group="Alignment" tag="Chaotic"/>
     <tag group="SlotSet" tag="selMISQuaC"/>
     <bootstrap thing="cBonusHD"></bootstrap>
@@ -1847,7 +1708,10 @@ Endif]]></eval>
     <bootstrap thing="zSggDrrNat"></bootstrap>
     <bootstrap thing="zSggDrrStr"></bootstrap>
     <bootstrap thing="raSgSteedB">
-      <autotag group="Custom" tag="sggCone"/>
+      <autotag group="RGDrrEner" tag="Cold"/>
+      <autotag group="BreathShp" tag="Cone"/>
+      <assignval field="abValue" value="15"/>
+      <assignval field="abValue3" value="4"/>
       </bootstrap>
     <bootstrap thing="raSgDrFocu"></bootstrap>
     <bootstrap thing="raSgLink"></bootstrap>
@@ -1890,85 +1754,46 @@ Endif]]></eval>
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
       </bootstrap>
     <bootstrap thing="cBonusHD"></bootstrap>
-    <eval phase="First" priority="500" index="2"><![CDATA[~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
-#value[raSgDrFocu] = 4
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
+    <eval phase="First" priority="490"><![CDATA[
+      ~ Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+      var S2_Focus as number
+      S2_Focus = 4
+      ~ Initial Setup of Dragon Steed
+      call 3PDrStMain
 
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
-
-~ Set Dragons breath weapon
-perform pulltags[BloodEner.?]
-perform hero.child[raSgSteedB].pushtags[BloodEner.?]
-~ Set length of breath
-hero.child[raSgSteedB].field[abValue].value = 15
-~ Set die size
-hero.child[raSgSteedB].field[abValue3].value = 4
-~ Set Companion Level
-hero.child[raSgSteedB].field[abValue4].value = field[anCompLev].value
-
-~ Give SR at 16th level
-~If (field[anCompLev].value >= 16) then
-~   #applysr[field[anCompLev].value+5]
-~Endif
-
-~ Set natural armor bonus for this dragon
-~hero.child[ArmorClass].field[tACNatural].value += 3
-
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,5]
-   #applyvalue[xFly,60]
-   #applyvalue[xBurrow,10]
-   hero.child[Speed].field[tSpeed].value = 60
-   #applyvalue[raDarkVis,120]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,10]
-   #applyvalue[xFly,70]
-   hero.child[Speed].field[tSpeed].value = 70
-   #applyvalue[xBurrow,20]
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
-    <eval phase="First" priority="490"><![CDATA[~ Set animal companion level based off the Steed Class ability
-~ this is so the bootstrap Bonus HD work correctly.
-field[anCompLev].value += master.hero.child[cDrrSteed].field[abValue].value
-
-~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
-    <eval phase="PostAttr" priority="500" index="3">~ Calculate the Dragon steeds skill points
-#resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]</eval>
+      ~ 8th level improvments
+      If (field[anCompLev].value >= 8) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,5]
+         #applyvalue[xFly,60]
+         #applyvalue[xBurrow,10]
+         hero.child[Speed].field[tSpeed].value = 60
+         #applyvalue[raDarkVis,120]
+         #value[raSgDrFocu] += 1
+      Endif
+      ~ 16th level improvments
+      If (field[anCompLev].value >= 16) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,10]
+         #applyvalue[xFly,70]
+         hero.child[Speed].field[tSpeed].value = 70
+         #applyvalue[xBurrow,20]
+         #value[raSgDrFocu] += 1
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="500" index="2"><![CDATA[
+      ~ Calculate the Dragon steeds skill points &
+      call 3PDrStSkl]]></eval>
     </thing>
   <thing id="minSteeWhi" name="Dragon Steed, White" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
     <usesource source="sggDragRid"/>
-    <tag group="gType" tag="Mounts" name="Mounts, Pets and Related Gear" abbrev="Mounts"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Mounts"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
     <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Good] + tagis[Alignment.Lawful] = 0</exprreq>
     <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="tpSgDragon"></bootstrap>
       <bootstrap thing="rSGDrrWhit"></bootstrap>
       </minion>
     </thing>
@@ -1980,13 +1805,12 @@ Endif]]></eval>
     <fieldval field="rWIS" value="1"/>
     <fieldval field="rSpeed" value="50"/>
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="RaceSize" tag="Small11"/>
     <tag group="HasType" tag="tpSgDragon"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="Quadruped"/>
     <tag group="Helper" tag="NotHum"/>
-    <tag group="BloodEner" tag="Fire" name="Fire"/>
-    <tag group="RaceType" tag="Animal"/>
     <tag group="Alignment" tag="Chaotic"/>
     <tag group="Alignment" tag="Good"/>
     <tag group="SlotSet" tag="selMISQuaC"/>
@@ -2037,7 +1861,10 @@ Endif]]></eval>
     <bootstrap thing="zSggDrrNat"></bootstrap>
     <bootstrap thing="zSggDrrStr"></bootstrap>
     <bootstrap thing="raSgSteedB">
-      <autotag group="Custom" tag="sggLine"/>
+      <autotag group="RGDrrEner" tag="Fire"/>
+      <autotag group="BreathShp" tag="Line"/>
+      <assignval field="abValue" value="30"/>
+      <assignval field="abValue3" value="4"/>
       </bootstrap>
     <bootstrap thing="raSgDrFocu"></bootstrap>
     <bootstrap thing="raSgLink"></bootstrap>
@@ -2077,102 +1904,65 @@ Endif]]></eval>
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
       </bootstrap>
     <bootstrap thing="cBonusHD"></bootstrap>
-    <eval phase="First" priority="490"><![CDATA[~ Set animal companion level based off the Steed Class ability
-~ this is so the bootstrap Bonus HD work correctly.
-field[anCompLev].value += master.hero.child[cDrrSteed].field[abValue].value
+    <eval phase="First" priority="490"><![CDATA[
+      ~ Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+      var S2_Focus as number
+      S2_Focus = 4
+      ~ Initial Setup of Dragon Steed
+      call 3PDrStMain
 
-~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
-    <eval phase="PostAttr" priority="500" index="3">~ Calculate the Dragon steeds skill points
-#resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]</eval>
-    <eval phase="First" priority="500" index="2"><![CDATA[~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
-#value[raSgDrFocu] = 4
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
-
-~ Set Dragons breath weapon
-perform pulltags[BloodEner.?]
-perform hero.child[raSgSteedB].pushtags[BloodEner.?]
-~ Set length of breath
-hero.child[raSgSteedB].field[abValue].value = 30
-~ Set die size
-hero.child[raSgSteedB].field[abValue3].value = 4
-~ Set Companion Level
-hero.child[raSgSteedB].field[abValue4].value = field[anCompLev].value
-
-~ Give SR at 16th level
-~If (field[anCompLev].value >= 16) then
-~   #applysr[field[anCompLev].value+5]
-~Endif
-
-~ Set natural armor bonus for this dragon
-~hero.child[ArmorClass].field[tACNatural].value += 3
-
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,5]
-   #applyvalue[xFly,60]
-   #applyvalue[xBurrow,10]
-   hero.child[Speed].field[tSpeed].value = 60
-   #applyvalue[raDarkVis,120]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,10]
-   #applyvalue[xFly,70]
-   hero.child[Speed].field[tSpeed].value = 70
-   #applyvalue[xBurrow,20]
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
+      ~ 8th level improvments
+      If (field[anCompLev].value >= 8) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,5]
+         #applyvalue[xFly,60]
+         #applyvalue[xBurrow,10]
+         hero.child[Speed].field[tSpeed].value = 60
+         #applyvalue[raDarkVis,120]
+         #value[raSgDrFocu] += 1
+      Endif
+      ~ 16th level improvments
+      If (field[anCompLev].value >= 16) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,10]
+         #applyvalue[xFly,70]
+         hero.child[Speed].field[tSpeed].value = 70
+         #applyvalue[xBurrow,20]
+         #value[raSgDrFocu] += 1
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="500" index="2"><![CDATA[
+      ~ Calculate the Dragon steeds skill points &
+      call 3PDrStSkl]]></eval>
     </thing>
   <thing id="raSgGusWin" name="Gust of Wind" description="A juvenile or older brass dragon can call up the desert wind to serve him. This functions as {i}gust of wind{/i}, but any creature in its path must make a Fortitude save or be blinded for 1d4 rounds by the sand. The save DC for this effect is equal to the dragon&apos;s breath weapon DC." compset="RaceSpec">
     <fieldval field="trkMax" value="3"/>
     <usesource source="sggDragRid"/>
-    <tag group="SpecType" tag="SpellLike" name="Spell-Like Ability" abbrev="Spell-Like Ability"/>
-    <tag group="Usage" tag="Day" name="/day" abbrev="/day"/>
-    <tag group="User" tag="Tracker" name="Tracker" abbrev="Tracker"/>
-    <tag group="AbilType" tag="SpellLike" name="Spell-Like Ability" abbrev=" (Sp)"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="SpellLike"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="AbilType" tag="SpellLike"/>
     <tag group="StandardDC" tag="aCHA"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     </thing>
   <thing id="raSgSleepB" name="Sleep Breath" description="Counts as two uses of breath weapon and uses same area, targets failing a Fortitude save are asleep for 1d6 rounds, and may be awoken using the same methods as targets of the {i}sleep{/i} spell." compset="RaceSpec">
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="StandardDC" tag="aCON"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="SpecType" tag="Attack"/>
     <tag group="AbilType" tag="Super"/>
     </thing>
   <thing id="minSteeBra" name="Dragon Steed, Brass" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
     <usesource source="sggDragRid"/>
-    <tag group="gType" tag="Mounts" name="Mounts, Pets and Related Gear" abbrev="Mounts"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Mounts"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
     <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Evil] + tagis[Alignment.Lawful] = 0</exprreq>
     <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="tpSgDragon"></bootstrap>
       <bootstrap thing="rSGDrrBras"></bootstrap>
       </minion>
     </thing>
@@ -2186,16 +1976,20 @@ Endif]]></eval>
     <fieldval field="rINT" value="4"/>
     <fieldval field="rCHA" value="4"/>
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="Quadruped"/>
     <tag group="Helper" tag="NotHum"/>
-    <tag group="BloodEner" tag="Elec" name="Electricity"/>
-    <tag group="RaceType" tag="Animal"/>
     <tag group="Alignment" tag="Good"/>
     <tag group="HasType" tag="tpSgDragon"/>
     <tag group="RaceSize" tag="Medium0"/>
     <tag group="Alignment" tag="Lawful"/>
     <tag group="SlotSet" tag="selMISQuaC"/>
+    <bootstrap thing="cBonusHD"></bootstrap>
+    <bootstrap thing="cBonusHD"></bootstrap>
+    <bootstrap thing="cBonusHD">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 2]]></containerreq>
+      </bootstrap>
     <bootstrap thing="cBonusHD">
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 5]]></containerreq>
       </bootstrap>
@@ -2236,7 +2030,10 @@ Endif]]></eval>
     <bootstrap thing="zSggDrrNat"></bootstrap>
     <bootstrap thing="zSggDrrStr"></bootstrap>
     <bootstrap thing="raSgSteedB">
-      <autotag group="Custom" tag="sggLine"/>
+      <autotag group="RGDrrEner" tag="Elec"/>
+      <autotag group="BreathShp" tag="Line"/>
+      <assignval field="abValue" value="30"/>
+      <assignval field="abValue3" value="4"/>
       </bootstrap>
     <bootstrap thing="raSgDrFocu"></bootstrap>
     <bootstrap thing="raSgLink"></bootstrap>
@@ -2275,85 +2072,52 @@ Endif]]></eval>
     <bootstrap thing="raBroElecA">
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 16]]></containerreq>
       </bootstrap>
-    <bootstrap thing="cBonusHD"></bootstrap>
-    <bootstrap thing="cBonusHD"></bootstrap>
-    <bootstrap thing="cBonusHD">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 2]]></containerreq>
-      </bootstrap>
     <bootstrap thing="raBroWaveM">
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 8]]></containerreq>
       </bootstrap>
     <bootstrap thing="cBonusHD">
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 4]]></containerreq>
       </bootstrap>
-    <eval phase="PostAttr" priority="500" index="3">~ Calculate the Dragon steeds skill points
-#resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]</eval>
-    <eval phase="First" priority="500" index="2"><![CDATA[~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
-#value[raSgDrFocu] = 4
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
+    <eval phase="First" priority="490"><![CDATA[
+      ~ Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+      var S2_Focus as number
+      S2_Focus = 4
+      ~ Initial Setup of Dragon Steed
+      call 3PDrStMain
 
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
-
-~ Set Dragons breath weapon
-perform pulltags[BloodEner.?]
-perform hero.child[raSgSteedB].pushtags[BloodEner.?]
-~ Set length of breath
-hero.child[raSgSteedB].field[abValue].value = 30
-~ Set die size
-hero.child[raSgSteedB].field[abValue3].value = 4
-~ Set Companion Level
-hero.child[raSgSteedB].field[abValue4].value = field[anCompLev].value
-
-~ Give SR at 16th level
-~If (field[anCompLev].value >= 16) then
-~   #applysr[field[anCompLev].value+5]
-~Endif
-
-~ Set natural armor bonus for this dragon
-~hero.child[ArmorClass].field[tACNatural].value += 3
-
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,5]
-   #applyvalue[xFly,50]
-   hero.child[Speed].field[tSpeed].value = 60
-   #applyvalue[raDarkVis,120]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,10]
-   #applyvalue[xFly,70]
-   hero.child[Speed].field[tSpeed].value = 60
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
-    <eval phase="First" priority="490"><![CDATA[~ Set animal companion level based off the Steed Class ability
-~ this is so the bootstrap Bonus HD work correctly.
-field[anCompLev].value += master.hero.child[cDrrSteed].field[abValue].value
-
-~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
+      ~ 8th level improvments
+      If (field[anCompLev].value >= 8) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,5]
+         #applyvalue[xFly,50]
+         hero.child[Speed].field[tSpeed].value = 60
+         #applyvalue[raDarkVis,120]
+         #value[raSgDrFocu] += 1
+      Endif
+      ~ 16th level improvments
+      If (field[anCompLev].value >= 16) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,10]
+         #applyvalue[xFly,70]
+         hero.child[Speed].field[tSpeed].value = 60
+         #value[raSgDrFocu] += 1
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="500" index="2"><![CDATA[
+      ~ Calculate the Dragon steeds skill points &
+      call 3PDrStSkl]]></eval>
+    </thing>
+  <thing id="minSteeCoo" name="Dragon Steed, Copper" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
+    <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Mounts"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
+    <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Evil] + tagis[Alignment.Lawful] = 0</exprreq>
+    <minion id="Mount">
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="tpSgDragon"></bootstrap>
+      <bootstrap thing="rSGDrrCopp"></bootstrap>
+      </minion>
     </thing>
   <thing id="rSGDrrCopp" name="Dragon Steed, Copper" description="This is the Dragonrider class dragon steed mount." compset="Race" uniqueness="unique">
     <fieldval field="rAC" value="5"/>
@@ -2364,11 +2128,10 @@ Endif]]></eval>
     <fieldval field="rINT" value="2"/>
     <fieldval field="rCHA" value="2"/>
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="Quadruped"/>
     <tag group="Helper" tag="NotHum"/>
-    <tag group="BloodEner" tag="Acid" name="Acid"/>
-    <tag group="RaceType" tag="Animal"/>
     <tag group="Alignment" tag="Chaotic"/>
     <tag group="Alignment" tag="Good"/>
     <tag group="HasType" tag="tpSgDragon"/>
@@ -2417,7 +2180,10 @@ Endif]]></eval>
     <bootstrap thing="zSggDrrNat"></bootstrap>
     <bootstrap thing="zSggDrrStr"></bootstrap>
     <bootstrap thing="raSgSteedB">
-      <autotag group="Custom" tag="sggLine"/>
+      <autotag group="RGDrrEner" tag="Acid"/>
+      <autotag group="BreathShp" tag="Line"/>
+      <assignval field="abValue" value="30"/>
+      <assignval field="abValue3" value="6"/>
       </bootstrap>
     <bootstrap thing="raSgDrFocu"></bootstrap>
     <bootstrap thing="raSgLink"></bootstrap>
@@ -2464,104 +2230,68 @@ Endif]]></eval>
     <bootstrap thing="cBonusHD">
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 2]]></containerreq>
       </bootstrap>
-    <eval phase="First" priority="490"><![CDATA[~ Set animal companion level based off the Steed Class ability
-~ this is so the bootstrap Bonus HD work correctly.
-field[anCompLev].value += master.hero.child[cDrrSteed].field[abValue].value
+    <eval phase="First" priority="490"><![CDATA[
+      ~ Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+      var S2_Focus as number
+      S2_Focus = 3
+      ~ Initial Setup of Dragon Steed
+      call 3PDrStMain
 
-~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
-    <eval phase="PostAttr" priority="500" index="3">~ Calculate the Dragon steeds skill points
-#resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]</eval>
-    <eval phase="First" priority="500" index="2"><![CDATA[~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
-#value[raSgDrFocu] = 3
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
-
-~ Set Dragons breath weapon
-perform pulltags[BloodEner.?]
-perform hero.child[raSgSteedB].pushtags[BloodEner.?]
-~ Set length of breath
-hero.child[raSgSteedB].field[abValue].value = 30
-~ Set die size
-hero.child[raSgSteedB].field[abValue3].value = 6
-~ Set Companion Level
-hero.child[raSgSteedB].field[abValue4].value = field[anCompLev].value
-
-~ Give SR at 16th level
-~If (field[anCompLev].value >= 16) then
-~   #applysr[field[anCompLev].value+5]
-~Endif
-
-~ Set natural armor bonus for this dragon
-~hero.child[ArmorClass].field[tACNatural].value += 3
-
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,5]
-   hero.child[Speed].field[tSpeed].value = 40
-   #applyvalue[xFly,50]
-   #applyvalue[xSwim,40]
-   #applyvalue[raDarkVis,120]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,10]
-   hero.child[Speed].field[tSpeed].value = 40
-   #applyvalue[xFly,60]
-   #applyvalue[xSwim,50]
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
+      ~ 8th level improvments
+      If (field[anCompLev].value >= 8) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,5]
+         hero.child[Speed].field[tSpeed].value = 40
+         #applyvalue[xFly,50]
+         #applyvalue[xSwim,40]
+         #applyvalue[raDarkVis,120]
+         #value[raSgDrFocu] += 1
+      Endif
+      ~ 16th level improvments
+      If (field[anCompLev].value >= 16) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,10]
+         hero.child[Speed].field[tSpeed].value = 40
+         #applyvalue[xFly,60]
+         #applyvalue[xSwim,50]
+         #value[raSgDrFocu] += 1
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="500" index="2"><![CDATA[
+      ~ Calculate the Dragon steeds skill points &
+      call 3PDrStSkl]]></eval>
     </thing>
   <thing id="minSteeBro" name="Dragon Steed, Bronze" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
     <usesource source="sggDragRid"/>
-    <tag group="gType" tag="Mounts" name="Mounts, Pets and Related Gear" abbrev="Mounts"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Mounts"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
     <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Evil] + tagis[Alignment.Chaotic] = 0</exprreq>
     <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="tpSgDragon"></bootstrap>
       <bootstrap thing="rSGDrrBron"></bootstrap>
       </minion>
     </thing>
   <thing id="raSgSlowBr" name="Slow Breath" description="Counts as two uses of breath weapon and uses same area, targets failing a Fortitude save is slowed, as per the spell {i}slow{/i}, for 1 round" compset="RaceSpec">
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="StandardDC" tag="aCON"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="SpecType" tag="Attack"/>
     </thing>
-  <thing id="minSteeCoo" name="Dragon Steed, Copper" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
+  <thing id="minSteeGol" name="Dragon Steed, Gold" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
     <usesource source="sggDragRid"/>
-    <tag group="gType" tag="Mounts" name="Mounts, Pets and Related Gear" abbrev="Mounts"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Mounts"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
     <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Evil] + tagis[Alignment.Lawful] = 0</exprreq>
     <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
-      <bootstrap thing="rSGDrrCopp"></bootstrap>
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="tpSgDragon"></bootstrap>
+      <bootstrap thing="rSGDrrGold"></bootstrap>
       </minion>
     </thing>
   <thing id="rSGDrrGold" name="Dragon Steed, Gold" description="This is the Dragonrider class dragon steed mount." compset="Race" uniqueness="unique">
@@ -2574,11 +2304,10 @@ Endif]]></eval>
     <fieldval field="rINT" value="4"/>
     <fieldval field="rCHA" value="4"/>
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="Quadruped"/>
     <tag group="Helper" tag="NotHum"/>
-    <tag group="BloodEner" tag="Fire" name="Fire"/>
-    <tag group="RaceType" tag="Animal"/>
     <tag group="Alignment" tag="Good"/>
     <tag group="HasType" tag="tpSgDragon"/>
     <tag group="RaceSize" tag="Large1"/>
@@ -2624,7 +2353,10 @@ Endif]]></eval>
     <bootstrap thing="zSggDrrNat"></bootstrap>
     <bootstrap thing="zSggDrrStr"></bootstrap>
     <bootstrap thing="raSgSteedB">
-      <autotag group="Custom" tag="sggCone"/>
+      <autotag group="RGDrrEner" tag="Fire"/>
+      <autotag group="BreathShp" tag="Cone"/>
+      <assignval field="abValue" value="15"/>
+      <assignval field="abValue3" value="8"/>
       </bootstrap>
     <bootstrap thing="raSgDrFocu"></bootstrap>
     <bootstrap thing="raSgLink"></bootstrap>
@@ -2671,83 +2403,53 @@ Endif]]></eval>
     <bootstrap thing="cBonusHD">
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 4]]></containerreq>
       </bootstrap>
-    <eval phase="First" priority="490"><![CDATA[~ Set animal companion level based off the Steed Class ability
-~ this is so the bootstrap Bonus HD work correctly.
-field[anCompLev].value += master.hero.child[cDrrSteed].field[abValue].value
+    <eval phase="First" priority="490"><![CDATA[
+      ~ Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+      var S2_Focus as number
+      S2_Focus = 2
+      ~ Initial Setup of Dragon Steed
+      call 3PDrStMain
 
-~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
-    <eval phase="PostAttr" priority="500" index="3">~ Calculate the Dragon steeds skill points
-#resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]</eval>
-    <eval phase="First" priority="500" index="2"><![CDATA[~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
-#value[raSgDrFocu] = 2
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
-
-~ Set Dragons breath weapon
-perform pulltags[BloodEner.?]
-perform hero.child[raSgSteedB].pushtags[BloodEner.?]
-~ Set length of breath
-hero.child[raSgSteedB].field[abValue].value = 15
-~ Set die size
-hero.child[raSgSteedB].field[abValue3].value = 8
-~ Set Companion Level
-hero.child[raSgSteedB].field[abValue4].value = field[anCompLev].value
-
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,5]
-   hero.child[Speed].field[tSpeed].value = 50
-   #applyvalue[xFly,60]
-   #applyvalue[raDarkVis,120]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,10]
-   hero.child[Speed].field[tSpeed].value = 60
-   #applyvalue[xFly,100]
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
+      ~ 8th level improvments
+      If (field[anCompLev].value >= 8) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,5]
+         hero.child[Speed].field[tSpeed].value = 50
+         #applyvalue[xFly,60]
+         #applyvalue[raDarkVis,120]
+         #value[raSgDrFocu] += 1
+      Endif
+      ~ 16th level improvments
+      If (field[anCompLev].value >= 16) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,10]
+         hero.child[Speed].field[tSpeed].value = 60
+         #applyvalue[xFly,100]
+         #value[raSgDrFocu] += 1
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="500" index="2"><![CDATA[
+      ~ Calculate the Dragon steeds skill points &
+      call 3PDrStSkl]]></eval>
     </thing>
   <thing id="raSgWeakBr" name="Weakening Breath" description="Counts as two uses of breath weapon and uses same area, targets failing a Fortitude save take 1d4+1 Strength damage." compset="RaceSpec">
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="StandardDC" tag="aCON"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="SpecType" tag="Attack"/>
     </thing>
-  <thing id="minSteeGol" name="Dragon Steed, Gold" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
+  <thing id="minSteeSil" name="Dragon Steed, Silver" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
     <usesource source="sggDragRid"/>
-    <tag group="gType" tag="Mounts" name="Mounts, Pets and Related Gear" abbrev="Mounts"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Mounts"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
-    <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Evil] + tagis[Alignment.Lawful] = 0</exprreq>
+    <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Evil] + tagis[Alignment.Chaotic] = 0</exprreq>
     <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
-      <bootstrap thing="rSGDrrGold"></bootstrap>
+      <tag group="Hero" tag="FixedRace"/>
+      <bootstrap thing="tpSgDragon"></bootstrap>
+      <bootstrap thing="rSGDrrSilv"></bootstrap>
       </minion>
     </thing>
   <thing id="rSGDrrSilv" name="Dragon Steed, Silver" description="This is the Dragonrider class dragon steed mount." compset="Race" uniqueness="unique">
@@ -2759,11 +2461,10 @@ Endif]]></eval>
     <fieldval field="rINT" value="4"/>
     <fieldval field="rCHA" value="4"/>
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="NoPathSoc"/>
     <tag group="Helper" tag="Quadruped"/>
     <tag group="Helper" tag="NotHum"/>
-    <tag group="BloodEner" tag="Cold" name="Cold"/>
-    <tag group="RaceType" tag="Animal"/>
     <tag group="Alignment" tag="Good"/>
     <tag group="HasType" tag="tpSgDragon"/>
     <tag group="RaceSize" tag="Large1"/>
@@ -2809,7 +2510,10 @@ Endif]]></eval>
     <bootstrap thing="zSggDrrNat"></bootstrap>
     <bootstrap thing="zSggDrrStr"></bootstrap>
     <bootstrap thing="raSgSteedB">
-      <autotag group="Custom" tag="sggCone"/>
+      <autotag group="RGDrrEner" tag="Cold"/>
+      <autotag group="BreathShp" tag="Cone"/>
+      <assignval field="abValue" value="15"/>
+      <assignval field="abValue3" value="8"/>
       </bootstrap>
     <bootstrap thing="raSgDrFocu"></bootstrap>
     <bootstrap thing="raSgLink"></bootstrap>
@@ -2856,83 +2560,40 @@ Endif]]></eval>
     <bootstrap thing="cBonusHD">
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 4]]></containerreq>
       </bootstrap>
-    <eval phase="First" priority="490"><![CDATA[~ Set animal companion level based off the Steed Class ability
-~ this is so the bootstrap Bonus HD work correctly.
-field[anCompLev].value += master.hero.child[cDrrSteed].field[abValue].value
+    <eval phase="First" priority="490"><![CDATA[
+      ~ Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
+      var S2_Focus as number
+      S2_Focus = 2
+      ~ Initial Setup of Dragon Steed
+      call 3PDrStMain
 
-~ Push energy type tag to hero level
-perform pulltags[BloodEner.?]
-perform hero.pushtags[BloodEner.?]
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[cDrrDragon] <> 0) then
-   perform master.child[cDrrDragon].pushtags[BloodEner.?]   
-Endif]]></eval>
-    <eval phase="PostAttr" priority="500" index="3">~ Calculate the Dragon steeds skill points
-#resmax[resSkill] += (hero.child[tpSgDragon].field[tpSkillPts].value + hero.child[aINT].field[aModBonus].value) * #totallevelcount[]</eval>
-    <eval phase="First" priority="500" index="2"><![CDATA[~Set focus 1 Full, 2 Standard, 3 Move, 4 Swift, 5 Free
-#value[raSgDrFocu] = 2
-~ Set Steed Natural Armor
-#value[zSggDrrNat] = field[anCompLev].value
-~ Set Steed Str/Con bonus
-#value[zSggDrrStr] = field[anCompLev].value
-~ Set Steed Int/Cha bonus
-#value[zSggDrrInt] = field[anCompLev].value
-
-~ Set Form of the Dragon Breath weapon on PC
-If (master.childlives[raSgBreath] <> 0) then
-   perform pulltags[BloodEner.?]
-   perform master.child[raSgBreath].pushtags[BloodEner.?]
-   ~ Set length of breath
-   master.child[raSgBreath].field[abValue].value = 100
-   ~ Set Type: Line=1,Cone=0
-   master.child[raSgBreath].field[abValue2].value = 1
-Endif
-
-~ Set Dragons breath weapon
-perform pulltags[BloodEner.?]
-perform hero.child[raSgSteedB].pushtags[BloodEner.?]
-~ Set length of breath
-hero.child[raSgSteedB].field[abValue].value = 15
-~ Set die size
-hero.child[raSgSteedB].field[abValue3].value = 8
-~ Set Companion Level
-hero.child[raSgSteedB].field[abValue4].value = field[anCompLev].value
-
-~ 8th level improvments
-If (field[anCompLev].value >= 8) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,5]
-   hero.child[Speed].field[tSpeed].value = 40
-   #applyvalue[xFly,40]
-   #applyvalue[raDarkVis,120]
-   #value[raSgDrFocu] += 1
-Endif
-~ 16th level improvments
-If (field[anCompLev].value >= 16) then
-   herofield[tSize].value += 1
-   #applydr[xDamRdMag,10]
-   hero.child[Speed].field[tSpeed].value = 40
-   #applyvalue[xFly,50]
-   #value[raSgDrFocu] += 1
-Endif]]></eval>
+      ~ 8th level improvments
+      If (field[anCompLev].value >= 8) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,5]
+         hero.child[Speed].field[tSpeed].value = 40
+         #applyvalue[xFly,40]
+         #applyvalue[raDarkVis,120]
+         #value[raSgDrFocu] += 1
+      Endif
+      ~ 16th level improvments
+      If (field[anCompLev].value >= 16) then
+         herofield[tSize].value += 1
+         #applydr[xDamRdMag,10]
+         hero.child[Speed].field[tSpeed].value = 40
+         #applyvalue[xFly,50]
+         #value[raSgDrFocu] += 1
+      Endif]]></eval>
+    <eval phase="PostAttr" priority="500" index="2"><![CDATA[
+      ~ Calculate the Dragon steeds skill points &
+      call 3PDrStSkl]]></eval>
     </thing>
   <thing id="raSgParaBr" name="Paralyzing Breath" description="Counts as two uses of breath weapon and uses same area, targets failing a Fortitude save are affected as by a hold person spell." compset="RaceSpec">
     <usesource source="sggDragRid"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="StandardDC" tag="aCON"/>
-    <tag group="Helper" tag="ShowSpec" name="ShowSpec" abbrev="ShowSpec"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="SpecType" tag="Attack"/>
-    </thing>
-  <thing id="minSteeSil" name="Dragon Steed, Silver" description="The bonded dragon mount for the Dragonrider class.\n\nA dragonrider’s alignment must be within one step of his dragon steed (see Chapter Seven in the Pathfinder Roleplaying game for more information on alignment steps)." compset="Minion" stacking="never" uniqueness="useronce">
-    <usesource source="sggDragRid"/>
-    <tag group="gType" tag="Mounts" name="Mounts, Pets and Related Gear" abbrev="Mounts"/>
-    <tag group="Helper" tag="NoPathSoc"/>
-    <exprreq message="You must have at least one level in Dragonrider to take this mount."><![CDATA[#custspeciallevelcount[Dragonrid] <> 0]]></exprreq>
-    <exprreq message="Wrong alignment to bond to this dragon.">tagis[Alignment.Evil] + tagis[Alignment.Chaotic] = 0</exprreq>
-    <minion id="Mount">
-      <tag group="Hero" tag="FixedRace" name="FixedRace" abbrev="FixedRace"/>
-      <bootstrap thing="rSGDrrSilv"></bootstrap>
-      </minion>
     </thing>
   </document>
