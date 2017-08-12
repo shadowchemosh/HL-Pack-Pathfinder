@@ -776,49 +776,6 @@
       ~ Set Talented Monk Attack Bonus tag to our Unarmed Strike
       perform hero.childfound[wUnarmed].assign[wSpecial.RGTalMnkAB]]]></eval>
     </thing>
-  <thing id="cRG1RiStUn" name="Fighting Style (Unarmed Strikes)" description="Most monks are trained in one or more fighting styles, a specific way of using a set of similar weapons to perform martial arts maneuvers. Offensive edges and talents marked with an asterisk* can only be performed with weapons in a weapon group the monk has selected with this edge.\n\nSelect one weapon group below. This list is identical to the weapon group list from {i}The Genius Guide to the Talented Fighter,{/i} with the exception of excluding the siege weapons (no matter how good a monk is, he cannot deliver a stunning fist attack through a catapult) and the addition of the improvised weapon group (which includes anything the GM would allow to be used as an improvised weapon). GMs may add other weapons to any weapon group, or add entirely new groups. The monk is proficient with all weapons in the selected group, and may use his specialty attack bonus (from {b}Table 1: The Talented Monk on page 2{/b}) when making an attack or combat maneuver with one of these weapons, and treats them all as if they had the ki focus ability (allowing him to use abilities and attacks that normally work with unarmed attacks, such as Stunning fist and Punishing Kick, with these weapons). The monk may also deal lethal or nonlethal damage with any weapons in a group he has selected without penalty.\n\nThis edge may be selected more than once. Each time it is selected, it grants proficiency and the ability to use weaponrelated monk edges and talents with weapons of another group." compset="ClSpecial" summary="Fighting style edge with your unarmed strikes only.">
-    <comment><![CDATA[This item is deprecated and is now hidden as it's not required by Unfettered Kata any longer.]]></comment>
-    <tag group="WepProf" tag="wUnarmed"/>
-    <tag group="Helper" tag="SpecUp"/>
-    <tag group="Hide" tag="ClSpecList"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="AbilType" tag="Extra"/>
-    <eval phase="PostLevel" priority="20000" index="4"><![CDATA[
-      ~ Because we need our level count multiple times save it once
-      ~ in a local variable to save CPU time.
-      field[abValue].value += hero.tagcount[Classes.Monk]
-
-      ~ Calculate our current BAB vs Level difference
-      field[abValue2].value += field[abValue].value - #BAB[]
-
-      ~ Calculate the number of attacks we have as a full BAB character
-      field[abValue3].value += 1
-      if (field[abValue].value >= 6) then
-        field[abValue3].value += 1
-      endif
-      if (field[abValue].value >= 11) then
-        field[abValue3].value += 1
-      endif
-      if (field[abValue].value >= 16) then
-        field[abValue3].value += 1
-      endif
-
-      ~ Adjust unarmed strike to use full BAB and to have
-      ~ the correct number of additional attacks.
-      hero.childfound[wUnarmed].field[wAttBAB].value += field[abValue2].value
-      hero.childfound[wUnarmed].field[wRanAttBAB].value += field[abValue2].value
-      hero.childfound[wUnarmed].field[wNumAttTbl].arrayvalue[0] = field[abValue3].value
-      hero.childfound[wUnarmed].field[wNumAttTbl].arrayvalue[1] = field[abValue3].value
-      hero.childfound[wUnarmed].field[wNumAttTbl].arrayvalue[2] = field[abValue3].value
-      hero.childfound[wUnarmed].field[wNumAttTbl].arrayvalue[3] = field[abValue3].value
-      hero.childfound[wUnarmed].field[wNumAttTbl].arrayvalue[5] = field[abValue3].value]]></eval>
-    <eval phase="First" priority="20000"><![CDATA[
-      ~ Set weapon proficency to the hero &
-      perform hero.pushtags[WepProf.?]
-
-      ~ Set Talented Monk Attack Bonus tag to our Unarmed Strike
-      perform hero.childfound[wUnarmed].assign[wSpecial.RGTalMnkAB]]]></eval>
-    </thing>
   <thing id="cRG1AdaMnk" name="Adamantine Monk" description="[Monk of the Sacred Mountain] The monk has muscles so strong and skin so resilient that he gains DR 1/ - . This DR increases by 1 at 12th level, and by an additional 1 at 16th level. As a swift action, the monk can spend 1 ki point to double his DR until the beginning of his next turn.\n\nA monk must be at least 8th level, have a ki pool, and have the bastion stance talent to select this talent." compset="CustomSpec" summary="Gain DR &amp; can send 1 Ki point to double this DR until the beginning of your next turn." uniqueness="unique">
     <usesource source="srcMonkTal"/>
     <tag group="Helper" tag="Secondary"/>
@@ -1311,13 +1268,6 @@
       ~ Increase the feat by the number of dice
       #value[fElemFist] += field[abValue].value]]></eval>
     <exprreq message="Elemental Fist feat required."><![CDATA[#hasfeat[fElemFist] <> 0]]></exprreq>
-    </thing>
-  <thing id="cRG1VerImp" name="Versatile Improvisation" description="As a swift action, a monk may use an improvised weapon to deal damage as if it were another type (bludgeoning, piercing, or slashing) for 1 round, regardless of the weapon’s normal damage type. This ability replaces still mind." compset="ClSpecial" summary="Improvised weapons can change damage type.">
-    <comment>Deprecated and hidden.</comment>
-    <tag group="SpecType" tag="Attack"/>
-    <tag group="abCategory" tag="RGGMnkTlnt"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="AbilType" tag="Extra"/>
     </thing>
   <thing id="cRG1Versat" name="Versatile Improvisation" description="[Monk of the Empty Hand]  As a swift action, the monk may cause his weapon, unarmed, or natural attacks to deal damage as if they were another type (bludgeoning, piercing, or slashing) for 1 round, regardless of the attack’s normal damage type." compset="CustomSpec" uniqueness="unique">
     <fieldval field="actName" value="Versatile Improvisation"/>
@@ -2234,8 +2184,6 @@
       hero.childfound[cfgQinggon].field[cfgLevel].value += linkage[table].field[cTotalLev].value]]></eval>
     <exprreq message="Monk ki pool required."><![CDATA[#hasability[cMnkKiPool] <> 0]]></exprreq>
     </thing>
-  <hidden id="cRG1RiStUn"/>
-  <hidden id="cRG1VerImp"/>
   <extthing thing="fManyshot" group="BonusFor" tag="RG1Lvl6"/>
   <extthing thing="fMobility" group="BonusFor" tag="RG1Lvl6"/>
   <extthing thing="fPartShot" group="BonusFor" tag="RG1Lvl6"/>
