@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Structure">
+
+  <!-- ==================================================  -->
+  <!-- Starfinder Weapon                                   -->
+  <!-- ==================================================  -->
+  <component
+    id="P7BaseWep"
+    name="Starfinder Weapons"
+    autocompset="no"
+    hasshortname="no"
+    ispublic="yes">
+
+    <!-- Fields -->
+    <field
+      id="wP7Usage"
+      name="Weapon Usage"
+      type="derived"
+      maxlength="0">
+    </field>
+
+    <!-- Allows for assigning the Psionic Class tag to Powers
+    <identity group="psiClass"/>
+     -->
+
+    <!-- TAGS -->
+    <tag group="wCritMult"  tag="2"/>
+    <tag group="wCritMin"   tag="20"/>
+    <tag group="Helper"     tag="Proficient"/>
+    <tag group="wMain"      tag="1d2"/>
+    <tag group="Helper"     tag="AlwaysMast"/>
+
+    <eval index="1" phase="First" priority="50"><![CDATA[
+      ~ If no damage dice get out now!
+      doneif (tagis[P7NumDice.?] + tagis[P7DiceSize.?] = 0)
+
+      ~ Remove hard-coded dice damage
+      field[wFixRanDam].text = ""
+      field[wFixDamage].text = ""
+
+      ~ Try and correctly set the damage type display info
+      If (tagexpr[(wType.B|wType.S|wType.P) & !(wType.Acid|wType.Cold|wType.Elec|wType.Fire|wType.Sonic)] <> 0) Then
+
+        field[wDamExtra].text = " " & tagabbrevs[wType.?," & "]
+
+      ElseIf (tagexpr[(wType.B|wType.S|wType.P) & (wType.Acid|wType.Cold|wType.Elec|wType.Fire|wType.Sonic)] <> 0) Then
+
+        field[wDamExtra].text = " & "
+        field[wDamExtra].text &= tagabbrevs[wType.B]
+        field[wDamExtra].text &= tagabbrevs[wType.S]
+        field[wDamExtra].text &= tagabbrevs[wType.P]
+      Endif
+      ]]></eval>
+
+    <eval index="2" phase="PreLevel" priority="25000"><![CDATA[
+
+      ~ Operative weapons use Dex to attack for everyone
+      If (tagis[wSpecial.P7xOperati] = 1) Then
+        perform assign[MelAttOver.aDEX]
+        perform assign[Helper.Finesse]
+      Endif
+
+      ~ Explosives do not get Str Damage
+      If (tagis[wFtrGroup.Explosives] = 1) Then
+        perform assign[wMaxStrBon.0]
+        field[dmmBonus].value += -1 * hero.child[Damage].field[Bonus].value
+        field[dmrBonus].value += -1 * hero.child[Damage].field[Bonus].value
+      Endif
+
+      ~ Calculate the number of usages
+      field[wP7Usage].value += tagis[wSpecial.P7Usage01] * 1
+      field[wP7Usage].value += tagis[wSpecial.P7Usage02] * 2
+      field[wP7Usage].value += tagis[wSpecial.P7Usage03] * 3
+      field[wP7Usage].value += tagis[wSpecial.P7Usage04] * 4
+      field[wP7Usage].value += tagis[wSpecial.P7Usage05] * 5
+      field[wP7Usage].value += tagis[wSpecial.P7Usage06] * 6
+      field[wP7Usage].value += tagis[wSpecial.P7Usage07] * 7
+      field[wP7Usage].value += tagis[wSpecial.P7Usage08] * 8
+      field[wP7Usage].value += tagis[wSpecial.P7Usage09] * 9
+      field[wP7Usage].value += tagis[wSpecial.P7Usage10] * 10
+      field[wP7Usage].value += tagis[wSpecial.P7Usage11] * 11
+      field[wP7Usage].value += tagis[wSpecial.P7Usage12] * 12
+      field[wP7Usage].value += tagis[wSpecial.P7Usage13] * 13
+      field[wP7Usage].value += tagis[wSpecial.P7Usage14] * 14
+      field[wP7Usage].value += tagis[wSpecial.P7Usage15] * 15
+      field[wP7Usage].value += tagis[wSpecial.P7Usage16] * 16
+      field[wP7Usage].value += tagis[wSpecial.P7Usage17] * 17
+      field[wP7Usage].value += tagis[wSpecial.P7Usage18] * 18
+      field[wP7Usage].value += tagis[wSpecial.P7Usage19] * 19
+      field[wP7Usage].value += tagis[wSpecial.P7Usage20] * 20
+
+      ~ Set capacity value into tracker to display. Sense we want
+      ~ each In-Play tick to represent a shot we divide the capacity
+      ~ by the usage to get new tracker value.
+      If (tagis[Usage.P7Uses] = 1) Then
+        field[trkMax].value += round(field[wCapacity].value/field[wP7Usage].value,0,-1)
+      Else
+        ~ Set capacity value into tracker to display
+        field[trkMax].value += field[wCapacity].value
+      Endif
+      ]]></eval>
+
+    <eval index="3" phase="Final" priority="12500"><![CDATA[
+      ~ If no damage dice get out now!
+      doneif (tagis[P7NumDice.?] + tagis[P7DiceSize.?] = 0)
+
+      ~ Xd6
+      field[wRMainDNum].value = tagvalue[P7NumDice.?]
+      field[wMMainDNum].value = tagvalue[P7NumDice.?]
+      ~ 1dX
+      field[wRMainDSiz].value = tagvalue[P7DiceSize.?]
+      field[wMMainDSiz].value = tagvalue[P7DiceSize.?]
+      ]]>
+      <after name="Modify Weapon Dice"/>
+      </eval>
+
+    <eval index="4" phase="PostLevel" priority="50000"><![CDATA[
+      ~ If we have capacity then show in the In-Play tab when equipped
+      If (field[trkMax].value <> 0) Then
+        If (field[gIsEquip].value <> 0) Then
+          perform assign[User.Tracker]
+        Endif
+      Endif
+      ]]></eval>
+
+    <eval index="5" phase="PreAttr" priority="25050"><![CDATA[
+      ~ Explosives do not get specialization Damage
+      If (tagis[wFtrGroup.Explosives] = 1) Then
+        field[dmmBonus].value += -1 * hero.child[Damage].field[Bonus].value
+        field[dmrBonus].value += -1 * hero.child[Damage].field[Bonus].value
+      Endif
+      ]]></eval>
+
+    <!--
+      This makes sure that only a single discipline is marked as primary.
+    -->
+    <prereq message="xxxxxxxxxxxx">
+      <validate>
+        @valid = 1
+      </validate>
+    </prereq>
+
+  </component>
+  <!-- ************************************************************************ -->
+
+
+  <compset
+    id="P7Weapon">
+    <compref component="P7BaseWep"/>
+    <compref component="Activated"/>
+    <compref component="AttDam"/>
+    <compref component="AttDamMods"/>
+    <compref component="BaseEquip"/>
+    <compref component="BaseWep"/>
+    <compref component="Buyable"/>
+    <compref component="Custom"/>
+    <compref component="DescInfo"/>
+    <compref component="Modifiers"/>
+    <compref component="MyGear"/>
+    <compref component="NormalWep"/>
+    <compref component="PathSocRes"/>
+    <compref component="PolyDefRet"/>
+    <compref component="Sellable"/>
+    <compref component="SetName"/>
+    <compref component="SourceAbbr"/>
+    <compref component="SpecialTab"/>
+    <compref component="StatblName"/>
+    <compref component="Tracker"/>
+    <compref component="Value"/>
+    <compref component="WepFeatTag"/>
+    <compref component="genericnam"/>
+    <compref component="shortname"/>
+    <compref component="_gear_"/>
+    <compref component="_stackable"/>
+  </compset>
+
+
+  </document>
