@@ -133,14 +133,14 @@
       <containerreq phase="First" priority="99">hero#MindBlade.Light</containerreq>
       </bootstrap>
     <bootstrap thing="iPUMndBlLT">
-      <containerreq phase="First" priority="99">hero#MindBlade.Light</containerreq>
+      <containerreq phase="First" priority="99">hero#MindBlade.Light|hero#MindBlade.1HLight</containerreq>
+      </bootstrap>
+    <bootstrap thing="iPUMndBl1H">
+      <containerreq phase="First" priority="99">hero#MindBlade.OneHanded|hero#MindBlade.1HLight</containerreq>
       </bootstrap>
     <bootstrap thing="zPUMndBld1"></bootstrap>
     <bootstrap thing="zPUMndBld2"></bootstrap>
     <bootstrap thing="zPUMndBld3"></bootstrap>
-    <bootstrap thing="iPUMndBl1H">
-      <containerreq phase="First" priority="99">hero#MindBlade.OneHanded</containerreq>
-      </bootstrap>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
@@ -250,9 +250,7 @@
       doneif (field[abilActive].value <> 1)
 
       ~ Display Psychic Strike damage on the mind blades
-      perform hero.assign[MindBlade.PsyStrike]
-
-      ]]></eval>
+      perform hero.assign[MindBlade.PsyStrike]]]></eval>
     </thing>
   <thing id="cSknBSAltB" name="Alter Mind Blade" description="The soulknife gains the ability to shape her mind blade into different weapon forms. She may change her blade&apos;s form to the light weapon, one-handed weapon, or two-handed weapon forms any time she forms her mind blade. Additionally, the soulknife may choose to form her mind blade into a one-handed weapon and a light weapon instead of two light weapons." compset="CustomSpec" summary="You can reshape your mind blade any time you form it" uniqueness="useronce">
     <usesource source="pPsiUn"/>
@@ -260,6 +258,7 @@
     <tag group="abCategory" tag="PUBladeSk"/>
     <tag group="NotClExpr" tag="cHelpPUA"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="zPUMndBld6"></bootstrap>
     </thing>
   <thing id="cSknBSBlds" name="Bladestorm" description="As a full attack, when wielding her mind blade, the soulknife can give up her regular attacks and instead throw one mind blade at her full attack bonus at all opponents within 30 feet, ignoring the normal range increments for throwing a mind blade. Regardless of the number of attacks she makes, she only provokes attacks of opportunity as though she made a single ranged attack. The soulknife must possess the Bladewind blade skill to take this ability, this ability may not be used if the mind blade is in a two-handed weapon form, and the soulknife must be at least 16th level to choose this blade skill." compset="CustomSpec" uniqueness="useronce">
     <usesource source="pPsiUn"/>
@@ -1084,13 +1083,12 @@
     <tag group="abCategory" tag="PUBladeSk"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="shMTowShld">
-      <containerreq phase="First" priority="100"><![CDATA[!ClassVary.arPUShldBl]]></containerreq>
+      <containerreq phase="First" priority="100">!ClassVary.arPUShldBl</containerreq>
       </bootstrap>
     <eval phase="First" priority="99"><![CDATA[
       ~ Need to get our ability tag to the hero earlier
       ~ than the LW scripts push it. &
-      perform hero.pushtags[Ability.?]
-      ]]></eval>
+      perform hero.pushtags[Ability.?]]]></eval>
     <exprreq message="Mind Shield Blade Skill required."><![CDATA[#hasability[cSknBSMShl] <> 0]]></exprreq>
     </thing>
   <thing id="cSknBSTSSk" name="Tower Shield Skill" description="The soulknife reduces the attack and armor check penalties by 1 (to a minimum of 0) if his mind shield is in tower shield form. The soulknife may take this blade skill multiple times, its effects stack. The soulknife must have the mind shield blade skill and the ability to shape his mind shield into a tower shield to choose this blade skill." compset="CustomSpec">
@@ -3082,12 +3080,7 @@
     <tag group="Helper" tag="Proficient"/>
     <tag group="MindBlade" tag="ArmorLight"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="5000"><![CDATA[
-      ~ Call Magic Armor Gizmo &
-      Call iMagArmor
-
-      ~ The MW tag is not lowering the ACP by 1
-      field[arArmorChk].value += 1]]></eval>
+    <tag group="Helper" tag="Free"/>
     <eval phase="Render" priority="99999999" index="2"><![CDATA[
       ~ Correct the Mind Armor name that gets chopped when any
       ~ item power is added. &
@@ -3095,6 +3088,12 @@
     <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
       ~ Setup the Mind Blade item powers &
       call MndBlItPow]]></eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ Call Magic Armor Gizmo &
+      Call iMagArmor
+
+      ~ The MW tag is not lowering the ACP by 1
+      field[arArmorChk].value += 1]]></eval>
     <child entity="gMagArmor">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="arChainShr">
@@ -3111,12 +3110,7 @@
     <tag group="Helper" tag="Proficient"/>
     <tag group="MindBlade" tag="ArmorMed"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="5000"><![CDATA[
-      ~ Call Magic Armor Gizmo &
-      Call iMagArmor
-
-      ~ The MW tag is not lowering the ACP by 1
-      field[arArmorChk].value += 1]]></eval>
+    <tag group="Helper" tag="Free"/>
     <eval phase="Render" priority="99999999" index="2"><![CDATA[
       ~ Correct the Mind Armor name that gets chopped when any
       ~ item power is added. &
@@ -3124,6 +3118,12 @@
     <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
       ~ Setup the Mind Blade item powers &
       call MndBlItPow]]></eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ Call Magic Armor Gizmo &
+      Call iMagArmor
+
+      ~ The MW tag is not lowering the ACP by 1
+      field[arArmorChk].value += 1]]></eval>
     <child entity="gMagArmor">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="arChain">
@@ -3140,12 +3140,7 @@
     <tag group="Helper" tag="Proficient"/>
     <tag group="MindBlade" tag="ArmorHeavy"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="5000"><![CDATA[
-      ~ Call Magic Armor Gizmo &
-      Call iMagArmor
-
-      ~ The MW tag is not lowering the ACP by 1
-      field[arArmorChk].value += 1]]></eval>
+    <tag group="Helper" tag="Free"/>
     <eval phase="Render" priority="99999999" index="2"><![CDATA[
       ~ Correct the Mind Armor name that gets chopped when any
       ~ item power is added. &
@@ -3153,6 +3148,12 @@
     <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
       ~ Setup the Mind Blade item powers &
       call MndBlItPow]]></eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ Call Magic Armor Gizmo &
+      Call iMagArmor
+
+      ~ The MW tag is not lowering the ACP by 1
+      field[arArmorChk].value += 1]]></eval>
     <child entity="gMagArmor">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="arSplint">
@@ -3172,9 +3173,6 @@
     <tag group="wRangeInc" tag="10"/>
     <tag group="wCategory" tag="RangeThrow"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="5000"><![CDATA[
-      ~ Manually call HL Gizmo setup for magic weapons &
-      call iMagWeapon]]></eval>
     <eval phase="Final" priority="200000" index="2"><![CDATA[
       ~ Remove the in-play tracker that appeares now that
       ~ we are a thrown ranged weapon. &
@@ -3186,6 +3184,9 @@
     <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
       ~ Setup the Mind Blade item powers &
       call MndBlItPow]]></eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ Manually call HL Gizmo setup for magic weapons &
+      call iMagWeapon]]></eval>
     <child entity="gMagWeapon">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="wUnarmed">
@@ -3213,6 +3214,7 @@
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="Helper" tag="SingleAtt"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Free"/>
     </thing>
   <thing id="iPUFormCla" name="Claws x2" description="The feral heart can turn his hands into vicious claws which grant him 2 primary natural attacks that each deal 1d4 points of damage (if a Mediumsized creature, but see below) with a critical multiplier of 20/x2. If the feral heart is hurt, on his next turn he is forced to form his feral claws if they are not already active unless he makes a DC 15 Will save. Forming feral claws is a move action and the claws last until dismissed as a free action.\n\n{b}Note:{/b} To ehance your bite go to the {b}Weapons{/b} tab and click on the &quot;Wrench/Hammer&quot; icon. Then you can make it a +1 Bite or a +1 Flaming Bite. Currently the scripts will not error check if you increase the bonus past what you should be allowed or take a invalid item power. This will come in a future update." compset="MagicWep" xactspecial="2">
     <comment>Copying this item to make anything other than a Magical Claw weapon stats for a mind blade is not recommended. There are settings that cannot be changed in the editor, which will be carried along with your copy.</comment>
@@ -3224,9 +3226,6 @@
     <tag group="Helper" tag="Proficient"/>
     <tag group="Helper" tag="Free"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PreLevel" priority="5000"><![CDATA[
-      ~ Manually call HL Gizmo setup for magic weapons &
-      call iMagWeapon]]></eval>
     <eval phase="Render" priority="99999999" index="2"><![CDATA[
       ~ Correct the Mind Blade name that gets chopped when any
       ~ item power is added. &
@@ -3234,6 +3233,9 @@
     <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
       ~ Setup the Mind Blade item powers &
       call MndBlItPow]]></eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ Manually call HL Gizmo setup for magic weapons &
+      call iMagWeapon]]></eval>
     <child entity="gMagWeapon">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="wPUFormCla">
@@ -3261,6 +3263,7 @@
     <tag group="Helper" tag="GearNoSize"/>
     <tag group="Helper" tag="SingleAtt"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Free"/>
     </thing>
   <thing id="iPUBite" name="Bite" description="The feral heart gains a bite attack as a primary natural attack that deals 1d8 points of damage (if a Medium-sized creature) and is affected by the enhanced claws ability, but the enhancement bonus on it is reduced by 1 (to a minimum of 0) and it has the same configuration from enhanced claws. If this would result in the bite having no enhancement bonus and a weapon special ability such as {i}flaming{/i}, the bite does not gain any weapon special abilities granted by enhanced claws and is instead only considered to be psionic for the purposes of damage reduction.\n\n{b}Note:{/b} To ehance your claws go to the {b}Weapons{/b} tab and click on the &quot;Wrench/Hammer&quot; icon. Then you can make it a +1 Claws or a +1 Flaming Claws. Currently the scripts will not error check if you increase the bonus past what you should be allowed or take a invalid item power. This will come in a future update." compset="MagicWep" xactspecial="2">
     <comment>Copying this item to make anything other than a Magical Bite weapon stats for a mind blade is not recommended. There are settings that cannot be changed in the editor, which will be carried along with your copy.</comment>
@@ -3327,7 +3330,6 @@
   <thing id="mPUMindShi" name="Mind Shield" compset="Armor">
     <usesource source="pPsiUn"/>
     <tag group="ArmorAC" tag="2"/>
-    <tag group="ArmorMaxDx" tag="0"/>
     <tag group="ArmorCheck" tag="0"/>
     <tag group="ArmorArcFl" tag="0"/>
     <tag group="PieceArcFl" tag="10"/>
@@ -3336,6 +3338,7 @@
     <tag group="MindBlade" tag="ArmorShldH"/>
     <tag group="Helper" tag="Helper"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Free"/>
     </thing>
   <thing id="iPUMndShld" name="Mind Shield" description="A mind shield provides a +2 shield bonus to AC as long as he has a hand free.\n\nUnlike any other soulknife who takes the mind shield blade skill, a shielded blade can use the mind shield as if it was in all ways (except visually) a masterwork heavy steel shield, including making shield bashes, although he does not suffer the Armor Check penalty or Arcane Spell Failure for using a heavy steel shield. The shielded blade&apos;s mind shield is affected like a mind blade in all other ways (breaking, null psionics fields, etc). A shielded blade still applies the shield&apos;s shield bonus to his AC when performing a shield bash.\n\nThe shielded blade&apos;s mind shield is enhanced as the soulknife gains levels at the same rate as the mind blade, but the mind blade suffers a -1 penalty to its enhancement bonus (if any) if the shielded blade has both formed at the same time. The shielded blade may only apply the enhancement bonus for a mind shield to the Armor Class bonus of the shield, and not as a bonus to attack and damage rolls.\n\nA shielded blade may (and eventually must) choose special abilities for the mind shield, just as he does for the mind blade. She chooses special abilities for the mind shield from the table below.\n\nA shielded blade is always considered proficient with his mind shield." compset="MagicArmor" holdable="no">
     <tag group="Helper" tag="Helper"/>
@@ -3345,27 +3348,28 @@
     <tag group="Helper" tag="AlwaysMast"/>
     <tag group="Helper" tag="Proficient"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Free"/>
     <bootstrap thing="wPUMndShie">
-      <containerreq phase="First" priority="100"><![CDATA[!hero#Ability.cSknBSTowM]]></containerreq>
+      <containerreq phase="First" priority="100">!hero#Ability.cSknBSTowM</containerreq>
       </bootstrap>
-    <eval phase="Render" priority="99999999" index="2"><![CDATA[
-      ~ Correct the Mind Armor name that gets chopped when any
-      ~ item power is added. &
-      call NameMindBl]]></eval>
     <eval phase="PreLevel" priority="5000"><![CDATA[
       ~ Call Magic Armor Gizmo &
       Call iMagArmor]]></eval>
     <eval phase="PostLevel" priority="15000" index="4"><![CDATA[
       ~ Setup the Mind Blade item powers &
       call MndBlItPow]]></eval>
+    <eval phase="Render" priority="99999999" index="2"><![CDATA[
+      ~ Correct the Mind Armor name that gets chopped when any
+      ~ item power is added. &
+      call NameMindBl]]></eval>
     <child entity="gMagArmor">
       <tag group="Helper" tag="NoSelChild"/>
       <bootstrap thing="mPUMindShi">
-        <containerreq phase="First" priority="100"><![CDATA[!hero#Ability.cSknBSTowM]]></containerreq>
+        <containerreq phase="First" priority="100">!hero#Ability.cSknBSTowM</containerreq>
         <autotag group="Helper" tag="Forward"/>
         </bootstrap>
       <bootstrap thing="shMTowShld">
-        <containerreq phase="First" priority="100"><![CDATA[hero#Ability.cSknBSTowM]]></containerreq>
+        <containerreq phase="First" priority="100">hero#Ability.cSknBSTowM</containerreq>
         <autotag group="Helper" tag="Forward"/>
         </bootstrap>
       </child>
@@ -3404,6 +3408,7 @@
     <tag group="Helper" tag="AlwaysMast"/>
     <tag group="Helper" tag="Proficient"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="Free"/>
     <eval phase="PreLevel" priority="5000"><![CDATA[
       var AttPen as number
 
