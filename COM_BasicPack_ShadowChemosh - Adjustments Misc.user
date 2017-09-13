@@ -4718,7 +4718,7 @@
       ~ Increase/Decrease Sanity Edge value
       herofield[tSanEdge].value += field[pAdjust].value]]></eval>
     </thing>
-  <thing id="pS2EqWeigh" name="Equipment, Weight" description="Select this adjustment to increase/decrease the weight of a piece of equipment (gear, magic, weapon or armor).  In example you could change the weight of Rope from 10lbs to 5lbs using this adjustment." compset="InPlay">
+  <thing id="pS2EqWeigh" name="Equipment, Weight" description="Select this adjustment to increase/decrease the weight of a piece of equipment (gear, magic, weapon or armor). In example you could change the weight of Rope from 10lbs to 5lbs using this adjustment." compset="InPlay">
     <fieldval field="pCandExpr" value="component.MyGear &amp; !(Helper.Static|thingid.mNatural)"/>
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="CoreCampOK"/>
@@ -4735,5 +4735,67 @@
 
       ~ Make sure 0 is as low of a value as we go
       field[pChosen].chosen.field[gWeight].value = maximum(field[pChosen].chosen.field[gWeight].value,0)]]></eval>
+    </thing>
+  <thing id="pS2EqSlots" name="Equipment, Slots In Use" description="This adjustment lets you see which magic items slots are in use and by which magic item. This displays on a the Specials tab and will print to a character sheet or a summary will print to a statblock." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="OthAdjCat" tag="Equipment"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <bootstrap thing="pS2GenEqSl">
+      <containerreq phase="First" priority="1000"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      </bootstrap>
+    </thing>
+  <thing id="pS2GenEqSl" name=" Equipment Slots In Use" compset="GenericAb">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Render" priority="9999999999999"><![CDATA[
+      ~ Note this component set will not be visable in the editor. &
+
+      ~ Remove the Ex abiliy type tag
+      perform delete[AbilType.Extra]
+      ~ Set default livename to thing name
+      field[livename].text = field[thingname].text
+
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ Set the summary to just the slots in use
+      field[abSumm].text = hero.tagnames[Hero.Eqp?,", "]
+
+      ~ If nothing else equipped check for shields
+      If (field[abSumm].isempty = 1) Then
+        field[abSumm].text = hero.tagnames[BaseArmTyp.Shield]
+      Else
+        field[abSumm].text &= ", " & hero.tagnames[BaseArmTyp.Shield]
+      Endif
+
+      ~ If nothing at all equipped then set some helpful text
+      ~ and get out now!
+      If (field[abSumm].isempty = 1) Then
+        field[abSumm].text = "Nothing equipped."
+        field[CustDesc].text = "No equipment slots in use."
+        done
+      Endif
+
+      ~ Loop through all the equipped magic items
+      foreach pick in hero from BaseMagicI where "Hero.Eqp? & fieldval:gIsEquip = 1 & !Helper.CurrArmor"
+        field[CustDesc].text &= "{b}" & eachpick.tagnames[Hero.Eqp?," and "] & " Slot:{/b} " & eachpick.field[thingname].text & "\n"
+      nexteach
+
+      ~ Find the suit of armor
+      perform hero.findchild[BaseArmor,"gType.Armor & Helper.CurrArmor"].setfocus
+      If (state.isfocus <> 0) Then
+        field[CustDesc].text &= "{b}Armor Slot:{/b} " & focus.field[livename].text & "\n"
+        perform state.clearfocus
+      Endif
+
+      ~ Find any equipped shields
+      perform hero.findchild[BaseArmor,"gType.Armor & Helper.CurrShield"].setfocus
+      If (state.isfocus <> 0) Then
+        field[CustDesc].text &= "{b}Shield Slot:{/b} " & focus.field[livename].text & "\n"
+        perform state.clearfocus
+      Endif]]></eval>
     </thing>
   </document>
