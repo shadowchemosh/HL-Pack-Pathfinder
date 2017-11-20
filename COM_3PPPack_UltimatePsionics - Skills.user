@@ -242,4 +242,27 @@
       ~ Error out the skills panel
       hero.panelvalid[skills] = 0]]></evalrule>
     </thing>
+  <thing id="skPUconcWi" name="Concentration: Wilder" description="To manifest a power, you must concentrate. If something interrupts your concentration while you&apos;re manifesting, you must make a concentration check or lose the power. When you make a concentration check, you roll d20 and add your manifester level and the ability score modifier used to determine bonus powers of the same type. The more distracting the interruption and the higher the level of the power you are trying to manifest, the higher the DC (see Table: Concentration Check DCs). If you fail the check, you lose the power just as if you had manifest it to no effect.\n\n{b}Manifest defensively{/b} 15 + double power level\n{b}Injured while manifesting{/b} 10 + damage dealt + power level\n{b}Continuous damage while manifesting{/b} 10 + 1/2 damage dealt + power level\n{b}Affected by a non-damaging power while manifesting{/b} DC of the power + power level\n{b}Grappled or pinned while manifesting{/b} 10 + grappler&apos;s CMB + power level\n{b}Vigorous motion while manifesting{/b} 10 + power level\n{b}Violent motion while manifesting{/b} 15 + power level\n{b}Extremely violent motion while manifesting{/b} 20 + power level\n{b}Wind with rain or sleet while manifesting{/b} 5 + power level\n{b}Wind with hail and debris while manifesting{/b} 10 + power level\n{b}Weather caused by power{/b} see power\n{b}Entangled while manifesting{/b} 15 + power level" compset="Skill" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="AdjSkill" tag="Concent"/>
+    <tag group="Helper" tag="ExtraSkill"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <link linkage="skillattr" thing="aCHA"/>
+    <eval phase="First" priority="10000" index="2"><![CDATA[
+      ~ Do initial setup of the concentraion skill &
+      call S2CalcConc]]></eval>
+    <eval phase="Final" priority="999999999"><![CDATA[
+      ~ Calculate the total concentration and place it in the
+      ~ skill total field. We also add any Bonus values so that
+      ~ the Skill Adjustment Bonus will work with these
+      ~ concentration skills.
+      var S2_Class as string
+      S2_Class = "cHelpWld"
+      call S2CalcConc]]></eval>
+    <evalrule phase="Validation" priority="5000" message="Can&apos;t have ranks in pathfinder."><![CDATA[
+      ~ Error if user put any ranks into this skill &
+      validif (field[skRanks].value = 0)
+      ~ Error out the skills panel
+      hero.panelvalid[skills] = 0]]></evalrule>
+    </thing>
   </document>
