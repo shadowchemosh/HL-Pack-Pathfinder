@@ -81,14 +81,12 @@
     </thing>
   <thing id="cMPCHQkFi" name="Quick Fix" description="The Engineer can repair a mechanical or electrical device in half the normal time. However, cutting the repair time increases the craft check DC by 5." compset="CustomSpec" uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
-    <usesource source="GRCMP2MSR"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="SpecSource" tag="arMHEngine"/>
     </thing>
-  <thing id="cMPCHWpnUp" name="Weapon Upgrade" description="An Engineer can upgrade weapons, as well as weapon systems aboard vehicles. \n\nThe Engineer must spend 1 hour tinkering with the weapon, after which he must succeed at a Craft (mechanical) check. The DC varies depending on how the weapon is modified, as shown in Table: Weapon Upgrade. \n\nIf the skill check fails, the attempt to modify the weapon also fails, although the Engineer may try again. (The engineer may take 20 on the skill check, but the upgrade takes 20 hours to complete.) An upgraded weapon has a 10% chance of breaking after each time it is used; it cannot be used again until repaired, and repairing it requires 1 hour and a successful craft check (DC 40)." compset="CustomSpec" uniqueness="useronce">
+  <thing id="cMPCHWpnUp" name="Weapon Upgrade" description="An Engineer can upgrade weapons, as well as weapon systems aboard vehicles. \n\nThe Engineer must spend 1 hour tinkering with the weapon, after which he must succeed at a Craft (mechanical) check. The DC varies depending on how the weapon is modified, as shown in Table: Weapon Upgrade. \n\nIf the skill check fails, the attempt to modify the weapon also fails, although the Engineer may try again. (The engineer may take 20 on the skill check, but the upgrade takes 20 hours to complete.) An upgraded weapon has a 10% chance of breaking after each time it is used; it cannot be used again until repaired, and repairing it requires 1 hour and a successful craft check (DC 40).\n\n{b}Table: Weapon Upgrade{/b}\n\n{b}Handheld/Robot Weapon{/b}                                                {b}UpgradeDC{/b}\nWeapon also dazes target for 1 round                                 25\nWeapon also knocks target prone                                        30\nWeapon leaves target shaken for 1d4 rounds                   35\nWeapon also stuns target for 1d4 rounds                           40\n\n{b}Vehicle Weapon{/b}                                                                   {b}UpgradeDC{/b}\nWeapon deals an extra two dice of damage                        25\nWeapon ignores 5 points of target’s hardness/DR             30\nWeapon’s critical hit multiplier increases by 1                    35\nWeapon ignores 10 points of target’s hardness/DR           40" compset="CustomSpec" uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
-    <usesource source="GRCMP2MSR"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="SpecSource" tag="arMHEngine"/>
@@ -194,7 +192,7 @@
     <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
     <tag group="User" tag="NeedDomain" name="NeedDomain" abbrev="NeedDomain"/>
     </thing>
-  <thing id="cMPCHSkMt" name="Skill Mastery" description="A Field Scientist selects a number of skills from his or her class list equal to 3 + his or her Intelligence modifier. \n\nWhen making a skill check using one of these skills, the Field Scientist may take 10 even if stress and distractions would normally prevent him or her from doing so." compset="CustomSpec">
+  <thing id="cMPCHSkMt" name="Skill Mastery" description="A Field Scientist selects a number of skills from his or her class list equal to 3 + his or her Intelligence modifier. \n\nWhen making a skill check using one of these skills, the Field Scientist may take 10 even if stress and distractions would normally prevent him or her from doing so." compset="CustomSpec" summary="Can always take 10 with (3 + int modifier) skills.">
     <usesource source="GRCMP2tMP3"/>
     <usesource source="GRCMP2MSR"/>
     <tag group="AbilType" tag="Extra"/>
@@ -647,34 +645,13 @@ endif]]></eval>
     </thing>
   <thing id="cMPCHIWnD" name="Improvised Weapon Damage" description="The Street Warrior&apos;s attacks with improvised weapons deal more damage. \n\nHe treats an improvised weapon as one size category larger than it is for the purpose of determining the damage it deals." compset="CustomSpec" uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
-    <usesource source="GRCMP2MSR"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="SpecSource" tag="arMPCHStWa"/>
     <tag group="AbilType" tag="Extra"/>
-    <eval phase="First" priority="11000"><![CDATA[
-      ~ If we're disabled, do nothing
-      doneif (tagis[Helper.FtDisable] <> 0)
-
-      foreach pick in hero from BaseWep where "Helper.Improvised"
-        ~ Set our critical modifier to it's expanded range.
-        perform eachpick.assign[wCritMin.19]
-
-        ~ We need to increase our damage if we are currently below 1d8 (2d6 if 
-        ~ two handed).
-        if (eachpick.tagis[wClass.TwoHanded] <> 0) then
-          if (eachpick.tagvalue[wMain.?] < 104) then
-            perform eachpick.assign[Helper.DamageUp]
-
-          ~ We need a specific check for the 1d10 tag, since that is on another
-          ~ progression level.
-          elseif (eachpick.tagvalue[wMain.?] = 304) then
-            perform eachpick.assign[Helper.DamageUp]
-            endif
-        else
-          if (eachpick.tagvalue[wMain.?] < 6) then
-            perform eachpick.assign[Helper.DamageUp]
-            endif
-          endif
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="First" priority="11000"><![CDATA[foreach pick in hero from BaseWep where "wProfReq.ImprovMel|wProfReq.ImprovRng|wSpecial.Improvised"
+        perform eachpick.assign[Helper.DamageUp]
         nexteach]]></eval>
     <pickreq thing="cMPCHImpWn"/>
     </thing>
@@ -3034,12 +3011,14 @@ hero.childfound[cHelpMnk].field[cBonFtMax].value -= 1]]></eval>
     <usesource source="GRCMP2tMP3"/>
     <tag group="AbilType" tag="Extra"/>
     </thing>
-  <thing id="cMPCHSwep" name="Sweep" description="An Infiltrator knows how to size up an area and get the lay of the land in a single sweep of his or her eyes. \n\nThis sweep provides a +4 circumstance bonus on Perception checks and covers an area out to 30 feet away from the Infiltrator. The Infiltrator can use this bonus at the start of an encounter. \n\nAnything not concealed can be spotted in a sweep with a successful check (DC 10). The DC for concealed or less obvious threats is equal to their Stealth check result." compset="CustomSpec" uniqueness="useronce">
+  <thing id="cMPCHSwep" name="Sweep" description="An Infiltrator knows how to size up an area and get the lay of the land in a single sweep of his or her eyes. \n\nThis sweep provides a +4 circumstance bonus on Perception checks and covers an area out to 30 feet away from the Infiltrator. The Infiltrator can use this bonus at the start of an encounter. \n\nAnything not concealed can be spotted in a sweep with a successful check (DC 10). The DC for concealed or less obvious threats is equal to their Stealth check result." compset="CustomSpec" summary="An Infiltrator knows how to size up an area." uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
-    <usesource source="GRCMP2MSR"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="SpecSource" tag="arMHInfilt"/>
     <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[#situational[hero.childfound[skPercep],"+4 circumstance bonus and covers an area out to 30 feet.",field[thingname].text]]]></eval>
     </thing>
   <thing id="cMPCHDare" name="Daredevil" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
     <usesource source="GRCMP2tMP3"/>
@@ -3076,22 +3055,26 @@ hero.childfound[cHelpMnk].field[cBonFtMax].value -= 1]]></eval>
     </thing>
   <thing id="cMPCHImpIp" name="Improvised Implements" description="An Infiltrator no longer takes a -4 penalty when wielding an improvised weapon. \n\nAlso, the Infiltrator is able to make do without proper equipment in certain circumstances: the Infiltrator no longer takes a penalty when using skills without the proper tools." compset="CustomSpec" uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
-    <usesource source="GRCMP2MSR"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="SpecSource" tag="arMHInfilt"/>
     <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     <eval phase="First" priority="2500"><![CDATA[      ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
 
       perform hero.assign[Hero.ProfImpMel]
       perform hero.assign[Hero.ProfImpRng]]]></eval>
+    <eval phase="PostAttr" priority="20000" index="2"><![CDATA[   foreach pick in hero from BaseSkill where "Helper.ToolsNeed"
+   eachpick.field[Bonus].value += 2
+nexteach]]></eval>
     </thing>
   <thing id="cMPCHISklM" name="Skill Mastery" description="At 9th level, an Infiltrator selects a number of skills from skill list equal to 3 + his or her Intelligence modifier. \n\nWhen making a check using one of these skills, the Infiltrator may take 10 even if stress and distractions would normally prevent him or her from doing so. \n\nThis ability replaces trap sense +3." compset="ClSpecial">
     <usesource source="GRCMP2tMP3"/>
     <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
     <tag group="User" tag="NeedDomain" name="NeedDomain" abbrev="NeedDomain"/>
     </thing>
-  <thing id="cMPCHISkMt" name="Skill Mastery" description="An Infiltrator selects a number of skills from skill list equal to 3 + his or her Intelligence modifier. \n\nWhen making a check using one of these skills, the Infiltrator may take 10 even if stress and distractions would normally prevent him or her from doing so." compset="CustomSpec" uniqueness="useronce">
+  <thing id="cMPCHISkMt" name="Skill Mastery" description="The Infiltrator becomes so confident in the use of certain skills that she can use them reliably even under adverse conditions.\n\nUpon gaining this ability, she selects a number of skills equal to 3 + her Intelligence modifier. When making a skill check with one of these skills, she may take 10 even if stress and distractions would normally prevent her from doing so. An Infiltrator may gain this special ability multiple times, selecting additional skills for skill mastery to apply to each time." compset="CustomSpec" summary="Can always take 10 with (3 + int modifier) skills.">
     <usesource source="GRCMP2tMP3"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="SpecSource" tag="arMHInfilt"/>
@@ -3130,34 +3113,13 @@ hero.childfound[cHelpMnk].field[cBonFtMax].value -= 1]]></eval>
     </thing>
   <thing id="cMPCHIIpWD" name="Improvised Weapon Damage" description="An Infiltrator&apos;s attacks with improvised weapons deal more damage.\n\nThe Infiltrator treats an improvised weapon as one size category larger than it is for the purpose of determining the damage it deals." compset="CustomSpec" uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
-    <usesource source="GRCMP2MSR"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="SpecSource" tag="arMHInfilt"/>
     <tag group="AbilType" tag="Extra"/>
-    <eval phase="First" priority="11000"><![CDATA[
-      ~ If we're disabled, do nothing
-      doneif (tagis[Helper.FtDisable] <> 0)
-
-      foreach pick in hero from BaseWep where "Helper.Improvised"
-        ~ Set our critical modifier to it's expanded range.
-        perform eachpick.assign[wCritMin.19]
-
-        ~ We need to increase our damage if we are currently below 1d8 (2d6 if 
-        ~ two handed).
-        if (eachpick.tagis[wClass.TwoHanded] <> 0) then
-          if (eachpick.tagvalue[wMain.?] < 104) then
-            perform eachpick.assign[Helper.DamageUp]
-
-          ~ We need a specific check for the 1d10 tag, since that is on another
-          ~ progression level.
-          elseif (eachpick.tagvalue[wMain.?] = 304) then
-            perform eachpick.assign[Helper.DamageUp]
-            endif
-        else
-          if (eachpick.tagvalue[wMain.?] < 6) then
-            perform eachpick.assign[Helper.DamageUp]
-            endif
-          endif
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
+    <eval phase="First" priority="11000"><![CDATA[foreach pick in hero from BaseWep where "wProfReq.ImprovMel|wProfReq.ImprovRng|wSpecial.Improvised"
+        perform eachpick.assign[Helper.DamageUp]
         nexteach]]></eval>
     <pickreq thing="cMPCHImpIp"/>
     </thing>
@@ -3165,12 +3127,13 @@ hero.childfound[cHelpMnk].field[cBonFtMax].value -= 1]]></eval>
     <usesource source="GRCMP2tMP3"/>
     <tag group="AbilType" tag="Extra"/>
     </thing>
-  <thing id="cMPCHImPSp" name="Improved Sweep" description="An Infiltrator&apos;s ability to get the lay of the land improves. \n\nNow the Infiltrator not only spots potential perils with a successful check, he or she can determine the relative strength of these dangers. A successful check relates the danger&apos;s strength compared to the Infiltrator: stronger (higher level or Hit Dice), on par (same level or HD), or weaker (lower level or HD)." compset="CustomSpec" uniqueness="useronce">
+  <thing id="cMPCHImPSp" name="Improved Sweep" description="An Infiltrator&apos;s ability to get the lay of the land improves. \n\nThe Infiltrator not only spots potential perils with a successful check, he or she can determine the relative strength of these dangers. A successful check relates the danger&apos;s strength compared to the Infiltrator.\n\nStronger (higher level or Hit Dice), on par (same level or HD), or weaker (lower level or HD)." compset="CustomSpec" summary="Can determine the relative strength of dangers." uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
-    <usesource source="GRCMP2MSR"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="SpecSource" tag="arMHInfilt"/>
     <tag group="AbilType" tag="Extra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     <pickreq thing="cMPCHSwep"/>
     </thing>
   <thing id="cMPCHWaTrc" name="Without a Trace" description="At 18th level, an Infiltrator gains a +4 bonus on all opposed skill checks.\n\nThis ability replaces trap sense +6." compset="ClSpecial">
@@ -3179,7 +3142,6 @@ hero.childfound[cHelpMnk].field[cBonFtMax].value -= 1]]></eval>
     </thing>
   <thing id="cMPCHWthTr" name="Without a Trace" description="An Infiltrator gains a +4 bonus on all opposed skill checks." compset="CustomSpec" uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
-    <usesource source="GRCMP2MSR"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="SpecSource" tag="arMHInfilt"/>
     <tag group="AbilType" tag="Extra"/>
@@ -3218,9 +3180,8 @@ hero.childfound[cHelpMnk].field[cBonFtMax].value -= 1]]></eval>
     <usesource source="GRCMP2tMP3"/>
     <tag group="AbilType" tag="Extra"/>
     </thing>
-  <thing id="cMPCHWpnU2" name="Weapon Upgrade" description="An Engineer can upgrade weapons, as well as weapon systems aboard vehicles. \n\nThe Engineer must spend 1 hour tinkering with the weapon, after which he must succeed at a Craft (mechanical) check. The DC varies depending on how the weapon is modified, as shown in Table: Weapon Upgrade. \n\nIf the skill check fails, the attempt to modify the weapon also fails, although the Engineer may try again. (The engineer may take 20 on the skill check, but the upgrade takes 20 hours to complete.) An upgraded weapon has a 10% chance of breaking after each time it is used; it cannot be used again until repaired, and repairing it requires 1 hour and a successful craft check (DC 40)." compset="CustomSpec" uniqueness="useronce">
+  <thing id="cMPCHWpnU2" name="Weapon Upgrade" description="An Engineer can upgrade weapons, as well as weapon systems aboard vehicles. \n\nThe Engineer must spend 1 hour tinkering with the weapon, after which he must succeed at a Craft (mechanical) check. The DC varies depending on how the weapon is modified, as shown in Table: Weapon Upgrade. \n\nIf the skill check fails, the attempt to modify the weapon also fails, although the Engineer may try again. (The engineer may take 20 on the skill check, but the upgrade takes 20 hours to complete.) An upgraded weapon has a 10% chance of breaking after each time it is used; it cannot be used again until repaired, and repairing it requires 1 hour and a successful craft check (DC 40).\n\n{b}Table: Weapon Upgrade{/b}\n\n{b}Handheld/Robot Weapon{/b}                                                {b}UpgradeDC{/b}\nWeapon also dazes target for 1 round                                 25\nWeapon also knocks target prone                                        30\nWeapon leaves target shaken for 1d4 rounds                   35\nWeapon also stuns target for 1d4 rounds                           40\n\n{b}Vehicle Weapon{/b}                                                                   {b}UpgradeDC{/b}\nWeapon deals an extra two dice of damage                        25\nWeapon ignores 5 points of target’s hardness/DR             30\nWeapon’s critical hit multiplier increases by 1                    35\nWeapon ignores 10 points of target’s hardness/DR           40" compset="CustomSpec" uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
-    <usesource source="GRCMP2MSR"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecSource" tag="arMPCHEng"/>
     </thing>
@@ -6389,8 +6350,8 @@ doneif (tagis[Helper.FtDisable] <> 0)
   <thing id="conMPCHShC" name="Supernatural Creature" description="This supernatural creature may or may not be overtly hostile toward humans, but it tolerates the contact. The supernatural creature will provide information or other minor assistance as though its attitude toward the contact were friendly. It might still omit important details, depending on its relationship with the contact.\n\nThe supernatural creature doesn&apos;t accompany the contact on adventures, and it may not always be available when the contact wants it. In most cases, the supernatural contact can be called upon once per week, and the creature requires some form of compensation for each favor. Compensation can be a favor in return or something appropriate to the creature in question." compset="Contact">
     <fieldval field="conRisk" value="3"/>
     <usesource source="D20Arcana"/>
-    <tag group="SocialType" tag="Normal"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SocialType" tag="Normal"/>
     </thing>
   <thing id="cMPCHSdCnt" name="Shadow Contact" description="The Occultist gains a familiar. A familiar is an animal chosen by a spellcaster to aid him in his study of magic. It retains the appearance, Hit Dice, base attack bonus, base save bonuses, skills, and feats of the normal animal it once was, but is now a magical beast for the purpose of effects that depend on its type. Only a normal, unmodified animal may become a familiar. An animal companion cannot also function as a familiar.\n\nA familiar grants special abilities to its master, (see the core rules). These special abilities apply only when the master and familiar are within 1 mile of each other.\n\nLevels of different classes that are entitled to familiars stack for the purpose of determining any familiar abilities that depend on the master&apos;s level.\nIf a familiar is dismissed, lost, or dies, it can be replaced 1 week later through a specialized ritual that costs $2,000 per wizard level. The ritual takes 8 hours to complete." compset="CustomSpec" summary="An Occultist has the ability to obtain a familiar.">
     <usesource source="D20Arcana"/>
@@ -8634,7 +8595,7 @@ field[abDC].value += round(hero.tagcount[Classes.?]/2,0,-1)</eval>
         perform hero.assign[Custom.MPADPTremo]
       endif]]></eval>
     </thing>
-  <thing id="cHelpMBM" name="(Modern) Battle Mind" description="The Battle Mind turns their psionic potential into the ultimate weapon. The Battle Mind combines physical prowess with mental energy to become a devastating warrior. Using telekinetics, pyrokinetics, and biokinetics, the Battle Mind employs psionics with the subtlety of an assassin or the hard-hitting power of an explosive force.\n\nWhether forging weapons of bio-energy or mentally manipulating physical objects, calling forth fire from their mind or unleashing a bolt of mental energy, the Battle Mind is never at a loss for an offensive strategy.\n\nThe fastest path of advancement to this prestige class is through the Strong Hero Core Class." compset="Class" uniqueness="unique">
+  <thing id="cHelpMBM" name=" Battle Mind" description="The Battle Mind turns their psionic potential into the ultimate weapon. The Battle Mind combines physical prowess with mental energy to become a devastating warrior. Using telekinetics, pyrokinetics, and biokinetics, the Battle Mind employs psionics with the subtlety of an assassin or the hard-hitting power of an explosive force.\n\nWhether forging weapons of bio-energy or mentally manipulating physical objects, calling forth fire from their mind or unleashing a bolt of mental energy, the Battle Mind is never at a loss for an offensive strategy.\n\nThe fastest path of advancement to this prestige class is through the Strong Hero Core Class." compset="Class" uniqueness="unique">
     <fieldval field="cSpec2ndNm" value="Training"/>
     <fieldval field="cSpec2ndSi" value="Training"/>
     <fieldval field="cAbbr" value="MBM"/>
@@ -8651,8 +8612,7 @@ field[abDC].value += round(hero.tagcount[Classes.?]/2,0,-1)</eval>
     <arrayval field="cBonFtTot" index="5" value="2"/>
     <arrayval field="cBonFtTot" index="8" value="3"/>
     <arrayval field="cCustScTot" index="0" value="1"/>
-    <usesource source="D20Arcana"/>
-    <tag group="ClassSkill" tag="skProfDriv" name="Profession (driver)" abbrev="Profession (driver)"/>
+    <usesource source="GRCMP2MSR"/>
     <tag group="Classes" tag="MSRDBttMd" name="Battle Mind" abbrev="Battle Mind"/>
     <tag group="CstS1Type" tag="Attack" name="Attack" abbrev="Attack"/>
     <tag group="cAttack" tag="Medium"/>
@@ -8685,9 +8645,7 @@ field[abDC].value += round(hero.tagcount[Classes.?]/2,0,-1)</eval>
     <tag group="ClassSkill" tag="skPercep" name="Perception" abbrev="Perception"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AllowCust" tag="cHelpMdH"/>
-    <bootstrap thing="cACBMnBN">
-      <autotag group="ClSpecWhen" tag="2"/>
-      </bootstrap>
+    <tag group="ClassSkill" tag="skProfDriv" name="Profession (driver)" abbrev="Profession (driver)"/>
     <bootstrap thing="cACBMnBN">
       <autotag group="ClSpecWhen" tag="8"/>
       </bootstrap>
@@ -8716,6 +8674,59 @@ field[abDC].value += round(hero.tagcount[Classes.?]/2,0,-1)</eval>
     <bootstrap thing="cACBMnBN">
       <autotag group="ClSpecWhen" tag="1"/>
       </bootstrap>
+    <bootstrap thing="cACBMnBN">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <eval phase="Render" priority="2147483647" index="5"><![CDATA[field[livename].text = "Battle Mind"]]></eval>
+    <eval phase="PreLevel" priority="10000" index="4"><![CDATA[if (#totallevelcount[] >= 2) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 3) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 5) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 6) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 7) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 9) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 10) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 11) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 13) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 15) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 17) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 19) then
+hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
+endif]]></eval>
+    <eval phase="PostAttr" priority="10000">#resmax[resPowerPt] += hero.child[aWIS].field[aModBonus].value</eval>
+    <eval phase="First" index="2">perform hero.assign[Hero.Psionic]</eval>
     <eval phase="PreLevel" priority="10000" index="3"><![CDATA[      var result as number
       result = hero.assign[Hero.Psionic]
       #resmax[resPowerPt] += 1
@@ -8795,63 +8806,14 @@ endif
 if (#totallevelcount[] >= 20) then
 #resmax[resPowerPt] += 6
 endif]]></eval>
-    <eval phase="Render" priority="2147483647" index="5"><![CDATA[field[livename].text = "Battle Mind"]]></eval>
-    <eval phase="PreLevel" priority="10000" index="4"><![CDATA[if (#totallevelcount[] >= 2) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 3) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 5) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 6) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 7) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 9) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 10) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 11) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 13) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 15) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 17) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 19) then
-hero.childfound[cfgMPABMPP].field[cfgMax1].value += 1
-endif]]></eval>
-    <eval phase="PostAttr" priority="10000">#resmax[resPowerPt] += hero.child[aWIS].field[aModBonus].value</eval>
-    <eval phase="First" index="2">perform hero.assign[Hero.Psionic]</eval>
     </thing>
-  <thing id="cMSRDBttMd" name="(Modern) Battle Mind" description="The Battle Mind turns their psionic potential into the ultimate weapon. The Battle Mind combines physical prowess with mental energy to become a devastating warrior. Using telekinetics, pyrokinetics, and biokinetics, the Battle Mind employs psionics with the subtlety of an assassin or the hard-hitting power of an explosive force.\n\nWhether forging weapons of bio-energy or mentally manipulating physical objects, calling forth fire from their mind or unleashing a bolt of mental energy, the Battle Mind is never at a loss for an offensive strategy.\n\nThe fastest path of advancement to this prestige class is through the Strong Hero Core Class." compset="ClassLevel" maxlimit="10">
-    <usesource source="D20Arcana"/>
-    <tag group="ClassType" tag="Prestige"/>
+  <thing id="cMSRDBttMd" name=" Battle Mind" description="The Battle Mind turns their psionic potential into the ultimate weapon. The Battle Mind combines physical prowess with mental energy to become a devastating warrior. Using telekinetics, pyrokinetics, and biokinetics, the Battle Mind employs psionics with the subtlety of an assassin or the hard-hitting power of an explosive force.\n\nWhether forging weapons of bio-energy or mentally manipulating physical objects, calling forth fire from their mind or unleashing a bolt of mental energy, the Battle Mind is never at a loss for an offensive strategy.\n\nThe fastest path of advancement to this prestige class is through the Strong Hero Core Class." compset="ClassLevel" maxlimit="10">
+    <usesource source="GRCMP2MSR"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassType" tag="Prestige"/>
     <bootstrap thing="cHelpMBM"></bootstrap>
     <link linkage="helper" thing="cHelpMBM"/>
+    <eval phase="Final" priority="10000"><![CDATA[field[livename].text = "Battle Mind"]]></eval>
     <exprreq message="Base Attack Bonus: +3"><![CDATA[child[Attack].field[tAtkBase].value >= 3]]></exprreq>
     <exprreq message="Acrobatics 3 ranks"><![CDATA[#skillranks[skAcrobat] >= 3]]></exprreq>
     </thing>
@@ -10029,7 +9991,7 @@ nexteach
       endif]]></eval>
     <exprreq message="Character level 13 required"><![CDATA[#totallevelcount[] >= 13]]></exprreq>
     </thing>
-  <thing id="cHelpMPA" name="(Modern) Psionic Agent" description="They move like the wind, appearing from thin air, and have power to match the denizens of Shadow. They are beings of the mundane world, individuals of superior mental ability. They are men and women in black who use their para-human talents to investigate Shadow. In some cases stopping it, in others encouraging it. They can be assassins, protectors, or investigators with greater power then mere mortals. They are Psionic Agents.\n\nSelect this advanced class if you want your character to be able to use psionics in an investigative and long-range combat, as opposed to the up-there, up-close combat of the Battle Mind.\n\nThe fastest path into this advanced class is from the Fast hero basic class, though other paths are possible. A good Wisdom is recommended to allow access to higher level powers." compset="Class" uniqueness="unique">
+  <thing id="cHelpMPA" name=" Psionic Agent" description="They move like the wind, appearing from thin air, and have power to match the denizens of Shadow. They are beings of the mundane world, individuals of superior mental ability. They are men and women in black who use their para-human talents to investigate Shadow. In some cases stopping it, in others encouraging it. They can be assassins, protectors, or investigators with greater power then mere mortals. They are Psionic Agents.\n\nSelect this advanced class if you want your character to be able to use psionics in an investigative and long-range combat, as opposed to the up-there, up-close combat of the Battle Mind.\n\nThe fastest path into this advanced class is from the Fast hero basic class, though other paths are possible. A good Wisdom is recommended to allow access to higher level powers." compset="Class" uniqueness="unique">
     <fieldval field="cSpec2ndNm" value="Training"/>
     <fieldval field="cSpec2ndSi" value="Training"/>
     <fieldval field="cAbbr" value="MPA"/>
@@ -10046,8 +10008,7 @@ nexteach
     <arrayval field="cCustScTot" index="7" value="6"/>
     <arrayval field="cCustScTot" index="9" value="7"/>
     <arrayval field="cBonFtTot" index="2" value="1"/>
-    <usesource source="D20Arcana"/>
-    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
+    <usesource source="GRCMP2MSR"/>
     <tag group="ClassSkill" tag="skEscape"/>
     <tag group="ClassSkill" tag="skSenseMot"/>
     <tag group="ClassSkill" tag="skStealth"/>
@@ -10078,7 +10039,7 @@ nexteach
     <tag group="fCategory" tag="Combat" name="Combat" abbrev="Combat"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AllowCust" tag="cHelpMdH"/>
-    <bootstrap thing="trkMPPyPSt"></bootstrap>
+    <tag group="fCategory" tag="Psionic" name="Psionic" abbrev="Psionic"/>
     <bootstrap thing="trkMPCHPwP"></bootstrap>
     <bootstrap thing="cfgMPAPAPP"></bootstrap>
     <bootstrap thing="trkMPACnCh"></bootstrap>
@@ -10109,53 +10070,7 @@ nexteach
     <bootstrap thing="cMHACClass">
       <autotag group="ClSpecWhen" tag="4"/>
       </bootstrap>
-    <eval phase="PreLevel" priority="10000" index="4"><![CDATA[if (#totallevelcount[] >= 2) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 3) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 5) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 6) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 7) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 9) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 10) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 11) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 13) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 15) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 17) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 19) then
-hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
-endif]]></eval>
+    <bootstrap thing="trkMPPyPSt"></bootstrap>
     <eval phase="Render" priority="2147483647" index="5"><![CDATA[field[livename].text = "Psionic Agent"]]></eval>
     <eval phase="PostAttr" priority="10000">#resmax[resPowerPt] += hero.child[aCHA].field[aModBonus].value</eval>
     <eval phase="First" index="2">perform hero.assign[Hero.Psionic]</eval>
@@ -10238,13 +10153,61 @@ endif
 if (#totallevelcount[] >= 20) then
 #resmax[resPowerPt] += 6
 endif]]></eval>
+    <eval phase="PreLevel" priority="10000" index="4"><![CDATA[if (#totallevelcount[] >= 2) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 3) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 5) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 6) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 7) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 9) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 10) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 11) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 13) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 15) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 17) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 19) then
+hero.childfound[cfgMPAPAPP].field[cfgMax1].value += 1
+endif]]></eval>
     </thing>
-  <thing id="cMSRDPsAgt" name="(Modern) Psionic Agent" description="They move like the wind, appearing from thin air, and have power to match the denizens of Shadow. They are beings of the mundane world, individuals of superior mental ability. They are men and women in black who use their para-human talents to investigate Shadow. In some cases stopping it, in others encouraging it. They can be assassins, protectors, or investigators with greater power then mere mortals. They are Psionic Agents.\n\nSelect this advanced class if you want your character to be able to use psionics in an investigative and long-range combat, as opposed to the up-there, up-close combat of the Battle Mind.\n\nThe fastest path into this advanced class is from the Fast hero basic class, though other paths are possible. A good Wisdom is recommended to allow access to higher level powers." compset="ClassLevel" maxlimit="10">
-    <usesource source="D20Arcana"/>
-    <tag group="ClassType" tag="Prestige"/>
+  <thing id="cMSRDPsAgt" name=" Psionic Agent" description="They move like the wind, appearing from thin air, and have power to match the denizens of Shadow. They are beings of the mundane world, individuals of superior mental ability. They are men and women in black who use their para-human talents to investigate Shadow. In some cases stopping it, in others encouraging it. They can be assassins, protectors, or investigators with greater power then mere mortals. They are Psionic Agents.\n\nSelect this advanced class if you want your character to be able to use psionics in an investigative and long-range combat, as opposed to the up-there, up-close combat of the Battle Mind.\n\nThe fastest path into this advanced class is from the Fast hero basic class, though other paths are possible. A good Wisdom is recommended to allow access to higher level powers." compset="ClassLevel" maxlimit="10">
+    <usesource source="GRCMP2MSR"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassType" tag="Prestige"/>
     <bootstrap thing="cHelpMPA"></bootstrap>
     <link linkage="helper" thing="cHelpMPA"/>
+    <eval phase="Final" priority="10000"><![CDATA[field[livename].text = "Psionic Agent"]]></eval>
     <exprreq message="Stealth 3 ranks"><![CDATA[#skillranks[skStealth] >= 3]]></exprreq>
     <exprreq message="Base Attack Bonus: +2"><![CDATA[child[Attack].field[tAtkBase].value >= 2]]></exprreq>
     </thing>
@@ -10263,7 +10226,7 @@ endif]]></eval>
     <eval phase="PostLevel" priority="10000" index="3">~ Include 1/2 class levels also.
 field[abDC].value += round(hero.tagcount[Classes.?]/2,0,-1)</eval>
     </thing>
-  <thing id="cHelpMTp" name="(Modern) Telepath" compset="Class" uniqueness="unique">
+  <thing id="cHelpMTp" name=" Telepath" compset="Class" uniqueness="unique">
     <fieldval field="cSpec2ndNm" value="Training"/>
     <fieldval field="cSpec2ndSi" value="Training"/>
     <fieldval field="cAbbr" value="MTp"/>
@@ -10280,8 +10243,7 @@ field[abDC].value += round(hero.tagcount[Classes.?]/2,0,-1)</eval>
     <arrayval field="cCustScTot" index="7" value="6"/>
     <arrayval field="cCustScTot" index="9" value="7"/>
     <arrayval field="cBonFtTot" index="2" value="1"/>
-    <usesource source="D20Arcana"/>
-    <tag group="cAttack" tag="Poor"/>
+    <usesource source="GRCMP2MSR"/>
     <tag group="cFort" tag="Poor"/>
     <tag group="cRef" tag="Poor" name="Slow" abbrev="Slow"/>
     <tag group="cWill" tag="Good"/>
@@ -10313,7 +10275,7 @@ field[abDC].value += round(hero.tagcount[Classes.?]/2,0,-1)</eval>
     <tag group="CstS1Type" tag="Attack" name="Attack" abbrev="Attack"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AllowCust" tag="cHelpMdH"/>
-    <bootstrap thing="trkMPCHPwP"></bootstrap>
+    <tag group="cAttack" tag="Poor"/>
     <bootstrap thing="cfgMPPsyTa"></bootstrap>
     <bootstrap thing="trkMPACnIn"></bootstrap>
     <bootstrap thing="cFAMETelBN">
@@ -10338,83 +10300,7 @@ field[abDC].value += round(hero.tagcount[Classes.?]/2,0,-1)</eval>
       <autotag group="ClSpecWhen" tag="8"/>
       </bootstrap>
     <bootstrap thing="trkMPPyPSt"></bootstrap>
-    <eval phase="PreLevel" priority="10000" index="4"><![CDATA[hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 3
-
-if (#totallevelcount[] >= 2) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 3) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 4) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 5) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 6) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 7) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 8) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 9) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 10) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 11) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 12) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 13) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 14) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 15) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 16) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 17) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 18) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif
-
-if (#totallevelcount[] >= 19) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 1
-endif
-
-if (#totallevelcount[] >= 20) then
-hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
-endif]]></eval>
+    <bootstrap thing="trkMPCHPwP"></bootstrap>
     <eval phase="Render" priority="2147483647" index="5"><![CDATA[field[livename].text = "Telepath"]]></eval>
     <eval phase="PostAttr" priority="10000">#resmax[resPowerPt] += hero.child[aINT].field[aModBonus].value</eval>
     <eval phase="First" index="2">perform hero.assign[Hero.Psionic]</eval>
@@ -10497,16 +10383,94 @@ endif
 if (#totallevelcount[] >= 20) then
 #resmax[resPowerPt] += 32
 endif]]></eval>
+    <eval phase="PreLevel" priority="10000" index="4"><![CDATA[hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 3
+
+if (#totallevelcount[] >= 2) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 3) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 4) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 5) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 6) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 7) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 8) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 9) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 10) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 11) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 12) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 13) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 14) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 15) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 16) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 17) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 18) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif
+
+if (#totallevelcount[] >= 19) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 1
+endif
+
+if (#totallevelcount[] >= 20) then
+hero.childfound[cfgMPPsyTa].field[cfgMax1].value += 2
+endif]]></eval>
     </thing>
-  <thing id="cMSRDTelep" name="(Modern) Telepath" compset="ClassLevel" maxlimit="10">
-    <usesource source="D20Arcana"/>
-    <tag group="ClassType" tag="Prestige"/>
+  <thing id="cMSRDTelep" name=" Telepath" compset="ClassLevel" maxlimit="10">
+    <usesource source="GRCMP2MSR"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassType" tag="Prestige"/>
     <bootstrap thing="cHelpMTp"></bootstrap>
     <link linkage="helper" thing="cHelpMTp"/>
+    <eval phase="Final" priority="10000"><![CDATA[field[livename].text = "Telepath"]]></eval>
+    <exprreq message="Bluff 3 ranks"><![CDATA[#skillranks[skBluff] >= 3]]></exprreq>
     <exprreq message="Diplomacy 3 ranks"><![CDATA[#skillranks[skDiplo] >= 3]]></exprreq>
     <exprreq message="Perception 3 ranks"><![CDATA[#skillranks[skPercep] >= 3]]></exprreq>
-    <exprreq message="Bluff 3 ranks"><![CDATA[#skillranks[skBluff] >= 3]]></exprreq>
     </thing>
   <thing id="trkMPACnCh" name="Psychic Concentration Check Modifier" description="{b}Benefit:{/b} The manifester gains the ability to have a Concentration check even if they are not a spell caster. This is equal to: A d20 roll and add your Hit Dice and your Wisdom score modifier.\n\nYou can manifest a Psychic Ability by making a Concentration check. Each Psychic Ability has a modifier to the Concentration check. If the ability is used out of combat and in a relaxed atmosphere the Concentration check is 10+ ability modifiers.\nFor more information see the core rules or: http://paizo.com/pathfinderRPG/prd/magic.html\n\nA failed Concentration check results in a condition. The Psychic ability has what condition type and duration.\n\nThere is no limit on the number of times a day that you can use a Psychic Ability, but with each use, there is a stacking +1 added to the Concentration check DC.\n\nPsychic Abilities are &quot;Supernatural Abilities&quot; and require a standard action, (unless otherwise noted), to activate.\nCredit: For more information on Psychic abilities can be found in Super Genius Games: Anachronistic Adventurers: The Sensitive." compset="Tracker">
     <fieldval field="shortname" value="Conc Ck Mod"/>

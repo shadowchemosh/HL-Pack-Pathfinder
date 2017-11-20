@@ -418,7 +418,7 @@ if (levelquart < 1) then
     levelquart = 1
 endif
 
-if (levelquart < hero.child[aCON].field[aModBonus].value) then
+if (levelquart < hero.child[aCON].field[aModBonus].value) then 
     uncons = hero.child[aCON].field[aModBonus].value
     death = hero.child[aCON].field[aModBonus].value + hero.child[aCON].field[aFinalVal].value
 else
@@ -473,7 +473,7 @@ www.supergeniusgames.com</comment>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecSource" tag="arMSRDToug"/>
     <eval phase="PreAttr" priority="10000">var result as number
-
+  
       result = hero.child[wUnarmed].delete[wCritMin.?]
       result = hero.child[wUnarmed].assign[wCritMin.19]</eval>
     <exprreq message="Character level 5th required."><![CDATA[#totallevelcount[] >= 5]]></exprreq>
@@ -613,7 +613,7 @@ www.supergeniusgames.com</comment>
         field[abValue].value += maximum(herofield[tHitDice].value, 1)
 
         ~ add that bonus to our hit points
-        container.child[Totals].field[tBonusHP].value += field[abValue].value
+        container.child[Totals].field[tBonusHP].value += field[abValue].value 
 
         field[abSumm].text = "You gain +" & field[abValue].value & " hit points."
         endif
@@ -825,7 +825,7 @@ www.supergeniusgames.com</comment>
     <eval phase="First" priority="2500"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.SpcDisable] <> 0)
-
+      
       perform hero.assign[Hero.HasLowLig]]]></eval>
     </thing>
   <thing id="cMPSGGSwif" name="Swift" description="+10 feet to movement rate" compset="CustomSpec" summary="Swift (+10 feet to movement rate)" uniqueness="useronce">
@@ -935,75 +935,39 @@ www.supergeniusgames.com</comment>
     <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="SpecSource" tag="arMPSGGMSm"/>
     </thing>
-  <thing id="trMPSGGVCB" name="Vehicular Combat Bonus" description="Vehicular Combat Bonus (VCB) = Driver/pilot&apos;s Profession (driver), Profession (pilot), Profession (sailor) or Ride bonus + vehicle size modifier + vehicle speed modifier" compset="Trait" summary="Skill Bonus  bonus + vehicle size modifier + vehicle speed modifier" uniqueness="useronce">
+  <thing id="trMPSGGVCB" name="Vehicle Combat Training" description="Vehicular Combat Bonus (VCB) is your preferred driving skill bonus + vehicle size modifier + vehicle speed modifier." compset="Trait" summary="Skill Bonus  bonus + vehicle size modifier + vehicle speed modifier" uniqueness="useronce">
     <comment>Anachronistic Adventurers - The Tough
 
 Super Genius Games
 www.supergeniusgames.com</comment>
     <fieldval field="shortname" value="VCB"/>
     <fieldval field="usrCandid1" value="thingid.skProfDriv|thingid.skMHPilot|thingid.skProfSail|thingid.skMSRDDriv|thingid.skMSRDPilt|thingid.skRide|thingid.skFly"/>
-    <usesource source="GRCMP2MSR"/>
-    <usesource source="D20Arcana"/>
-    <tag group="User" tag="NoAutoName"/>
+    <usesource source="GRCMP2tMP3"/>
     <tag group="Custom" tag="GRCMPVehic" name="Vehicular Combat" abbrev="Vehicular Combat"/>
-    <tag group="Usage" tag="MPSGGVCB" name="/VCB" abbrev="/VCB"/>
-    <tag group="Helper" tag="ShowSpec"/>
     <tag group="ChooseSrc1" tag="Hero"/>
-    <eval phase="Final" priority="30000"><![CDATA[if (field[usrChosen1].ischosen <> 0) then
-var sp as number
-sp = field[usrChosen1].chosen.field[skTotal].value
-sp = round(sp, 0, -1)
-field[trkMax].value += sp
-hero.childfound[trMPSGGVCD].field[trkMax].value += sp
-endif]]></eval>
+    <tag group="trCategory" tag="Training"/>
+    <tag group="SpecType" tag="Skill"/>
+    <bootstrap thing="abMHRGGVCB"></bootstrap>
+    <eval phase="PostAttr" priority="10000">hero.childfound[abMHRGGVCB].field[trkMax].value += field[usrChosen1].chosen.field[skTotal].value</eval>
     </thing>
-  <thing id="trMPSGGVCD" name="Vehicular Combat Defense" description="Vehicular Combat Defense (VCD) = 10 + drive/ pilot&apos;s Ride bonus + vehicle size modifier + vehicle speed modifier (see Intervals, ranges, Sizes, and Spells)" compset="Trait" summary="10+Skill Bonus  bonus + vehicle size modifier + vehicle speed modifier" uniqueness="useronce">
+  <thing id="trMPSGGVCD" name="Vehicle Defense Training" description="Vehicular Combat Defense (VCD)  is 10 + preferred driving skill bonus + vehicle size modifier + vehicle speed modifier. + vehicle size modifier + vehicle speed modifier (see Intervals, ranges, Sizes, and Spells)." compset="Trait" summary="10+Skill Bonus  bonus + vehicle size modifier + vehicle speed modifier" uniqueness="useronce">
     <comment>Anachronistic Adventurers - The Tough
 
 Super Genius Games
 www.supergeniusgames.com</comment>
     <fieldval field="shortname" value="VCD"/>
     <fieldval field="trkMax" value="10"/>
-    <usesource source="GRCMP2MSR"/>
-    <usesource source="D20Arcana"/>
+    <fieldval field="usrCandid1" value="thingid.skProfDriv|thingid.skMHPilot|thingid.skProfSail|thingid.skMSRDDriv|thingid.skMSRDPilt|thingid.skRide|thingid.skFly"/>
+    <usesource source="GRCMP2tMP3"/>
     <tag group="Custom" tag="GRCMPVehic" name="Vehicular Combat" abbrev="Vehicular Combat"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    <tag group="Usage" tag="MPSGGVCD" name="/VCD" abbrev="/VCD"/>
+    <tag group="trCategory" tag="Training"/>
+    <tag group="SpecType" tag="Skill"/>
+    <bootstrap thing="abMHRGGVCD"></bootstrap>
+    <eval phase="PostAttr" priority="10000">hero.childfound[abMHRGGVCD].field[trkMax].value += field[usrChosen1].chosen.field[skTotal].value</eval>
     </thing>
-  <thing id="mMPSGGVCM" name="Vehicular Combat Maneuvers" description="Because the relative position rules don&apos;t track the exact position, speed, or facing of vehicles, things like closing or engaging in strafing runs are handled with vehicular combat maneuvers. Every vehicle has a Vehicle Combat Bonus (VCB) and a Vehicle Combat Defense (VCD), which are calculated as shown below.\n\nVehicular Combat Bonus (VCB) = Driver/pilot&apos;s Ride bonus + vehicle size modifier + vehicle speed modifier (see Intervals, ranges, Sizes, and Spells, above)\n\nVehicular Combat Defense (VCD) = 10 + drive/ pilot&apos;s Ride bonus + vehicle size modifier + vehicle speed modifier (see Intervals, ranges, Sizes, and Spells, above)\n\nFor all vehicular combat maneuvers, &quot;driver&quot; refers to the character controlling the movement of the vehicle. This may be a driver, rider, pilot, or  helmsman, depending on the vehicle making the maneuver. Each maneuver shows the kind of action it requires, and has a description of its effect.\n\nMaking any vehicular combat maneuver allows the driver/pilot to be in control of the vehicle (removing the need to take a separate action, as described in the vehicle rules in Ultimate Combat)." compset="Mechanics" uniqueness="useronce">
-    <comment>Anachronistic Adventurers - The Tough
-
-Super Genius Games
-www.supergeniusgames.com</comment>
-    <usesource source="GRCMP2MSR"/>
-    <usesource source="D20Arcana"/>
-    <bootstrap thing="trMPSGGVCB">
-      <containerreq phase="First" priority="500">hero#Custom.GRCMPVehic</containerreq>
-      </bootstrap>
-    <bootstrap thing="trMPSGGVCD">
-      <containerreq phase="First" priority="500">hero#Custom.GRCMPVehic</containerreq>
-      </bootstrap>
-    <eval phase="First" priority="450" index="2"><![CDATA[~ if (hero.child[skProfSail].field[skUser].value >= 1) then
-~perform hero.assign[Custom.GRCMPVehic]
-~endif]]></eval>
-    <eval phase="First" priority="450" index="3"><![CDATA[if (hero.child[skFly].field[skUser].value >= 1) then
-perform hero.assign[Custom.GRCMPVehic]
-elseif (hero.child[skFly].field[skUser].value >= 1) then
-perform hero.assign[Custom.GRCMPVehic]
-endif]]></eval>
-    <eval phase="First" priority="450" index="4"><![CDATA[if (hero.child[skRide].field[skUser].value >= 1) then
-perform hero.assign[Custom.GRCMPVehic]
-elseif (hero.child[skRide].field[skUser].value >= 1) then
-perform hero.assign[Custom.GRCMPVehic]
-endif]]></eval>
-    <eval phase="First"><![CDATA[
-~ loop through all the skills on the hero
-foreach pick in hero from BaseSkill
-  ~ Make sure we have the skill
-  If (eachpick.tagis[ClassSkill.skProfDriv] + eachpick.tagis[ClassSkill.skProfSail]<> 0) then
-       perform hero.assign[Custom.GRCMPVehic]
-  Endif
-nexteach]]></eval>
+  <thing id="mMPSGGVCM" name="Vehicular Combat Maneuvers (Obsolete)" compset="Mechanics" uniqueness="useronce">
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="Obsolete"/>
     </thing>
   <thing id="cMPSGGCVOp" name="Combat Vehicle Operations" description="The outrider is a master of vehicular combat. She is proficient with all weapons mounted on or built into vehicles (including siege weapons - see Ultimate Combat for more information on siege weapons and vehicles) and is able to drive, pilot, or operate any vehicle after 1-6 minutes of study.\n\nAdditionally, once a round when the outrider&apos;s vehicle is hit in combat, she may attempt a Ride check (as an immediate action) to negate the hit. The hit is negated if her Ride check result is greater than the opponent&apos;s attack roll. This talent also counts as the Mounted combat feat for purpose of meeting feat prerequisites, and any feat the outrider takes that does have Mounted Combat as a prerequisite she may use for a vehicle." compset="CustomSpec" uniqueness="unique">
     <comment>Anachronistic Adventurers - The Tough
@@ -1018,7 +982,7 @@ www.supergeniusgames.com</comment>
     <eval phase="First" priority="2500"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
-
+      
       perform hero.assign[Hero.ProfSiege]]]></eval>
     </thing>
   <thing id="cMPSGGVhFc" name="Vehicle Focus" description="The outrider gains special mastery in one kind of vehicle. \n\nThe outrider selects one type of vehicle available in the campaign, as defined by the GM (typical choices might include motorcycles, cars, trucks, big rigs, prop planes, jet planes, helicopters, airships, boats, and submarines). When she is the driver, pilot, or operator of a vehicle of this type, the vehicle gains a +1 dodge bonus to AC, and the outrider receives a +1 bonus to all Ride checks made to operate the vehicle and attack rolls made with the vehicle&apos;s weapons.  This bonus increases every 4 levels.\n\nThe outrider can select an additional vehicle type by taking this training again.\n\n{b}Note{/b}: The user will have to add the modifier to score." compset="CustomSpec" summary="Bonus when operating the vehicle">
@@ -1065,7 +1029,7 @@ www.supergeniusgames.com</comment>
     <tag group="User" tag="Tracker"/>
     <eval phase="Final" priority="10000"><![CDATA[   ~our bonus is level /2, min 1
       var bonus as number
-      bonus = field[xTotalLev].value
+      bonus = field[xTotalLev].value 
       field[abValue].value += maximum(round(bonus,0,-1),1)
       field[livename].text = "Come On Baby +" & field[abValue].value & "d6"
       field[abSumm].text = "+" & field[abValue].value & "d6 restores HP damage to a vehicle"]]></eval>
@@ -1128,8 +1092,8 @@ doneif (tagis[Helper.FtDisable] <> 0)
 var sp as number
 sp = field[xTotalLev].value / 4
 sp = round(sp, 0, -1)
-hero.childfound[trMPSGGVCB].field[trkMax].value += sp
-hero.childfound[trMPSGGVCD].field[trkMax].value += sp]]></eval>
+hero.childfound[abMHRGGVCB].field[trkMax].value += sp
+hero.childfound[abMHRGGVCD].field[trkMax].value += sp]]></eval>
     <pickreq thing="cMPSGGVhFc"/>
     </thing>
   <thing id="cMPSGGTOtM" name="Thin Out the Mix" description="The outrider can make minor adjustments to her vehicle each day - cleaning its control surfaces, doing maintenance on its engine and systems, tightening its joints, mixing special fuels - to increase its move rate. This takes one hour, and may only be done to vehicles the outrider has a vehicle focus bonus with. The vehicle&apos;s movement rate is increased by 20% for the next 24 hours." compset="CustomSpec" summary="Make minor adjustments to her vehicle each day" uniqueness="useronce">
@@ -1163,8 +1127,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1178,8 +1142,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Axes"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1189,7 +1153,7 @@ doneif (hero.childlives[wGreataxe] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wGreataxe].delete[wCritMin.?]
       result = hero.child[wGreataxe].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="4">~ If weapons not found on the hero then we are done
@@ -1197,7 +1161,7 @@ doneif (hero.childlives[wBardiche] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wBardiche].delete[wCritMin.?]
       result = hero.child[wBardiche].assign[wCritMin.18]</eval>
     <eval phase="PreAttr" priority="10000" index="5">~ If weapons not found on the hero then we are done
@@ -1205,7 +1169,7 @@ doneif (hero.childlives[wBattleaxe] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wBattleaxe].delete[wCritMin.?]
       result = hero.child[wBattleaxe].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="6">~ If weapons not found on the hero then we are done
@@ -1213,7 +1177,7 @@ doneif (hero.childlives[wWaraxeDw] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wWaraxeDw].delete[wCritMin.?]
       result = hero.child[wWaraxeDw].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="7">~ If weapons not found on the hero then we are done
@@ -1221,7 +1185,7 @@ doneif (hero.childlives[wHandaxe] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wHandaxe].delete[wCritMin.?]
       result = hero.child[wHandaxe].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="8">~ If weapons not found on the hero then we are done
@@ -1229,7 +1193,7 @@ doneif (hero.childlives[wPickHeavy] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wPickHeavy].delete[wCritMin.?]
       result = hero.child[wPickHeavy].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="9">~ If weapons not found on the hero then we are done
@@ -1237,7 +1201,7 @@ doneif (hero.childlives[wAxeHook] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wAxeHook].delete[wCritMin.?]
       result = hero.child[wAxeHook].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="10">~ If weapons not found on the hero then we are done
@@ -1245,7 +1209,7 @@ doneif (hero.childlives[wAxeKnuckl] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wAxeKnuckl].delete[wCritMin.?]
       result = hero.child[wAxeKnuckl].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="11">~ If weapons not found on the hero then we are done
@@ -1253,7 +1217,7 @@ doneif (hero.childlives[wPickLight] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wPickLight].delete[wCritMin.?]
       result = hero.child[wPickLight].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="12">~ If weapons not found on the hero then we are done
@@ -1261,7 +1225,7 @@ doneif (hero.childlives[wMattock] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wMattock].delete[wCritMin.?]
       result = hero.child[wMattock].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="13">~ If weapons not found on the hero then we are done
@@ -1269,7 +1233,7 @@ doneif (hero.childlives[wAxeOrcDbl] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wAxeOrcDbl].delete[wCritMin.?]
       result = hero.child[wAxeOrcDbl].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="14">~ If weapons not found on the hero then we are done
@@ -1277,7 +1241,7 @@ doneif (hero.childlives[wPFPata] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wPFPata].delete[wCritMin.?]
       result = hero.child[wPFPata].assign[wCritMin.19]</eval>
     <eval phase="PreAttr" priority="10000" index="15">~ If weapons not found on the hero then we are done
@@ -1285,7 +1249,7 @@ doneif (hero.childlives[wAxeThrow] = 0)
 
 ~ assign a new crit mult tag.
       var result as number
-
+      
       result = hero.child[wAxeThrow].delete[wCritMin.?]
       result = hero.child[wAxeThrow].assign[wCritMin.19]</eval>
     </thing>
@@ -1310,8 +1274,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1325,8 +1289,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.BladeHeavy"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1368,8 +1332,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1383,8 +1347,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.BladeLight"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1411,8 +1375,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1426,8 +1390,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Bows"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1458,8 +1422,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1473,8 +1437,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Close"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1516,8 +1480,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1531,8 +1495,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Crossbows"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1559,8 +1523,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1574,8 +1538,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Double"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1617,8 +1581,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1632,8 +1596,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Firearms"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1660,8 +1624,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1675,8 +1639,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Flails"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1703,8 +1667,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1718,8 +1682,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Hammers"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1750,8 +1714,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1765,8 +1729,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Monk"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1793,8 +1757,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1808,8 +1772,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Natural"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1836,8 +1800,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1851,8 +1815,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.PoleArms"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1879,8 +1843,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1894,8 +1858,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Spears"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -1922,8 +1886,8 @@ www.supergeniusgames.com</comment>
         nexteach
 
       perform hero.pushtags[WepProf.?]
-
-      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of
+      
+      ~ Cycle through and apply the Helper.ExoticProf tag to all examples of 
       ~ the chosen weapon on the hero. This is important for the Aldori Dueling
       ~ Sword specifically, and possibly others.
       var searchexpr as string
@@ -1937,8 +1901,8 @@ www.supergeniusgames.com</comment>
       damage = field[xTotalLev].value / 6
       field[abValue].value += maximum(round(damage,0,-1),1)
 
-field[abSumm].text = "+" & field[abValue].value & "damage"
-field[livename].text = field[thingname].text & " +" & field[abValue].value
+field[abSumm].text = "+" & field[abValue].value & "damage" 
+field[livename].text = field[thingname].text & " +" & field[abValue].value 
 
 foreach pick in hero from BaseWep where "wFtrGroup.Thrown"
   eachpick.field[wDamBonus].value += field[abValue].value
@@ -2052,55 +2016,57 @@ www.supergeniusgames.com</comment>
       field[abSumm].text = "Your Fearful Inspiration Bonus +" & field[abValue].value]]></eval>
     <exprreq message="Character level 5th required."><![CDATA[#totallevelcount[] >= 5]]></exprreq>
     </thing>
-  <thing id="manMPSGGBz" name="Buzz" description="{b}Vehicle Maneuvers - Move Action{/b}:  The driver hugs his vehicle very close to dangerous terrain features. This maneuver can include flying low to the ground in aircraft, weaving through traffic or difficult terrain on a motorcycle, taking an atomic rocket through a dense asteroid field, or even making sharp turns down narrow alleys in a getaway car. A buzz maneuver is only possible if terrain exists that can pose a threat to the vehicle (GM&apos;s discretion). A buzz maneuver can be taken as a swift action in any round the driver makes another vehicular maneuver.\n\nWhen a driver decides to make a buzz maneuver, he declares a DC he is attempting for the maneuver (which represents how dangerous a buzz he is attempting, often defined by how close he is getting to dangerous terrain or obstacles). If his VCB check is successful against the DC, any vehicle attempting to perform a close, dogfight, or ram maneuver against the buzzing vehicle must make a VCB check at the same DC (as a free action) or automatically fail. Any vehicle following the driver&apos;s vehicle that does not make one of these maneuvers falls back two distance intervals.\nAny vehicle that fails a buzz maneuver by 5 or more strikes some piece of terrain and takes damage as if it had rammed a vehicle bigger than itself (see ram, below).\n \nOccasionally, terrain requires vehicles perform a buzz maneuver at a specific DC in order to perform any other vehicular maneuvers (such as driving through a   forest, of flying between buildings) as determined by the GM." compset="ManType" summary="The driver hugs his vehicle very close to dangerous terrain features">
+  <thing id="manMPSGGBz" name="Vehicle Maneuvers, buzz" description="{b}Vehicle Maneuvers - Move Action{/b}:  The driver hugs his vehicle very close to dangerous terrain features. This maneuver can include flying low to the ground in aircraft, weaving through traffic or difficult terrain on a motorcycle, taking an atomic rocket through a dense asteroid field, or even making sharp turns down narrow alleys in a getaway car. A buzz maneuver is only possible if terrain exists that can pose a threat to the vehicle (GM&apos;s discretion). A buzz maneuver can be taken as a swift action in any round the driver makes another vehicular maneuver.\n\nWhen a driver decides to make a buzz maneuver, he declares a DC he is attempting for the maneuver (which represents how dangerous a buzz he is attempting, often defined by how close he is getting to dangerous terrain or obstacles). If his VCB check is successful against the DC, any vehicle attempting to perform a close, dogfight, or ram maneuver against the buzzing vehicle must make a VCB check at the same DC (as a free action) or automatically fail. Any vehicle following the driver&apos;s vehicle that does not make one of these maneuvers falls back two distance intervals.\nAny vehicle that fails a buzz maneuver by 5 or more strikes some piece of terrain and takes damage as if it had rammed a vehicle bigger than itself (see ram, below).\n \nOccasionally, terrain requires vehicles perform a buzz maneuver at a specific DC in order to perform any other vehicular maneuvers (such as driving through a   forest, of flying between buildings) as determined by the GM." compset="ManType" summary="The driver hugs his vehicle very close to dangerous terrain features">
     <comment>Anachronistic Adventurers - The Tough
 
 Super Genius Games
 www.supergeniusgames.com</comment>
-    <usesource source="MPRGGAnac"/>
+    <usesource source="GRCMP2tMP3"/>
     </thing>
-  <thing id="manMPSGGCs" name="Close" description="{b}Vehicle Maneuvers - Move Action{/b}:  The driver attempts to reduce the distance between himself and a locus (normally another vehicle). \n\nIf the VCB check meets or exceeds the VCD of the locus vehicle (or the locus&apos;s VMD, if it is not determined by a vehicle), the driver&apos;s vehicle moves one distance interval closer (minimum of 0 intervals). If you exceed the target VCD by 5 or more, you close 2 distance intervals. A vehicle cannot make more than one close maneuver each round." compset="ManType" summary="The driver attempts to reduce the distance between himself and a locus">
+  <thing id="manMPSGGCs" name="Vehicle Maneuvers, close" description="{b}Vehicle Maneuvers - Move Action{/b}:  The driver attempts to reduce the distance between himself and a locus (normally another vehicle). \n\nIf the VCB check meets or exceeds the VCD of the locus vehicle (or the locus&apos;s VMD, if it is not determined by a vehicle), the driver&apos;s vehicle moves one distance interval closer (minimum of 0 intervals). If you exceed the target VCD by 5 or more, you close 2 distance intervals. A vehicle cannot make more than one close maneuver each round." compset="ManType" summary="The driver attempts to reduce the distance between himself and a locus">
     <comment>Anachronistic Adventurers - The Tough
 
 Super Genius Games
 www.supergeniusgames.com</comment>
-    <usesource source="MPRGGAnac"/>
+    <usesource source="GRCMP2tMP3"/>
     </thing>
-  <thing id="manMPSGGDg" name="Disengage" description="{b}Vehicle Maneuvers - Move Action{/b}:  The driver attempts to increase the distance between himself and either other vehicles or (more rarely) a locus. \n\nIf the VCB check meets or exceeds the VCD of the chasing vehicles (or the locus&apos;s VCD, if it is not determined by a vehicle), the driver&apos;s vehicle moves one distance interval farther away. If you exceed the target VCD by 5 or more, you move 2 distance intervals away. A vehicle cannot make more than one disengage maneuver each round. If you are moving away from multiple vehicles you must beat the VCD of all of them to move away." compset="ManType" summary="The driver attempts to increase the distance between himself and either other vehicles">
+  <thing id="manMPSGGDg" name="Vehicle Maneuvers, disengage" description="{b}Vehicle Maneuvers - Move Action{/b}:  The driver attempts to increase the distance between himself and either other vehicles or (more rarely) a locus. \n\nIf the VCB check meets or exceeds the VCD of the chasing vehicles (or the locus&apos;s VCD, if it is not determined by a vehicle), the driver&apos;s vehicle moves one distance interval farther away. If you exceed the target VCD by 5 or more, you move 2 distance intervals away. A vehicle cannot make more than one disengage maneuver each round. If you are moving away from multiple vehicles you must beat the VCD of all of them to move away." compset="ManType" summary="The driver attempts to increase the distance between himself and either other vehicles">
     <comment>Anachronistic Adventurers - The Tough
 
 Super Genius Games
 www.supergeniusgames.com</comment>
-    <usesource source="MPRGGAnac"/>
+    <usesource source="GRCMP2tMP3"/>
     </thing>
-  <thing id="manMPSGGDf" name="Dogfight" description="{b}Vehicle Maneuvers - Standard Action{/b}:  The driver locks on to one opposing vessel, and attempts to engage it in tight combat maneuvers. \n\nYou may only perform this maneuver on vehicles at 0 distance intervals. As a swift action the driver may make one attack against the vessel targeted by this maneuver with a -4 penalty, using vehicular weapons under his control. If the VCB check meets or exceeds the targeted vessel&apos;s VCD, the targeted vessel cannot disengage on its next turn, and the driver gains a +4 bonus to the first VCB check he makes against the vessel on his next turn." compset="ManType" summary="The driver locks on to one opposing vessel, and attempts to engage it in tight combat maneuvers.">
+  <thing id="manMPSGGDf" name="Vehicle Maneuvers, dogfight" description="{b}Vehicle Maneuvers - Standard Action{/b}:  The driver locks on to one opposing vessel, and attempts to engage it in tight combat maneuvers. \n\nYou may only perform this maneuver on vehicles at 0 distance intervals. As a swift action the driver may make one attack against the vessel targeted by this maneuver with a -4 penalty, using vehicular weapons under his control. If the VCB check meets or exceeds the targeted vessel&apos;s VCD, the targeted vessel cannot disengage on its next turn, and the driver gains a +4 bonus to the first VCB check he makes against the vessel on his next turn." compset="ManType" summary="The driver locks on to one opposing vessel, and attempts to engage it in tight combat maneuvers.">
     <comment>Anachronistic Adventurers - The Tough
 
 Super Genius Games
 www.supergeniusgames.com</comment>
-    <usesource source="MPRGGAnac"/>
+    <usesource source="GRCMP2tMP3"/>
     </thing>
-  <thing id="manMPSGGEM" name="Evasive Maneuvers" description="{b}Vehicle Maneuvers - Full-round action{/b}:  The driver does everything possible to make his vehicle hard to hit. \n\nThe vehicle gains a +2 bonus to AC and a +4 bonus to VCD until the beginning of the driver&apos;s next turn. All attacks made from the vehicle suffer a -4 penalty, and the vehicle counts as being in &quot;extremely violent motion&quot; for purposes of spellcasting and concentration checks.\n\nVehicles with negative maneuverability ratings gain only a +1 AC and +2 VCD from evasive maneuvers." compset="ManType" summary="The driver does everything possible to make his vehicle hard to hit.">
+  <thing id="manMPSGGEM" name="Vehicle Maneuvers, evasive" description="{b}Vehicle Maneuvers - Full-round action{/b}:  The driver does everything possible to make his vehicle hard to hit. \n\nThe vehicle gains a +2 bonus to AC and a +4 bonus to VCD until the beginning of the driver&apos;s next turn. All attacks made from the vehicle suffer a -4 penalty, and the vehicle counts as being in &quot;extremely violent motion&quot; for purposes of spellcasting and concentration checks.\n\nVehicles with negative maneuverability ratings gain only a +1 AC and +2 VCD from evasive maneuvers." compset="ManType" summary="The driver does everything possible to make his vehicle hard to hit.">
     <comment>Anachronistic Adventurers - The Tough
 
 Super Genius Games
 www.supergeniusgames.com</comment>
-    <usesource source="MPRGGAnac"/>
+    <usesource source="GRCMP2tMP3"/>
     </thing>
-  <thing id="manMPSGGRm" name="Ram" description="{b}Vehicle Maneuvers - Standard Action{/b}:  Because the relative positioning rules don&apos;t give exact locations for vehicles, ramming another vehicle isn&apos;t automatic. \n\nThis maneuver can only be attempted against targets in the same distance increment. The driver attempts to slam the vehicle under his control into another vehicle (or a stationary object, which always has a VCD of 10). On a successful check, the ramming vehicle deals double its ram damage to the target, and takes its normal ram damage. (See Ultimate Combat for more information on vehicular ramming damage)." compset="ManType" summary="The driver attempts to slam the vehicle under his control into another vehicle">
+  <thing id="manMPSGGRm" name="Vehicle Maneuvers, ram" description="{b}Vehicle Maneuvers - Standard Action{/b}:  Because the relative positioning rules don&apos;t give exact locations for vehicles, ramming another vehicle isn&apos;t automatic. \n\nThis maneuver can only be attempted against targets in the same distance increment. The driver attempts to slam the vehicle under his control into another vehicle (or a stationary object, which always has a VCD of 10). On a successful check, the ramming vehicle deals double its ram damage to the target, and takes its normal ram damage. (See Ultimate Combat for more information on vehicular ramming damage)." compset="ManType" summary="The driver attempts to slam the vehicle under his control into another vehicle">
     <comment>Anachronistic Adventurers - The Tough
 
 Super Genius Games
 www.supergeniusgames.com</comment>
-    <usesource source="MPRGGAnac"/>
+    <usesource source="GRCMP2tMP3"/>
     </thing>
-  <thing id="tmMPSGGVeh" name="Vehicle" description="Inanimate Object: The vehicle is an inanimate object. It is immune to any effect that does not affect objects, but cannot take any actions on its own. Its movement can only be used if it has a driver or pilot, and its attacks require a driver/pilot and/or a crew.\n\nThe final form of the vehicle can be anything the GM wishes to allow, but the size and forms of movement should dictate what kind of vehicle a creature is used for. A riding dog or horse can easily be used to create a motorcycle, a dire bear an armored car, and a wyvern a biplane." compset="Template" uniqueness="unique">
+  <thing id="tmMPSGGVeh" name="Anachronistic Vehicle" description="Inanimate Object: The vehicle is an inanimate object. It is immune to any effect that does not affect objects, but cannot take any actions on its own. Its movement can only be used if it has a driver or pilot, and its attacks require a driver/pilot and/or a crew.\n\nThe final form of the vehicle can be anything the GM wishes to allow, but the size and forms of movement should dictate what kind of vehicle a creature is used for. A riding dog or horse can easily be used to create a motorcycle, a dire bear an armored car, and a wyvern a biplane." compset="Template" uniqueness="unique">
     <comment>Anachronistic Adventurers - The Tough
 
 Super Genius Games
 www.supergeniusgames.com</comment>
     <usesource source="MPRGGAnac"/>
     <tag group="OverType" tag="tpConst"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoPathSoc"/>
     <bootstrap thing="stClockwor"></bootstrap>
     </thing>
   <thing id="fMPSGGVhGl" name="Vehicle Golem" description="A magically powered vehicle has found its way into your possession.\n\n{b}Benefit{/b}: You gain a vehicle, designed by the GM using the vehicle template rules (above). The CR of the vehicle is equal to the level of cohort you would receive with the Leadership feat if you had a leadership score equal to your HD plus your highest ability bonus. \n\nThe vehicle golem is considered a magic item with a caster level equal to your HD. It repairs itself once per day (if left unused for 8 hours or more) of 1d6 hp for each level you have. It does not require fueling. The vehicle golem is not self- aware, and cannot take actions without a pilot or driver.\n\nAs you gain HD and your ability scores go up your vehicle golem increases in CR (your GM will either use the monster advancement rules to modify the base creature used for your vehicle template, or select new creatures as appropriate). If your vehicle golem is lost or destroyed, you receive a new one (or miraculously regain the existing one, at the GM&apos;s discretion) when you gain a new character level." compset="Feat" summary="A magically powered vehicle has found its way into your possession." uniqueness="useronce">
@@ -2112,6 +2078,7 @@ www.supergeniusgames.com</comment>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="fShowWhat" tag="Attributes"/>
     <tag group="fCategory" tag="Special"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
@@ -2144,8 +2111,7 @@ www.supergeniusgames.com</comment>
     <tag group="SpecSource" tag="arMSRDToug"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="SpecSource" tag="arMPSGGTou"/>
-    <tag group="SpecType" tag="DR"/>
-    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="SpecType" tag="DR" name="Damage Reduction" abbrev="Damage Reduction"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[      var DamBonus as number
       DamBonus = 0
       DamBonus = hero.child[xDamRd].field[abValue].value + 1
@@ -2173,5 +2139,42 @@ else
       field[livename].text = field[thingname].text & " Specialization"
       field[abSumm].text = "Increase Damage Reduction by 1"
 endif]]></eval>
+    </thing>
+  <thing id="abMHRGGVCB" name="Vehicular Combat Bonus" description="Vehicular Combat Bonus (VCB) is your preferred driving skill bonus + vehicle size modifier + vehicle speed modifier." compset="Ability" summary="Bonus + vehicle size modifier + vehicle speed modifier" uniqueness="useronce">
+    <fieldval field="shortname" value="VCB"/>
+    <fieldval field="actName" value="Vehicular Combat Bonus"/>
+    <fieldval field="actIncrNam" value="Vehicular Combat Bonus"/>
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Custom" tag="GRCMPVehic"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="HideActChk"/>
+    <tag group="User" tag="NoActSign"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="abDuration" tag="Constant"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <eval phase="Render" priority="20000"><![CDATA[field[abSource].text = "Modern"]]></eval>
+    <eval phase="First" priority="1000" index="2">#trkmax[abMHRGGVCB] += field[actUser].value</eval>
+    <eval phase="Final" priority="10000" index="3"><![CDATA[      field[livename].text = field[name].text & " +" & "(" & field[trkMax].value & ")"
+      field[shortname].text = "VCB: " & field[trkMax].value]]></eval>
+    </thing>
+  <thing id="abMHRGGVCD" name="Vehicular Combat Defense" description="Vehicular Combat Defense (VCD)  is 10 + preferred driving skill bonus + vehicle size modifier + vehicle speed modifier. + vehicle size modifier + vehicle speed modifier (see Intervals, ranges, Sizes, and Spells)." compset="Ability" summary="10+Skill Bonus + vehicle size modifier + vehicle speed modifier" uniqueness="useronce">
+    <fieldval field="shortname" value="VCD"/>
+    <fieldval field="actName" value="Vehicular Combat Defense"/>
+    <fieldval field="actIncrNam" value="Vehicular Combat Defense"/>
+    <fieldval field="trkMax" value="10"/>
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="HideActChk"/>
+    <tag group="User" tag="NoActSign"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="abRange" tag="Personal"/>
+    <tag group="abDuration" tag="Constant"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Custom" tag="GRCMPVehic"/>
+    <eval phase="First" priority="1000" index="2">#trkmax[abMHRGGVCD] += field[actUser].value</eval>
+    <eval phase="Final" priority="10000" index="3"><![CDATA[      field[livename].text = field[name].text & " +" & "(" & field[trkMax].value & ")"
+      field[shortname].text = "VCD: " & field[trkMax].value]]></eval>
+    <eval phase="Render" priority="20000"><![CDATA[field[abSource].text = "Modern"]]></eval>
     </thing>
   </document>

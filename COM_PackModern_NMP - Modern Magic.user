@@ -19,8 +19,7 @@
     <tag group="User" tag="NoAutoName"/>
     <tag group="SpecType" tag="SpellLike"/>
     <eval phase="Render" priority="10000" index="2"><![CDATA[field[abSource].text = "Modern Talent"]]></eval>
-    <eval phase="Render" priority="10000" index="3">
-      doneif (field[usrChosen1].ischosen = 0)
+    <eval phase="Render" priority="10000" index="3">doneif (field[usrChosen1].ischosen = 0)
       field[livename].text = field[usrChosen1].chosen.field[name].text</eval>
     <eval phase="Final" priority="10000"><![CDATA[
       ~ If we're disabled, do nothing
@@ -306,83 +305,95 @@ foreach pick in hero from Class
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="20000"><![CDATA[#situational[hero.child[svWill], "+4 bonus to any mind-effecting or Will save that calls the hero's loyalty to " & field[domDomain].text & " into question.", field[thingname].text]]]></eval>
     </thing>
-  <thing id="trMPNMPCul" name="Cult Member" description="A Cult Member includes heretics, followers of fringe religions, &quot;family&quot; members, alternative lifestyles, and sect members.\n\nChoose one of the following skills: Bluff, Intimidate, Knowledge (Arcana), Knowledge (Religion), Linguistics, Sense Motive, Spellcraft\n\nYou gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\nWealth Bonus: +2" compset="Trait" summary="A Cult Member includes heretics, followers of fringe religions" uniqueness="useronce">
+  <thing id="trMPNMPCul" name="Cult Member" description="A Cult Member includes heretics, followers of fringe religions, &quot;family&quot; members, alternative lifestyles, and sect members.\n\n{b}Class Skills{/b}: Choose one of the following skills: Bluff, Intimidate, Knowledge (Arcana), Knowledge (Religion), Linguistics, Sense Motive, Spellcraft. You gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\n{b}Wealth Bonus{/b}: +2" compset="Trait" summary="A Cult Member includes heretics, followers of fringe religions" uniqueness="useronce">
     <fieldval field="usrCandid1" value="thingid.skBluff|thingid.skKnowArca|thingid.skSpellcr|thingid.skLinguist|thingid.skKnowRel|thingid.skSenseMot|thingid.skIntim"/>
     <usesource source="MPNMPModMg"/>
-    <tag group="trCategory" tag="Background"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="trCategory" tag="Religion"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="Custom" tag="GRCMPWealt"/>
+    <eval phase="PostLevel" priority="1000" index="2">~add uses to our Wealth Bonus
+      hero.childfound[abGRCMHWBn].field[trkMax].value += 2</eval>
     <eval phase="PreLevel" priority="10000"><![CDATA[
 if (field[usrChosen1].ischosen <> 0) then
   perform field[usrChosen1].chosen.assign[Helper.ClassSkill]
   #applybonus[BonTrait,field[usrChosen1].chosen,1]
   endif]]></eval>
-    <eval phase="PostLevel" priority="1000" index="2">~add 1 uses to our Wealth Bonus
-      hero.childfound[trMPWlthBn].field[trkMax].value += 2</eval>
     </thing>
-  <thing id="trMPNMPIni" name="Initiate" description="Initiates are members of secret religions or esoteric societies who have started down the path of magical knowledge, learning the mysteries of ancient spellcasters.\n\nChoose one of the following skills: Diplomacy, Knowledge (Arcana), Knowledge (Religion), Spellcraft, Use Magical Device\n\nYou gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\nWealth Bonus: +2" compset="Trait" summary="Initiates are members of secret religions or esoteric societies" uniqueness="useronce">
+  <thing id="trMPNMPIni" name="Initiate" description="Initiates are members of secret religions or esoteric societies who have started down the path of magical knowledge, learning the mysteries of ancient spellcasters.\n\n{b}Class Skills{/b}: Choose one of the following skills: Diplomacy, Knowledge (Arcana), Knowledge (Religion), Spellcraft, Use Magical Device. You gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\n{b}Wealth Bonus{/b}: +2" compset="Trait" summary="Initiates are members of secret religions or esoteric societies" uniqueness="useronce">
     <fieldval field="usrCandid1" value="thingid.skDiplo|thingid.skKnowArca|thingid.skSpellcr|thingid.skUseMagic|thingid.skKnowRel"/>
     <usesource source="MPNMPModMg"/>
-    <tag group="trCategory" tag="Magic"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="trCategory" tag="Religion"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="Custom" tag="GRCMPWealt"/>
+    <eval phase="PostLevel" priority="1000" index="2">~add 1 uses to our Wealth Bonus
+      hero.childfound[abGRCMHWBn].field[trkMax].value += 2</eval>
     <eval phase="PreLevel" priority="10000"><![CDATA[
 if (field[usrChosen1].ischosen <> 0) then
   perform field[usrChosen1].chosen.assign[Helper.ClassSkill]
   #applybonus[BonTrait,field[usrChosen1].chosen,1]
   endif]]></eval>
-    <eval phase="PostLevel" priority="1000" index="2">~add 1 uses to our Wealth Bonus
-      hero.childfound[trMPWlthBn].field[trkMax].value += 2</eval>
     </thing>
-  <thing id="trMPNMPNwA" name="New Ager" description="New agers are believers in spiritual and metaphysical philosophies that are generally viewed by others as kooks.\n\nChoose one of the following skills: Diplomacy, Heal, Knowledge (Arcana), Knowledge (Planes), Knowledge (Religion)\n\nYou gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\nWealth Bonus: +3" compset="Trait" summary="New agers are believers in spiritual and metaphysical philosophies" uniqueness="useronce">
+  <thing id="trMPNMPNwA" name="New Ager" description="New agers are believers in spiritual and metaphysical philosophies that are generally viewed by others as kooks.\n\n{b}Class Skills{/b}: Choose one of the following skills: Diplomacy, Heal, Knowledge (Arcana), Knowledge (Planes), Knowledge (Religion). You gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\n{b}Wealth Bonus{/b}: +3" compset="Trait" summary="New agers are believers in spiritual and metaphysical philosophies" uniqueness="useronce">
     <fieldval field="usrCandid1" value="thingid.skDiplo|thingid.skKnowArca|thingid.skKnowPlan|thingid.skHeal|thingid.skKnowRel"/>
     <usesource source="MPNMPModMg"/>
     <tag group="trCategory" tag="Faith"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="Custom" tag="GRCMPWealt"/>
     <eval phase="PostLevel" priority="10000" index="2">~add 1 uses to our Wealth Bonus
-      hero.childfound[trMPWlthBn].field[trkMax].value += 3</eval>
+      hero.childfound[abGRCMHWBn].field[trkMax].value += 3</eval>
     <eval phase="PreLevel" priority="10000"><![CDATA[
 if (field[usrChosen1].ischosen <> 0) then
   perform field[usrChosen1].chosen.assign[Helper.ClassSkill]
   #applybonus[BonTrait,field[usrChosen1].chosen,1]
   endif]]></eval>
     </thing>
-  <thing id="trMPNMPOcc" name="Occultist" description="Occultists are people who have devoted their lives to the study of all things magical.\n\nChoose one of the following skills: Craft (alchemy), Knowledge (Arcana), Spellcraft, and Use Magic Device checks.\n\nYou gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\nWealth Bonus: +1" compset="Trait" summary="Devoted their lives to the study of all things magical." uniqueness="useronce">
+  <thing id="trMPNMPOcc" name="Occultist" description="Occultists are people who have devoted their lives to the study of all things magical.\n\n{b}Class Skills{/b}: Choose one of the following skills: Craft (alchemy), Knowledge (Arcana), Spellcraft, and Use Magic Device checks. You gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\n{b}Wealth Bonus{/b}: +1" compset="Trait" summary="Devoted their lives to the study of all things magical." uniqueness="useronce">
     <fieldval field="usrCandid1" value="thingid.skCrafAlch|thingid.skKnowArca|thingid.skUseMagic|thingid.skSpellcr"/>
     <usesource source="MPNMPModMg"/>
-    <tag group="trCategory" tag="Magic"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="trCategory" tag="Training"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="Custom" tag="GRCMPWealt"/>
+    <eval phase="PostLevel" priority="1000" index="2">~add 1 uses to our Wealth Bonus
+      hero.childfound[abGRCMHWBn].field[trkMax].value += 1</eval>
     <eval phase="PreLevel" priority="10000"><![CDATA[
 if (field[usrChosen1].ischosen <> 0) then
   perform field[usrChosen1].chosen.assign[Helper.ClassSkill]
   #applybonus[BonTrait,field[usrChosen1].chosen,1]
   endif]]></eval>
-    <eval phase="PostLevel" priority="1000" index="2">~add 1 uses to our Wealth Bonus
-      hero.childfound[trMPWlthBn].field[trkMax].value += 1</eval>
     </thing>
-  <thing id="trMPNMPPIv" name="Paranormal Investigator" description="Paranormal investigators include ufologists, cryptozoologists, ghost hunters and parapsychologists.\n\nChoose one of the following skills: Knowledge (Arcana), Knowledge (Technology), Perception, Sense Motive, Stealth\n\nYou gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\nWealth Bonus: +2" compset="Trait" summary="Ufologists, cryptozoologists, ghost hunters and parapsychologists" uniqueness="useronce">
+  <thing id="trMPNMPPIv" name="Paranormal Investigator" description="Paranormal investigators include ufologists, cryptozoologists, ghost hunters and parapsychologists.\n\n{b}Class Skills{/b}: Choose one of the following skills: Knowledge (Arcana), Knowledge (Technology), Perception, Sense Motive, Stealth. You gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\n{b}Wealth Bonus{/b}: +2" compset="Trait" summary="Ufologists, cryptozoologists, ghost hunters and parapsychologists" uniqueness="useronce">
     <fieldval field="usrCandid1" value="thingid.skSenseMot|thingid.skKnowArca|thingid.skMHTechno|thingid.skPercep|thingid.skStealth"/>
     <usesource source="MPNMPModMg"/>
-    <tag group="trCategory" tag="Custom"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="trCategory" tag="Training"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="Custom" tag="GRCMPWealt"/>
+    <eval phase="PostLevel" priority="1000" index="2">~add 1 uses to our Wealth Bonus
+      hero.childfound[abGRCMHWBn].field[trkMax].value += 2</eval>
     <eval phase="PreLevel" priority="10000"><![CDATA[
 if (field[usrChosen1].ischosen <> 0) then
   perform field[usrChosen1].chosen.assign[Helper.ClassSkill]
   #applybonus[BonTrait,field[usrChosen1].chosen,1]
   endif]]></eval>
-    <eval phase="PostLevel" priority="1000" index="2">~add 1 uses to our Wealth Bonus
-      hero.childfound[trMPWlthBn].field[trkMax].value += 2</eval>
     </thing>
-  <thing id="trMPNMPWic" name="Wiccan" description="Wiccans are believers in a specific neopaganistic religion.\n\nChoose one of the following skills: Craft (alchemy), Knowledge (Arcana), Knowledge (Nature), Knowledge (Religion), Heal, Spellcraft, Use Magical Device\n\nYou gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\nWealth Bonus: +1" compset="Trait" summary="Wiccans are believers in a specific neopaganistic religion." uniqueness="useronce">
+  <thing id="trMPNMPWic" name="Wiccan" description="Wiccans are believers in a specific neopaganistic religion.\n\n{b}Class Skills{/b}: Choose one of the following skills: Craft (alchemy), Knowledge (Arcana), Knowledge (Nature), Knowledge (Religion), Heal, Spellcraft, Use Magical Device. You gain a +1 trait bonus on this skill and it is always considered a class skill for you.\n\n{b}Wealth Bonus{/b}: +1" compset="Trait" summary="Wiccans are believers in a specific neopaganistic religion." uniqueness="useronce">
     <fieldval field="usrCandid1" value="thingid.skCrafAlch|thingid.skKnowArca|thingid.skUseMagic|thingid.skSpellcr|thingid.skKnowRel|thingid.skHeal|thingid.skKnowNat"/>
     <usesource source="MPNMPModMg"/>
     <tag group="trCategory" tag="Faith"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="Custom" tag="GRCMPWealt"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
 if (field[usrChosen1].ischosen <> 0) then
   perform field[usrChosen1].chosen.assign[Helper.ClassSkill]
   #applybonus[BonTrait,field[usrChosen1].chosen,1]
   endif]]></eval>
     <eval phase="PostLevel" priority="1000" index="2">~add 1 uses to our Wealth Bonus
-      hero.childfound[trMPWlthBn].field[trkMax].value += 1</eval>
+      hero.childfound[abGRCMHWBn].field[trkMax].value += 1</eval>
     </thing>
   <thing id="cMPNMPCdUn" name="Command Undead" description="{b}Prerequisites{/b}: Channel energy class feature.\n\n{b}Benefit{/b}: As a standard action, you can use one of your uses of channel negative energy to enslave undead within 30 feet. Undead receive a Will save to negate the effect. The DC for this Will save is equal to 10 + 1/2 your caster level + your Charisma modifier. Undead that fail their saves fall under your control, obeying your commands to the best of their ability, as if under the effects of control undead. Intelligent undead receive a new saving throw each day to resist your command. You can control any number of undead, so long as their total Hit Dice do not exceed your level. If you use channel energy in this way, it has no other effect (it does not heal or harm nearby creatures). If an undead creature is under the control of another creature, you must make an opposed Charisma check whenever your orders conflict." compset="CustomSpec" summary="Channel energy can take control of undead." uniqueness="unique">
     <usesource source="MPNMPModMg"/>
@@ -1263,7 +1274,7 @@ foreach pick in hero from BaseSkill where "!thingid.skIntim"
     <tag group="StandardDC" tag="aCHA"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="arMPNMPGan" name="Gangsta" description="This is the hero&apos;s primary career. An Archetype must be chosen at 1st level (unless the &quot;No Class&quot; Difficulty is taken) and cannot be changed as higher levels are achieved." compset="ClassVary" uniqueness="unique">
+  <thing id="arMPNMPGan" name="Gangster" description="This is the hero&apos;s primary career. An Archetype must be chosen at 1st level (unless the &quot;No Class&quot; Difficulty is taken) and cannot be changed as higher levels are achieved." compset="ClassVary" uniqueness="unique">
     <fieldval field="cvSpec2ndS" value="Training"/>
     <fieldval field="cvSpec2ndN" value="Training"/>
     <arrayval field="cvBonFtMod" index="3" value="-1"/>
