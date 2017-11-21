@@ -1165,4 +1165,69 @@
     ]]>
   </procedure>
 
+
+<!-- =================================================================== -->
+<!-- Helper Porcedure for the Alchemist Beastmorph Mutagen adjustment    -->
+<!-- =================================================================== -->
+  <procedure id="SCInitBeMu" context="pick"><![CDATA[
+    ~ This procedure correctly Initalize beastmorph mutagen tags
+
+    ~ Polymorph Adjustment & Setup scripts
+    perform field[usrChosen1].chosen.pulltags[PolyAdjust.?]
+    perform field[usrChosen1].chosen.pulltags[wConstrict.?]
+    perform field[usrChosen1].chosen.pulltags[wRake.?]
+    perform field[usrChosen1].chosen.pulltags[wTrample.?]
+    perform field[usrChosen2].chosen.pulltags[PolyAdjust.?]
+    perform field[usrChosen2].chosen.pulltags[wConstrict.?]
+    perform field[usrChosen2].chosen.pulltags[wRake.?]
+    perform field[usrChosen2].chosen.pulltags[wTrample.?]
+
+    ~ Push to hero
+    perform hero.pushtags[wConstrict.?]
+    perform hero.pushtags[wRake.?]
+    perform hero.pushtags[wTrample.?]
+    perform hero.pushtags[PolyAdjust.?]
+    ]]>
+  </procedure>
+
+  <procedure id="SCSetBeMu" context="pick"><![CDATA[
+    ~ This procedure correctly setups the beastmorph mutagen abilities
+    #value[xSwim]  += field[usrChosen1].chosen.field[phSwim].value
+    #value[xClimb] += field[usrChosen1].chosen.field[phClimb].value
+    #value[xFly]   += field[usrChosen1].chosen.field[phFly].value
+    #value[xBurrow] += field[usrChosen1].chosen.field[phBurrow].value
+    #value[raS2Jet] += field[usrChosen1].chosen.field[phJet].value
+
+    #value[xSwim]  += field[usrChosen2].chosen.field[phSwim].value
+    #value[xClimb] += field[usrChosen2].chosen.field[phClimb].value
+    #value[xFly]   += field[usrChosen2].chosen.field[phFly].value
+    #value[xBurrow] += field[usrChosen2].chosen.field[phBurrow].value
+    #value[raS2Jet] += field[usrChosen2].chosen.field[phJet].value
+
+    ~ If fly speed set maneuverability to good
+    If (field[usrChosen1].chosen.field[phFly].value <> 0) Then
+      perform hero.childfound[xFly].assign[Maneuver.Good]
+    Endif
+    If (field[usrChosen2].chosen.field[phFly].value <> 0) Then
+      perform hero.childfound[xFly].assign[Maneuver.Good]
+    Endif
+
+    ~ Set the rake damage values
+    If (tagis[wRake.?] = 1) Then
+      perform hero.child[wRake].pushtags[wRake.?,wMain]
+    Endif
+
+    ~ Set the Trample damage values
+    If (tagis[wTrample.?] = 1) Then
+      perform hero.child[wTrample].pushtags[wTrample.?,wMain]
+    Endif
+
+    ~ Set the Constrict damage values
+    If (tagis[wConstrict.?] = 1) Then
+      perform hero.child[wConstrict].pushtags[wConstrict.?,wMain]
+    Endif
+    ]]>
+  </procedure>
+
+
 </document>

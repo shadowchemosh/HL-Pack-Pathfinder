@@ -423,184 +423,306 @@
         endif
       nexteach]]></eval>
     </thing>
-  <thing id="pS2ImBeMu" name="Alchemist: Improved Beastform Mutagen" description="At 6th level, a beastmorph&apos;s mutagen grants him additional abilities and options. The alchemist gains his choice of two of the abilities listed in the {i}beast shape I{/i} spell, which persist as long as the mutagen. He may select two different abilities each time he creates a mutagen." compset="InPlay">
-    <fieldval field="pCandExpr" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.1"/>
+
+  <thing id="abS2ImBeMu" name="Improved Beastform Mutagen" description="At 6th level, a beastmorph&apos;s mutagen grants him additional abilities and options. The alchemist gains his choice of two of the abilities listed in the {i}beast shape I{/i} spell, which persist as long as the mutagen. He may select two different abilities each time he creates a mutagen." compset="Ability" uniqueness="useronce">
+    <fieldval field="actName" value="Activate"/>
     <usesource source="srcS2Adjus"/>
-    <tag group="Helper" tag="NoIncr"/>
-    <tag group="Adjustment" tag="S2Custom"/>
-    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="User" tag="Activation"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="raLowLight">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.LowLight]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.LowLight]]></containerreq>
       </bootstrap>
     <bootstrap thing="raDarkVis">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Darkvision]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Darkvision]]></containerreq>
       <assignval field="abValue" value="60"/>
       </bootstrap>
     <bootstrap thing="xScent">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Scent]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Scent]]></containerreq>
       </bootstrap>
-    <eval phase="First" priority="1000" index="2"><![CDATA[
-      ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value <> 1)
-      ~ If nothing's been chosen, get out now
-      doneif (field[pChosen].ischosen <> 1)
+    <eval phase="Render" priority="9999999" index="3"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
 
-      #value[xSwim]  += field[pChosen].chosen.field[phSwim].value
-      #value[xClimb] += field[pChosen].chosen.field[phClimb].value
-      #value[xFly]   += field[pChosen].chosen.field[phFly].value]]></eval>
-    <eval phase="PreLevel" priority="11000" index="3"><![CDATA[
-      ~ Set custom expression to "All Things on Hero"
-      field[pUsePicks].value = 0]]></eval>
+      ~ Let this display on the In-Play tab but not the Specials tab
+      perform delete[Hide.Activation]]]></eval>
+    </thing>
+  <thing id="abS2ImBeM1" name="Improved Beastform Mutagen" description="At 6th level, a beastmorph&apos;s mutagen grants him additional abilities and options. The alchemist gains his choice of two of the abilities listed in the {i}beast shape I{/i} spell, which persist as long as the mutagen. He may select two different abilities each time he creates a mutagen." compset="Ability" uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.1"/>
+    <fieldval field="usrCandid2" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.1"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ChooseSrc2" tag="Thing"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="450"><![CDATA[
       ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value <> 1)
+      doneif (hero.child[abS2ImBeMu].field[abilActive].value <> 1)
 
-      ~ Polymorph Adjustment & Setup scripts
-      perform field[pChosen].chosen.pulltags[PolyAdjust.?]
-      perform hero.pushtags[PolyAdjust.?]]]></eval>
+      ~ Initalize the Beastform Mutagen tags/fields
+      Call SCInitBeMu]]></eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (hero.child[abS2ImBeMu].field[abilActive].value <> 1)
+
+      ~ Setup the Beastform Mutagen abilities
+      Call SCSetBeMu]]></eval>
+    <eval phase="Render" priority="9999999" index="3"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ Let this display on the In-Play tab but not the Specials tab
+      perform delete[Hide.Activation]]]></eval>
     </thing>
-  <thing id="pS2GrBeMu" name="Alchemist: Greater Beastform Mutagen" description="At 10th level, a beastmorph&apos;s mutagen grants him three of the abilities listed in the {i}beast shape II{/i} spell, which persist as long as the mutagen. He may select three different abilities each time he creates a mutagen." compset="InPlay">
-    <fieldval field="pCandExpr" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.2"/>
+  <thing id="pS2ImBeMu" name="Alchemist: Improved Beastform Mutagen" description="At 6th level, a beastmorph&apos;s mutagen grants him additional abilities and options. The alchemist gains his choice of two of the abilities listed in the {i}beast shape I{/i} spell, which persist as long as the mutagen. He may select two different abilities each time he creates a mutagen." compset="InPlay">
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="NoIncr"/>
     <tag group="Adjustment" tag="S2Custom"/>
     <tag group="Helper" tag="AdjConfer"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="abS2ImBeMu"></bootstrap>
+    <bootstrap thing="abS2ImBeM1"></bootstrap>
+    </thing>
+
+  <thing id="abS2GrBeMu" name="Greater Beastform Mutagen" description="At 10th level, a beastmorph&apos;s mutagen grants him three of the abilities listed in the {i}beast shape II{/i} spell, which persist as long as the mutagen. He may select three different abilities each time he creates a mutagen." compset="Ability" uniqueness="useronce">
+    <fieldval field="actName" value="Activate"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
     <bootstrap thing="raLowLight">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.LowLight]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.LowLight]]></containerreq>
       </bootstrap>
     <bootstrap thing="raDarkVis">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Darkvision]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Darkvision]]></containerreq>
       <assignval field="abValue" value="60"/>
       </bootstrap>
     <bootstrap thing="raGrab">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Grab]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Grab]]></containerreq>
       </bootstrap>
     <bootstrap thing="raPounce">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Pounce]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Pounce]]></containerreq>
       </bootstrap>
     <bootstrap thing="raTrip">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Trip]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Trip]]></containerreq>
       </bootstrap>
     <bootstrap thing="xScent">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Scent]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Scent]]></containerreq>
       </bootstrap>
-    <eval phase="First" priority="1000" index="2"><![CDATA[
-      ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value <> 1)
-      ~ If nothing's been chosen, get out now
-      doneif (field[pChosen].ischosen <> 1)
+    <eval phase="Render" priority="9999999" index="3"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
 
-      #value[xSwim]  += field[pChosen].chosen.field[phSwim].value
-      #value[xClimb] += field[pChosen].chosen.field[phClimb].value
-      #value[xFly]   += field[pChosen].chosen.field[phFly].value
-      ~ If fly speed set maneuverability to good
-      If (field[pChosen].chosen.field[phFly].value <> 0) Then
-        perform hero.childfound[xFly].assign[Maneuver.Good]
-      Endif]]></eval>
-    <eval phase="PreLevel" priority="11000" index="3"><![CDATA[
-      ~ Set custom expression to "All Things on Hero"
-      field[pUsePicks].value = 0]]></eval>
+      ~ Let this display on the In-Play tab but not the Specials tab
+      perform delete[Hide.Activation]]]></eval>
+    </thing>
+  <thing id="abS2GrBeM1" name="Greater Beastform Mutagen" description="At 10th level, a beastmorph&apos;s mutagen grants him three of the abilities listed in the {i}beast shape II{/i} spell, which persist as long as the mutagen. He may select three different abilities each time he creates a mutagen." compset="Ability" uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.2"/>
+    <fieldval field="usrCandid2" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.2"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ChooseSrc2" tag="Thing"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="450"><![CDATA[
       ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value <> 1)
+      doneif (hero.child[abS2GrBeMu].field[abilActive].value <> 1)
 
-      ~ Polymorph Adjustment & Setup scripts
-      perform field[pChosen].chosen.pulltags[PolyAdjust.?]
-      perform hero.pushtags[PolyAdjust.?]]]></eval>
+      ~ Initalize the Beastform Mutagen tags/fields
+      Call SCInitBeMu]]></eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (hero.child[abS2GrBeMu].field[abilActive].value <> 1)
+
+      ~ Setup the Beastform Mutagen abilities
+      Call SCSetBeMu]]></eval>
+    <eval phase="Render" priority="9999999" index="3"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ Let this display on the In-Play tab but not the Specials tab
+      perform delete[Hide.Activation]]]></eval>
     </thing>
-  <thing id="pS2GaBeMu" name="Alchemist: Grand Beastform Mutagen" description="At 14th level, a beastmorph&apos;s mutagen grants him four of the abilities listed in the {i}beast shape III{/i} spell, which persist as long as the mutagen. He may select four different abilities each time he creates a mutagen." compset="InPlay">
-    <fieldval field="pCandExpr" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.3"/>
+  <thing id="abS2GrBeM2" name="Greater Beastform Mutagen" description="At 10th level, a beastmorph&apos;s mutagen grants him three of the abilities listed in the {i}beast shape II{/i} spell, which persist as long as the mutagen. He may select three different abilities each time he creates a mutagen." compset="Ability" uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.2"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ChooseSrc2" tag="Thing"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="450"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (hero.child[abS2GrBeMu].field[abilActive].value <> 1)
+
+      ~ Initalize the Beastform Mutagen tags/fields
+      Call SCInitBeMu]]></eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (hero.child[abS2GrBeMu].field[abilActive].value <> 1)
+
+      ~ Setup the Beastform Mutagen abilities
+      Call SCSetBeMu]]></eval>
+    <eval phase="Render" priority="9999999" index="3"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ Let this display on the In-Play tab but not the Specials tab
+      perform delete[Hide.Activation]]]></eval>
+    </thing>
+  <thing id="pS2GrBeMu" name="Alchemist: Greater Beastform Mutagen" description="At 10th level, a beastmorph&apos;s mutagen grants him three of the abilities listed in the {i}beast shape II{/i} spell, which persist as long as the mutagen. He may select three different abilities each time he creates a mutagen." compset="InPlay">
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="NoIncr"/>
     <tag group="Adjustment" tag="S2Custom"/>
     <tag group="Helper" tag="AdjConfer"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <bootstrap thing="raLowLight">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.LowLight]]></containerreq>
-      </bootstrap>
-    <bootstrap thing="raDarkVis">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Darkvision]]></containerreq>
-      <assignval field="abValue" value="60"/>
-      </bootstrap>
+    <bootstrap thing="abS2GrBeMu"></bootstrap>
+    <bootstrap thing="abS2GrBeM1"></bootstrap>
+    <bootstrap thing="abS2GrBeM2"></bootstrap>
+    </thing>
+
+
+  <thing id="abS2GaBeMu" name="Grand Beastform Mutagen" description="At 14th level, a beastmorph&apos;s mutagen grants him four of the abilities listed in the {i}beast shape III{/i} spell, which persist as long as the mutagen. He may select four different abilities each time he creates a mutagen." compset="Ability" uniqueness="useronce">
+    <fieldval field="actName" value="Activate"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
     <bootstrap thing="wConstrict">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & wConstrict.?]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & wConstrict.?]]></containerreq>
       <autotag group="PolyAdjust" tag="Weapon"/>
       </bootstrap>
     <bootstrap thing="wRake">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & wRake.?]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & wRake.?]]></containerreq>
       <autotag group="PolyAdjust" tag="Weapon"/>
       </bootstrap>
     <bootstrap thing="wTrample">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & wTrample.?]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & wTrample.?]]></containerreq>
       <autotag group="PolyAdjust" tag="Weapon"/>
       </bootstrap>
     <bootstrap thing="raS2Poison">
-      <containerreq phase="First" priority="490"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Poison]]></containerreq>
+      <containerreq phase="First" priority="490"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Poison]]></containerreq>
       </bootstrap>
     <bootstrap thing="rBlindsen">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Blindsense]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Blindsense]]></containerreq>
       <assignval field="abValue" value="30"/>
       </bootstrap>
     <bootstrap thing="raFerocity">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Ferocity]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Ferocity]]></containerreq>
       </bootstrap>
     <bootstrap thing="raGrab">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Grab]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Grab]]></containerreq>
       </bootstrap>
     <bootstrap thing="raS2Jet">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Jet]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Jet]]></containerreq>
       </bootstrap>
     <bootstrap thing="raPounce">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Pounce]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Pounce]]></containerreq>
       </bootstrap>
     <bootstrap thing="raS2Web">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Web]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Web]]></containerreq>
       </bootstrap>
     <bootstrap thing="raTrip">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Trip]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Trip]]></containerreq>
       </bootstrap>
     <bootstrap thing="xScent">
-      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0 & PolyAdjust.Scent]]></containerreq>
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Scent]]></containerreq>
       </bootstrap>
-    <eval phase="First" priority="1000" index="2"><![CDATA[
-      ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value <> 1)
-      ~ If nothing's been chosen, get out now
-      doneif (field[pChosen].ischosen <> 1)
+    <bootstrap thing="raLowLight">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.LowLight]]></containerreq>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:abilActive <> 0 & PolyAdjust.Darkvision]]></containerreq>
+      <assignval field="abValue" value="60"/>
+      </bootstrap>
+    <eval phase="Render" priority="9999999" index="3"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
 
-      #value[xSwim]  += field[pChosen].chosen.field[phSwim].value
-      #value[xClimb] += field[pChosen].chosen.field[phClimb].value
-      #value[xFly]   += field[pChosen].chosen.field[phFly].value
-      ~ If fly speed set maneuverability to good
-      If (field[pChosen].chosen.field[phFly].value <> 0) Then
-        perform hero.childfound[xFly].assign[Maneuver.Good]
-      Endif
-
-      #value[xBurrow] += field[pChosen].chosen.field[phBurrow].value
-      #value[raS2Jet] += field[pChosen].chosen.field[phJet].value]]></eval>
-    <eval phase="PreLevel" priority="11000" index="3"><![CDATA[
-      ~ Set custom expression to "All Things on Hero"
-      field[pUsePicks].value = 0]]></eval>
+      ~ Let this display on the In-Play tab but not the Specials tab
+      perform delete[Hide.Activation]]]></eval>
+    </thing>
+  <thing id="abS2GaBeM1" name="Grand Beastform Mutagen" description="At 14th level, a beastmorph&apos;s mutagen grants him four of the abilities listed in the {i}beast shape III{/i} spell, which persist as long as the mutagen. He may select four different abilities each time he creates a mutagen." compset="Ability" uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.3"/>
+    <fieldval field="usrCandid2" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.3"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ChooseSrc2" tag="Thing"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="450"><![CDATA[
       ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value <> 1)
+      doneif (hero.child[abS2GaBeMu].field[abilActive].value <> 1)
 
-      ~ Polymorph Adjustment & Setup scripts
-      perform field[pChosen].chosen.pulltags[PolyAdjust.?]
-      perform field[pChosen].chosen.pulltags[wConstrict.?]
-      perform field[pChosen].chosen.pulltags[wRake.?]
-      perform field[pChosen].chosen.pulltags[wTrample.?]
+      ~ Initalize the Beastform Mutagen tags/fields
+      Call SCInitBeMu]]></eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (hero.child[abS2GaBeMu].field[abilActive].value <> 1)
 
-      ~ Push to hero
-      perform hero.pushtags[wConstrict.?]
-      perform hero.pushtags[wRake.?]
-      perform hero.pushtags[wTrample.?]
-      perform hero.pushtags[PolyAdjust.?]]]></eval>
+      ~ Setup the Beastform Mutagen abilities
+      Call SCSetBeMu]]></eval>
+    <eval phase="Render" priority="9999999" index="3"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ Let this display on the In-Play tab but not the Specials tab
+      perform delete[Hide.Activation]]]></eval>
+    </thing>
+  <thing id="abS2GaBeM2" name="Grand Beastform Mutagen" description="At 14th level, a beastmorph&apos;s mutagen grants him four of the abilities listed in the {i}beast shape III{/i} spell, which persist as long as the mutagen. He may select four different abilities each time he creates a mutagen." compset="Ability" uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.3"/>
+    <fieldval field="usrCandid2" value="component.PolyHelp &amp; AdjShadow.Mutagen &amp; Value.3"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="ChooseSrc1" tag="Thing"/>
+    <tag group="ChooseSrc2" tag="Thing"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="450"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (hero.child[abS2GaBeMu].field[abilActive].value <> 1)
+
+      ~ Initalize the Beastform Mutagen tags/fields
+      Call SCInitBeMu]]></eval>
+    <eval phase="First" priority="1000" index="2"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (hero.child[abS2GaBeMu].field[abilActive].value <> 1)
+
+      ~ Setup the Beastform Mutagen abilities
+      Call SCSetBeMu]]></eval>
+    <eval phase="Render" priority="9999999" index="3"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ Let this display on the In-Play tab but not the Specials tab
+      perform delete[Hide.Activation]]]></eval>
+    </thing>
+  <thing id="pS2GaBeMu" name="Alchemist: Grand Beastform Mutagen" description="At 14th level, a beastmorph&apos;s mutagen grants him four of the abilities listed in the {i}beast shape III{/i} spell, which persist as long as the mutagen. He may select four different abilities each time he creates a mutagen." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Helper" tag="AdjConfer"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="abS2GaBeMu"></bootstrap>
+    <bootstrap thing="abS2GaBeM1"></bootstrap>
+    <bootstrap thing="abS2GaBeM2"></bootstrap>
     </thing>
   <thing id="pS2SplCom" name="Magus: Spell Combat" description="At 1st level, a magus learns to cast spells and wield his weapons at the same time. This functions much like two-weapon fighting, but the off-hand weapon is a spell that is being cast. To use this ability, the magus must have one hand free (even if the spell being cast does not have somatic components), while wielding a light or one-handed melee weapon in the other hand. As a full-round action, he can make all of his attacks with his melee weapon at a -2 penalty and can also cast any spell from the magus spell list with a casting time of 1 standard action (any attack roll made as part of this spell also takes this penalty). If he casts this spell defensively, he can decide to take an additional penalty on his attack rolls, up to his Intelligence bonus, and add the same amount as a circumstance bonus on his concentration check. If the check fails, the spell is wasted, but the attacks still take the penalty. A magus can choose to cast the spell first or make the weapon attacks first, but if he has more than one attack, he cannot cast the spell between weapon attacks.\n\nAt 8th level, the magus&apos;s ability to cast spells and make melee attacks improves. When using the spell combat ability, the magus receives a +2 circumstance bonus on concentration checks, in addition to any bonus granted by taking an additional penalty on the attack roll.\n\nAt 14th level, the magus gains the ability to seamlessly cast spells and make melee attacks. Whenever he uses the spell combat ability, his concentration check bonus equals double the amount of the attack penalty taken.\n\n{B}Note:{/b} This version places an activation on the &quot;In-Play&quot; tab instead of leaving it here as an adjustment. This is much more helpful for those using the iPad." compset="InPlay">
     <usesource source="srcS2Adjus"/>
