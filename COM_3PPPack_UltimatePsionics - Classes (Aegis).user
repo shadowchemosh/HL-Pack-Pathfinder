@@ -1492,4 +1492,139 @@
         validif (levels >= 8)]]></validate>
       </prereq>
     </thing>
+  <thing id="wPUSpiCar" name="Carapace Spikes" description="The astral suit is covered in sharp spikes as if equipped with armor spikes." compset="Weapon" uniqueness="unique">
+    <usesource source="pPsiUn"/>
+    <tag group="wMain" tag="1d6_5"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCritMult" tag="2"/>
+    <tag group="wType" tag="P"/>
+    <tag group="wClass" tag="OneHanded"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="NoOutGear"/>
+    <tag group="wProfReq" tag="Martial"/>
+    <tag group="wFtrGroup" tag="Close"/>
+    <tag group="wCategory" tag="Melee"/>
+    <tag group="Helper" tag="GearNoSize"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If no special material present then get out now! &
+      doneif (tagcount[IsMaterial.?] =  0)
+
+      ~ Append special material type onto name
+      field[livename].text = tagnames[IsMaterial.?] & " " & field[thingname].text
+      ]]></eval>
+    </thing>
+  <thing id="rcPUaSpikC" name="Spiked Carapace" description="The astral suit is covered in sharp spikes as if equipped with armor spikes." compset="RaceCustom" summary="Gain armor spikes" uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="wPUSpiCar">
+      <autotag group="HasAbility" tag="rcPUaSpikC"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcPUaSwim" name="Swim" description="The aegis gains a swim speed equal to his base speed." summary="Swim speed = base land speed." compset="RaceCustom" uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="14000"><![CDATA[
+      ~ If we're not wearling the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      #applybonus[abValue, hero.child[xSwim], hero.child[Speed].field[tSpeed].value]]]></eval>
+    </thing>
+  <thing id="rcPUaUndw" name="Underwater Breath" description="The aegis can safely breathe underwater as long as he is wearing his astral suit." summary="You can breathe water as well as air." compset="RaceCustom" uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rcPUaAdFt1" name="Adhesive Feet" description="The aegis gains a +4 bonus to CMD against bull rush, trip, and any combat maneuvers that attempt to move him from his current location. He also gains a +4 circumstance bonus to Climb checks." compset="RaceCustom" summary="Bonus CMD vs being moved." uniqueness="useronce">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="1000"><![CDATA[
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      ~ +4 circumstance to climb
+      #applybonus[ModCirc,hero.childfound[skClimb],field[abValue].value]
+
+      ~ +4 bonus to Bull Rush
+      hero.child[manBullRus].field[manCMD].value += field[abValue].value
+
+      #situational[hero.child[ManeuvDef],signed(field[abValue].value) & " bonus to CMD vs any combat maneuvers that attempt to move you from your current location.",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="rcPUaAugWp" name="Augmented Weapon" description="The astral suit coats the aegis&apos;s weapon. The weapon is treated as if it was one size category larger for damage purposes. The aegis does not suffer any penalties for wielding the weapon. This ability does not stack with effects that increase the aegis&apos;s size category, such as {i}expansion{/i}. The aegis must be at least 6th level to select this customization.\n\n{b}Note:{/b} You must equip a weapon to see the damage increase." summary="Weapons treated as one size larger." compset="RaceCustom" uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      foreach pick in hero from BaseWep where "fieldval:gIsEquip = 1"
+        perform eachpick.assign[Helper.DamageUp]
+      nexteach]]></eval>
+    <prereq message="Aegis level 6+ required.">
+      <validate><![CDATA[
+        var classcheck as string
+        var levels as number
+        classcheck = "Aegis"
+        call PUPreReqs
+        validif (levels >= 6)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcPUaCham" name="Chameleon" description="The aegis gains a +4 circumstance bonus to Stealth checks. The aegis must be at least 5th level before selecting this customization and this customization can be taken once for every five levels the aegis possesses." summary="+4 bonus to stealth." compset="RaceCustom">
+    <fieldval field="abValue" value="4"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="1000"><![CDATA[
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      ~ +4 circumstance to climb
+      #applybonus[ModCirc,hero.childfound[skStealth],field[abValue].value]]]></eval>
+    <prereq message="Aegis level 5+ required.">
+      <validate><![CDATA[
+        var classcheck as string
+        var levels as number
+        classcheck = "Aegis"
+        call PUPreReqs
+        validif (levels >= 5)]]></validate>
+      </prereq>
+    <prereq message="">
+      <validate><![CDATA[
+        var classcheck as string
+        var levels as number
+        classcheck = "Aegis"
+        call PUPreReqs
+        var allowed as number
+        allowed = round(levels/5,0,-1)
+
+        ~ if we're a pick, then there must be complevel/5 or fewer copies of
+        ~ this ability
+        if (@ispick <> 0) then
+          validif (tagcount[HasAbility.rcPUaCham] <= allowed)
+        ~ otherwise, look for fewer, since we're adding this
+        else
+          validif (tagcount[HasAbility.rcPUaCham] < allowed)
+        endif
+
+         @message = "You may not have more than " & allowed & " copies of this ability."]]></validate>
+      </prereq>
+    </thing>
+
   </document>
