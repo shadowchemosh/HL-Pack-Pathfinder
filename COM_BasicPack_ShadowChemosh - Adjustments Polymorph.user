@@ -465,6 +465,7 @@ Target.? - When bootstrapping this to a race you can set the Target.? tag to whi
     <fieldval field="trkMax" value="8"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="SpecType" tag="Attack"/>
+    <tag group="Helper" tag="DCUseTotHD"/>
     <tag group="StandardDC" tag="aCON"/>
     <tag group="Usage" tag="Day"/>
     <tag group="User" tag="Tracker"/>
@@ -472,13 +473,15 @@ Target.? - When bootstrapping this to a race you can set the Target.? tag to whi
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="First" priority="900" index="3">~ This simple logic is set here to force this Pick to become
+    <eval phase="First" priority="900" index="1"><![CDATA[
+      ~ This simple logic is set here to force this Pick to become &
       ~ Live before First/1000.
-      perform assign[PolyAdjust.Web]</eval>
-    <eval phase="Final" priority="10000">~our abValue is our HP
+      perform assign[PolyAdjust.Web]]]></eval>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[
+      ~our abValue is our HP &
       ~default: our HD
-      field[abValue].value += herofield[tHitDice].value</eval>
-    <eval phase="Render" priority="10000" index="2"><![CDATA[
+      field[abValue].value += herofield[tHitDice].value]]></eval>
+    <eval phase="Render" priority="10000" index="3"><![CDATA[
       field[livename].text = field[thingname].text & " (" & signed(field[wRanAtk].value) & " ranged, " & field[abValue].value & " hp)"
       field[sbName].text = lowercase(field[thingname].text) & " (" & signed(field[wRanAtk].value) & " ranged, DC " & field[abDC].value & ", " & field[abValue].value & " hp)"]]></eval>
     </thing>
