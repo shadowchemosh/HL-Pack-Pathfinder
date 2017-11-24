@@ -6,13 +6,40 @@
     <info_history>April 2, 2014 - Tim Shadow
       -Dorje changed to allow selection of Powers and to auto-calc its cost.</info_history>
     </fileinfo>
-  <thing id="mCrysDeep" name="Crystal, Deep" compset="Material">
-    <fieldval field="mtDesc" value="Spend 2 power points to add 2d6 to weapon damage."/>
+  <thing id="mCrysDeep" name="Deep Crystal" description="Deep crystal is crystal of above-average quality found at the hearts of large veins or deposits of mundane crystal (see below). Deep crystal is renowned for its strength and its psionically resonant nature. Mundane crystal is used for many items of psionic manufacture, such as dorjes, power stones, and psicrystals. Deep crystal is a better grade.\n\nWhile a weapon made of deep crystal is no different from a mundane crystal weapon for a nonpsionic character, a psionic wielder of a deep crystal weapon can focus psionic power through it, increasing the damage that weapon deals. As a free action that does not provoke attacks of opportunity, the wielder can channel psionic power into a melee weapon or ranged weapon made of deep crystal. For 2 power points, the deep crystal weapon deals an extra 2d6 points of damage. The weapon will stay charged for 1 minute or until it scores its next hit. Bows, crossbows, and slings bestow this power on their ammunition. All missile weapons lose this effect if they miss. However, they may be recovered and charged again.\n\nAny weapon made of deep crystal costs 1,000 gp more than its noncrystal counterpart. Any item could potentially be made out of deep crystal. Because deep crystal armor is considered to be made out of metal, druids cannot wear it.\n\nDeep crystal has 30 hit points per inch of thickness and a hardness of 10." compset="Material">
+    <fieldval field="mtDesc" value="Spend 2PP for +2d6"/>
     <fieldval field="mtCost" value="1000"/>
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="MatWepOK"/>
+    <tag group="PowerType" tag="Weapon"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      if (parent.tagis[component.BaseWep] <> 0) then
+        #extradamage[parent," plus 2d6",field[thingname].text]
+        parent.field[Bonus].value += 2
+      else
+        foreach pick in hero from BaseWep where container.child[gCustMagic].field[gWeapExpr].text
+          #extradamage[eachpick," plus 2d6",field[thingname].text]
+          eachpick.field[Bonus].value += 2
+        nexteach
+      endif]]></eval>
+    <eval phase="Final" priority="50000" index="2"><![CDATA[
+      ~ Only proceed if we are a type of ammunition like arrows & bolts
+      doneif (parent.tagis[wCategory.Ammunition] = 0)
+
+      ~ We want to always show the activation button as this is really
+      ~ useful for arrows/bolts. So even if not equipped show us.
+      perform delete[Helper.SpcDisable]
+      perform delete[Hide.Activation]]]></eval>
+    <eval phase="Render" priority="111000" index="4"><![CDATA[
+      ~ Set a nice looking activation name &
+      field[actName].text = field[abSource].text & " +2d6"]]></eval>
     </thing>
-  <thing id="mCrysMund" name="Crystal, Mundane" description="Mundane crystal can be used in place of metal in weapons or armor, using a special forging process. The fortified crystal possesses the properties of a similar masterwork steel weapon or armor, except for visual appearance.\n\nWeapons and armor made of mundane crystal cost the same amount to make as their masterwork counterparts. Any item could potentially be made with mundane crystal. Because mundane crystal armor is considered to be made out of metal, druids cannot wear it.\n\nMundane crystal properly forged has 25 hit points per inch of thickness and a hardness of 8." compset="Material">
+  <thing id="mCrysMund" name="Mundane Crystal" description="Mundane crystal can be used in place of metal in weapons or armor, using a special forging process. The fortified crystal possesses the properties of a similar masterwork steel weapon or armor, except for visual appearance.\n\nWeapons and armor made of mundane crystal cost the same amount to make as their masterwork counterparts. Any item could potentially be made with mundane crystal. Because mundane crystal armor is considered to be made out of metal, druids cannot wear it.\n\nMundane crystal properly forged has 25 hit points per inch of thickness and a hardness of 8." compset="Material">
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="MatWepOK"/>
     <tag group="Helper" tag="MatRqMetal"/>
@@ -505,7 +532,6 @@
     <tag group="gType" tag="Wonder"/>
     <tag group="iSubschool" tag="PsycKin" name="Psychokinesis"/>
     <tag group="Helper" tag="AlwaysAvl"/>
-    
     <tag group="fShowWhat" tag="Energy"/>
     </thing>
   <thing id="ioMCrTatCn" name="Crawling Tattoo of Concussion" description="This crawling tattoo delivers a concussion effect, dealing 1d6 points of damage to a creature hit by its touch attack.\n\nAura faint psychokinesis; ML 1st\nSlot -; Price 50 gp; Weight -" compset="Wondrous" holdable="no">
@@ -514,7 +540,6 @@
     <usesource source="pPsiUn"/>
     <tag group="gType" tag="Wonder"/>
     <tag group="Helper" tag="AlwaysAvl"/>
-    
     <tag group="Helper" tag="ShowSpec"/>
     </thing>
   <thing id="ioMCSDipl" name="Companion Stone of Diplomacy" description="The wielder of a staff enhanced with this stone gains a +4 competence bonus on Diplomacy checks.\n\nCOMPANION STONES\nA companion stone is similar to a setting stone in that it functions only in conjunction with a psicrystal staff (see below). Like setting stones, companion stones add functionality to each staff. Unlike setting stones, however, companion stones take up orbit around the head of the staff, similar to the way ioun stones orbit the head of their owner. However, companion stones orbit only the head of a chosen psicrystal staff, not the wielder of the staff.\n\nWhen a character first acquires a stone, she must hold it and then release it, whereupon it takes up a circling orbit 1 foot from the head of her staff. A character must grab the companion stone to remove it from orbit about the psicrystal staff. The owner may voluntarily seize and stow a stone to keep it safe, but she loses the benefits of the stone during that time.\n\nCompanion stones have an Armor Class of 22, 8 hit points, and a hardness of 10.\n\nThe wielder can enhance her psicrystal staff with a maximum of 10 companion stones before the density of orbiting stones becomes too great.\n\nAs with the benefits provided by setting stones, the character must have her psicrystal staff in hand to gain the benefits from any orbiting companion stones.\n\n\nAura  Faint telepathy; ML 5th\nSlot -; Price 1,700 gp;\nWeight -" compset="Wondrous">
@@ -525,7 +550,6 @@
     <tag group="iSubschool" tag="Telepathy"/>
     <tag group="Helper" tag="EquipMag"/>
     <tag group="Helper" tag="ShowSpec"/>
-    
     <tag group="gType" tag="Wonder"/>
     <eval phase="PreLevel" priority="5000"><![CDATA[  if (field[gIsEquip].value <> 0) then
         #competencebonus[hero.child[skDiplo], 4]
@@ -538,7 +562,6 @@ endif]]></eval>
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="Helper" tag="EquipMag"/>
     <tag group="Helper" tag="ShowSpec"/>
-    
     <tag group="gType" tag="Wonder"/>
     <tag group="iSubschool" tag="sPsycMet"/>
     </thing>
@@ -548,7 +571,6 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="EquipMag"/>
     <tag group="Helper" tag="ShowSpec"/>
-    
     <tag group="gType" tag="Wonder"/>
     <tag group="iSubschool" tag="sPsycMet"/>
     <tag group="Helper" tag="EquipAvail"/>
@@ -563,7 +585,6 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="EquipMag"/>
     <tag group="Helper" tag="ShowSpec"/>
-    
     <tag group="gType" tag="Wonder"/>
     <tag group="iSubschool" tag="PsycKin"/>
     <tag group="Helper" tag="EquipAvail"/>
@@ -576,7 +597,6 @@ endif]]></eval>
     <fieldval field="actName" value="Companion Stone of Fortify"/>
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="ShowSpec"/>
-    
     <tag group="gType" tag="Wonder"/>
     <tag group="iSubschool" tag="sPsycMet"/>
     <tag group="Helper" tag="EquipMag"/>
@@ -592,7 +612,6 @@ endif]]></eval>
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="EquipMag"/>
     <tag group="Helper" tag="ShowSpec"/>
-    
     <tag group="gType" tag="Wonder"/>
     <tag group="iSubschool" tag="Telepathy"/>
     <tag group="Helper" tag="EquipAvail"/>
@@ -604,7 +623,6 @@ endif]]></eval>
     <fieldval field="gCost" value="3000"/>
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="EquipAvail"/>
-    
     <tag group="gType" tag="Wonder"/>
     <tag group="iSubschool" tag="sClairsent"/>
     <tag group="Helper" tag="EquipMag"/>
@@ -620,7 +638,6 @@ endif]]></eval>
     <fieldval field="gCost" value="10080"/>
     <fieldval field="trkMax" value="1"/>
     <usesource source="pPsiUn"/>
-    
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="Helper" tag="EquipMag"/>
     <tag group="Hero" tag="EqpEyes"/>
@@ -634,7 +651,6 @@ endif]]></eval>
     <fieldval field="gCost" value="20160"/>
     <fieldval field="trkMax" value="1"/>
     <usesource source="pPsiUn"/>
-    
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="Helper" tag="EquipMag"/>
     <tag group="Hero" tag="EqpEyes"/>
@@ -648,7 +664,6 @@ endif]]></eval>
     <fieldval field="gCost" value="3000"/>
     <usesource source="pPsiUn"/>
     <tag group="Helper" tag="EquipAvail"/>
-    
     <tag group="gType" tag="Wonder"/>
     <tag group="Helper" tag="EquipMag"/>
     <tag group="iSubschool" tag="sClairsent"/>
@@ -660,7 +675,6 @@ endif]]></eval>
     <fieldval field="gCost" value="14000"/>
     <fieldval field="trkMax" value="3"/>
     <usesource source="pPsiUn"/>
-    
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="Helper" tag="EquipMag"/>
     <tag group="Helper" tag="ShowSpec"/>
@@ -675,7 +689,6 @@ endif]]></eval>
     <fieldval field="iCL" value="5"/>
     <usesource source="pPsiUn"/>
     <tag group="gType" tag="Wonder"/>
-    
     <tag group="Helper" tag="AlwaysAvl"/>
     <tag group="iSubschool" tag="sPsycMet"/>
     </thing>
@@ -685,7 +698,6 @@ endif]]></eval>
     <fieldval field="iCL" value="5"/>
     <usesource source="pPsiUn"/>
     <tag group="gType" tag="Wonder"/>
-    
     <tag group="Helper" tag="AlwaysAvl"/>
     <tag group="iSubschool" tag="sClairsent"/>
     </thing>
@@ -695,7 +707,6 @@ endif]]></eval>
     <fieldval field="iCL" value="5"/>
     <usesource source="pPsiUn"/>
     <tag group="gType" tag="Wonder"/>
-    
     <tag group="Helper" tag="AlwaysAvl"/>
     <tag group="iSubschool" tag="Metacreate"/>
     </thing>
@@ -705,7 +716,6 @@ endif]]></eval>
     <fieldval field="iCL" value="5"/>
     <usesource source="pPsiUn"/>
     <tag group="gType" tag="Wonder"/>
-    
     <tag group="Helper" tag="AlwaysAvl"/>
     <tag group="iSubschool" tag="PsycKin"/>
     </thing>
@@ -715,7 +725,6 @@ endif]]></eval>
     <fieldval field="iCL" value="5"/>
     <usesource source="pPsiUn"/>
     <tag group="gType" tag="Wonder"/>
-    
     <tag group="Helper" tag="AlwaysAvl"/>
     <tag group="iSubschool" tag="sClairsent"/>
     </thing>
@@ -725,7 +734,6 @@ endif]]></eval>
     <fieldval field="iCL" value="5"/>
     <usesource source="pPsiUn"/>
     <tag group="gType" tag="Wonder"/>
-    
     <tag group="Helper" tag="AlwaysAvl"/>
     <tag group="iSubschool" tag="Telepathy"/>
     </thing>
@@ -735,7 +743,6 @@ endif]]></eval>
     <fieldval field="iCL" value="5"/>
     <usesource source="pPsiUn"/>
     <tag group="gType" tag="Wonder"/>
-    
     <tag group="Helper" tag="AlwaysAvl"/>
     <tag group="iSubschool" tag="sPsycPort"/>
     </thing>
@@ -744,7 +751,6 @@ endif]]></eval>
     <fieldval field="gWeight" value=".5"/>
     <fieldval field="gCost" value="10000"/>
     <usesource source="pPsiUn"/>
-    
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="iSubschool" tag="sClairsent"/>
     <tag group="Helper" tag="EquipMag"/>
@@ -760,7 +766,6 @@ endif]]></eval>
     <fieldval field="gWeight" value=".5"/>
     <fieldval field="gCost" value="10000"/>
     <usesource source="pPsiUn"/>
-    
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="iSubschool" tag="sClairsent"/>
     <tag group="Helper" tag="EquipMag"/>
@@ -776,7 +781,6 @@ endif]]></eval>
     <fieldval field="gWeight" value=".5"/>
     <fieldval field="gCost" value="10000"/>
     <usesource source="pPsiUn"/>
-    
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="iSubschool" tag="sClairsent"/>
     <tag group="Helper" tag="EquipMag"/>
@@ -792,7 +796,6 @@ endif]]></eval>
     <fieldval field="gWeight" value=".5"/>
     <fieldval field="gCost" value="20250"/>
     <usesource source="pPsiUn"/>
-    
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="iSubschool" tag="sClairsent"/>
     <tag group="Helper" tag="EquipMag"/>
@@ -816,7 +819,6 @@ endif]]></eval>
     <tag group="Hero" tag="EqpHead"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="gType" tag="Wonder"/>
-    
     <tag group="ChooseSrc1" tag="Thing"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[var myId as String
 myId = ""
@@ -843,7 +845,6 @@ if (field[gIsEquip].value <> 0) then
     <tag group="User" tag="Tracker"/>
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="Usage" tag="Day"/>
-    
     <tag group="Helper" tag="EquipMag"/>
     <tag group="iSubschool" tag="sPsycPort"/>
     </thing>
@@ -852,7 +853,6 @@ if (field[gIsEquip].value <> 0) then
     <fieldval field="gWeight" value=".5"/>
     <fieldval field="gCost" value="2500"/>
     <usesource source="pPsiUn"/>
-    
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="iSubschool" tag="sClairsent"/>
     <tag group="Helper" tag="EquipMag"/>
@@ -876,7 +876,6 @@ if (field[gIsEquip].value <> 0) then
     <fieldval field="gWeight" value=".5"/>
     <fieldval field="gCost" value="10667"/>
     <usesource source="pPsiUn"/>
-    
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="Helper" tag="EquipMag"/>
     <tag group="Hero" tag="EqpHead"/>
@@ -892,7 +891,6 @@ endif]]></eval>
     <fieldval field="gWeight" value=".5"/>
     <fieldval field="gCost" value="10000"/>
     <usesource source="pPsiUn"/>
-    
     <tag group="Helper" tag="EquipAvail"/>
     <tag group="iSubschool" tag="sClairsent"/>
     <tag group="Helper" tag="EquipMag"/>
@@ -1133,8 +1131,7 @@ endif]]></eval>
     <tag group="gType" tag="Wonder"/>
     <tag group="iSubschool" tag="sPsycMet"/>
     <tag group="Helper" tag="EquipMag"/>
-    <eval phase="PostLevel" priority="10000">
-      ~ If not equipped get out now!
+    <eval phase="PostLevel" priority="10000">~ If not equipped get out now!
       doneif (field[gIsEquip].value = 0)
       field[abValue].value += 10
 
