@@ -246,38 +246,12 @@
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="xxDamRdClM" name="Damage Reduction, Cold Iron or Magic" description="You have Damage Reduction against all except Magical or Cold Iron attacks." compset="Ability" uniqueness="unique">
-    <tag group="Helper" tag="BaseAbil"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    <tag group="SpecType" tag="DR"/>
-    <tag group="Helper" tag="PFSUserOK"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="Final" priority="10000"><![CDATA[
-      call CalcValue
-
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/cold iron or magic)"
-      field[shortname].text = field[abValue].value & "/cold iron or magic"]]></eval>
-    </thing>
   <thing id="xCBTrueSee" name="True Seeing" description="Creature has constant {i}true seeing{/i} effect." compset="RaceSpec" uniqueness="useronce">
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="SpecType" tag="Sense"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AbilType" tag="SpellLike"/>
-    </thing>
-  <thing id="xxDamRdGO" name="Damage Reduction, Glass or Obsidian" description="You have Damage Reduction against all except weapons made from gold." compset="Ability" uniqueness="unique">
-    <tag group="Helper" tag="ShowSpec"/>
-    <tag group="Helper" tag="PFSUserOK"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="SpecType" tag="DR"/>
-    <tag group="Helper" tag="BaseAbil"/>
-    <eval phase="Final" priority="10000"><![CDATA[
-      call CalcValue
-
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/glass or obsidian)"
-      field[shortname].text = field[abValue].value & "/glass or obsidian"]]></eval>
     </thing>
   <thing id="xxCBSprGoo" name="Spell Resistance vs Good" description="You have Spell Resistance." compset="Ability" uniqueness="unique">
     <tag group="Helper" tag="ShowSpec"/>
@@ -305,7 +279,6 @@
   <thing id="abResBlows" name="Resistant to Blows" description="Take only half damage from melee and ranged weapons, natural weapons, and falls. Apply this reduction before applying damage reduction." compset="Ability" summary="Take half damage from weapons and falls.">
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="AbilType" tag="Extra"/>
-    <tag group="SpecType" tag="DR"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
@@ -388,6 +361,30 @@
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
+  <thing id="xxDamRdClM" name="Damage Reduction, Cold Iron or Magic" description="You have Damage Reduction against all except Magical or Cold Iron attacks." compset="Ability" uniqueness="unique">
+    <fieldval field="shortname" value="cold iron or magic"/>
+    <tag group="SpecType" tag="DR"/>
+    <tag group="Universal" tag="Universal"/>
+    <tag group="Helper" tag="BaseAbil"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
+    </thing>
+  <thing id="xxDamRdGO" name="Damage Reduction, Glass or Obsidian" description="You have Damage Reduction against all except weapons made from gold." compset="Ability" uniqueness="unique">
+    <fieldval field="shortname" value="glass or obsidian"/>
+    <tag group="SpecType" tag="DR"/>
+    <tag group="Universal" tag="Universal"/>
+    <tag group="Helper" tag="BaseAbil"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
+    </thing>
   <thing id="xxDREviCha" name="Damage Reduction, Evil or Chaotic" description="You have Damage Reduction against all except Evil or Chaotic attacks." compset="Ability" uniqueness="unique">
     <fieldval field="shortname" value="evil or chaotic"/>
     <tag group="SpecType" tag="DR"/>
@@ -397,11 +394,8 @@
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
-      call CalcValue
-
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/evil or chaotic)"
-      field[shortname].text = field[abValue].value & "/evil or chaotic"]]></eval>
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
     </thing>
   <thing id="xxDREviLaw" name="Damage Reduction, Evil or Lawful" description="You have Damage Reduction against all except Evil or Lawful attacks." compset="Ability" uniqueness="unique">
     <fieldval field="shortname" value="evil or lawful"/>
@@ -412,11 +406,8 @@
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
-      call CalcValue
-
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/evil or lawful)"
-      field[shortname].text = field[abValue].value & "/evil or lawful"]]></eval>
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
     </thing>
   <thing id="xxDRGooCha" name="Damage Reduction, Good or Chaotic" description="You have Damage Reduction against all except Good or Chaotic attacks." compset="Ability" uniqueness="unique">
     <fieldval field="shortname" value="good or chaotic"/>
@@ -427,128 +418,115 @@
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
-      call CalcValue
-
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/good or chaotic)"
-      field[shortname].text = field[abValue].value & "/good or chaotic"]]></eval>
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
     </thing>
   <thing id="xxDRGold" name="Damage Reduction, Gold" description="You have Damage Reduction against all except weapons made from gold." compset="Ability" uniqueness="unique">
-    <tag group="Helper" tag="ShowSpec"/>
+    <fieldval field="shortname" value="gold"/>
     <tag group="SpecType" tag="DR"/>
     <tag group="Universal" tag="Universal"/>
     <tag group="Helper" tag="BaseAbil"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
-      call CalcValue
-
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/gold)"
-      field[shortname].text = field[abValue].value & "/gold"]]></eval>
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
     </thing>
   <thing id="xxDRBlOrSl" name="Damage Reduction, Bludgeoning or Slashing" description="You have Damage Reduction against all except Bludgeoning or Slashing attacks." compset="Ability" summary="You have Damage Reduction against all except Bludgeoning or Slashing attacks." uniqueness="unique">
     <fieldval field="shortname" value="bludgeoning or slashing"/>
-    <tag group="Helper" tag="ShowSpec"/>
     <tag group="SpecType" tag="DR"/>
     <tag group="Universal" tag="Universal"/>
     <tag group="Helper" tag="BaseAbil"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
-      call CalcValue
-
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/bludgeoning or slashing)"
-      field[shortname].text = field[abValue].value & "/bludgeoning or slashing"]]></eval>
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
     </thing>
   <thing id="xxDRLawrMg" name="Damage Reduction, Lawful or Magic" description="You have Damage Reduction against all except Lawful or Magic attacks." compset="Ability" uniqueness="unique">
+    <fieldval field="shortname" value="lawful or magic"/>
+    <tag group="SpecType" tag="DR"/>
+    <tag group="Universal" tag="Universal"/>
     <tag group="Helper" tag="BaseAbil"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <tag group="SpecType" tag="DR"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
-      call CalcValue
-
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/lawful or magic)"
-      field[shortname].text = field[abValue].value & "/lawful or magic"]]></eval>
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
     </thing>
   <thing id="xDamRdByes" name="Damage Reduction, Byeshk" description="You have Damage Reduction against all except byeshk attacks." compset="Ability" uniqueness="unique">
+    <fieldval field="shortname" value="byseshk"/>
     <tag group="SpecType" tag="DR"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    <tag group="NaturalDR" tag="Adamant"/>
-    <tag group="HasAbility" tag="xDamRdAny"/>
-    <tag group="Helper" tag="BaseAbil"/>
     <tag group="Universal" tag="Universal"/>
+    <tag group="Helper" tag="BaseAbil"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
-      ~ Set abValue
-      call CalcValue
-      ~ add in abValue2
-      field[abValue].value += field[abValue2].value
-      var sText as string
-      ~ make this easier to setup with only a single DR type string
-      sText = "byeshk"
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/" & sText & ")"
-      field[shortname].text = field[abValue].value & "/" & sText]]></eval>
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
     </thing>
   <thing id="xDamRdByMa" name="Damage Reduction, Byeshk or Magic" description="You have Damage Reduction against all except byeshk or magic attacks." compset="Ability" uniqueness="unique">
+    <fieldval field="shortname" value="byseshk or magic"/>
     <tag group="SpecType" tag="DR"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    <tag group="NaturalDR" tag="Adamant"/>
-    <tag group="HasAbility" tag="xDamRdAny"/>
-    <tag group="Helper" tag="BaseAbil"/>
     <tag group="Universal" tag="Universal"/>
+    <tag group="Helper" tag="BaseAbil"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
-      ~ Set abValue
-      call CalcValue
-      ~ add in abValue2
-      field[abValue].value += field[abValue2].value
-      var sText as string
-      ~ make this easier to setup with only a single DR type string
-      sText = "byeshk or magic"
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/" & sText & ")"
-      field[shortname].text = field[abValue].value & "/" & sText]]></eval>
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
     </thing>
   <thing id="xDamRdTarg" name="Damage Reduction, Targath" description="You have Damage Reduction against all except targath attacks." compset="Ability" uniqueness="unique">
+    <fieldval field="shortname" value="targath"/>
     <tag group="SpecType" tag="DR"/>
-    <tag group="Helper" tag="ShowSpec"/>
-    <tag group="NaturalDR" tag="Adamant"/>
-    <tag group="HasAbility" tag="xDamRdAny"/>
-    <tag group="Helper" tag="BaseAbil"/>
     <tag group="Universal" tag="Universal"/>
+    <tag group="Helper" tag="BaseAbil"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
-      ~ Set abValue
-      call CalcValue
-      ~ add in abValue2
-      field[abValue].value += field[abValue2].value
-      var sText as string
-      ~ make this easier to setup with only a single DR type string
-      sText = "targath"
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/" & sText & ")"
-      field[shortname].text = field[abValue].value & "/" & sText]]></eval>
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
     </thing>
   <thing id="xxDRDeepCr" name="Damage Reduction, Deep Crystal" description="You have Damage Reduction against all except deep crystal." compset="Ability" summary="You have Damage Reduction against all except deep crystal attacks." uniqueness="unique">
     <fieldval field="shortname" value="deep crystal"/>
-    <tag group="Helper" tag="ShowSpec"/>
     <tag group="SpecType" tag="DR"/>
+    <tag group="Universal" tag="Universal"/>
+    <tag group="Helper" tag="BaseAbil"/>
+    <tag group="Helper" tag="ShowSpec"/>
     <tag group="Helper" tag="PFSUserOK"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
+    </thing>
+  <thing id="abDamRdMSB" name="Damage Reduction, Magic Slashing or Bludgeoning" description="You have Damage Reduction against all except Magic Slashing or Bludgeoning attacks." compset="Ability" uniqueness="unique">
+    <fieldval field="shortname" value="magic slashing or bludgeoning"/>
+    <tag group="SpecType" tag="DR"/>
+    <tag group="Universal" tag="Universal"/>
     <tag group="Helper" tag="BaseAbil"/>
-    <eval phase="Final" priority="10000" name="Damage Reduction CalcValue">call CalcValue</eval>
-    <eval phase="Render" priority="1000"><![CDATA[
-      ~ Use our value field as the amount of damage we can resist
-      field[livename].text = "Damage Reduction (" & field[abValue].value & "/deep crystal)"
-      field[shortname].text = field[abValue].value & "/deep crystal"]]></eval>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
+    </thing>
+  <thing id="abNNWDRMSv" name="Damage Reduction, Magic and Silver" description="You have Damage Reduction can only be overcome by weapons that are both Magic and Silver." compset="Ability" summary="DR only overcome by weapons that are both magic and silver" uniqueness="unique">
+    <fieldval field="shortname" value="magic and silver"/>
+    <tag group="SpecType" tag="DR"/>
+    <tag group="Universal" tag="Universal"/>
+    <tag group="Helper" tag="BaseAbil"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="PFSUserOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Final" priority="10000"><![CDATA[
+      ~ Setup Damage Reduction Ability &
+      Call xxSetupDR]]></eval>
     </thing>
   </document>
