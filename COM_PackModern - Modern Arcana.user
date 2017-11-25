@@ -2851,19 +2851,22 @@ hero.child[Attack].field[Bonus].value +=1
 endif]]></eval>
     <eval phase="Final" priority="20000" index="2"><![CDATA[#situational[hero.child[Attack], " +1 bonus on attack rolls made against a faction opposed to " & field[usrChosen1].chosen.field[name].text & ".", field[thingname].text]]]></eval>
     </thing>
-  <thing id="ioMPAblPtJ" name="Ablative Paint Job" description="{b}Benefit{/b}: A vehicle coated in this nigh unscratchable silvery-gray paint gains 5 points of hardness. It has no effect on any vehicle with a hardness of 10 or higher." compset="Wondrous" summary="Gains 5 points of hardness" holdable="no">
+  <thing id="ioMPAblPtJ" name="Ablative Paint Job" description="{b}Benefit{/b}: A vehicle coated in this nigh unscratchable silvery-gray paint gains 5 points of hardness." compset="Wondrous" summary="Gains 5 points of hardness" holdable="no">
     <comment/>
     <fieldval field="gCost" value="2800"/>
     <fieldval field="iCL" value="5"/>
     <fieldval field="gCraftCost" value="1400"/>
+    <fieldval field="usrCandid1" value="component.OnlyGear &amp; gType.LandTrans|gType.AirTrans|gType.Transport"/>
     <usesource source="D20Arcana"/>
-    <tag group="ProductId" tag="HLCommunit"/>
     
     <tag group="iSchool" tag="Enchant"/>
     <tag group="gType" tag="LandTrans"/>
     <tag group="Helper" tag="ActivMenu"/>
-    <tag group="Helper" tag="ShowSpec"/>
     <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="NoAutoName"/>
+    <eval phase="PostAttr" priority="10000">doneif (field[usrChosen1].ischosen = 0)
+field[usrChosen1].chosen.field[actUserMax].value += 5</eval>
     </thing>
   <thing id="ioMPBumpB" name="Bumpers of Blasting" description="{b}Benefit{/b}: If a vehicle equipped with bumpers of blasting strikes an object or creature while moving at least street speed the driver of the vehicle can choose to have the bumper emit an explosive blast. The explosion causes 5d6 points of fire damage (in addition to any collision damage) to the object or creature struck. The vehicle with the bumper of blasting does not take any damage from the explosion, but does take collision damage as normal.\n \nThe explosive blast can be triggered three times per day, regardless of whether the attack is made with a front or rear bumper. The driver cannot trigger an explosive blast out of turn, such as when struck by another vehicle, although the driver could ready an action to trigger the explosive blast when such a condition arises" compset="Wondrous" holdable="no">
     <comment/>
@@ -2875,14 +2878,20 @@ endif]]></eval>
     
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="ioMPBumpR" name="Bumper of the Ram" description="This vicious looking spiked bumper must be bolted to the front or back of the vehicle. \n\n{b}Benefit{/b}: Any time the driver of the vehicle uses the bumper to ram another vehicle or object, damage to the opposed vehicle is increased by one speed and size increment, while damage to the vehicle with the bumper of the ram is reduced by one speed and one size increment. The bumper of the ram’s effects do not apply to sideswipes." compset="Wondrous" holdable="no">
+  <thing id="ioMPBumpR" name="Bumper of the Ram" description="This vicious looking spiked bumper must be bolted to the front or back of the vehicle. \n\n{b}Benefit{/b}: Any time the driver of the vehicle uses the bumper to ram another vehicle or object, damage to the opposed vehicle is increased by one speed and size increment, while damage to the vehicle with the bumper of the ram is reduced by one speed and one size increment. The bumper of the ram’s effects do not apply to sideswipes." compset="Wondrous" summary="Vicious looking spiked bumper">
     <comment/>
     <fieldval field="gCost" value="3200"/>
     <fieldval field="iCL" value="9"/>
+    <fieldval field="usrCandid1" value="component.BaseWep  &amp; thingid.wMHVehRmDm"/>
     <usesource source="D20Arcana"/>
-    
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="gType" tag="LandTrans"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    
+    <eval phase="First" priority="10000">doneif (field[usrChosen1].ischosen = 0)
+perform field[usrChosen1].chosen.setfocus
+
+perform focus.assign[Helper.DamageUp]</eval>
     </thing>
   <thing id="ioMPDshBdF" name="Dashboard Figurine" description="A dashboard figurine appears to be a statue of an animal or person 4 to 6 inches tall. \n\n{b}Benefit{/b}: When placed upon the dashboard of a vehicle, it sticks in place and can only be removed by the owner with a command word. Once in place, the figurine grants a special ability to the vehicle and the driver.\n \nThree different types of dashboard figurines are available: Humorous, monstrous, and religious. \n\n{b}Humorous{/b}: This figurine depicts some amusing-looking figure, such as a hula dancer or a cartoon character. The driver of the vehicle gains a +1 morale bonus on all saves while operating the vehicle.\n \n{b}Monstrous{/b}: This figurine depicts some sort of fierce-looking toy monster. Attacks made by the driver and passengers of the vehicle gain a +1 morale bonus.\n \n{b}Religious{/b}: This is an icon of a saint, the Virgin Mary, or some other being of religious or spiritual significance. This type of dashboard figurine provides a +2 deflection bonus to the vehicle’s AC." compset="Wondrous" holdable="no">
     <comment/>
