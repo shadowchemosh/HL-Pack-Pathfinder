@@ -4077,14 +4077,18 @@ herofield[tLangsSpk].value += 1</eval>
     </thing>
   <thing id="cPUFearIns" name="Fearsome Insight" description="The dread’s connection to the fears and the subconscious grows and she gains a greater understanding of the mental faculties which regulate fear. This translates into an insight bonus to Intimidate equal to half her class level (minimum +1)." compset="ClSpecial" summary="+ CL/2 (Minimum 1) Insight bonus to Intimidate.">
     <usesource source="pPsiUn"/>
-    <eval phase="PreLevel" priority="5000"><![CDATA[var MyBonus as number
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-field[abValue].value += round(#levelcount[Dread]/2,0,1)
+      ~ Intimidate bonus equal to 1/2 level
+      field[abValue].value += maximum(round(field[xTotalLev].value/2,0,-1),1)
 
-MyBonus += field[abValue].value
-#applybonus[BonInsight,hero.childfound[skIntim],MyBonus]
+      #applybonus[BonInsight,hero.childfound[skIntim],field[abValue].value]
 
-field[abSumm].text = "+" & MyBonus & " Insight bonus to Intimidate."]]></eval>
+      field[abSumm].text = signed(field[abValue].value) & " Insight bonus to Intimidate."]]></eval>
     </thing>
   <thing id="cPUDevaTou" name="Devastating Touch" description="A dread is able to channel psionic energy from fear and nightmares into a touch that causes pain. To use this ability, a dread must make a melee touch attack as a standard action on a living target. If the attack hits, it deals 1d6 points of damage plus 1 point per class level. The dread does not add his Strength modifier to the damage of this attack." compset="ClSpecial">
     <fieldval field="abValue3" value="6"/>
