@@ -2671,7 +2671,7 @@ hero.child[ManeuvDef].field[Bonus].value += 2</eval>
     <eval phase="Final" priority="20000"><![CDATA[#situational[hero.child[ArmorClass], "+4 dodge bonus to AC against ranged attacks.", field[thingname].text]]]></eval>
     <exprreq message="Dex 13+ required" iserror="no"><![CDATA[child[aDEX].field[aFinalVal].value >= 13]]></exprreq>
     </thing>
-  <thing id="fMHUnblOpp" name="Unbalance Opponent" description="Opponent doesn&apos;t add Strength to attack, CMB and CMD\n\n{b}Benefit{/b}:  You can, with a successful combat maneuver, deny an opponent his Strength bonus to his attack rolls, CMB and CMD, for one round. This will not function on opponents a size category larger or more than you." compset="Feat" summary="Opponent doesn&apos;t add Strength to attack, CMB and CMD" uniqueness="useronce">
+  <thing id="fMHUnblOpp" name="Unbalance Opponent" description="Opponent doesn&apos;t add strength to attack, CMB and CMD\n\n{b}Benefit{/b}:  You can, with a successful combat maneuver, deny an opponent his Strength bonus to his attack rolls, CMB and CMD, for one round. This will not function on opponents a size category larger or more than you." compset="Feat" summary="Opponent doesn&apos;t add Strength to attack, CMB and CMD" uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
     <tag group="fCategory" tag="Combat"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -4944,8 +4944,10 @@ foreach pick in hero from BaseSkill where "Helper.SkCatCraft"
     <tag group="SpecType" tag="Skill"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="fCategory" tag="General"/>
-    <tag group="ChooseSrc2" tag="Thing"/>
+    <tag group="ChooseSrc2" tag="Hero"/>
     <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="User" tag="NoAutoName"/>
     <eval phase="PostLevel">doneif (field[usrChosen1].ischosen = 0)
 doneif (field[usrIsCheck].value = 0)
 #applybonus[BonTrait,field[usrChosen1].chosen,4]</eval>
@@ -5021,7 +5023,7 @@ doneif (field[usrIsCheck].value = 0)
     <eval phase="PreLevel" priority="10000">~ Add to our attack bonus
       hero.child[Attack].field[Bonus].value += 1</eval>
     </thing>
-  <thing id="facMHHunte" name="Hunter" description="The Hunter can come from any walk of life, background, and/or experience. They serve as a primary bastion against the ever-present threat of a supernatural incursion. The faction&apos;s strength lies in its ability to remain unknown by the general public. Hunters must stand fearless in the face of the supernatural.\n\n{b}Goal{/b}: The primary goal of a Hunter is to eliminate the supernatural. They hunt the supernatural and keep the innocent safe.\nHunters are a loose group of individuals and many work on their own. Groups of Hunters are not unknown, but they generally have their own leader.\n\n{b}Alignment{/b}: Any\nHunters can have any Alignment. Alignments can have their lines blurred when you are faced with the supernatural.\n\n{b}Faction Leader{/b}: \nNone, Hunters are a lose group of individuals and many work one their own. Groups of Hunters are not unknown, but they generally have their own leader.\n\n{b}Good Archetype Choice{/b}\nShadow Hunter" compset="Faction" summary="The Hunter can come from any walk of life, background, and/or experience." uniqueness="useronce">
+  <thing id="facMHHunte" name="Hunter" description="The Hunter can come from any walk of life, background, and/or experience. They serve as a primary bastion against the ever-present threat of a supernatural incursion. The faction&apos;s strength lies in its ability to remain unknown by the general public. Hunters must stand fearless in the face of the supernatural.\n\n{b}Goal{/b}: The primary goal of a Hunter is to eliminate the supernatural. \n\n{b}Gaining Fame{/b}: Hunt the supernatural and keep the innocent safe. \n\n{b}Alignment{/b}: Any\nAlignments can have their lines blurred when you are faced with the supernatural.\n\n{b}Faction Leader{/b}: None\nHunters are a lose group of individuals and many work one their own. Groups of Hunters are not unknown, but they generally have their own leader.\n\n{b}Good Archetype Choice{/b}\nShadow Hunter" compset="Faction" summary="{b}Goal{/b}: To eliminate the supernatural." uniqueness="useronce">
     <usesource source="D20Arcana"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
@@ -8443,20 +8445,20 @@ field[sbName].text = "Ordinary"]]></eval>
     </thing>
   <thing id="fMHTalente" name="Modern Talent" description="You gain a Talent from the Modern Hero class.\n\n{b}Benefit{/b}: You gain aTalent from the Modern Hero class." compset="Feat" summary="You gain a Talent from the Modern Hero class.">
     <usesource source="GRCMP2tMP3"/>
-    <tag group="fCategory" tag="General" name="General" abbrev="General"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Custom" tag="GRCMHMdTal" name="Modern Talents" abbrev="Talents"/>
+    <tag group="fCategory" tag="fCatTalent"/>
     <bootstrap thing="cfgMHModer">
       <containerreq phase="First" priority="400"><![CDATA[hero#Classes.ModHero<> 1]]></containerreq>
       </bootstrap>
-    <eval phase="Level" priority="10000"><![CDATA[      if (hero.tagis[Classes.ModHero] <> 1) then
-hero.childfound[cfgMHModer].field[cfgMax1].value += 1
-endif]]></eval>
     <eval phase="Level" priority="10000" index="2"><![CDATA[      if (hero.tagis[Classes.ModHero] <> 0) then
 hero.childfound[cHelpMdH].field[cGiveSpec].value += 1
 endif]]></eval>
     <eval phase="Level" priority="10000" index="3"><![CDATA[      if (hero.tagis[Classes.Ordinarie] <> 0) then
 hero.childfound[cHelpMHO].field[cGiveSpec].value += 1
+endif]]></eval>
+    <eval phase="Level" priority="10000"><![CDATA[      if (hero.tagis[Classes.ModHero] <> 1) then
+hero.childfound[cfgMHModer].field[cfgMax1].value += 1
 endif]]></eval>
     </thing>
   <thing id="flMHKlepto" name="Kleptomaniac" description="{b}Penalty{/b}: The hero just cannot seem to keep his hands off other people&apos;s stuff. \n\nYou must make a Willpower save (DC 10 + 1 per day of not stealing) each day. \n\nIf the save fails, the hero must steal something of value that day." compset="Flaw" summary="Inability to keep your hands off other people&apos;s stuff">
@@ -9917,7 +9919,7 @@ linkage[table].field[cSpec3rdSi].text = "Art of War"]]></eval>
     <tag group="AbilType" tag="Super"/>
     <tag group="SpecType" tag="Attack"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="fCategory" tag="Combat"/>
+    <tag group="fCategory" tag="GRSupernat" name="Supernatural" abbrev="Supernatural"/>
     </thing>
   <thing id="trMHHerita" name="Heritage" description="A heritage is someone who comes from a long line of family hunters. \n\n{b}Class Skills{/b}: You gain a +1 Trait bonus on Knowledge (arcana) and Survival skill and these skills are always a class skill for you.\n\n{b}Fame Bonus{/b}: +5" compset="Trait" summary="A heritage is someone who comes from a long line of family hunters." uniqueness="useronce">
     <usesource source="D20Arcana"/>
@@ -10093,9 +10095,9 @@ foreach pick in hero from BaseSkill where "!thingid.skIntim"
     <tag group="ChooseSrc1" tag="Thing"/>
     <tag group="ChooseSrc2" tag="Thing"/>
     <tag group="User" tag="Tracker"/>
-    <tag group="fCategory" tag="General" name="General" abbrev="General"/>
     <tag group="Usage" tag="Day"/>
     <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="KPRitual" name="Ritual" abbrev="Ritual"/>
     <eval phase="Render" priority="10000"><![CDATA[      doneif (tagis[Helper.FtDisable] <> 0)
 
       doneif (field[usrChosen2].ischosen = 0)
@@ -10120,9 +10122,9 @@ foreach pick in hero from BaseSkill where "!thingid.skIntim"
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ChooseSrc1" tag="Thing"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="fCategory" tag="Special"/>
     <tag group="StandardDC" tag="aCHA"/>
     <tag group="abSave" tag="Will"/>
+    <tag group="fCategory" tag="GRSupernat"/>
     <eval phase="Final" priority="20000"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
@@ -10137,7 +10139,7 @@ foreach pick in hero from BaseSkill where "!thingid.skIntim"
       field[trkMax].value += root.field[trkMax].value]]></eval>
     <exprreq message="Ability to channel energy required." iserror="no"><![CDATA[hero.tagis[HasAbility.xChannel] <> 0]]></exprreq>
     </thing>
-  <thing id="facMHOrdSe" name="Order of the Secret" description="Order of the Secret is an ancient and mysterious faction. Its origins are unknown, but there are references found of the order within the earliest of writings and lore.\n\n{b}Goal{/b}: The primary goal of Order of the Secret is to regulate the practice of magic. \n\n{b}Alignment{/b}: Any" compset="Faction" summary="Order of the Secret is an ancient and mysterious faction." uniqueness="useronce">
+  <thing id="facMHOrdSe" name="Order of the Secret" description="Order of the Secret is an ancient and mysterious faction. Its origins are unknown, but there are references found of the order within the earliest of writings and lore.\n\n{b}Goal{/b}: The primary goal of Order of the Secret is to regulate the practice of magic. \n\n{b}Gaining Fame{/b}: To keep the secrets of the order and arcane principles out of public view.  \n\n{b}Alignment{/b}: Any\n\n{b}Faction Leader{/b}: Uknown" compset="Faction" summary="{b}Goal{/b}: To regulate the practice of magic." uniqueness="useronce">
     <usesource source="D20Arcana"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
@@ -10391,18 +10393,10 @@ linkage[table].field[cSpec4thSi].text = "Revelation"]]></eval>
     <arrayval field="usrArray" index="1" value="Ordinary"/>
     <usesource source="GRCMP2tMP3"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="fCategory" tag="General" name="General" abbrev="General"/>
+    <tag group="fCategory" tag="fCatTalent"/>
     <bootstrap thing="cfgMHModer">
       <containerreq phase="First" priority="400"><![CDATA[hero#Classes.ModHero<> 1]]></containerreq>
       </bootstrap>
-    <eval phase="Level" priority="10000" index="3"><![CDATA[ ~ If we're disabled, do nothing
-      doneif (tagis[Helper.FtDisable] <> 0)  
-
-      if (field[usrIndex].value = 0) then
-      if (hero.tagis[Classes.ModHero] <> 0) then
-hero.childfound[cHelpMdH].field[cGiveSp2nd].value += 1
-endif
-endif]]></eval>
     <eval phase="Level" priority="10000" index="4"><![CDATA[ ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0) 
 
@@ -10425,6 +10419,14 @@ endif]]></eval>
       if (field[usrIndex].value = 1) then
       if (hero.tagis[Classes.Ordinarie] <> 1) then
 hero.childfound[cfgMHModer].field[cfgMax2].value += 1
+endif
+endif]]></eval>
+    <eval phase="Level" priority="10000" index="3"><![CDATA[ ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)  
+
+      if (field[usrIndex].value = 0) then
+      if (hero.tagis[Classes.ModHero] <> 0) then
+hero.childfound[cHelpMdH].field[cGiveSp2nd].value += 1
 endif
 endif]]></eval>
     </thing>
@@ -11061,22 +11063,24 @@ hero.child[AllKnow].field[BonComp].value += 1]]></eval>
     </thing>
   <thing id="mMPSpaceSt" name="Space suit" description="The standard space suit used by NASA and other space programs is a completely enclosed environment suit capable of sustaining life in extremes of temperature and a lack of breathable air. The suit is large and bulky, composed of a thick body suit and helmet with a transparent mask, all parts of which are capable of deflecting micro-meteors and other space-borne projectiles. Inside the suit, internal air tanks and environmental filters maintain temperature and pressure. Additionally, a communications system not only allows for radio transmissions to the space shuttle but also allows internal sensors to monitor biological functions that can be observed from mission control. The space suit is poor combat armor, but allows for movement and action in space." compset="Armor">
     <comment>Future MSRD</comment>
-    <fieldval field="gWeight" value="10"/>
-    <fieldval field="gSizeCost" value="12000"/>
+    <fieldval field="gWeight" value="35"/>
+    <fieldval field="gSizeCost" value="90000"/>
     <usesource source="GRCMP2tMP3"/>
     <tag group="ArmorAC" tag="7"/>
     <tag group="ArmorMaxDx" tag="0"/>
-    <tag group="ArmorCheck" tag="10"/>
+    <tag group="ArmorCheck" tag="8"/>
     <tag group="ArmorClass" tag="Heavy"/>
     <tag group="ArmorCateg" tag="Gauntlets"/>
     <tag group="ArmorCateg" tag="Slows"/>
-    <tag group="ArmorArcFl" tag="30"/>
-    <tag group="ArmorCateg" tag="SlowsEx"/>
+    <tag group="ArmorArcFl" tag="10"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="ArmorGroup" tag="MSRDMHTact"/>
     <tag group="EquipType" tag="MetalSome"/>
     <tag group="EquipType" tag="Leather"/>
     <tag group="EquipType" tag="Cloth"/>
+    <tag group="PieceArcFl" tag="10"/>
+    <tag group="SpecGroup" tag="HighTech"/>
+    <bootstrap thing="abMPSpaces"></bootstrap>
     </thing>
   <thing id="gMPDispGls" name="Display glasses" description="A logical advancement of video display and VR technology, display glasses provide on-the-go monitors that can be hooked up to everything from computer systems to televisions and other audiovideo equipment. \n\nEach pair of display glasses looks like a darkened pair of sunglasses and features one or two earpieces that wrap around the back of the ear. The glasses are semitransparent and allow the wearer to see both the display and the user&apos;s surroundings simultaneously." compset="Gear">
     <fieldval field="gCost" value="20"/>
@@ -16107,5 +16111,29 @@ field[livename].text = root.field[shortname].text & ",hardness (" & root.field[a
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="wSpecial" tag="Improvised"/>
     <tag group="EquipType" tag="Wood"/>
+    </thing>
+  <thing id="abMPSpaces" name="Spacesuit" description="{b}Capacity{/b} 25\n{b}Usage{/b} 1 charge/hour\n\nThis airtight suit of synthetic polymers includes a transparent, dome-like helmet that completely covers the wearer&apos;s head. A spacesuit is nearly identical in function to an HEV suit (see page 31), except that as long as the spacesuit is charged, it provides a bit more armor protection as well as complete protection from all radiation and exposure to vacuum. A spacesuit repairs damage to itself at the rate of 4d6 points of damage per charge consumed. It has hardness 6 and 60 hit points.\n\nA space suit is fitted with numerous small booster jets that grant the wearer a fly speed of 20 ft. (poor) in areas of zero gravity while the spacesuit is charged. The boosters impart no benefit in areas of high, low, or normal gravity.\n\n{b}Construction{/b}\n{b}Requirements{/b}: Craft Technological Arms and Armor, military lab; {b}Cost{/b} 45,000 gp" compset="Ability">
+    <fieldval field="actName2" value="Zero Gravity"/>
+    <fieldval field="trkMax" value="25"/>
+    <tag group="Usage" tag="Charges" name=" charges" abbrev=" charges"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="User" tag="Tracker" name="Modern Action Points" abbrev="Modern Action Points"/>
+    <tag group="AbilFunc" tag="ItemSpHelp" name="Specific Item Helper" abbrev="Specific Item Helper"/>
+    <tag group="StatblHide" tag="SQ" name="SQ" abbrev="SQ"/>
+    <bootstrap thing="xFly">
+      <containerreq phase="First" priority="600"><![CDATA[fieldval:abilAct2 <> 0]]></containerreq>
+      <autotag group="Maneuver" tag="Poor"/>
+      <autotag group="Value" tag="20"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      if (root.field[gIsEquip].value = 0) then
+        perform delete[Helper.ShowSpec]
+        endif
+
+      if (root.container.ishero = 0) then
+        if (root.parent.field[gIsEquip].value <> 0) then
+          perform assign[Helper.ShowSpec]
+          endif
+        endif]]></eval>
     </thing>
   </document>

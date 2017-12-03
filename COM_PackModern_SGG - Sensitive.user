@@ -4,9 +4,14 @@
   <thing id="fMPSGGScSt" name="Second Sight" description="You have opened your mind to the ley energy of psychic abilities.\n\n{b}Benefit{/b}: Select one psychic ability. Once made, this choice cannot be changed. You gain the use of the selected psychic ability. If you are a sensitive, you may use your intuition bonus in place of any skill check the psychic ability calls for. (This goes not expend a use of your intuition ability.)\n\n{b}Special{/b}: You may select this feat more than once, but selecting it a second time requires a Wisdom of 17, a third time, a Wisdom of 21, and the Wisdom prerequisite increases by +4 for each additional time you select the feat." compset="Feat" summary="You have opened your mind to the ley energy of psychic abilities.">
     <usesource source="MPRGGAnac"/>
     <tag group="Helper" tag="ShowSpec"/>
-    <tag group="fCategory" tag="MPSGGPsyc" name="Psychic" abbrev="Psychic"/>
+    <tag group="fCategory" tag="Psionic"/>
+    <tag group="User" tag="NoAutoName"/>
     <bootstrap thing="cfgMPSGGPs"></bootstrap>
     <eval phase="Final" priority="10000">hero.childfound[cfgMPSGGPs].field[cfgMax1].value += 1</eval>
+    <eval phase="PostLevel" priority="10000" index="3"><![CDATA[      doneif (tagis[Helper.FtDisable] <> 0)
+
+      ~Assign psychic skill unlock tag
+      perform hero.assign[Hero.OccSkUnloc]]]></eval>
     <eval phase="First" priority="25000" index="2"><![CDATA[      ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
 
@@ -24,6 +29,12 @@
     <tag group="Custom" tag="MPSGGPsych"/>
     <tag group="AllowRCust" tag="cfgMPSGGPs"/>
     <tag group="AbilType" tag="Super"/>
+    <eval phase="First" priority="450"><![CDATA[if (hero.tagis[source.OccultSkl] <> 0) then
+      perform hero.assign[Custom.abDowsing]
+endif]]></eval>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[if (hero.tagis[source.OccultSkl] <> 0) then
+        #trkmax[abDowsing] += 2
+endif]]></eval>
     </thing>
   <thing id="rcMPSGGMes" name="Mesmerism" description="You can send false information into the mind of a target, causing it to believe something that isn&apos;t true. This allows you to make Bluff checks to deceive (rather than to feint or send secret messages) at range against a target you can see. You do not have to speak to, or share a language with, your target though it must have an Int of 2 or greater. Using mesmerism is a standard action, regardless of how complex a lie you attempt to convince your target is true.\n\nIf you attempt to convince a target of the falsehood of something it can directly observe (such as claiming you are holding a banana, rather than a gun), the target may choose to resist your Bluff check with a Perception check (rather than a Sense Motive check). You suffer normal penalties for attempting to convince your target of unlikely or impossible lies, but gain no bonus for having proof of your lie. Mesmerism has no obvious visible or audible effects. \n\nSomeone observing you may make a Perception check opposed by your mesmerism check to realize you are intently focused on your target (and if your target begins acting in an obviously unusual way, such observers may conclude you are responsible, even if they do not know exactly how).\n\nWhile you are not dependent on language, trying to use mesmerism on a radically different mind is difficult. When attempting mesmerism on a creature of a different type than you are, you suffer a -4 penalty.\n\nIf your Bluff check against a target is successful, it is unaware that you influenced it (though a target can later contemplate its behavior, and how you benefited from it, and conclude you are somehow responsible).  If your Bluff check fails, the target makes a Will save (DC 10 +1/2 your total Bluff bonus) to realize you are somehow attempting to alter its perception of reality.  On a failed check, you suffer no penalty to future efforts to use mesmerism to Bluff the target." compset="RaceCustom" summary="You can send false information into the mind of a target" uniqueness="useronce">
     <comment>Anachronistic Adventurers - The Sensitive
@@ -64,6 +75,12 @@ www.supergeniusgames.com</comment>
     <tag group="Custom" tag="MPSGGPsych"/>
     <tag group="AllowRCust" tag="cfgMPSGGPs"/>
     <tag group="AbilType" tag="Super"/>
+    <eval phase="First" priority="450"><![CDATA[if (hero.tagis[source.OccultSkl] <> 0) then
+      perform hero.assign[Custom.abPsychome]
+endif]]></eval>
+    <eval phase="Final" priority="10000" index="2"><![CDATA[if (hero.tagis[source.OccultSkl] <> 0) then
+        #trkmax[abPsychome] += 2
+endif]]></eval>
     </thing>
   <thing id="rcMPSGGTrf" name="Thought Transference" description="You can read the thoughts and emotions of others, and broadcast your own thoughts directly into the minds of your targets. \n\nThis allows you to make certain skill checks at range against a target you can see. You may use thought transference to make Bluff checks to send secret messages (rather than to feint or lie) and Intimidate checks to influence attitude (rather than demoralize). You do not have to speak to, or share a language with, your target, though it must have an Int of 4 or greater. If you succeed at a Bluff check to send a secret message, you may also read a reply the target intentionally sends back to you. If you succeed at an Intimidate check, and wish the target to give you information, you receive the information in your mind with no need for the target to speak.\n\nUsing thought transference is a standard action. You are limited to what could reasonably be said in a single round of normal conversation with each use of this ability.\n\nWhile you are not dependent on language, trying to use thought transference on a radically different mind is difficult. When attempting thought transference on a creature of a different type than you are, you suffer a -4 penalty.\n\nIf you use thought transference to pass secret messages, the target is aware you are the source of the messages if your effort succeeds, and notices nothing if it fails. If you use thought transference to influence attitude, the target receives a Will save (DC 10 +1/2  your total Intimidate bonus) regardless if your effort is successful or a failure. On a failed check the target just has a vague sense of  unease,  and  its later attitude toward you does not change,nor do you take penalties for future attempts to intimidate it (though a target can later contemplate its behavior, and how you benefited from it, and conclude you are somehow responsible). If the save succeeds the target realizes you are somehow &quot;in its mind,&quot; and reacts to you as it would if you had made a conventional Intimidate check (even if it cannot explain exactly what you have done)." compset="RaceCustom" summary="You can read the thoughts and emotions of others" uniqueness="useronce">
     <comment>Anachronistic Adventurers - The Sensitive
