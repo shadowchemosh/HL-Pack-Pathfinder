@@ -407,6 +407,7 @@ www.supergeniusgames.com</comment>
     <tag group="Helper" tag="Secondary"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecSource" tag="arMSRDToug"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[var uncons as number
 var death as number
 var levelquart as number
@@ -440,6 +441,7 @@ www.supergeniusgames.com</comment>
     <tag group="Helper" tag="Secondary"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecSource" tag="arMSRDToug"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[var levelquart as number
 
 levelquart = field[xTotalLev].value / 8
@@ -461,6 +463,7 @@ www.supergeniusgames.com</comment>
     <tag group="SpecSource" tag="rGWyrGreen"/>
     <tag group="SpecSource" tag="anHippopot"/>
     <tag group="SpecSource" tag="arMSRDToug"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     </thing>
   <thing id="cMPSGGMayh" name="Mayhem" description="The tough can inflict surprisingly large amounts of mayhem. Whenever the tough makes an unarmed attack, uses an improvised weapon, or uses a weapon with a x3 or greater crit multiple, its threat range is doubled. \n\nThis talent does not stack with Improved Critical, or other effects that increase an attack&apos;s threat range. \n\nA tough must be at least 5th level before selecting this talent." compset="CustomSpec" summary="The tough can inflict surprisingly large amounts of mayhem" uniqueness="unique">
     <comment>Anachronistic Adventurers - The Tough
@@ -472,6 +475,7 @@ www.supergeniusgames.com</comment>
     <tag group="Helper" tag="Secondary"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecSource" tag="arMSRDToug"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <eval phase="PreAttr" priority="10000">var result as number
   
       result = hero.child[wUnarmed].delete[wCritMin.?]
@@ -643,6 +647,7 @@ www.supergeniusgames.com</comment>
     <tag group="Helper" tag="Secondary"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecSource" tag="arMSRDToug"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <eval phase="Final" priority="20000"><![CDATA[#situational[hero.child[skIntim], "Make an intimidate check when critically hit, or when damaging a foe with an Unarmed or Improvised strike, or weapon with 3x crit modifier.", field[thingname].text]]]></eval>
     </thing>
   <thing id="cMPSGGTDTD" name="Too Dumb To Die" description="The tough simply ignores damage they don&apos;t see coming. If the tough is flat-footed, has lost their Dex modifier to AC, or is flanked, they reduce the first hp damage taken each round by half their level.\n\nIn the case of being flanked, this only applies to damage dealt by a flanker." compset="CustomSpec" summary="The tough simply ignores damage they don&apos;t see coming" uniqueness="unique">
@@ -655,13 +660,14 @@ www.supergeniusgames.com</comment>
     <tag group="Helper" tag="Secondary"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecSource" tag="arMSRDToug"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
+    <eval phase="Final" priority="20000" index="2"><![CDATA[#situational[hero.child[ArmorClass], "Ignore first " & hero.child[cMPSGGTDTD].field[abValue].value & " damage when Flat-footed/Flanked", field[thingname].text]]]></eval>
     <eval phase="PostAttr" priority="10000"><![CDATA[var ignoreDam as number
 ignoreDam = #totallevelcount[] / 2
 ignoreDam = round(ignoreDam, 0, -1)
 field[abValue].value = ignoreDam
 
 field[livename].text = field[thingname].text & " (Ignore " & field[abValue].value & " damage Flat-footed/Flanked)"]]></eval>
-    <eval phase="Final" priority="20000" index="2"><![CDATA[#situational[hero.child[ArmorClass], "Ignore first " & hero.child[cMPSGGTDTD].field[abValue].value & " damage when Flat-footed/Flanked", field[thingname].text]]]></eval>
     </thing>
   <thing id="cMPSGGYBPm" name="Your Biggest Problem" description="If the tough attacks a foe with a melee attack, and foe does not take steps to defend itself or retaliate on its next turn (see full description), the tough gains a bonus to attack and damage rolls against the target on his next turn. \n\nThe tough demands that those they attacks pay attention to them, and can punish them if they don&apos;t.\n\nThis bonus increases by +1 for every 8 levels.\n\nA foe avoids triggering these bonuses if, before the tough&apos;s next turn, it takes a full defense action, a withdraw action, attacks the tough, makes the tough the target of a spell or effect, or includes the tough in the area of a spell or effect." compset="CustomSpec" summary="The tough demands that those they attack pay attention to them" uniqueness="unique">
     <comment>Anachronistic Adventurers - The Tough
@@ -673,6 +679,7 @@ www.supergeniusgames.com</comment>
     <tag group="Helper" tag="Secondary"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecSource" tag="arMSRDToug"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[var attbonus as number
 attbonus = (field[xTotalLev].value / 8) + 1
 attbonus = round(attbonus, 0, -1)
@@ -692,12 +699,7 @@ www.supergeniusgames.com</comment>
     <tag group="Usage" tag="Day"/>
     <tag group="SpecSource" tag="arMSRDToug"/>
     <tag group="User" tag="Tracker"/>
-    <eval phase="Level" priority="2500">var hp as number
-      hp = 0 + (herofield[tLevel].value / 5)
-      hp = round(hp, 0, -1)
-
-      ~ Add to our total charges.
-      field[trkMax].value += hp</eval>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <eval phase="Level" priority="10500" index="2"><![CDATA[if (#levelcount[MSRDTough] >= 2) then
       var levelhalf as number
 
@@ -707,6 +709,12 @@ www.supergeniusgames.com</comment>
       field[livename].text = field[thingname].text & " (+" & levelhalf & " Bonus)"
 
 endif]]></eval>
+    <eval phase="Level" priority="2500">var hp as number
+      hp = 0 + (herofield[tLevel].value / 5)
+      hp = round(hp, 0, -1)
+
+      ~ Add to our total charges.
+      field[trkMax].value += hp</eval>
     </thing>
   <thing id="cMPSGGWrth" name="Wrath" description="The tough can land a melee attack with enough ferocity to deal additional damage. When the tough makes a single melee attack as a standard action, they can add their Constitution or Charisma modifier (tough&apos;s choice) to the damage dealt." compset="CustomSpec" summary="Land a melee attack with enough ferocity to deal additional damage" uniqueness="unique">
     <comment>Anachronistic Adventurers - The Tough
@@ -718,6 +726,7 @@ www.supergeniusgames.com</comment>
     <tag group="Helper" tag="Secondary"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecSource" tag="arMSRDToug"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     </thing>
   <thing id="cMPSGGTANl" name="Tough As Nails" description="At 20th level the tough is so hard to put down he&apos;s often described as unkillable. \n\nOnce per round when an attack or effect would kill the tough, knock him unconscious, or render him helpless, the tough may make a Fortitude saving throw to take minimum damage (from an attack) or ignore an effect (if it would leave him helpless without dealing damage). \n\nThe saving throw&apos;s DC is equal to the DC of the effect if it normally allows a save, or 10 + character level (or 10 + caster level) of whoever created the effect if it does not normally allow a saving throw." compset="CustomSpec" summary="At 20th level the tough is so hard to put down he&apos;s often described as unkillable" uniqueness="unique">
     <comment>Anachronistic Adventurers - The Tough
@@ -2111,6 +2120,7 @@ www.supergeniusgames.com</comment>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="SpecSource" tag="arMPSGGTou"/>
     <tag group="SpecType" tag="DR" name="Damage Reduction" abbrev="Damage Reduction"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[      var DamBonus as number
       DamBonus = 0
       DamBonus = hero.child[xDamRd].field[abValue].value + 1
