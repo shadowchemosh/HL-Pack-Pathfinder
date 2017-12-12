@@ -5,6 +5,7 @@
     <fieldval field="reqCha" value="13"/>
     <usesource source="MPIAPL4IAg"/>
     <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="20000"><![CDATA[
       #situational[hero.child[skBluff], "+2 bonus on Bluff, Diplomacy, and Perform checks with the intention of seducing a target.", field[thingname].text]
       #situational[hero.child[skDiplo], "+2 bonus on Bluff, Diplomacy, and Perform checks with the intention of seducing a target.", field[thingname].text]]]></eval>
@@ -12,24 +13,28 @@
   <thing id="fMPIABkMkB" name="Black Market Bargain" description="You are especially adept at buying and selling items on the black market, and can pawn off stolen or illicit goods with great ease.\n\n{b}Benefit{/b}: When buying or selling an item on the black market, you are able to increase the sell value or decrease the Purchase price by 10%." compset="Feat" summary="When buying or selling an item on the black market, you are able to increase the sell value or decrease the Purchase price by 10%." uniqueness="useronce">
     <usesource source="MPIAPL4IAg"/>
     <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="fMPIACntSq" name="Country Squire" description="You have status in rural communities due to your large property ownership.\n\n{b}Prerequisites{/b}: Must own largest country estate in rural area (usually near a village)\n\n{b}Benefit{/b}: Characters with this feat gain a +2 to Diplomacy checks. In addition, you are considered to be a gentleman and you wield political power in the closest village (acting as a justice of the peace, selecting rectors, etc.)." compset="Feat" summary="+2 to Diplomacy checks." uniqueness="useronce">
     <usesource source="MPIAPL4IAg"/>
     <tag group="fCategory" tag="Upbringing"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="10000">#skillbonus[skDiplo] += 2</eval>
     </thing>
   <thing id="fMPIACuTtl" name="Courtesy Title" description="You are from a noble family or have married into one. Your father holds the true title.\n\n{b}Benefit{/b}: You gain a +2 to all Diplomacy checks and gain a +5 to wealth bonus. In some countries you are considered an aristocrat, while other countries (such as Britain) treat you as a respected commoner.\n\n{b}Special{/b}: If you take this feat at 1st level, you may choose whether you are part of a noble bloodline or are already married to a noble. If you take this feat after character creation, you must marry into a noble family to gain this feat." compset="Feat" summary="+2 to Diplomacy checks." uniqueness="useronce">
     <usesource source="MPIAPL4IAg"/>
     <tag group="Custom" tag="GRCMPWealt"/>
     <tag group="fCategory" tag="Upbringing"/>
-    <eval phase="PreLevel" priority="10000">#skillbonus[skDiplo] += 2</eval>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="1000" index="3">~add 1 uses to our Wealth Bonus
       hero.childfound[abGRCMHWBn].field[trkMax].value += 5</eval>
+    <eval phase="PreLevel" priority="10000">#skillbonus[skDiplo] += 2</eval>
     </thing>
   <thing id="fMPIAExFtr" name="Exotic Features" description="Whether it is your unusual accent, physical features, or lack of social etiquette, you are viewed as a foreigner. Men feel overprotective of you and tend to underestimate you..\n\n{b}Prerequisites{/b}: Female only, Cha 13+.\n\n{b}Benefit{/b}: Benefit: When dealing with a male PC or NPC, you gain a +2 to Bluff, Diplomacy, and Sense Motive checks." compset="Feat" summary="+2 to Bluff, Diplomacy, and Sense Motive checks when dealing with a male PC or NPC." uniqueness="useronce">
     <fieldval field="reqCha" value="13"/>
     <usesource source="MPIAPL4IAg"/>
     <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="20000"><![CDATA[#situational[hero.child[skBluff], "+2 to Bluff, Diplomacy, and Sense Motive checks against males.", field[thingname].text]
 
 #situational[hero.child[skDiplo], "+2 to Bluff, Diplomacy, and Sense Motive checks against males.", field[thingname].text]
@@ -41,12 +46,7 @@
     <usesource source="MPIAPL4IAg"/>
     <tag group="fCategory" tag="General"/>
     <tag group="Helper" tag="AnimCompOK" name="AnimCompOK" abbrev="AnimCompOK"/>
-    <eval phase="PostLevel" priority="15000" index="2"><![CDATA[      if (hero.tagis[source.GRCMP2MSR] <> 0) then
-      #skillbonus[skMSRDResr] += 2
-      if (#skillranks[skMSRDResr] >= 10) then
-        #skillbonus[skMSRDResr] += 2
-        endif
-        endif]]></eval>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="15000"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
@@ -57,6 +57,12 @@
         endif]]>
       <after name="Suppress Innate Skills"/>
       </eval>
+    <eval phase="PostLevel" priority="15000" index="2"><![CDATA[      if (hero.tagis[source.GRCMP2MSR] <> 0) then
+      #skillbonus[skMSRDResr] += 2
+      if (#skillranks[skMSRDResr] >= 10) then
+        #skillbonus[skMSRDResr] += 2
+        endif
+        endif]]></eval>
     </thing>
   <thing id="fMPIAFlFrt" name="Fool’s Fortune" description="For you, things have a way of coming out for the best.\n\n{b}Benefit{/b}: Once per day, re-roll one attack roll, saving throw, skill check, or ability check and choose the better result." compset="Feat" summary="Once per day, re-roll one attack roll, saving throw, skill check, or ability check." uniqueness="useronce">
     <fieldval field="trkMax" value="1"/>
@@ -64,16 +70,19 @@
     <tag group="Usage" tag="Day"/>
     <tag group="fCategory" tag="General"/>
     <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="fMPIAGentr" name="Gentry" description="You have a British title. While not considered part of the Peerage, you are addressed as “Sir” or “Dame” and are granted certain noble privileges. Baronets and Knights are considered gentry; only Baronet is an inherited title..\n\n{b}Benefit{/b}: Characters with this feat gain a +2 to Diplomacy checks. In addition, they are considered members of the upper middle class, and are awarded all perks appropriate to their station.\n\n{b}Special{/b}: Characters that gain this feat at character creation may choose to be a knight or a baronet. Characters that acquire this feat during play become knights." compset="Feat" summary="+2 to Diplomacy checks." uniqueness="useronce">
     <usesource source="MPIAPL4IAg"/>
     <tag group="fCategory" tag="Upbringing"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="10000">#skillbonus[skDiplo] += 2</eval>
     </thing>
   <thing id="fMPIAGnNat" name="Gone Native" description="You’ve spent so much time in a particular exotic locale that you’ve started to understand and emulate their ways. This has given you greater expertise in this particular culture, but has a negative impact on those who feel you’ve turned your back on their ways.\n\n{b}Prerequisites{/b}: Speak Language in the culture you’re adopting.\n\n{b}Benefit{/b}: You gain a +2 to all Diplomacy and Knowledge checks that involve the culture you’ve adopted. In addition, you suffer no Attitude penalties that would normally be given to someone from your original culture. Unfortunately, members of your original culture treat you as one Attitude level lower than they normally would." compset="Feat" summary="+2 to all Diplomacy, Gather Information, and Knowledge checks that involve the culture you’ve adopted." uniqueness="useronce">
     <usesource source="MPIAPL4IAg"/>
     <tag group="User" tag="NeedDomain"/>
     <tag group="fCategory" tag="Story"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="20000"><![CDATA[#situational[hero.child[skDiplo], "+2 bonus to Diplomacy and Knowledge checks involving the " & field[domDomain].text & " culture.", field[thingname].text]
 
 #situational[hero.child[skKnowLoc], "+2 bonus to Diplomacy and Knowledge checks involving the " & field[domDomain].text & " culture.", field[thingname].text]]]></eval>
@@ -83,20 +92,23 @@
     <usesource source="MPIAPL4IAg"/>
     <tag group="Custom" tag="GRCMPWealt"/>
     <tag group="fCategory" tag="Upbringing"/>
-    <eval phase="PreLevel" priority="10000">#skillbonus[skDiplo] += 2</eval>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="1000" index="3">~add 1 uses to our Wealth Bonus
       hero.childfound[abGRCMHWBn].field[trkMax].value += 5</eval>
+    <eval phase="PreLevel" priority="10000">#skillbonus[skDiplo] += 2</eval>
     <pickreq thing="fMPIACuTtl"/>
     </thing>
   <thing id="fMPIAPrfRc" name="Perfect Recall" description="You remember everything you’ve experienced.\n\n{b}Prerequisites{/b}: Int 16+\n\n{b}Benefit{/b}: You can recall everything you’ve seen, read or experienced perfectly. If you forget some detail your character should remember, you can ask the GM to remind you. You get a +2 bonus on any skill rolls for which rote memorization is useful (at the GM’s judgment)." compset="Feat" summary="+2 bonus on all Bluff, Diplomacy, and Perform checks made with the intention of seducing an appropriate NPC target." uniqueness="useronce">
     <fieldval field="reqInt" value="16"/>
     <usesource source="MPIAPL4IAg"/>
     <tag group="fCategory" tag="General"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="fMPIAServa" name="Servant" description="You are part of a household staff and treated as practically invisible. As a result, people tend not to question your assertions or motives.\n\n{b}Benefit{/b}: You get a +2 to Bluff and Diplomacy checks. If you have 10 or more ranks in one of these skills, the bonus increases to +4 for that skill." compset="Feat" summary="You get a +2 to Bluff and Diplomacy checks." uniqueness="useronce">
     <usesource source="MPIAPL4IAg"/>
     <tag group="Helper" tag="AnimCompOK" name="AnimCompOK" abbrev="AnimCompOK"/>
     <tag group="fCategory" tag="Story"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="15000"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
@@ -116,21 +128,25 @@
   <thing id="arMPIACrzo" name="Cryptozoologist" description="Based on the MSRD: Xenophile (Class)" compset="ClassVary" uniqueness="unique">
     <usesource source="GRCMP2tMP3"/>
     <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <link linkage="varies" thing="cHelpMdH"/>
     </thing>
-  <thing id="cMPIACrtlr" name="Cryptolore" description="A Cryptozoologist can make a Knowledge check to identify certain characteristics of a cryptid, including any special attacks, special qualities, or vulnerabilities. In general, the DC of the Knowledge check equals 10 + the cryptid’s Hit Dice. A successful check allows the Cryptozoologist to unlock a single fact about the cryptid. For every 5 points by which her check result exceeds the DC, the Cryptozoologist learns another piece of useful information. \n\nThe type of Knowledge check depends on the cryptid’s creature type, as shown below: \n\nKnowledge (arcana): Fey, magical beasts. \n\nKnowledge (earth and life sciences): Aberrations, animals, dragons, elementals, giants, humanoids, monstrous humanoids, oozes, plants, vermin. \n\nKnowledge (technology): Constructs. \n\nKnowledge (religion): Outsiders, undead." compset="CustomSpec" summary="Knowledge check to identify certain characteristics of a cryptid" uniqueness="unique">
+  <thing id="cMPIACrtlr" name="Cryptolore" description="{b}Benefit{/b}: A Cryptozoologist can make a Knowledge check to identify certain characteristics of a cryptid, including any special attacks, special qualities, or vulnerabilities. In general, the DC of the Knowledge check equals 10 + the cryptid’s Hit Dice. A successful check allows the Cryptozoologist to unlock a single fact about the cryptid. For every 5 points by which her check result exceeds the DC, the Cryptozoologist learns another piece of useful information. \n\nThe type of Knowledge check depends on the cryptid’s creature type, as shown below: \n\n{b}Knowledge (arcana){/b}: Fey, magical beasts. \n{b}Knowledge (earth and life sciences){/b}: Aberrations, animals, dragons, elementals, giants, humanoids, monstrous humanoids, oozes, plants, vermin. \n{b}Knowledge (technology){/b}: Constructs. \n{b}Knowledge (religion){/b}: Outsiders, undead." compset="CustomSpec" summary="Knowledge check to identify certain characteristics of a cryptid" uniqueness="unique">
     <usesource source="GRCMP2tMP3"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="SpecSource" tag="arMPIACrzo"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="cMPIACrypt" name="Cryptozoologist" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+  <thing id="cMPIACrypt" name="Cryptozoologist" description="{b}Benefit{/b}: The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\n{b}Special{/b}: This may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
     <fieldval field="shortname" value="Crypto"/>
     <usesource source="GRCMP2tMP3"/>
     <tag group="Helper" tag="Quaternary" name="Quaternary" abbrev="Quaternary"/>
     <tag group="ClsCountAs" tag="arMPIACrzo" name="Cryptozoologist" abbrev="Crypto"/>
     <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
     <tag group="Helper" tag="SpecUp" name="SpecUp" abbrev="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="2147483647"><![CDATA[        ~ we'll overwrite the secondary abilities' expression, since we need
         ~ to allow it to choose the abilities of our associated archetype
 
@@ -146,7 +162,7 @@
         ~ Now replace the old expresson with our modified one
         linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
     </thing>
-  <thing id="cMPIAFavEn" name="Cryptotype" description="A Cryptozoologist selects a creature type from the ranger favored enemies table. He gains a +2 bonus on Bluff, Knowledge, Perception, Sense Motive, and Survival checks against creatures of his selected type. Likewise, he gets a +2 bonus on weapon attack and damage rolls against them. \n\nAny time this training is taken, the Cryptozoologist may select an additional Cryptotype.\n\nIf the Cryptozoologist chooses humanoids or outsiders as a favored enemy, he must also choose an associated subtype. (Note that there are other types of humanoid to choose from-those called out specifically on the table below are merely the most common.) If a specific creature falls into more than one category of favored enemy, the Cryptozoologist&apos;s bonuses do not stack; he simply uses whichever bonus is higher." compset="CustomSpec" summary="The Cryptozoologist selects a cryptid type as his favored cryptid">
+  <thing id="cMPIAFavEn" name="Cryptotype" description="{b}Benefit{/b}: A Cryptozoologist selects a creature type from the ranger favored enemies table. He gains a +2 bonus on Bluff, Knowledge, Perception, Sense Motive, and Survival checks against creatures of his selected type. Likewise, he gets a +2 bonus on weapon attack and damage rolls against them. \n\nAny time this training is taken, the Cryptozoologist may select an additional Cryptotype.\n\nIf the Cryptozoologist chooses humanoids or outsiders as a favored enemy, he must also choose an associated subtype. (Note that there are other types of humanoid to choose from-those called out specifically on the table below are merely the most common.) If a specific creature falls into more than one category of favored enemy, the Cryptozoologist&apos;s bonuses do not stack; he simply uses whichever bonus is higher." compset="CustomSpec" summary="The Cryptozoologist selects a cryptid type as his favored cryptid">
     <fieldval field="usrCandid1" value="component.BaseCustUs &amp; !Helper.Secondary "/>
     <fieldval field="actName" value="Cryptotype"/>
     <usesource source="GRCMP2tMP3"/>
@@ -156,14 +172,8 @@
     <tag group="SpecSource" tag="arMPIACrzo" name="Cryptozoologist" abbrev="Cryptozoologist"/>
     <tag group="ChooseSrc1" tag="Thing" name="All Things" abbrev="All Things"/>
     <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
-    <eval phase="Level" priority="10000" index="3"><![CDATA[if (field[abilActive].value <> 0) then
-hero.child[Attack].field[Bonus].value += 2
-endif]]></eval>
-    <eval phase="Level" priority="10000" index="4"><![CDATA[if (field[abilActive].value <> 0) then
-foreach pick in hero from BaseWep 
-   #extradamage[eachpick,"+2",field[livename].text]
-   nexteach
-endif]]></eval>
+    <tag group="abCategory" tag="GRCModTrai"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[      doneif (field[usrChosen1].ischosen = 0)
       
       var checkhas as string
@@ -192,8 +202,16 @@ endif]]></eval>
       #skillbonus[skPercep] += 2
       #skillbonus[skSenseMot] += 2
 endif]]></eval>
+    <eval phase="Level" priority="10000" index="3"><![CDATA[if (field[abilActive].value <> 0) then
+hero.child[Attack].field[Bonus].value += 2
+endif]]></eval>
+    <eval phase="Level" priority="10000" index="4"><![CDATA[if (field[abilActive].value <> 0) then
+foreach pick in hero from BaseWep 
+   #extradamage[eachpick,"+2",field[livename].text]
+   nexteach
+endif]]></eval>
     </thing>
-  <thing id="cMPIACpRes" name="Cryptoresistance" description="A Cryptozoologist adds a competence bonus equal to one-half his class level on saving throws to resist the extraordinary, spell-like, or supernatural attacks of cryptids." compset="CustomSpec" summary="A bonus equal to one-half his class level on saving throws" uniqueness="unique">
+  <thing id="cMPIACpRes" name="Cryptoresistance" description="{b}Benefit{/b}: A Cryptozoologist adds a competence bonus equal to one-half his class level on saving throws to resist the extraordinary, spell-like, or supernatural attacks of cryptids." compset="CustomSpec" summary="A bonus equal to one-half his class level on saving throws" uniqueness="unique">
     <fieldval field="actName" value="Save Bonus"/>
     <usesource source="GRCMP2tMP3"/>
     <tag group="User" tag="Activation"/>
@@ -201,13 +219,15 @@ endif]]></eval>
     <tag group="User" tag="NoAutoName"/>
     <tag group="SpecSource" tag="arMPIACrzo"/>
     <tag group="AbilType" tag="Extra"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[if (field[abilActive].value <> 0) then
      field[abValue].value += round(#totallevelcount[]/2,0,-1)
       field[livename].text = field[thingname].text & " +" & field[abValue].value
       hero.child[svAll].field[Bonus].value += field[abValue].value
 endif]]></eval>
     </thing>
-  <thing id="cMPIACypAC" name="Cryptodefense" description="A Cryptozoologist adds a competence bonus equal to one-half his class level to AC against cryptids." compset="CustomSpec" summary="A bonus equal to one-half his class level to AC" uniqueness="unique">
+  <thing id="cMPIACypAC" name="Cryptodefense" description="{b}Benefit{/b}: A Cryptozoologist adds a competence bonus equal to one-half his class level to AC against cryptids." compset="CustomSpec" summary="A bonus equal to one-half his class level to AC" uniqueness="unique">
     <fieldval field="actName" value="AC Bonus"/>
     <usesource source="GRCMP2tMP3"/>
     <tag group="Helper" tag="Secondary"/>
@@ -215,6 +235,8 @@ endif]]></eval>
     <tag group="SpecSource" tag="arMPIACrzo"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="User" tag="Activation"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[if (field[abilActive].value <> 0) then
      field[abValue].value += round(#totallevelcount[]/2,0,-1)
       field[livename].text = field[thingname].text & " +" & field[abValue].value

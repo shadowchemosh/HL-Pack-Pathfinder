@@ -41,8 +41,8 @@
     </thing>
   <thing id="fMPBBOvShd" name="Over the Shoulder" description="{b}Benefit{/b}: If you miss your target due to concealment, you can reroll the concealment miss chance once to see if you actually hit." compset="Feat" summary="Reroll the concealment miss." uniqueness="useronce">
     <usesource source="MPRPGOBB"/>
-    <tag group="fCategory" tag="Combat"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="fCategory" tag="Perform"/>
     <pickreq thing="fDeadAim"/>
     </thing>
   <thing id="fMPBBRfSpn" name="Rifle Spin" description="{b}Benefit{/b}: You can fire a single shot rifle one handed without the -4 attack modifier." compset="Feat" summary="You can fire a single shot rifle one handed without the -4 attack modifier." uniqueness="useronce">
@@ -338,17 +338,28 @@
     <link linkage="varies" thing="cHelpMdH"/>
     <eval phase="First" priority="500">perform hero.childfound[cHelpMdH].assign[sClass.cHelpClr]</eval>
     </thing>
-  <thing id="tmMPBBZbOk" name="Zombi, Okokiyat" description="This shuffling zombie is a moldy corpse devoid of any signs of intelligence.\n\nOkokiyat zombies are created through voodoo magic by sculpting an effigy (an ouanga) out of wax or some other substance. The ouanga is then placed in a coffin or some other place of confinement, where the bokor uses it to control the okokiyat zombie." compset="Template" summary="This shuffling zombie is a moldy corpse devoid of any signs of intelligence." uniqueness="unique">
+  <thing id="tmMPBBZbOk" name="Zombi, Okokiyat" description="This shuffling zombie is a moldy corpse devoid of any signs of intelligence.\n\n{b}Creating an Okokiyat zombies{/b}&quot;Okokiyat zombies&quot; are created through voodoo magic by sculpting an effigy (an ouanga) out of wax or some other substance. The ouanga is then placed in a coffin or some other place of confinement, where the bokor uses it to control the okokiyat zombie.\n{b}Challenge Rating{/b}: This depends on the creature&apos;s new total number of Hit Dice.\n{b}Alignment{/b}: Always neutral evil.\n{b}Type{/b}: The  creature&apos;s type changes to undead. It retains any subtype except for alignment subtypes (such as good) and subtypes that indicate kind. It does not gain the augmented subtype. It uses all the base creature&apos;s statistics and special abilities except as noted here.\n{b}Armor Class{/b}: Natural armor is based on the Okokiyat zombies&apos;s size.\n{b}Hit Dice{/b}: Drop HD gained from class levels (minimum of 1) and change racial HD to d8s. Okokiyat zombies gain a number of additional HD. Okokiyat zombies use their Charisma modifiers to determine bonus hit points (instead of Constitution).\n{b}Saves{/b}: Base save bonuses are Fort +1/3 HD, Ref +1/3 HD, and Will +1/2 HD + 2.\n{b}Defensive Abilities{/b}: Okokiyat zombies lose their defensive abilities and gain all of the qualities and immunities granted by the undead type. Okokiyat zombies gain DR 10/piercing.\n{b}Attacks{/b}: A zombie retains all the natural weapons, manufactured weapon attacks, and weapon proficiencies of the base creature. It also gains a slam attack that deals damage based on the zombie&apos;s size, but as if it were one size category larger than its actual size (see pages 301–302).\n{b}Special Attacks{/b}: A zombie retains none of the base creature&apos;s special attacks.\n{b}Abilities{/b}: Str +2, Dex –2. A zombie has no Con or Int score, and its Wis and Cha become 10.\n{b}BAB{/b}: A zombie&apos;s base attack is equal to 3/4 its Hit Dice.\n{b}Skills{/b}: A zombie has no skill ranks.\n{b}Feats{/b}: A zombie loses all feats possessed by the base creature, and does not gain feats as its Hit Dice increase, but it does gain Toughness as a bonus feat.\n{b}Special Qualities{/b}: A zombie loses most special qualities of the base creature. It retains any extraordinary special qualities that improve its melee or ranged attacks. A zombie gains the following special quality." compset="Template" summary="This shuffling zombie is a moldy corpse devoid of any signs of intelligence." uniqueness="unique">
     <fieldval field="tmSTR" value="2"/>
     <fieldval field="tmDEX" value="-2"/>
     <fieldval field="tmReplHD" value="8"/>
     <fieldval field="tmReplRaHD" value="8"/>
+    <fieldval field="tmInfHD" value="Drop class levels, all become d8s"/>
+    <fieldval field="tmHDSides" value="8"/>
     <usesource source="MPRPGOBB"/>
-    <tag group="TemplHelp" tag="Acquired" name="Acquired" abbrev="Acquired"/>
-    <tag group="TemplHelp" tag="NoClasses" name="NoClasses" abbrev="NoClasses"/>
     <tag group="OverType" tag="tpUndead" name="Undead" abbrev="Undead"/>
     <tag group="Helper" tag="NoTypeAbil" name="No Type Abilities" abbrev="No Type Abilities"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="TemplHelp" tag="NoClasses" name="NoClasses" abbrev="NoClasses"/>
+    <tag group="TemplHelp" tag="Acquired" name="Acquired" abbrev="Acquired"/>
+    <tag group="AlgnReq" tag="NeutEvil"/>
+    <tag group="TemplHelp" tag="Inherited"/>
+    <tag group="ClVaryName" tag="Append"/>
+    <bootstrap thing="fToughness">
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <autotag group="Value" tag="60"/>
+      </bootstrap>
     <bootstrap thing="xDamRdP">
       <autotag group="SpecSource" tag="tmZombie"/>
       <autotag group="Value" tag="10"/>
@@ -363,112 +374,13 @@
       <autotag group="Helper" tag="NatTwoHand"/>
       <autotag group="Value" tag="1"/>
       </bootstrap>
+    <eval phase="First" priority="530" index="3">call ZomHD</eval>
     <eval phase="First"><![CDATA[
-      ~ Many races and classes bootstrap feats, so go through them disabling
-      ~ them all - except Toughness!
-      foreach pick in hero from BaseFeat where "!thingid.fToughness & !Helper.ProfGroup"
-        perform eachpick.assign[Helper.FtDisable]
-        nexteach
-
-      ~ Disable all special abilities apart from the ones that we bootstrap
       var searchexpr as string
-      searchexpr = "!component.BaseFeat & !SpecSource.tmZombie & !SpecType.Movement"
-        foreach pick in hero from Ability where searchexpr
-          perform eachpick.assign[Helper.SpcDisable]
-          nexteach
+      searchexpr = "!component.BaseFeat & !thing.user_added & !(SpecSource.tmZombie | SpecSource.tmMagus | SpecSource.tmZomCurse | SpecSource.tmFastZomb | SpecSource.tmZomFast | SpecSource.tmZomRelen | SpecSource.tmZomAlche | SpecSource.tmPlagZomb | SpecSource.tmZomPlagu | SpecSource.tmZomGasbu | SpecSource.tmZomBrain) & !SpecType.MoveOther & !SpecType.Movement & !thingid.typUndead"
 
-      ~ Go over all weapons, deleting stuff like weapon focus and
-      ~ improved natural attack from them - these tags are often just
-      ~ bootstrapped directly onto the weapon
-      foreach pick in hero from BaseWep
-        perform eachpick.delete[Broadcast.?]
-        nexteach]]></eval>
-    <eval phase="PreLevel" priority="10000" index="2"><![CDATA[
-      var result as number
-
-      ~ bonus to natural armor based on size
-      var bonus as number
-      if (hero.tagis[Size.Small] <> 0) then
-        bonus = 1
-      elseif (hero.tagis[Size.Medium] <> 0) then
-        bonus = 2
-      elseif (hero.tagis[Size.Large] <> 0) then
-        bonus = 3
-      elseif (hero.tagis[Size.Huge] <> 0) then
-        bonus = 4
-      elseif (hero.tagis[Size.Gargantuan] <> 0) then
-        bonus = 7
-      elseif (hero.tagis[Size.Colossal] <> 0) then
-        bonus = 11
-        endif
-      hero.child[mNatural].field[Bonus].value += bonus
-
-      ~ We don't have an INT score
-      result = hero.child[aINT].assign[Helper.NoScore]
-
-      ~ Force our Wisdom to 10 and our Charisma to 10
-      hero.child[aWIS].field[aNormForce].value = 10
-      hero.child[aCHA].field[aNormForce].value = 10
-
-      var hd as number
-      hd = hero.tagcount[Hero.HitDice] - hero.tagcount[Classes.?]
-
-      ~ Use the number of HD to calculate CR
-      var cr as number
-      if (hd <= 1) then
-        cr = -2
-      elseif (hd <= 2) then
-        cr = 0
-      elseif (hd <= 4) then
-        cr = 1
-      elseif (hd <= 6) then
-        cr = 2
-      elseif (hd <= 10) then
-        cr = 3
-      elseif (hd <= 14) then
-        cr = 4
-      elseif (hd <= 16) then
-        cr = 5
-      else
-        cr = 6
-        endif
-      herofield[tCR].value = cr]]></eval>
-    <eval phase="First" priority="530" index="3"><![CDATA[
-      ~if we have no racial HD, add one to our template
-      if (hero.tagcount[Hero.HitDice] = 0) then
-        field[tmHitDice].value += 1
-        endif
-
-      ~at this timing, the size isn't set up on the hero yet, so we'll look up the Race's size
-      perform hero.findchild[BaseRace].setfocus
-      doneif (state.isfocus = 0)
-
-      var racesize as number
-      racesize = focus.tagvalue[RaceSize.?]
-      if (racesize > 10) then
-        racesize = (racesize - 10) * -1
-        endif
-
-      ~ Apply modifiers to the race size
-      racesize += focus.field[rSizeMod].value
-
-      ~now, look up that size on a table to figure out how many additional HD to add
-      if (racesize < -1) then
-        ~+0
-      elseif (racesize <= 0) then
-        field[tmHitDice].value += 1
-      elseif (racesize = 1) then
-        field[tmHitDice].value += 2
-      elseif (racesize = 2) then
-        field[tmHitDice].value += 4
-      elseif (racesize = 3) then
-        field[tmHitDice].value += 6
-      else
-        field[tmHitDice].value += 10
-        endif]]></eval>
-    <eval phase="Final" priority="9000" index="4">~ Delete all maneuverability tags from flight
-      perform hero.childfound[xFly].delete[Maneuver.?]
-      perform hero.childfound[xFly].assign[Maneuver.Clumsy]</eval>
+      call ZomAbils]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2">call ZomChanges</eval>
     <prereq message="Undead type forbidden." iserror="no">
       <validate><![CDATA[
         ~once we've been selected, we're fine (since this makes the creature undead).
@@ -932,7 +844,7 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="sClass" tag="cHelpClr"/>
     </thing>
-  <thing id="cMPBBChNE" name="Channel Negitive Energy" description="Channel negative energy to injure the living and heal the undead.\n\nYou can command undead Charisma modifier + 3 times per day." compset="CustomSpec" summary="You gain the ability to Channel Negitive Energy" uniqueness="unique">
+  <thing id="cMPBBChNE" name="Channel Negitive Energy" description="{b}Benefit{/b}: Channel negative energy to injure the living and heal the undead.\n\nYou can command undead Charisma modifier + 3 times per day." compset="CustomSpec" summary="You gain the ability to Channel Negitive Energy" uniqueness="unique">
     <fieldval field="shortname" value="Channel Negitive Energy"/>
     <usesource source="MPRPGOBB"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
@@ -968,62 +880,68 @@
 
       hero.child[xChannel].field[abValue].value += field[xTotalLev].value</eval>
     </thing>
-  <thing id="cMPBBCrZom" name="Create Zombi" description="When casting animate dead, the Bokor can choose to create Okokiyat zombies instead of normal zombies. The Bokor can also cast animate dead spontaneously, trading any prepared spell or spell slot of equivalent level or higher for it." compset="CustomSpec" summary="Create Okokiyat zombies instead of normal zombies" uniqueness="unique">
+  <thing id="cMPBBCrZom" name="Create Zombi" description="{b}Benefit{/b}: When casting animate dead, the Bokor can choose to create Okokiyat zombies instead of normal zombies. The Bokor can also cast animate dead spontaneously, trading any prepared spell or spell slot of equivalent level or higher for it." compset="CustomSpec" summary="Create Okokiyat zombies instead of normal zombies" uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
     <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <pickreq thing="cMPBBFsAn"/>
     </thing>
-  <thing id="cMPBBFsAn" name="Faster Animation" description="The Bokor can cast create zombie in 10 minutes rather than an hour." compset="CustomSpec" summary="The Bokor can cast create zombie in 10 minutes rather than an hour." uniqueness="unique">
+  <thing id="cMPBBFsAn" name="Faster Animation" description="{b}Benefit{/b}: The Bokor can cast create zombie in 10 minutes rather than an hour." compset="CustomSpec" summary="The Bokor can cast create zombie in 10 minutes rather than an hour." uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
     <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <pickreq thing="cMPBBZbPwd"/>
     </thing>
-  <thing id="cMPBBEyeZ" name="Eyes of Zombi" description="The Bokor gains the Blindsight ability with a range of 30 feet, allowing him to sense others through the body heat they emit. The Bokor is unable to use the Blindsight to target any creature that doesn’t radiate body heat (including most undead and constructs and certain elementals)." compset="CustomSpec" summary="Blindsight ability with a range of 30 feet" uniqueness="unique">
+  <thing id="cMPBBEyeZ" name="Eyes of Zombi" description="{b}Benefit{/b}: The Bokor gains the Blindsight ability with a range of 30 feet, allowing him to sense others through the body heat they emit. The Bokor is unable to use the Blindsight to target any creature that doesn’t radiate body heat (including most undead and constructs and certain elementals)." compset="CustomSpec" summary="Blindsight ability with a range of 30 feet" uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <bootstrap thing="rBlindSi"></bootstrap>
     <pickreq thing="cMPBBFsAn"/>
     </thing>
-  <thing id="cMPBBFgZb" name="Fangs of Zombi" description="The Bokor develops poisonous fangs. These fangs can be folded back when not in use and are not readily apparent. The Bokor can deliver a poisonous bite attack for 1d4 points of damage. In addition, the fangs deliver a poison that inflicts 1d6 points of primary Strength damage and 1d6 points of secondary Strength damage. The DC for the Fortitude save is 15 + the Bokor’s Constitution bonus. This attack is subject to all the usual rules affecting natural weaponry." compset="CustomSpec" summary="The Bokor develops poisonous fangs" uniqueness="unique">
+  <thing id="cMPBBFgZb" name="Fangs of Zombi" description="The Bokor develops poisonous fangs. \n\n{b}Benefit{/b}: These fangs can be folded back when not in use and are not readily apparent. The Bokor can deliver a poisonous bite attack for 1d4 points of damage. In addition, the fangs deliver a poison that inflicts 1d6 points of primary Strength damage and 1d6 points of secondary Strength damage. The DC for the Fortitude save is 15 + the Bokor’s Constitution bonus. This attack is subject to all the usual rules affecting natural weaponry." compset="CustomSpec" summary="The Bokor develops poisonous fangs" uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
     <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <bootstrap thing="wBite">
       <autotag group="wMain" tag="1d4_4"/>
       </bootstrap>
     <pickreq thing="cMPBBFsAn"/>
     </thing>
-  <thing id="cMPBBRbUnd" name="Rebuke Undead" description="Bokor gains the Command Undead feat." compset="CustomSpec" summary="Bokor gains the Command Undead feat." uniqueness="unique">
+  <thing id="cMPBBRbUnd" name="Rebuke Undead" description="{b}Benefit{/b}: Bokor gains the Command Undead feat." compset="CustomSpec" summary="Bokor gains the Command Undead feat." uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
     <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <bootstrap thing="fCommandUn">
       <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
     <pickreq thing="cMPBBChNE"/>
     </thing>
-  <thing id="cMPBBSclZb" name="Scales of Zombi" description="The Bokor begins to take on some of Zombi’s reptilian appearance. The Bokor develops scales that provide a +2 natural bonus to AC. These scales never cover the face or hands and can be hidden under clothing." compset="CustomSpec" summary="+2 natural bonus to AC" uniqueness="unique">
+  <thing id="cMPBBSclZb" name="Scales of Zombi" description="The Bokor begins to take on some of Zombi’s reptilian appearance. \n\n{b}Benefit{/b}: The Bokor develops scales that provide a +2 natural bonus to AC. These scales never cover the face or hands and can be hidden under clothing." compset="CustomSpec" summary="+2 natural bonus to AC" uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
     <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <eval phase="First" priority="10000"><![CDATA[
       ~ If we're disabled, do nothing
       doneif (tagis[Helper.FtDisable] <> 0)
@@ -1032,26 +950,28 @@
       hero.child[ArmorClass].field[tACNatural].value +=2]]></eval>
     <pickreq thing="cMPBBFsAn"/>
     </thing>
-  <thing id="cMPBBZbMst" name="Zombi Mastery" description="A Bokor can control up to triple his level in Hit Dice of Okokiyat zombies or normal zombies when casting animate dead or create okokiyat, rather than only double his level. At 10th level, this increases to quadruple his level." compset="CustomSpec" summary="Triple his level in Hit Dice of Okokiyat zombies" uniqueness="unique">
+  <thing id="cMPBBZbMst" name="Zombi Mastery" description="{b}Benefit{/b}: A Bokor can control up to triple his level in Hit Dice of Okokiyat zombies or normal zombies when casting animate dead or create okokiyat, rather than only double his level. At 10th level, this increases to quadruple his level." compset="CustomSpec" summary="Triple his level in Hit Dice of Okokiyat zombies" uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <pickreq thing="cMPBBFsAn"/>
     </thing>
-  <thing id="cMPBBZbPwd" name="Zombie Powder" description="A Bokor gains the Craft Wondrous Item Feat to create zombie powder, plague powder, or zombie cucumber at ½ the usual cost. The Bokor must still meet the prerequisites for creating the items." compset="CustomSpec" summary="Create zombie powder, plague powder, or zombie cucumber at ½ the usual DC" uniqueness="unique">
+  <thing id="cMPBBZbPwd" name="Zombie Powder" description="{b}Benefit{/b}: A Bokor gains the Craft Wondrous Item Feat to create zombie powder, plague powder, or zombie cucumber at ½ the usual cost. The Bokor must still meet the prerequisites for creating the items." compset="CustomSpec" summary="Create zombie powder, plague powder, or zombie cucumber at ½ the usual DC" uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <bootstrap thing="fCraftWond">
       <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
     </thing>
-  <thing id="cMPBBTocEv" name="Touch of Evil" compset="CustomSpec" summary="Bokor gains Touch of Evil" uniqueness="unique">
+  <thing id="cMPBBTocEv" name="Touch of Evil" description="You instill unbidden thoughts and desires into another with your touch.\n\n{b}Benefit{/b}: As a standard action, you can expend three uses of your channel negative energy and make a melee touch attack against a target. You can attempt an opposed Sleight of Hand check against the target’s Perception to make this attack without the target noticing. If the attack hits, the target gets a Will save (DC=10 + 1/2 your character level + your Charisma modifier). On a failed save, you implant a suggestion into the creature’s mind. This works similar to the suggestion spell, however, you can suggest to the creature to commit a harmful or destructive act against another creature or object. If you choose the latter, the creature attempts to carry out the suggestion in 1d6+1 days as it thinks over the suggestion and plans it out. The creature can attempt another Will save at the original DC to resist the suggestion right before it carries it out. If it fails the save, it gains a +4 circumstance bonus on one die roll used in carrying out the suggestion. This relentless planning causes the creature 1 point of Wisdom damage (or 1d6 sanity damage, if you are using that system), until the suggestion is carried out." compset="CustomSpec" summary="You instill unbidden thoughts and desires into another with your touch." uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
@@ -1059,20 +979,26 @@
     <tag group="Helper" tag="SpecUp"/>
     <tag group="HasAbility" tag="dEviTouch"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <bootstrap thing="dEviTouch">
       <autotag group="thing" tag="skipprereq"/>
       <autotag group="ClSpecWhen" tag="1"/>
       </bootstrap>
-    <pickreq thing="cMPBBChNE"/>
+    <exprreq message="Channel negative energy required."><![CDATA[tagis[Hero.ChanNeg] <> 0]]></exprreq>
     </thing>
-  <thing id="cMPBBSyEvl" name="Scythe of Evil" compset="CustomSpec" summary="Bokor gains Scythe of Evil" uniqueness="unique">
+  <thing id="cMPBBSyEvl" name="Scythe of Evil" description="{b}Benefit{/b}: You can give a weapon touched the unholy special weapon quality for a number of rounds equal to 1/2 your level. You can use this ability once per day, and an additional time per day for every four levels." compset="CustomSpec" summary="Bokor gains Scythe of Evil" uniqueness="unique">
+    <fieldval field="trkMax" value="1"/>
     <usesource source="MPRPGOBB"/>
-    <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
     <tag group="SpecSource" tag="arMPBBokor"/>
     <tag group="AbilType" tag="Super" name="Supernatural Ability" abbrev=" (Su)"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="HasAbility" tag="dEviTouch"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Helper" tag="Secondary" name="Secondary" abbrev="Secondary"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ChargeCalc" tag="RaceHDDiv4"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <bootstrap thing="dEviScythe">
       <autotag group="thing" tag="skipprereq"/>
       <autotag group="ClSpecWhen" tag="1"/>
@@ -1094,31 +1020,33 @@
     <tag group="ProductId" tag="HLCommunit"/>
     <link linkage="varies" thing="cHelpMdH"/>
     </thing>
-  <thing id="cMPBBZbHnt" name="Zombie Hunting" description="The Zombie Hunter receives a +1 bonus to Perception, and Survival checks.\n\nYou also gain a +1 attack bonus every 4 levels, against zombies . This ability stacks with similar abilities." compset="CustomSpec" summary=" +1 bonus to Bluff, Listen, Sense Motive, Spot, and Survival checks ." uniqueness="useronce">
+  <thing id="cMPBBZbHnt" name="Zombie Hunting" description="{b}Benefit{/b}: The Zombie Hunter receives a +1 bonus to Perception, and Survival checks.\n\nYou also gain a +1 attack bonus every 4 levels, against zombies . This ability stacks with similar abilities." compset="CustomSpec" summary=" +1 bonus to Bluff, Listen, Sense Motive, Spot, and Survival checks ." uniqueness="useronce">
     <usesource source="MPRPGOBB"/>
     <tag group="SpecSource" tag="arMPBBZbHn"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="Level" priority="10000"><![CDATA[
-      ~ If we're disabled, do nothing
-      doneif (tagis[Helper.FtDisable] <> 0)
-
-      #skillbonus[skPercep] += 1
-      #skillbonus[skSurvival] += 1]]></eval>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[      ~our bonus is level /4, min 1
       var bonus as number
       bonus = field[xTotalLev].value / 4
       field[abValue].value += maximum(round(bonus,0,-1),1)
       field[livename].text = field[thingname].text & " +" & field[abValue].value
       field[abSumm].text = "Your Zombie Attack Bonus is +" & field[abValue].value]]></eval>
+    <eval phase="Level" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      #skillbonus[skPercep] += 1
+      #skillbonus[skSurvival] += 1]]></eval>
     </thing>
-  <thing id="cMPBBPentB" name="Penetrating Blow" description="When fighting zombies, the Zombie Hunter can exploit the zombie’s weaknesses, causing extra damage.\n\nYou do 1 point of extra damage every 4 levels to Zombies.\n\nThis bonus also applies to damage rolls, though ranged attacks only gain the bonus when the Zombie Hunter is within 30 feet of the target. This ability stacks with similar abilities." compset="CustomSpec" summary="Exploits the zombie’s weaknesses" uniqueness="useronce">
+  <thing id="cMPBBPentB" name="Penetrating Blow" description="When fighting zombies, the Zombie Hunter can exploit the zombie’s weaknesses, causing extra damage.\n\n{b}Benefit{/b}: You do 1 point of extra damage every 4 levels to Zombies.\n\nThis bonus also applies to damage rolls, though ranged attacks only gain the bonus when the Zombie Hunter is within 30 feet of the target. This ability stacks with similar abilities." compset="CustomSpec" summary="Exploits the zombie’s weaknesses" uniqueness="useronce">
     <usesource source="MPRPGOBB"/>
     <tag group="SpecSource" tag="arMPBBZbHn"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[      ~our bonus is level /4, min 1
       var bonus as number
       bonus = field[xTotalLev].value / 4
@@ -1127,15 +1055,16 @@
       field[abSumm].text = "Your Penetrating Blow Bonus is +" & field[abValue].value]]></eval>
     <pickreq thing="cMPBBZbHnt"/>
     </thing>
-  <thing id="cMPBBFearl" name="Fearless" description="A Zombie Hunter is no longer affected by certain extraordinary, supernatural, or spell-like abilities that invoke fear. Any such fear invoking abilities that are used by creatures with a CR equal to or less than twice the character’s Zombie Hunter levels have no effect on the Zombie Hunter. \n\nZombie Hunters are still affected normally by fearcausing spells." compset="CustomSpec" summary="No longer affected by certain extraordinary, supernatural, or spell-like abilities that invoke fear." uniqueness="useronce">
+  <thing id="cMPBBFearl" name="Fearless" description="A Zombie Hunter is no longer affected by certain extraordinary, supernatural, or spell-like abilities that invoke fear. \n\n{b}Benefit{/b}: Any such fear invoking abilities that are used by creatures with a CR equal to or less than twice the character’s Zombie Hunter levels have no effect on the Zombie Hunter. \n\nZombie Hunters are still affected normally by fearcausing spells." compset="CustomSpec" summary="No longer affected by certain extraordinary, supernatural, or spell-like abilities that invoke fear." uniqueness="useronce">
     <usesource source="MPRPGOBB"/>
     <tag group="SpecSource" tag="arMPBBZbHn"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <pickreq thing="cMPBBZbHnt"/>
     </thing>
-  <thing id="cMPBBZbTr" name="Improved Track" compset="CustomSpec" uniqueness="useronce">
+  <thing id="cMPBBZbTr" name="Improved Track" description="{b}Benefit{/b}: You gains a +2 bonus on Survival skill checks when following or identifying tracks. When he tracks, he can also attempt a Knowledge (nature) check at DC 15. On a success, you can discern the type and condition of any animals or magical beasts he tracks. By studying their tracks, you are able to identify a rough approximation of their health, maneuverability, and their general behavior as compared to the norm." compset="CustomSpec" uniqueness="useronce">
     <usesource source="MPRPGOBB"/>
     <tag group="SpecSource" tag="arMPBBZbHn"/>
     <tag group="AbilType" tag="Extra"/>
@@ -1143,11 +1072,12 @@
     <tag group="Helper" tag="SpecUp"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <bootstrap thing="fMHTrack">
       <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
     </thing>
-  <thing id="cMPBBCTBok" name="Bokor" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+  <thing id="cMPBBCTBok" name="Bokor" description="{b}Benefit{/b}: The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\n{b}Special{/b}: This may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
     <tag group="AlgnReq" tag="Evil"/>
@@ -1172,7 +1102,7 @@
       ~ Now replace the old expresson with our modified one
       linkage[table].field[cCstS2Expr].text = newexpr]]></eval>
     </thing>
-  <thing id="cMPBBZmbHn" name="Zombie Hunter" description="The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\nThis may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
+  <thing id="cMPBBZmbHn" name="Zombie Hunter" description="{b}Benefit{/b}: The Hero may use a Training slot to gain access to another Archetype&apos;s Training abilities.\n\n{b}Special{/b}: This may be taken multiple times to access any another Archetype&apos;s Training abilities." compset="CustomSpec" summary="Gains access to another Archetype&apos;s Training abilities" uniqueness="unique">
     <usesource source="MPRPGOBB"/>
     <tag group="ClsCountAs" tag="arMPBBZbHn"/>
     <tag group="SpecSource" tag="cHelpMdH" name="Modern Hero" abbrev="Modern Hero"/>
@@ -1207,9 +1137,7 @@
     <tag group="SpecSource" tag="arMPBBokor"/>
     <tag group="Helper" tag="Secondary"/>
     <tag group="ClassSkill" tag="skKnowRel" name="Knowledge (religion)" abbrev="Knowledge (religion)"/>
-    <bootstrap thing="cSorGraspD">
-      <autotag group="ClSpecWhen" tag="9"/>
-      </bootstrap>
+    <tag group="abCategory" tag="GRCModTrai"/>
     <bootstrap thing="cSorGraspD">
       <autotag group="ClSpecWhen" tag="17"/>
       </bootstrap>
@@ -1265,6 +1193,9 @@
       <autotag group="ClSpecWhen" tag="3"/>
       </bootstrap>
     <bootstrap thing="cSorDeathG">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cSorGraspD">
       <autotag group="ClSpecWhen" tag="9"/>
       </bootstrap>
     </thing>

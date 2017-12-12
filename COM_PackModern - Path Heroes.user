@@ -9480,7 +9480,7 @@ nexteach]]></eval>
   endif
         nexteach]]></eval>
     </thing>
-  <thing id="cMHWpnsTrn" name="Weapons Study" description="You are proficient with all martial weapons and can make attack rolls normally.\n\n{b}Benefit{/b}: A hero also adds a +4 bonus to any combat maneuver checks made with all martial weapons. This bonus also applies to the hero&apos;s Combat Maneuver Defense when defending against disarm and sunder attempts made against any martial weapons." compset="CustomSpec" summary="Proficient with all martial weapons/ +4 bonus to any combat maneuver checks" uniqueness="useronce">
+  <thing id="cMHWpnsTrn" name="Weapons Study" description="{b}Benefit{/b}: You receive a +2 circumstance bonus on attack rolls made to confirm critical hits." compset="CustomSpec" summary="You receive a +2 circumstance bonus on attack rolls made to confirm critical hits" uniqueness="useronce">
     <usesource source="GRCMP2tMP3"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="SpecSource" tag="arMHSoldie"/>
@@ -9494,9 +9494,6 @@ nexteach]]></eval>
     <tag group="VersaTrain" tag="skIntim"/>
     <tag group="VersaTrain" tag="skSurvival"/>
     <tag group="abCategory" tag="GRCModTrai"/>
-    <bootstrap thing="fWepMart">
-      <autotag group="thing" tag="skipprereq"/>
-      </bootstrap>
     </thing>
   <thing id="cMHWTBdLt" name="Weapons Talent (Blades, Light)" description="A hero can select one group of weapons. \n\n{b}Benefit{/b}: Whenever he attacks with a weapon from this group, he gains a +1 bonus on attack, damage and initiative rolls.\n\n{b}Blades, Light{/b}: dagger, kama, kukri, rapier, sickle, starknife, and short sword." compset="CustomSpec" summary="+1 bonus on attack, damage and initiative rolls." uniqueness="unique">
     <fieldval field="shortname" value="Light Blades"/>
@@ -10314,22 +10311,14 @@ foreach pick in hero from BaseSkill where "!thingid.skIntim"
     <fieldval field="usrCandid2" value="component.BaseSpell"/>
     <fieldval field="usrCandid1" value="component.BaseSpell"/>
     <fieldval field="trkMax" value="1"/>
-    <usesource source="D20Arcana"/>
-    <tag group="ProductId" tag="HLCommunit"/>
+    <usesource source="MPArcana"/>
     <tag group="ChooseSrc1" tag="Thing"/>
     <tag group="ChooseSrc2" tag="Thing"/>
     <tag group="User" tag="Tracker"/>
     <tag group="Usage" tag="Day"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="KPRitual" name="Ritual" abbrev="Ritual"/>
-    <eval phase="Render" priority="10000"><![CDATA[      doneif (tagis[Helper.FtDisable] <> 0)
-
-      doneif (field[usrChosen2].ischosen = 0)
-
-      ~ Pull the tag to see the info for our chosen spell
-      perform field[usrChosen2].chosen.pulltags[SpInfo.?]
-
-      field[sbName].text = field[thingname].text & " (" & field[usrChosen2].chosen.field[name].text & ")"]]></eval>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Render" priority="10000" index="2"><![CDATA[      doneif (tagis[Helper.FtDisable] <> 0)
 
       doneif (field[usrChosen1].ischosen = 0)
@@ -10338,6 +10327,14 @@ foreach pick in hero from BaseSkill where "!thingid.skIntim"
       perform field[usrChosen1].chosen.pulltags[SpInfo.?]
 
       field[sbName].text = field[thingname].text & " (" & field[usrChosen1].chosen.field[name].text & ")"]]></eval>
+    <eval phase="Render" priority="10000"><![CDATA[      doneif (tagis[Helper.FtDisable] <> 0)
+
+      doneif (field[usrChosen2].ischosen = 0)
+
+      ~ Pull the tag to see the info for our chosen spell
+      perform field[usrChosen2].chosen.pulltags[SpInfo.?]
+
+      field[sbName].text = field[thingname].text & " (" & field[usrChosen2].chosen.field[name].text & ")"]]></eval>
     <exprreq message="Knowledge (arcana) 1 rank"><![CDATA[#skillranks[skKnowArca] >= 1]]></exprreq>
     </thing>
   <thing id="fMHTrnCrea" name="Turn Creature Type" description="Calling upon higher powers, you cause a chosen creature type to flee from the might of your unleashed divine energy.\n\n{b}Prerequisites{/b}: Channel energy class feature.\n\n{b}Benefit{/b}: You can, as a standard action, use one of your uses of channel energy to cause all the chosen creature type within 30 feet of you to flee, as if panicked. The chosen creature type receive a Will save to negate the effect. The DC for this Will save is equal to 10 + 1/2 your level + your Charisma modifier. \n\nThe chosen creature types that fail their save flee for 1 minute. Intelligent chosen creature type receive a new saving throw each round to end the effect. If you use channel energy in this way, it has no other effect (it does not heal or harm nearby creatures).\n\nThe chosen creature type is the same as the Ranger class ability &quot;Favored Enemy&quot;." compset="Feat" summary="Your Channel Energy can make a Creature Type flee.">
@@ -11807,7 +11804,7 @@ perform root.pushtags[SplAttr.?]</eval>
     </thing>
   <thing id="mechMPScTb" name="Social Tab" compset="Mechanics">
     <usesource source="GRCMP2tMP3"/>
-    <eval phase="First">perform hero.assign[source.UCReputat]</eval>
+    <eval phase="Render" priority="9000">perform assign[source.UCReputat]</eval>
     </thing>
   <thing id="trMPWlthBn" name="Professional Wealth" description="Professional Wealth is a Wealth Bonus from any chosen Profession skill. \n\n{b}Benefit{/b}: For each rank in a Profession skill grants a +1 to you Wealth bonus." compset="Trait" summary="A Wealth Bonus from any chosen Profession skill." uniqueness="useronce">
     <fieldval field="usrCandid1" value="component.BaseSkill &amp; Helper.SkCatProf"/>
