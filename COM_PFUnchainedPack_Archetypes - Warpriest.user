@@ -3,7 +3,7 @@
   <thing id="arP6SaFist" name="Sacred Fist Unchained" description="Unlike many warpriests, sacred fists leave behind armor and shield and instead rely on their fists and whatever protection their deity bestows on them.\n\n{b}Unchained:{/b} This archetype now uses the monks unchained flurry of blows rules instead of the chained monk flurry of blows.  Because of the lower BAB of the warpriest the bonus attacks gained from FoB is 1st and 15th.\n\n{b}Community Created:{/b} As this is a community created archetype that expands the unchained rules be sure you have your GM&apos;s approval before taking this archetype." compset="ClassVary" uniqueness="unique">
     <fieldval field="srcBookInf" value="Community"/>
     <fieldval field="srcPageNum" value="1"/>
-    <arrayval field="cvBon2FMod" index="7" value="1"/>
+    <fieldval field="cvSBonFtNm" value="Style Feats"/>
     <arrayval field="cvBon2FMod" index="8" value="1"/>
     <arrayval field="cvBon2FMod" index="9" value="1"/>
     <arrayval field="cvBon2FMod" index="10" value="1"/>
@@ -36,9 +36,8 @@
     <arrayval field="cvBonFtMod" index="19" value="-5"/>
     <arrayval field="cvBon2FMod" index="5" value="1"/>
     <arrayval field="cvBon2FMod" index="6" value="1"/>
+    <arrayval field="cvBon2FMod" index="7" value="1"/>
     <usesource source="srcUnWarAr"/>
-    
-    <tag group="ProductId" tag="HLCommunit"/>
     <tag group="AbReplace" tag="cWaPFocWep"/>
     <tag group="AbReplace" tag="cWaPSacArm"/>
     <tag group="AbReplace" tag="cWaPSacWep"/>
@@ -74,10 +73,7 @@
     <tag group="fDisable" tag="fSimple"/>
     <tag group="fDisable" tag="fWepMart"/>
     <tag group="ClVaryName" tag="AppParen"/>
-    <bootstrap thing="cMnkFlurUn">
-      <autotag group="ClSpecWhen" tag="1"/>
-      <assignval field="DescAppend" value="{b}Warpriest:{/b} The levels are 1st and 15th to get the bonus attacks."/>
-      </bootstrap>
+    <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="fImpUnarm">
       <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
@@ -129,6 +125,29 @@
     <bootstrap thing="cMnkUnarm">
       <autotag group="ClSpecWhen" tag="1"/>
       </bootstrap>
+    <bootstrap thing="cMnkFlurUn">
+      <autotag group="ClSpecWhen" tag="1"/>
+      <assignval field="DescAppend" value="{b}Warpriest:{/b} The levels are 1st and 15th to get the bonus attacks."/>
+      </bootstrap>
     <link linkage="varies" thing="cHelpWaP"/>
+    <eval phase="First" priority="1000"><![CDATA[
+      ~ If no base class get out now! &
+      doneif (islinkage[varies] = 0)
+
+      ~ Set that our feats to count as monk levels
+      perform linkage[varies].assign[FtCountAs.Monk]
+      perform linkage[varies].assign[FtCountAs.MonkUnc]
+
+      var sSearch as string
+      ~ Find all style feats on hero &
+      foreach pick in hero from BaseFeat where "fCategory.Style"
+         sSearch = splice(sSearch,"ReqFeat." & eachpick.idstring,"|")
+      nexteach
+
+      ~ Find the feats that require our Style feats
+      foreach thing in BaseFeat where sSearch
+        perform assignstr["fIncSec." & eachthing.idstring]
+      nexteach
+      ]]></eval>
     </thing>
   </document>
