@@ -4816,4 +4816,55 @@
         perform state.clearfocus
       Endif]]></eval>
     </thing>
+  <thing id="pS2ClsFCB" name="Class, Favored Class Bonus" description="This adjustment lets you select an additional favored class bonus to also be gained each level.  In example if you wanted to get both the +1 HP and +1 skill point per level you would leave the +1 HP on the class tab and then select +1 Skill Point favored class bonus on this adjustment.  Then each level you would gain a +1 HP and +1 skill point bonus.\n\nYou can also select other favored class bonuses based on your class/race combo.  Please note some of these may not work correctly because they didn&apos;t get selected on the Class tab.  But most should function without issues.\n\n{b}Note:{/b} To get the dropdown to appear correctly you must have both a race/class selected otherwise only the default HP/Skill point will be displayed." compset="InPlay">
+    <fieldval field="pUsePicks" value="1"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      field[pChosen].chosen.field[fcCount].value += hero.tagcount[Classes.?]]]></eval>
+    <eval phase="PreLevel" priority="11000" index="2"><![CDATA[
+      ~ Check to see if class/race was chosen
+      If (hero.tagcount[FavClass.?] + hero.tagcount[IsRace.?] >= 2) Then
+
+        ~ Build a valid list for active class/race combo 
+        field[pCandExpr].text = "component.FavClass & ((" & hero.tagids[FavClass.?,"|"] & ") & (" & hero.tagids[IsRace.?,"|"] & ") | (!FavClass.? & !IsRace.?))"
+
+      ~.. No race/class build generic choices only
+      Else
+        field[pCandExpr].text = "component.FavClass & (!FavClass.? & !IsRace.?)"
+      Endif]]></eval>
+    </thing>
+  <thing id="pS2ClsFCB2" name="Class, Favored Class Bonus Adjust" description="This adjustment lets you adjust the amount of bonus a favored class bonus gets. In example if you could select the +1 HP FCB and make it count your level as two higher by setting the counter to +2.\n\n{b}Note:{/b} To get the dropdown to appear correctly you must have both a race/class selected otherwise only the default HP/Skill point will be displayed." compset="InPlay">
+    <fieldval field="pUsePicks" value="1"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <eval phase="First" priority="11000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+
+      field[pChosen].chosen.field[fcCount].value += field[pAdjust].value]]></eval>
+    <eval phase="PreLevel" priority="11000" index="2"><![CDATA[
+      ~ Check to see if class/race was chosen
+      If (hero.tagcount[FavClass.?] + hero.tagcount[IsRace.?] >= 2) Then
+
+        ~ Build a valid list for active class/race combo 
+        field[pCandExpr].text = "component.FavClass & ((" & hero.tagids[FavClass.?,"|"] & ") & (" & hero.tagids[IsRace.?,"|"] & ") | (!FavClass.? & !IsRace.?))"
+
+      ~.. No race/class build generic choices only
+      Else
+        field[pCandExpr].text = "component.FavClass & (!FavClass.? & !IsRace.?)"
+      Endif]]></eval>
+    </thing>
   </document>
