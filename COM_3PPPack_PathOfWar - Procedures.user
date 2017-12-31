@@ -24,12 +24,12 @@
     doneif (empty(s2Search) <> 0)
     s2Search = "PathOfWar.Class & " & replace(s2Search,"ClsCountAs","thingid",0)]]></procedure>
   <procedure id="PWsetupMan" context="pick"><![CDATA[
-  
+
     ~ If we are maneuver then process here
     If (tagis[mType.Stance] = 0) Then
       ~ Setup the user choice array
       field[usrArray].arraytext[0] = "Not Readied"
-      field[usrArray].arraytext[1] = "Readied"     
+      field[usrArray].arraytext[1] = "Readied"
       ~ Create Has Manuever tag
       perform pulltags[Discipline.?,HasMan]
       ~ Assign Has Manuever tag to the hero which allows for Prerequisites checking
@@ -65,25 +65,25 @@
         ~ Set activated stance tag on Configurator
         perform linkage[table].assign[PathOfWar.StanceOn]
         perform hero.assign[PathOfWar.StanceOn]
-      Endif  
-    
+      Endif
+
 
     Endif
-  
+
   ~ Push our level tag to the discipline object; this is for tracking purposes so that things like the Sleeping Goddess PP bonus can work
   perform hero.findchild[Simple,tagids[Discipline.?]].setfocus
   doneif (state.isfocus = 0)
   perform focus.pushtags[mLevel.?]
-  
+
   ]]></procedure>
-  <procedure id="PWsetupCfg" context="pick"><![CDATA[  
+  <procedure id="PWsetupCfg" context="pick"><![CDATA[
     ~ Set to pull anything that is not a stance
     field[cfgAllow1].text = "PathOfWar.Manuever & (" & tagids[Discipline.?,"|"] & ")"
-    ~ Set to pull all the stances 
+    ~ Set to pull all the stances
     field[cfgAllow2].text = "PathOfWar.Stance & (" & tagids[Discipline.?,"|"] & ")"
 
     var s2X as number
-    var s2Search as string   
+    var s2Search as string
 
     ~ If we are normal class configurable then we will have a class counts
     ~ as tag. Otherwise assume we came from a special feat and go after it
@@ -127,8 +127,8 @@
       field[cfgMax2].value += focus.field[abValue3].value
       ~ Initiator Level
       field[cfgLevel].value += focus.field[abValue5].value
-      
-      ~ Set the Max level of Manuevers and Stances allowed      
+
+      ~ Set the Max level of Manuevers and Stances allowed
       field[cfgAllow1].text &= " & (" & tagids[mLevel.?,"|"] & ")"
       field[cfgAllow2].text &= " & (" & tagids[mLevel.?,"|"] & ")"
 
@@ -137,7 +137,7 @@
     Endif]]></procedure>
   <procedure id="PWsetupIL" context="pick"><![CDATA[
     ~ NOTE: This procedure is obsolete; IL setup is now done in the PWManList component
-  
+
     ~ If this is a prestige class, stop now, because we're going to inherit our IL from another configurable anyway
     doneif (tagis[ClassType.Prestige] + tagis[PathOfWar.Class] = 2)
 
@@ -196,7 +196,7 @@
       doneif (state.isfocus = 0)
       ~ Calculate the array value which is class level minus one as we start at zero
     s2X = focus.field[AryLevel].value
-      doneif (s2X < 0)    
+      doneif (s2X < 0)
 
       ~ Validate our level vs the number of Readied manuevers allowed
     If (altpick.tagcount[PathOfWar.ManueverOn] > focus.field[cManReady].arrayvalue[s2X]) Then
@@ -227,7 +227,7 @@
     var ValidStaOn as number
 
     ~Assume we are valid to start
-    ValidStaOn = 1 
+    ValidStaOn = 1
 
     ~ Validate the number of stances turned on based on the number we are allowed to have up
     If (hero.tagcount[PathOfWar.StanceOn] > altpick.tagcount[PathOfWar.StanceUp]) Then
@@ -235,7 +235,7 @@
 
     Endif]]></procedure>
   <procedure id="ValidManIL" scripttype="validate"><![CDATA[
-    ~ This procedure figures out if the manuevers Initiator Level is 
+    ~ This procedure figures out if the manuevers Initiator Level is
     ~ high enough to have taken the selected manuever.
     ~ ===How to use this Procedure===
     ~ var ValidManIL as number
@@ -265,16 +265,16 @@
       ~ Our highest manuever level is one lower than our current Initiator Level
       ~ because the array starts at zero.
       s2ManLevel = focus.field[cfgLevel].value - 1
-    
-    ~ Test to see if the level of the manuever is higher than what we can use
-    ~ and if so we are NOT valid.
-    if (s2ManLevel < 0) then
-      ValidManIL = 0
-    else
-      If (altpick.tagvalue[mLevel.?] > hero.child[mechPoW].field[mechFeat].arrayvalue[s2ManLevel]) Then
+
+      ~ Test to see if the level of the manuever is higher than what we can use
+      ~ and if so we are NOT valid.
+      if (s2ManLevel < 0) then
         ValidManIL = 0
-      Endif
-    endif
+      else
+        If (altpick.tagvalue[mLevel.?] > hero.child[mechPoW].field[mechFeat].arrayvalue[s2ManLevel]) Then
+          ValidManIL = 0
+        Endif
+      endif
 
     ~..Lets see if we came from a Feat instead
     elseif (focus.tagcount[HasFeat.?] <> 0) then
@@ -318,7 +318,7 @@
         s2name = altthing.tagnames[Discipline.?]
         ~ generate error message to be passed back
         ValidManTx = altthing.field[mPreReq].value & " " & s2name & " maneuver(s) required."
-      Endif 
+      Endif
 
     ~ If a Pick process here
     ElseIf (@ispick = 1) Then
@@ -332,10 +332,10 @@
         s2name = altpick.tagnames[Discipline.?]
         ~ generate error message to be passed back
         ValidManTx = altpick.field[mPreReq].value & " " & s2name & " maneuver(s) required."
-      Endif 
+      Endif
     Endif]]></procedure>
   <procedure id="PWinDSta" context="pick"><![CDATA[
-    ~ This procedure determines if the hero has an active martial stance from a given discipline (by tag) 
+    ~ This procedure determines if the hero has an active martial stance from a given discipline (by tag)
     var IsInStance as number
     var targetDisc as string
     IsInStance = 0
@@ -381,7 +381,7 @@
     #applybonus[Bonus, hero.child[ManeuvBon], curSizeBon]]]></procedure>
   <procedure id="PWsetupDSk" context="pick">~ This procedure setups the Discpline Skill
     perform hero.findchild[BaseSkill,tagids[ClassSkill.?]].pushtags[Discipline.?]</procedure>
-  <procedure id="PWOrdKtLev" context="pick"><![CDATA[      
+  <procedure id="PWOrdKtLev" context="pick"><![CDATA[
     ~ This procedure helps the Ordained Knight class feature from the Battle Templar PrC.
     ~ levAdd will hold our final result, the number to add to a field for the class feature being advanced.
     var levAdd as number
@@ -434,21 +434,21 @@
   </procedure>
   <procedure id="PWsetupMT" context="pick"><![CDATA[
       ~ This procedure is called from the abilities bootstrapped to the Martial Tradition factions, and sets up the discipline trade mechanism
-    
+
       ~ Stop if we haven't picked a maneuver list
       doneif (field[usrChosen1].ischosen = 0)
 
     ~ Can't trade away the same discipline we're trading for...
     field[usrCandid2].text &= " & !" & tagids[Discipline.?, " & !"]
-    
+
     ~ Limit the tradeaway selection to disciplines gained by the chosen maneuver list
     field[usrCandid2].text &= " & ("
     field[usrCandid2].text &= field[usrChosen1].chosen.tagids[Discipline.?, " | "]
     field[usrCandid2].text &= ")"
-    
+
     ~ Stop if we haven't picked a discipline to trade
     doneif (field[usrChosen2].ischosen = 0)
-      
+
       ~ Get the discipline tag from the chosen field, and remove it from the chosen maneuver list
       var remDisc as string
       remDisc = field[usrChosen2].chosen.tagids[Discipline.?]
@@ -458,17 +458,17 @@
       perform field[usrChosen1].chosen.pushtags[Discipline.?]
     ]]>
   </procedure>
-  
+
   <procedure id="PWgetILBon" context="pick"><![CDATA[
       ~ This procedure is used by stances that increase a granted bonus at level X and again every Y levels.
     var firstIncLv as number
     var incEveryLv as number
     var incAmt as number
     var inc as number
-    
+
     ~ Start by assuming no increase
     inc = 0
-    
+
     var tmp as number
     tmp = field[mIL].value
     while (tmp >= firstIncLv)
@@ -504,12 +504,12 @@
     ~.. If we have a manually entered range text then use it
     ElseIf ( empty(field[mRange].text) = 0 ) Then
       sText &= sBreak & "{b}Range:{/b} " & field[mRange].text
-    Endif  
+    Endif
 
     ~If we have a manually entered area text then use it
     If ( empty(field[mArea].text) = 0 ) Then
       sText &= sBreak & "{b}Area:{/b} " & field[mArea].text
-    Endif  
+    Endif
 
     ~ If we have a target tag then add it into the header text
     If (tagis[mTarget.?] <> 0) Then
@@ -517,7 +517,7 @@
     ~.. If we have a manually entered target text then use it
     ElseIf ( empty(field[mTarget].text) = 0 ) Then
       sText &= sBreak & "{b}Target:{/b} " & field[mTarget].text
-    Endif  
+    Endif
 
     ~ If we have a Duration tag then add it into the header text
     If (tagis[mDuration.?] <> 0) Then
@@ -525,7 +525,7 @@
     ~.. If we have a manually entered Duration text then use it
     ElseIf ( empty(field[mDuration].text) = 0 ) Then
       sText &= sBreak & "{b}Duration:{/b} " & field[mDuration].text
-    Endif  
+    Endif
 
     ~ If we have a saving throw tag then add it into the header text
     If (tagis[mSave.?] <> 0) Then

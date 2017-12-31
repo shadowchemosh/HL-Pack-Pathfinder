@@ -121,24 +121,59 @@
          of the manuever.
     -->
     <prereq message="maneuver(s) required.">
-      <validate>
+      <validate><![CDATA[
         ~ Validate the number of maneuvers needed. The number of maneuvers needed is stored in mPreReq
         var ValidManRQ as number
         var ValidManTx as string
         Call ValidManRQ
         @valid = ValidManRQ
         @message = ValidManTx
+        ]]>
       </validate>
     </prereq>
     <!-- This checks after we become a pick that we have a high enough IL to have learned this
          maneuver. This can NOT be done why we are a Thing as we have no idea which class we
          are currently attached to.
     -->
-    <prereq message="You do not have a high enough Initiator Level to learn this maneuver.">
-      <validate>
+    <prereq message="Higher Initiator Level required.">
+      <validate><![CDATA[
+        var ManLevel as number
         var ValidManIL as number
-        Call ValidManIL
+
+        ValidManIL = 1
+
+        ~ We are pick then validate old way
+        If (@ispick = 1) Then
+
+          Call ValidManIL
+
+        ~ If we're being added by configurable then lets check the manuever level using
+        ~ the new agent way.
+        ElseIf (@ispick = 0) Then
+
+          ~ Only try this if we are attached to a agent like a configurable
+          If (isagent = 1) Then
+
+            ~ Our highest manuever level is one lower than our current Initiator Level
+            ~ because the array starts at zero.
+            ManLevel = agent.field[cfgLevel].value - 1
+
+            ~ Test to see if the level of the manuever is higher than what we can use
+            ~ and if so we are NOT valid.
+            If (ManLevel < 0) Then
+              ValidManIL = 0
+
+            Else
+              ~ Check the manuever level vs the default PoW level values
+              If (altthing.tagvalue[mLevel.?] > hero.child[mechPoW].field[mechFeat].arrayvalue[ManLevel]) Then
+                ValidManIL = 0
+              Endif
+            Endif
+          Endif
+        Endif
+
         @valid = ValidManIL
+        ]]>
       </validate>
     </prereq>
 
