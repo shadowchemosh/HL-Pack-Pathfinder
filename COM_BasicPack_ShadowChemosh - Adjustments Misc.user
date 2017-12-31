@@ -3,7 +3,7 @@
   <fileinfo>
     <info_history>Everything in this file will be marked as valid for use in PFS.</info_history>
     </fileinfo>
-  <fileconstants thingidrequirement="">
+  <fileconstants>
     <autotag group="Helper" tag="PFSUserOK"/>
     </fileconstants>
   <thing id="pS2wFire" name="Weapon Elemental Dmg, Fire" description="Select this adjustment to show &quot;+1d6 Fire&quot; damage next to your weapon name." compset="InPlay">
@@ -3869,35 +3869,67 @@
         perform eachpick.delete[Helper.?]
       nexteach]]></eval>
     </thing>
-  <thing id="pS2GenTrac" name="Generic, Tracker" description="This adjustment allows you to add a generic/customizable Tracker to your character that will display on the In-Play tab. This allows you to set the tracker name and the number of usages it allows.\n\n{B}Note:{/b} Add this adjustment and then select &quot;Tracker 1&quot; from the drop down box and then change the name of the tracker from &quot;Tracker 1&quot; to whatever you wish.  Finally set the counter to the number of &quot;uses&quot; this should allow." compset="InPlay">
+  <thing id="pS2GenTrac" name="Generic, Tracker" description="This adjustment allows you to add a generic/customizable Tracker to your character that will display on the In-Play tab. This allows you to set the tracker name and the number of usages it allows.\n\n{B}Note:{/b} Add this adjustment and then select usage (/day or /round) from the drop down box. Change the wording &apos;Tracker 1&apos; to something useful. Finally the small dropdown has two options of &apos;Reset&apos; or &apos;No Reset&apos; which controls if the tracker is reset with a nights rest or not." compset="InPlay">
     <fieldval field="pSource" value="Tracker 1"/>
-    <fieldval field="pUsePicks" value="1"/>
-    <fieldval field="pCandExpr" value="component.Tracker &amp; thingid.trkS2?"/>
+    <fieldval field="pCandExpr" value="component.SelectHelp &amp; Selection.Usage"/>
     <usesource source="srcS2Adjus"/>
     <tag group="Helper" tag="AdjInfo"/>
     <tag group="Adjustment" tag="S2Custom"/>
     <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="MythAdjAvl" tag="Mythic"/>
     <tag group="OthAdjCat" tag="Misc"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="AdjNoPlus"/>
     <bootstrap thing="trkS2Trck1">
-      <containerreq phase="First" priority="457"><![CDATA[
-                 fieldval:pIsOn <> 0]]></containerreq>
+      <containerreq phase="First" priority="457"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
       </bootstrap>
-    <eval phase="Final" priority="5000" index="2"><![CDATA[
-      ~ If we're not enabled, get out now
-      doneif (field[pIsOn].value = 0)
-      ~ If nothing chosen, get out now
-      doneif (field[pChosen].ischosen <> 1)
+    <eval phase="Render" priority="6000" index="3"><![CDATA[
+      ~ Set new array of values
+      field[pModeTable].arraytext[0] = "No Reset"
+      field[pModeTable].arraytext[1] = "Reset"
 
-      ~ Set the custom Tracker name
-      field[pChosen].chosen.field[livename].text = field[pSource].text
-      ~ Set Tracker duration
-      field[pChosen].chosen.field[trkMax].value += field[pAdjust].value]]></eval>
+      ~ Reset the name to remove Mythic stuff
+      field[livename].text = field[thingname].text]]></eval>
     </thing>
   <thing id="trkS2Trck1" name="Tracker 1" description="This is a generic tracker." compset="Tracker">
     <usesource source="srcS2Adjus"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Usage" tag="UsedUp"/>
     <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+
+      ~ If nothing chosen default to Used Up
+      If (root.field[pChosen].ischosen = 0) Then
+        perform assign[Usage.UsedUp]
+
+      ~..Assigne the selected usage type
+      Else
+        perform root.field[pChosen].chosen.pulltags[Usage.?]
+      Endif]]></eval>
+    <eval phase="Final" priority="5000" index="2"><![CDATA[
+      ~ If we're not bootstrapped to something, get out now!
+      doneif (isroot = 0)
+      ~ If the root is not an adjustment, get out now!
+      doneif (root.tagis[component.BaseAdjust] = 0)
+      ~ If we're not enabled, get out now
+      doneif (root.field[pIsOn].value = 0)
+
+      ~ Set the custom Tracker name
+      field[livename].text = root.field[pSource].text
+      ~ Set Tracker duration
+      field[trkMax].value += root.field[pAdjust].value
+
+      ~ Assign No Nights Reset tag
+      If (root.field[pMode].value = 0) Then
+        perform assign[Helper.NoNightRes]
+
+      ~..Assign reset with nights rest
+      ElseIf (root.field[pMode].value = 1) Then
+        perform delete[Helper.NoNightRes]
+      Endif]]></eval>
     </thing>
   <thing id="pS2ACValid" name="Animal Companion, Allowed Class" description="Make any single animal companion valid for any class.\n\n{b}Note:{/b} This adjustment ONLY works on the Animal Companion itself.  Add your animal companion first then on the &quot;Personal&quot; tab add this adjustment.  From the drop down select the class that this animal companion should be valid for." compset="InPlay">
     <usesource source="srcS2Adjus"/>
