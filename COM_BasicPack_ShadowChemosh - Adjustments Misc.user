@@ -4267,7 +4267,7 @@
       perform field[pChosen].chosen.assign[Helper.DCUseTotHD]]]></eval>
     </thing>
   <thing id="pS2AttrTyp" name="Ability Score (Temp), Type" description="Select this adjustment to give a specific bonus/penalty type to a selected Ability Score. This adjustment follows the normal Pathfinder stacking rules regarding typed bonuses. So Bonus and Circumstance types will stack with themselves but all others will only apply the greatest value." compset="InPlay">
-    <fieldval field="pCandExpr2" value="component.SelectHelp &amp; (PackSelect.BonusType &amp; !AdjustBon.Resist)"/>
+    <fieldval field="pCandExpr2" value="component.SelectHelp &amp; PackSelect.AttrBonus"/>
     <usesource source="srcS2Adjus"/>
     <tag group="Adjustment" tag="Attribute"/>
     <tag group="OthAdjCat" tag="Attributes"/>
@@ -4292,6 +4292,8 @@
          #applybonus[BonEnhance,field[pChosen].chosen,field[pAdjust].value]
       ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Insight] <> 0) Then
          #applybonus[BonInsight,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Inherent] <> 0) Then
+         #applybonus[aInherBon,field[pChosen].chosen,field[pAdjust].value]
       ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Luck] <> 0) Then
          #applybonus[BonLuck,field[pChosen].chosen,field[pAdjust].value]
       ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Morale] <> 0) Then
@@ -4834,7 +4836,7 @@
       ~ Check to see if class/race was chosen
       If (hero.tagcount[FavClass.?] + hero.tagcount[IsRace.?] >= 2) Then
 
-        ~ Build a valid list for active class/race combo 
+        ~ Build a valid list for active class/race combo
         field[pCandExpr].text = "component.FavClass & ((" & hero.tagids[FavClass.?,"|"] & ") & (" & hero.tagids[IsRace.?,"|"] & ") | (!FavClass.? & !IsRace.?))"
 
       ~.. No race/class build generic choices only
@@ -4859,7 +4861,7 @@
       ~ Check to see if class/race was chosen
       If (hero.tagcount[FavClass.?] + hero.tagcount[IsRace.?] >= 2) Then
 
-        ~ Build a valid list for active class/race combo 
+        ~ Build a valid list for active class/race combo
         field[pCandExpr].text = "component.FavClass & ((" & hero.tagids[FavClass.?,"|"] & ") & (" & hero.tagids[IsRace.?,"|"] & ") | (!FavClass.? & !IsRace.?))"
 
       ~.. No race/class build generic choices only
