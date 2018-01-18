@@ -2948,12 +2948,13 @@ hero.childfound[abMHHeroic].field[trkMax].value += hp</eval>
     <eval phase="First" index="2">perform hero.assign[Custom.MSRDPrMdCl]</eval>
     </thing>
   <thing id="cMSRDBodyg" name=" Bodyguard" compset="ClassLevel" maxlimit="10">
-    <tag group="ClassType" tag="Prestige"/>
+    <usesource source="GRCMP2MSR"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClassType" tag="Prestige"/>
     <bootstrap thing="cHelpMSB"></bootstrap>
     <link linkage="helper" thing="cHelpMSB"/>
-    <exprreq message="Intimidate 1 ranks required"><![CDATA[#skillranks[skIntim] >= 1]]></exprreq>
     <exprreq message="Base Attack Bonus +1 required"><![CDATA[child[Attack].field[tAtkBase].value >= 1]]></exprreq>
+    <exprreq message="Intimidate 1 ranks required"><![CDATA[#skillranks[skIntim] >= 1]]></exprreq>
     </thing>
   <thing id="cHelpMCH" name="Charismatic Hero" compset="Class" uniqueness="unique">
     <fieldval field="cSpec2ndNm" value="Training"/>
@@ -19334,5 +19335,181 @@ perform hero.findchild[BaseFeat,"thingid.fStunFist"].delete[Helper.ShowSpec]]]><
     <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev="Ex"/>
     <bootstrap thing="xImmFright"></bootstrap>
     <bootstrap thing="xImmShaken"></bootstrap>
+    </thing>
+  <thing id="cMPMSRDDCl" name="Dead Calm" description="A dreadnought can enter a dispassionate killing spree as a free action, granting her additional combat prowess. \n\n{b}Benefit{/b}: The dreadnought gains only half the usual bonuses from her rage but takes no penalty to her AC, can use all her normal skills and effects that require concentration, and is not fatigued when her rage ends. The dreadnought cannot enter a rage for 1 minute after she ends her rage, and she cannot charge or run while under the effects of her rage." compset="CustomSpec" summary="Half bonuses from rage, but no AC pennnalty, normal skill use, and no fatigue." uniqueness="unique">
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="arMSRDDrea"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
+    <tag group="Custom" tag="DeadCalm" name="Dead Calm" abbrev="Dead Calm"/>
+    <tag group="SpecSource" tag="cHelpMdr"/>
+    <tag group="SpecSource" tag="arMPMSRDDn"/>
+    <tag group="SpecSource" tag="arMPCHDrea"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~We aren't fatigued after a rage
+      perform hero.childfound[cMPMSRDDRa].assign[Helper.ChgDisab2]
+
+      perform hero.assign[Custom.DeadCalm]]]>
+      <before name="Apply rage effects"/>
+      </eval>
+    <pickreq thing="cMPMSRDDRa"/>
+    </thing>
+  <thing id="cMPMSRDDRa" name="Rage" description="The hero gains the Rage class feature. \n\n{b}Benefit{/b}: A hero can call upon inner reserves of strength and ferocity, granting her additional combat prowess. A hero can rage for a number of rounds per day equal to 4 + her Constitution modifier, (+1 round per each Hero Point spent). At each level, the hero can rage for 2 additional rounds. \n\nTemporary increases to Constitution, such as those gained from rage do not increase the total number of rounds that a hero can rage per day. A hero can enter rage as a free action. The total number of rounds of rage per day is renewed after resting for 8 hours, although these hours do not need to be consecutive.\n\nWhile in rage, a hero gains a +4 morale bonus to her Strength and Constitution, as well as a +2 morale bonus on Will saves. In addition, she takes a -2 penalty to Armor Class. The increase to Constitution grants the hero 2 hit points per Hit Dice, but these disappear when the rage ends and are not lost first like temporary hit points. While in rage, a hero cannot use any Charisma-, Dexterity-, or Intelligence-based skills (except Acrobatics, Fly, Intimidate, and Ride) or any ability that requires patience or concentration.\n\nA hero can end her rage as a free action and is fatigued after rage for a number of rounds equal to 2 times the number of rounds spent in the rage. A hero cannot enter a new rage while fatigued or exhausted but can otherwise enter rage multiple times during a single encounter or combat. If a hero falls unconscious, her rage immediately ends, placing her in peril of death." compset="CustomSpec" summary="The hero gains the Rage class feature." uniqueness="unique">
+    <fieldval field="actName" value="Raging"/>
+    <usesource source="GRCMP2tMP3" parent="pGRCMP23" name="The Modern Path 2: Core Rules"/>
+    <tag group="HasAbility" tag="xBadgrRage" name="Rage" abbrev="Rage"/>
+    <tag group="ProductId" tag="HLCommunit" name="Hero Lab Community" abbrev="Hero Lab Community"/>
+    <tag group="Usage" tag="DayRound" name=" rounds/day" abbrev=" rounds/day"/>
+    <tag group="User" tag="Activation" name="Activation" abbrev="Activation"/>
+    <tag group="User" tag="Tracker" name="Modern Action Points" abbrev="Modern Action Points"/>
+    <tag group="abCategory" tag="GRCModernT" name="Modern Talent" abbrev="Modern Talent"/>
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev="Ex"/>
+    <tag group="Custom" tag="Primary" name="Primary" abbrev="Primary"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="SpecSource" tag="cHelpMdr"/>
+    <tag group="SpecSource" tag="arMSRDDrea"/>
+    <tag group="SpecSource" tag="arMPMSRDDn"/>
+    <tag group="SpecSource" tag="arMPCHDrea"/>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[ ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~ If we're enraged, apply the stat modifiers for that
+      var level as number
+      level = herofield[tHitDice].value
+      if (level >= 20) then
+        field[abValue].value += 8
+        field[abValue2].value += 4
+      elseif (level >= 11) then
+        field[abValue].value += 6
+        field[abValue2].value += 3
+      else
+        field[abValue].value += 4
+        field[abValue2].value += 2
+        endif
+
+      var conbonus as number
+      conbonus = field[abValue].value
+
+      if (field[abilActive].value <> 0) then
+        #applybonus[BonMorale, hero.child[aSTR], field[abValue].value]
+        conbonus += 2 * hero.tagcount[HasFeat.fRagVital]
+        #applybonus[BonMorale, hero.child[aCON], conbonus]
+        #applybonus[BonMorale, hero.child[svWill], field[abValue2].value]
+        hero.child[ArmorClass].field[Penalty].value -= 2
+        endif
+
+      ~ Set up our text fields
+      field[CustDesc].text = "Fly into a rage, giving you +" & field[abValue].value & " Str, +" & conbonus & " Con, +" & field[abValue2].value & " to Will saves and -2 to Armor Class. Many skills and abilities cannot be used while the character is enraged.{br}{br}Rage lasts for 3 rounds + Con bonus."
+      if (level < 17) then
+        field[CustDesc].text = field[CustDesc].text & " At the end of the rage, the Hero becomes fatigued (-2 Str, -2 Dex, can't charge or run) for the rest of the encounter."
+        endif
+      field[abSumm].text = "+" & field[abValue].value & " Str, +" & field[abValue].value & " Con, +" & field[abValue2].value & " to Will saves, -2 to AC when enraged."]]></eval>
+    <eval phase="PostLevel" priority="10000" index="3"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~if we're L17 and active, apply the penalties
+      if (herofield[tHitDice].value < 17) then
+        field[actName2].text = "Fatigued"
+        if (field[abilAct2].value <> 0) then
+          hero.child[aSTR].field[Penalty].value -= 2
+          hero.child[aDEX].field[Penalty].value -= 2
+          perform assign[Helper.ChgDisab1]
+          endif
+        endif]]></eval>
+    <eval phase="PostAttr" priority="10000" index="4"><![CDATA[ ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~we get 4 + CON Mod rounds of rage/day
+      field[trkMax].value += (herofield[tHitDice].value + 1) * 2 + hero.child[aCON].field[aBonus].value]]></eval>
+    <eval phase="Render" priority="10000" index="5"><![CDATA[field[abSource].text = "Modern Talent"]]></eval>
+    <eval phase="First" priority="450"><![CDATA[
+      ~if we're curently raging, forward a tag to the hero.
+      ~note the timing is just before First/500, which is when the containerreqs on the rage powers will look for this tag
+      if (field[abilActive].value <> 0) then
+        perform hero.assign[Hero.Raging]
+        endif]]></eval>
+    </thing>
+  <thing id="cMPMSRDSGa" name="Steady Gait" description="A dreadnought advances steadily, shrugging off attempts to slow her advance. \n\n{b}Benefit{/b}: The dreadnought gains a +1 bonus on saving throws and to her CMD against effects that would slow or immobilize her. This bonus increases to +2 when she gains 11 level and +3 when she gains 20th level." compset="CustomSpec" summary="Bonus to saves and CMD vs. effects that would slow or immobilize you." uniqueness="unique">
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="arMSRDDrea"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
+    <tag group="Custom" tag="DeadCalm" name="Dead Calm" abbrev="Dead Calm"/>
+    <tag group="SpecSource" tag="cHelpMdr"/>
+    <tag group="SpecSource" tag="arMPMSRDDn"/>
+    <tag group="SpecSource" tag="arMPCHDrea"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      if (herofield[tHitDice].value >= 20) then
+        field[abValue].value += 3
+      elseif (herofield[tHitDice].value >= 11) then
+        field[abValue].value += 2
+      else
+        field[abValue].value += 1
+        endif
+
+      #situational[hero.child[svAll],signed(field[abValue].value) & " vs. effects that would slow or immobilize",field[thingname].text]
+      #situational[hero.child[ManeuvDef],signed(field[abValue].value) & " vs. effects that would slow or immobilize",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="cMPMSRDIDs" name="Instant Dispassion" description="A dreadnought can quickly turn her compassion on and off\n\n{b}Benefit{/b}: She can enter a rage as soon as she wants after ending a previous rage." compset="CustomSpec" summary="Enter a rage as soon as you wish after ending a previous rage." uniqueness="unique">
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="SpecSource" tag="arMSRDDrea"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
+    <tag group="Custom" tag="DeadCalm" name="Dead Calm" abbrev="Dead Calm"/>
+    <tag group="SpecSource" tag="cHelpMdr"/>
+    <tag group="SpecSource" tag="arMPMSRDDn"/>
+    <tag group="SpecSource" tag="arMPCHDrea"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <pickreq thing="cMPMSRDDRa"/>
+    </thing>
+  <thing id="cMPMSRDCCo" name="Cultural Contact" description="An explorer gains the ability to communicate with creatures with which he doesn’t share a common language.\n\n{b}Benefit{/b}: Only basic concepts can be conveyed or understood, such as “I need help,” “I come in peace,” “Come over here,” “Go over there,” and the like. This allows the explorer to ignore the common language requirement of social interaction and language-dependent spells and effects, but he can do so only when the information being shared is relatively simple. The creature with which the explorer communicates must understand at least one language for this ability to function.\n\nAdditionally, a explorer can peacefully influence the initial attitude of humanoids that have Intelligence scores of 2 or lower. This ability functions just like wild empathy, but it works on humanoids instead of on animals. The explorer can also use this ability to influence a monstrous humanoid with 2 or lower Intelligence, but the explorer takes a –4 penalty on the check." compset="CustomSpec" summary="Communicate with creatures with which he doesn’t share a common language." uniqueness="unique">
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
+    <tag group="Custom" tag="DeadCalm" name="Dead Calm" abbrev="Dead Calm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="SpecSource" tag="cHelpMSE"/>
+    <tag group="SpecSource" tag="arMPMSRDEx"/>
+    <tag group="SpecSource" tag="arMPCHExpo"/>
+    <tag group="SpecSource" tag="arMPCHExpl"/>
+    </thing>
+  <thing id="cMPMSRDFTr" name="Favored Terrain" description="{b}Benefit{/b}: The explorer selects one terrain from the ranger&apos;s favored terrain list; she gains this as a favored terrain, as the ranger class feature" compset="CustomSpec" summary="Selects one terrain from the ranger&apos;s favored terrain list." uniqueness="unique">
+    <usesource source="GRCMP2tMP3"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Secondary"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abCategory" tag="GRCModTrai"/>
+    <tag group="Custom" tag="DeadCalm" name="Dead Calm" abbrev="Dead Calm"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="SpecSource" tag="cHelpMSE"/>
+    <tag group="SpecSource" tag="arMPMSRDEx"/>
+    <tag group="SpecSource" tag="arMPCHExpo"/>
+    <tag group="SpecSource" tag="arMPCHExpl"/>
+    <eval phase="PreLevel" priority="10000">linkage[table].field[cFav2Tot].arrayvalue[4] += 1</eval>
+    <eval phase="PostAttr" priority="10000" index="2">hero.child[resTerrSel].field[resMax].value += 1</eval>
     </thing>
   </document>
