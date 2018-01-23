@@ -4869,4 +4869,20 @@
         field[pCandExpr].text = "component.FavClass & (!FavClass.? & !IsRace.?)"
       Endif]]></eval>
     </thing>
+  <thing id="pS2ClsMxSL" name="Class, Max Spell Level" description="Select this adjustment to be able to increase the current spell level a class can cast.  In example a level 6 hunter normally can only cast up to level 2 spells. Use this adjustment to allow a hunter to cast up to level 3, 4, 5 or 6 level spells.\n\n{b}Note:{/b} You will also need to use the adjustments &quot;Spells Known&quot; and &quot;Spells Cast Per Day&quot; to allow a class to select these higher level spells." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.Class | (component.BaseRace &amp; SplLookup.?)"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <eval phase="PostAttr" priority="20001"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now &
+      doneif (field[pChosen].ischosen <> 1)
+
+      ~ Adjust the max spell level up or down
+      field[pChosen].chosen.field[cMaxSpLev].value += field[pAdjust].value]]></eval>
+    </thing>
   </document>
