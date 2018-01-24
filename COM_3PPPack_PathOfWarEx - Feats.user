@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document signature="Hero Lab Data">
-<fileconstants thingidrequirement="PW">
-  </fileconstants>
+  <fileconstants thingidrequirement="PW"></fileconstants>
   <thing id="fPWBatFerv" name="Battle Fervor" description="{b}Prerequisites:{/b} Fervor or Lay on Hands class feature, able to initiate maneuvers\n\n{b}Benefits:{/b} When you use Fervor or Lay on Hands to heal yourself as a swift action, your next strike deals bonus damage equal to 1/2 the amount you healed." compset="Feat" uniqueness="useronce">
     <usesource source="srcPOWEx"/>
     <tag group="fCategory" tag="Combat"/>
@@ -128,26 +127,25 @@
     <eval phase="PostLevel" priority="5000"><![CDATA[
       ~ If we're disabled, do nothing &
       doneif (tagis[Helper.FtDisable] <> 0)
-
-      ~ Find all katana/Wakizashi weapons on the hero
+ 
+     ~ Find all katana/Wakizashi weapons on the hero
+      ~ We need to make these behave as if we had weapon finesse
+      ~ as opposed to making them finessable. The Damage dice scaling
+      ~ should also use Helper.DamageUp. This is slightly buggy,
+      ~ as it renders a d8 katana 2d6 instead of 1d10, but that is
+      ~ LW's thing to fix with the FAQ for damage scaling in place.
       foreach pick in hero from BaseWep where "IsWeapon.wKatana|IsWeapon.wWakizashi"
-
-        ~ Katana
-        if (eachpick.tagis[IsWeapon.wKatana] = 1) then
-          ~ Do we have exotic weapon prof? or wielding it in 2 hands
-          if (eachpick.tagis[Helper.Proficient] = 1) then
-            perform eachpick.assign[Helper.Finesse]
-            perform eachpick.tagreplace[wMain.1d8,wMain.1d10]
-          endif
-
-        ~ Wakizashi
-        elseif (eachpick.tagis[IsWeapon.wWakizashi] = 1) then
-          ~ Are we proficient with the weapon?
-          if (eachpick.tagis[Helper.Proficient] = 1) then
-            perform eachpick.tagreplace[wMain.1d6,wMain.1d8]
-          endif
+        ~ If we're proficient, then we add the tags, don't need to
+        ~   know which weapon it is.
+        if (eachpick.tagis[Helper.Proficient] = 1) then
+           ~ Increase the damage dice one step.
+           perform eachpick.assign[Helper.DamageUp]
+           ~ Make dexterity an option for attack
+           perform eachpick.assign[MelAttOpt.aDEX]
+           ~ Just in case something out there needs it 
+           ~   (e.g. Deadly Agility, Mythic Weapon Finesse)
+           perform eachpick.assign[Helper.Finesse]
         endif
-
       nexteach]]></eval>
     <exprreq message="Katana or wakizashi proficiency required"><![CDATA[#hasfeat[fWepMart] + hero.tagis[WepProf.wKatana] + hero.tagis[WepProf.wWakizashi] <> 0]]></exprreq>
     </thing>
