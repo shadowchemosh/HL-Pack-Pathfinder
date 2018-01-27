@@ -1356,25 +1356,26 @@
     <tag group="AbilType" tag="Extra"/>
     <tag group="User" tag="Activation"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <bootstrap thing="fComRef"></bootstrap>
-    <eval phase="PostAttr" priority="10000"><![CDATA[~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
-doneif (tagis[Helper.SpcDisable] <> 0)
+    <bootstrap thing="fComRef">
+      <autotag group="UseAttr" tag="aINT"/>
+      <autotag group="User" tag="Tracker"/>
+      </bootstrap>
+    <eval phase="PostAttr" priority="15000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-~ Combat Reflexes: Use INT instead of DEX
-hero.child[fComRef].field[abValue].value = 1 + maximum(hero.child[aINT].field[aModBonus].value, 0)
+      ~ Allow Combat Reflexes uses to be tracked in the In-Play tab
+      hero.childfound[fComRef].field[trkMax].value += #value[fComRef]
 
-~ Threatened area while in Defensive Focus: 5ft + 5ft per 5 IL
-var IL as number
-var extraArea as number
-IL = hero.child[mHelpPW3].field[cIL].value
-extraArea = 5 * round(IL/5,0,-1)
-field[abValue].value = 5 + maximum(5, extraArea)
+      ~ Threatened area while in Defensive Focus: 5ft + 5ft per 5 IL
+      var extraArea as number
+      extraArea = 5 * round(hero.child[mHelpPW3].field[cIL].value/5,0,-1)
+      field[abValue].value += 5 + maximum(5, extraArea)
 
-
-~ CMD bonus vs. enemy Acro to avoid AoO: INT + Warder level
-field[abValue2].value = #attrmod[aINT] + field[xAllLev].value
-#situational[hero.childfound[ManeuvDef],signed(field[abValue2].value) & " vs. enemy Acrobatics checks to avoid provoking AoO",field[thingname].text]]]></eval>
+      ~ CMD bonus vs. enemy Acrobatics to avoid AoO: INT + Warder level
+      field[abValue2].value += #attrmod[aINT] + field[xAllLev].value
+      #situational[hero.childfound[ManeuvDef],signed(field[abValue2].value) & " vs. enemy Acrobatics checks to avoid provoking AoO",field[thingname].text]]]></eval>
     <eval phase="Render" priority="10000" index="2"><![CDATA[
       field[sbName].text = field[thingname].text
       field[livename].text &= " (" & field[abValue].value & "ft)"
@@ -1384,9 +1385,6 @@ field[abValue2].value = #attrmod[aINT] + field[xAllLev].value
     <usesource source="srcPathOfW"/>
     <tag group="AbilType" tag="Extra"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostAttr" priority="10000"><![CDATA[~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] = 0)
-doneif (tagis[Helper.SpcDisable] <> 0)]]></eval>
     </thing>
   <thing id="cPW3Aegis" name="Aegis" description="At 1st level, the warder’s defensive prowess extends to those who choose to stay near to him. Allies who are within 10 ft. of the warder’s position gain a +1 morale bonus to Armor Class and to Will saves under the warder’s defensive aegis, her presence bolstering and shepherding the defenses of her allies. This bonus improves to +2 at 5th level (+3 at 9th level, +4 at 13th level, and +5 at 17th level). The warder does not receive this bonus, but may receive the benefits of this ability from another warder. If the ally cannot see or hear the warder, then the ally does not gain the benefits of this ability (such as if the warder is concealed or invisible).\n\nAt 6th level, her aegis’ range increases its effective area, growing to a 20 ft. radius. At 12th level, this increases again to 30 ft.." compset="ClSpecial" summary="Morale bonus to nearby allies&apos; AC/Will save">
     <fieldval field="abValue2" value="10"/>
@@ -1398,38 +1396,35 @@ doneif (tagis[Helper.SpcDisable] <> 0)]]></eval>
     <tag group="AbilType" tag="Extra"/>
     <tag group="LvNamePar" tag="IncRange"/>
     <bootstrap thing="xPWAegis"></bootstrap>
-    <eval phase="PostLevel" priority="20000"><![CDATA[~Set the list name
-field[listname].text = field[thingname].text & " " & signed(field[xIndex].value)
+    <eval phase="PostLevel" priority="20000"><![CDATA[
+      ~Set the list name
+      field[listname].text = field[thingname].text & " " & signed(field[xIndex].value)
 
-~only perform the calculations for the first copy
-doneif (tagis[Helper.FirstCopy] = 0)
+      ~only perform the calculations for the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
 
-~ If we're not shown, just get out now
-doneif (tagis[Helper.ShowSpec] <> 1)
-~ if we've been disabled, get out now
-doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
-~ AC/save bonus increases by +1 for each copy of this ability
-field[abValue].value += field[xCount].value
-hero.child[xPWAegis].field[abValue].value = field[abValue].value
+      ~ AC/save bonus increases by +1 for each copy of this ability
+      field[abValue].value += field[xCount].value
+      hero.child[xPWAegis].field[abValue].value = field[abValue].value
 
-~ Base radius is 10', but Improved and Greater Aegis each increase that by 10'
-~ We store the initial range in abValue2 so that Improved and Greater can refer to it for display purposes
-field[abRange].value = field[abValue2].value
-if (hero.childfound[cPW3ImpAeg].tagis[Helper.ShowSpec] <> 0) then
-  field[abRange].value += hero.child[cPW3ImpAeg].field[abValue].value
-endif
-if (hero.childfound[cPW3GrtAeg].tagis[Helper.ShowSpec] <> 0) then
-  field[abRange].value += hero.child[cPW3GrtAeg].field[abValue].value
-endif
-
-~notify "Has Improved Aegis: " & #hasfeat[cPW3ImpAeg]
-~notify "Has Greater Aegis: " & hero.tagis[HasAbility.cPW3GrtAeg]
-~notify "Light Armor: " & hero.tagis[Hero.ProfLight]
-~notify "Aegis range is " & field[abRange].value]]></eval>
-    <eval phase="Render" priority="10000" index="2"><![CDATA[~ Update Specials text
-field[sbName].text = field[thingname].text
-field[abSumm].text = signed(field[abValue].value) & " morale bonus to AC and Will saves for allies within " & field[abRangText].text]]></eval>
+      ~ Base radius is 10', but Improved and Greater Aegis each increase that by 10'
+      ~ We store the initial range in abValue2 so that Improved and Greater can refer to it for display purposes
+      field[abRange].value = field[abValue2].value
+      if (hero.childfound[cPW3ImpAeg].tagis[Helper.ShowSpec] <> 0) then
+        field[abRange].value += hero.child[cPW3ImpAeg].field[abValue].value
+      endif
+      if (hero.childfound[cPW3GrtAeg].tagis[Helper.ShowSpec] <> 0) then
+        field[abRange].value += hero.child[cPW3GrtAeg].field[abValue].value
+      endif]]></eval>
+    <eval phase="Render" priority="10000" index="2"><![CDATA[
+      ~ Update Specials text
+      field[sbName].text = field[thingname].text
+      field[abSumm].text = signed(field[abValue].value) & " morale bonus to AC and Will saves for allies within " & field[abRangText].text]]></eval>
     </thing>
   <thing id="cHelpPW3" name="Warder" compset="Class" uniqueness="unique">
     <fieldval field="cHDSides" value="12"/>
