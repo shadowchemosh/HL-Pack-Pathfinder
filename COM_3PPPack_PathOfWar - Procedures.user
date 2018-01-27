@@ -293,25 +293,33 @@
       Endif
     endif]]></procedure>
   <procedure id="ValidManRQ" scripttype="validate"><![CDATA[
-    ~ This procedure figures out if the manuevers Initiatior Level
+    ~ This procedure validates if we have the correct number of required
+    ~ maneuvers/stances to take this maneuver.
     ~ ===How to use this Procedure===
-    ~ var ValidManIL as number
-    ~ Call ValidManIL
-    ~ @valid = ValidManIL
+    ~ var ValidManRQ as number
+    ~ var ValidManTx as string
+    ~ Call ValidManRQ
+    ~ @valid = ValidManRQ
+    ~ @message = ValidManTx
+
     var ValidManRQ as number
     var ValidManTx as string
-    var s2Tag      as string
     var s2name     as string
+    var s2Tag      as string
+    var s2TagSta   as string
+    var s2TagMan   as string
 
-    ~ Default to valid
+    ~ Default to requirments are valid
     ValidManRQ = 1
 
     ~ If a Thing process here
     If (@ispick = 0) Then
       s2Tag = altthing.tagids[Discipline.?]
-      s2Tag = replace(s2Tag,"Discipline","HasMan",0)
+      s2TagMan = replace(s2Tag,"Discipline","HasMan",0)
+      s2TagSta = replace(s2Tag,"Discipline","HasStance",0)
+
       ~ If we don't have the correct number then we are invalid
-      If (hero.tagcountstr[s2Tag] < altthing.field[mPreReq].value) Then
+      If (hero.tagcountstr[s2TagMan] + hero.tagcountstr[s2TagSta] < altthing.field[mPreReq].value) Then
         ~ not valid
         ValidManRQ = 0
         ~ get discipline name
@@ -323,9 +331,11 @@
     ~ If a Pick process here
     ElseIf (@ispick = 1) Then
       s2Tag = altpick.tagids[Discipline.?]
-      s2Tag = replace(s2Tag,"Discipline","HasMan",0)
+      s2TagMan = replace(s2Tag,"Discipline","HasMan",0)
+      s2TagSta = replace(s2Tag,"Discipline","HasStance",0)
+
       ~ If we don't have the correct number then we are invalid
-      If (hero.tagcountstr[s2Tag] < altpick.field[mPreReq].value) Then
+      If (hero.tagcountstr[s2TagMan] + hero.tagcountstr[s2TagSta] < altpick.field[mPreReq].value) Then
         ~ not valid
         ValidManRQ = 0
         ~ get discipline name
@@ -333,7 +343,10 @@
         ~ generate error message to be passed back
         ValidManTx = altpick.field[mPreReq].value & " " & s2name & " maneuver(s) required."
       Endif
-    Endif]]></procedure>
+    Endif
+    ]]>
+    </procedure>
+
   <procedure id="PWinDSta" context="pick"><![CDATA[
     ~ This procedure determines if the hero has an active martial stance from a given discipline (by tag)
     var IsInStance as number
