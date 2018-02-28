@@ -186,6 +186,7 @@
     <fieldval field="cfgObject2" value="Customization"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="StandardDC" tag="aINT"/>
+    <tag group="abCategory" tag="PUAegisCus" name="Aegis Customization"/>
     <eval phase="PostLevel" priority="15000" name="Astral Suit Configurable"><![CDATA[
       ~ Set focus to Aegis Helper Pick &
       perform hero.childfound[cPUAegHelp].setfocus
@@ -199,6 +200,11 @@
       field[cfgMax2].value += focus.field[abValue2].value + focus.field[abValue3].value]]>
       <after name="Set Aegis Base Points"/>
       </eval>
+    <eval phase="Final" priority="999999" name="Astral Suit Expressions"><![CDATA[
+      ~ Change the Customiazation expression to include Ability Category tags
+      ~ NOTE: This script assumes at least ONE abCategory.? tag exists on the configurable
+      ~       at the time that it runs.
+      field[cfgAllow2].text = "(" & field[cfgAllow2].text & ") | (" & tagids[abCategory.?,"|"] & ")"]]></eval>
     </thing>
   <thing id="cPUAegHelp" name="Aegis Array Helper" description="This helper pick holds Aegis Suit Customization points and total points." compset="S2GenAry" uniqueness="useronce">
     <comment>S2Array = Points per level; abValue = Suit Level; abValue2 = Bonus/Penalty points; abValue3 = Configurable points.</comment>
@@ -484,8 +490,8 @@
     </thing>
   <thing id="rcPUaSpeed" name="Speed" description="The aegis&apos;s base land speed is increased by 5 feet. This customization can be selected up to five times.{br}{br}Its effects stack." compset="CustomSpec" summary="Increase speed by +5ft.">
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="1"/>
     <tag group="SpecType" tag="Movement"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -517,8 +523,8 @@
     </thing>
   <thing id="rcPUaNimbl" name="Nimble" description="The aegis gains a +2 enhancement bonus to Dexterity while he is wearing his astral suit. This customization can be selected a second time beginning at 5th level, and a third time starting at 10th level. Each subsequent time it is taken, the enhancement bonus to Dexterity is increased by +2." compset="CustomSpec" summary="+2 enhancement bonus to Dexterity while wearing astral suit.">
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
@@ -581,8 +587,8 @@
     </thing>
   <thing id="rcPUaEvade" name="Evasion" description="As long as the aegis is wearing the astral suit, if the aegis is subjected to an attack that normally allows a Reflex save for half damage, he takes no damage if he makes a successful saving throw. The aegis must be at least 2nd level before selecting this customization." compset="CustomSpec" summary="Gain evasion ability while wearing astral suit." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="1"/>
     <tag group="SpecType" tag="Defense"/>
     <tag group="Helper" tag="SpecUp"/>
@@ -669,8 +675,8 @@
     </thing>
   <thing id="rcPUaImDmg" name="Improved Damage" description="The aegis&apos;s melee attacks deal additional damage. If wielding a two-handed weapon, the aegis deals 3 additional points of damage on a successful hit. If wielding a one-handed weapon, the aegis deals 2 additional points of damage on a successful hit. If wielding a light weapon, the aegis deals 1 additional point of damage on a successful hit. If dual-wielding, each weapon is affected separately." compset="CustomSpec" summary="Gain a dmg bonus based on weapon type." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
@@ -688,8 +694,8 @@
     </thing>
   <thing id="rcPUaBrawn" name="Brawn" description="The aegis gains a +2 enhancement bonus to Strength while he is wearing his astral suit. This customization can be selected a second time beginning at 5th level, and a third time starting at 10th level. Each subsequent time it is taken, the enhancement bonus to Strength is increased by +2." compset="CustomSpec" summary="+2 enhancement bonus to Strength while wearing astral suit.">
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
@@ -753,10 +759,9 @@
   <thing id="rcPUaFlexS" name="Flexible Suit" description="The aegis&apos;s armor check penalty is reduced by 1 (to a minimum of 0). The aegis may also sleep in his astral suit without becoming fatigued, if he was not already able to do so (such as if in astral skin form)." compset="CustomSpec" summary="Astral suit armor check penalty is reduced by 1 (to a minimum of 0)." uniqueness="useronce">
     <comment>This ability is fully implemented. The procedure PUAstBonus handles the bonus logic.</comment>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="1"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     </thing>
   <thing id="rcPUaJugge" name="Astral Juggernaut" description="When formed into astral juggernaut, an astral suit resembles masterwork half-plate and is treated as such for all mechanical purposes. Should the aegis be wearing armor when forming his astral suit in this fashion, the astral suit encloses the armor and the aegis gains the benefits of only his astral suit and not that from his armor, even if his armor would confer better benefits. Forming an astral suit into this form takes a full-round action. The aegis gains the following free customizations: fortification, hardy. At 2nd level, the aegis gains the stalwart customization as a free customization when the astral suit is in astral juggernaut form. At 7th level, the astral suit resembles and is treated as masterwork full plate for all mechanical purposes." compset="RaceCustom" summary="Half-Plate/Full Plate; Free customizations: fortification, hardy." uniqueness="useronce">
     <usesource source="pPsiUn"/>
@@ -827,9 +832,9 @@
     </thing>
   <thing id="rcPUaForti" name="Fortification" description="The aegis gains 25% chance to negate critical hits or sneak attacks (so damage is rolled normally instead). This does not stack with armor with the same special ability. This ability can be selected again starting at 8th level and at 12th level, increasing the chance to negate critical hits or sneak attacks by an additional 25% for every additional time it is taken." compset="CustomSpec" summary="25% chance to negate critical hits or sneak attacks.">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
       ~ Set Helper.FirstCopy &
@@ -891,8 +896,8 @@
     </thing>
   <thing id="rcPUaHardy" name="Hardy" description="The aegis gains a +2 enhancement bonus to Constitution while he is wearing his astral suit. This customization can be selected a second time beginning at 5th level, and a third time starting at 10th level. Each subsequent time it is taken, the enhancement bonus to Constitution is increased by +2." compset="CustomSpec" summary="+2 enhancement bonus to Constitution while wearing astral suit.">
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
@@ -956,8 +961,8 @@
   <thing id="rcPUaStalw" name="Stalwart" description="As long as the aegis is wearing the astral suit, if the aegis is subjected to an attack that normally allows a Fortitude or Will save for a reduced or partial effect, he ignores the effect if he makes a successful saving throw.{br}{br}The aegis must be at least 2nd level before selecting this customization." compset="CustomSpec" summary="Ignore partial effects when making a Fort/Will save." uniqueness="useronce">
     <fieldval field="abText5" value="If save allows for a reduced or partial effect, then ignore the effect if you successfully save."/>
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="1"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="50000"><![CDATA[
@@ -978,8 +983,7 @@
     </thing>
   <thing id="rcPUaDarkv" name="Darkvision" description="The aegis gains darkvision out to a range of 60 feet." compset="CustomSpec" uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="1"/>
     <tag group="SpecType" tag="Sense"/>
     <tag group="Helper" tag="SpecUp"/>
@@ -993,14 +997,13 @@
     <fieldval field="abValue" value="1"/>
     <fieldval field="abValue2" value="8"/>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="1"/>
     <tag group="Helper" tag="WeaponSpec"/>
     <tag group="wCategory" tag="RangeProj"/>
     <tag group="wType" tag="P"/>
     <tag group="wCritMin" tag="20"/>
     <tag group="wCritMult" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="wRangeInc" tag="30"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="500" name="Aegis Ranged Attack"><![CDATA[
@@ -1022,8 +1025,7 @@
     <fieldval field="actName" value="Move Action"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="User" tag="Activation"/>
     <eval phase="Final" priority="450"><![CDATA[
@@ -1055,9 +1057,8 @@
     <fieldval field="abValue2" value="6"/>
     <usesource source="pPsiUn"/>
     <tag group="User" tag="Activation"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="UserAdjust"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="1"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final"><![CDATA[
@@ -1094,8 +1095,8 @@
     <fieldval field="abValue" value="5"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="SpecUp"/>
     <eval phase="PostLevel" priority="20000"><![CDATA[
@@ -1130,8 +1131,7 @@
     <fieldval field="usrCandid1" value="component.SelectHelp &amp; Psionics.PsiActEne"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="25000"><![CDATA[
       ~ If we're not wearing the Astral Suit, get out now
@@ -1150,9 +1150,9 @@
   <thing id="rcPUaIEneR" name="Energy Resistance, Improved" description="The energy resistance gained from the Energy Resistance customization doubles. The aegis must have the Energy Resistance customization and be at least 6th level to select this customization." compset="CustomSpec" summary="2x your energy ristance." uniqueness="useronce">
     <fieldval field="abValue" value="2"/>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
       ~ Set the energy resistance amount to be doubled &
@@ -1169,9 +1169,9 @@
     </thing>
   <thing id="rcPUaEnerI" name="Energy Immunity" description="The aegis gains immunity to his active energy type as long as he is wearing his astral suit.{br}{br}The aegis must be at least 15th level before selecting this customization." compset="CustomSpec" summary="Gain immunity to your active energy type." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="xImmCold">
       <containerreq phase="First" priority="4500"><![CDATA[PsiActEne.Cold & Custom.WearAstS]]></containerreq>
@@ -1196,9 +1196,9 @@
     </thing>
   <thing id="rcPUaExArL" name="Extra Arms, Lesser" description="The aegis&apos;s astral suit has an extra pair of arms with limited function. Each arm can hold, but not use, any one item that can normally be held in one hand. Items held in this way count toward the aegis&apos;s carrying capacity. The aegis can retrieve any item held by his extra arms as a swift action. The aegis does not gain any mechanical benefit from items held by these arms, such as a shield bonus to armor class." compset="CustomSpec" summary="Gain an extra pair of arms that can hold items." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="200"><![CDATA[
       ~ If two hands not in use then add two tags to hero
@@ -1234,9 +1234,9 @@
     <fieldval field="abValue2" value="2"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
       ~ If no hands free to use then get out now! &
       doneif (hero.tagis[Activated.rcPUaExArL] = 0)
@@ -1261,9 +1261,9 @@
     </thing>
   <thing id="rcPUaExArG" name="Extra Arms, Greater" description="The extra arms on the aegis&apos;s astral suit function at nearly the same capacity as his normal arms. Each arm can now wield or use a light or one-handed weapon, shield, or any other item that he could normally use. Alternatively, the aegis can use one or both arms when wielding a two-handed weapon, possibly allowing him to wield a pair of two-handed weapons. The circumstance bonus on Climb checks and CMD against grapple attempts increases to +3 per extra arm that is not holding anything. The aegis must be 8th level and have the Extra Arms and Lesser Extra Arms customizations before selecting this customization." compset="CustomSpec" summary="Extra arms now work like your normal arms." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="300"><![CDATA[
       ~ Increase bonus to +3 per arm &
@@ -1291,8 +1291,8 @@
     <fieldval field="usrCandid1" value="component.SelectHelp &amp; PackSelect.DamageType &amp; (wType.S | wType.P)"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="1000"><![CDATA[
@@ -1314,14 +1314,12 @@
     </thing>
   <thing id="rcPUaPwrSR" name="Power Stone Repository" description="The aegis may absorb power stones into his astral suit, causing them to appear and disappear whenever the suit does. The aegis may choose to have the absorbed power stones visible (much like embedded gems), or may decide to keep any or all of them concealed. The aegis may store one power stone per class level in this fashion; adding or removing a power stone takes 1 minute per stone (any power stone that is completely flushed and powerless dissolves immediately and is not counted against the aegis&apos;s limit).{br}{br}The aegis may activate any power stone stored in his repository as if he were holding it in hand; this follows all of the standard rules for using power stones, except the aegis gets a bonus equal to the number of stored power stones to any Use Magic Device checks he makes for this purpose. If the aegis loses this customization for any reason, any power stones stored in the astral suit are inert but unharmed until removed or this customization is regained.{BR}{BR}{B}Not Fully Implemented{/b}" compset="CustomSpec" summary="Absorb power stones into your astral suit." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="First" priority="1000" index="1"><![CDATA[
+    <eval phase="First" priority="1000"><![CDATA[
       ~ Allow powers to a be added/tracked on the Astral Suit
-      hero.childfound[cfgPUAstSu].field[cfgPower1].text = "Power Stone(s)"
-      ]]></eval>
+      hero.childfound[cfgPUAstSu].field[cfgPower1].text = "Power Stone(s)"]]></eval>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
       ~ find all Astral Suit powers and turn them into a 1/use ability
       foreach pick in hero from BasePower where "CfgPower.cfgPUAstSu"
@@ -1329,22 +1327,19 @@
         perform eachpick.assign[Usage.Use]
         eachpick.field[trkMax].value += 1
         field[abValue5].value += 1
-      nexteach
-      ]]></eval>
+      nexteach]]></eval>
     <prereq message="Too many power stones added.">
       <validate><![CDATA[
         ~ Only do this validation when we are pick
         validif (@ispick = 0)
 
-        validif (altpick.field[abValue5].value <= altpick.linkage[table].field[cfgLevel].value)
-        ]]></validate>
+        validif (altpick.field[abValue5].value <= altpick.linkage[table].field[cfgLevel].value)]]></validate>
       </prereq>
     </thing>
   <thing id="rcPUaHarPS" name="Harness Power Stone" description="The aegis can manifest a single 1st-level power from a power stone stored in his power stone repository as if it were a known power, with an effective manifester level of 1. This effective manifester level does not make an aegis eligible for feats and prestige classes requiring a manifester level, nor does it allow him to activate other power stones without a Use Magic Device check. The aegis may manifest the chosen power as many times as his power point pool will allow, but changing to a different power (either within the same power stone, or within another power stone in the repository) requires a move action and flushes the old power from the power stone (so power stones with multiple powers lose one power, but the rest are unaffected; power stones with only a single power are flushed and dissolved). If this customization is lost or removed, any applicable attuned power is flushed from the power stone. The aegis must be at least 3rd level and have the Power Stone Repository customization to select this customization. This customization may be selected a second time beginning at 5th level; doing so allows the aegis to manifest a second 1st-level power from a power stone (either a second stone, or a second power in an already-selected stone). The aegis may freely alternate between these two powers (or any others gained via Harness Power Stone customizations) when manifesting, but trading out either power for a new power flushes out the sacrificed power as usual.{BR}{BR}{B}Not Fully Implemented{/b}" compset="CustomSpec">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <exprreq message="Power Stone Repository customization required."><![CDATA[#hasability[rcPUaPwrSR] <> 0]]></exprreq>
     <prereq message="Aegis level 3+ required.">
@@ -1384,9 +1379,8 @@
     </thing>
   <thing id="rcPUaHaPSI" name="Harness Power Stone, Improved" description="The aegis is able to manifest a single 2nd level or lower power from a power stone in his repository as if it were a known power. The aegis&apos;s effective manifester level when manifesting powers from power stones in this fashion is increased by 3 (this stacks with the effective manifester level gained from Harness Power stone as well as any effective manifester level increases granted by any of the other Harness Power Stone customizations). If this customization is lost or removed, any applicable attuned power is flushed from the power stone. The aegis does not need to have taken any previous Harness Power Stone customizations to take this customization. The aegis must be at least 7th level and have the Power Stone Repository customization to take this customization. The aegis can take this customization a second time at 9th level; doing so does not increase his effective manifester level, but allows him to manifest a second 2nd level power from a power stone." compset="CustomSpec">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <exprreq message="Power Stone Repository customization required."><![CDATA[#hasability[rcPUaPwrSR] <> 0]]></exprreq>
     <prereq message="Aegis level 7+ required.">
       <validate><![CDATA[
@@ -1424,9 +1418,8 @@
     </thing>
   <thing id="rcPUaHaPSG" name="Harness Power Stone, Greater" description="As Improved Harness Power Stone, except the power is 3rd level or lower, and the effective manifester level increase is +5. The aegis must be at least 11th level and have the Power Stone Repository customization to take this customization, and be 13th level to take this customization a second time." compset="CustomSpec">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <exprreq message="Power Stone Repository customization required."><![CDATA[#hasability[rcPUaPwrSR] <> 0]]></exprreq>
     <prereq message="Aegis level 11+ required.">
       <validate><![CDATA[
@@ -1463,9 +1456,8 @@
     </thing>
   <thing id="rcPUaHaPSS" name="Harness Power Stone, Superior" description="As Improved Harness Power Stone, except the power is 4th level or lower, and the effective manifester level increase is +7. The aegis must be at least 16th level and have the Power Stone Repository customization to take this customization, and be 18th level to take this customization a second time." compset="CustomSpec">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <exprreq message="Power Stone Repositor customization required."><![CDATA[#hasability[rcPUaPwrSR] <> 0]]></exprreq>
     <prereq message="Aegis level 16+ required.">
@@ -1503,9 +1495,8 @@
     </thing>
   <thing id="rcPUaHarSh" name="Harness Shard" description="The aegis is able to place a single {i}shard{/i} into the astral suit as a move action. By spending one power point as a standard action, he can gain one use of the {i}shard{/i} without the shard disintegrating. This customization may be selected multiple times. Each time, it allows the aegis to store an additional shard within the astral suit, although each shard must be activated separately.{BR}{BR}{B}Not Fully Implemented{/b}" compset="CustomSpec">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="User" tag="Activation"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
@@ -1513,10 +1504,9 @@
     <comment>This ability is fully implemented. The procedure PUAstBonus handles the bonus logic.</comment>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <prereq message="">
       <validate><![CDATA[
         var allowed as number
@@ -1551,9 +1541,8 @@
     </thing>
   <thing id="rcPUaPsiAt" name="Psionic Attacks" description="The aegis&apos;s astral suit encompasses his melee attacks. All of the aegis&apos;s melee attacks are treated as if they were magic for the purpose of overcoming damage reduction. In addition, any melee weapons wielded by the aegis are treated as masterwork if they are not already." compset="CustomSpec" summary="Melee weapons are treated as magic and MW." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="20000"><![CDATA[
       ~ If we're not wearing the Astral Suit, get out now
@@ -1568,9 +1557,8 @@
   <thing id="rcPUaPsiDa" name="Psionic Damage" description="The aegis&apos;s melee attacks deal an additional 1 point of damage. The aegis must have the psionic attacks customization and must be at least 5th level to select this customization." compset="CustomSpec" summary="Melee weapons deal +1 damage." uniqueness="useronce">
     <fieldval field="abValue" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (hero.tagcount[Custom.WearAstS] = 0)
@@ -1589,24 +1577,23 @@
     </thing>
   <thing id="rcPUaPull" name="Pull" description="The aegis&apos;s astral suit envelopes his weapon and grants him the ability to pull creatures closer with a successful melee attack. Whenever the aegis makes a successful melee attack, he can attempt a free combat maneuver check. If successful, the target of the attack is pulled 5 feet closer to the aegis. This ability only works on creatures of a size equal to or smaller than the aegis.{br}{br}Creatures pulled in this way do not provoke attacks of opportunity. The aegis must have a reach of 10 feet or more to select this customization. If there is insufficient room for the target to move closer to the aegis, the attempt automatically fails." compset="CustomSpec" summary="Successful melee attacks allow a CMB check to pull the target." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <exprreq message="10+ foot reach required."><![CDATA[herofield[tReach].value >= 10]]></exprreq>
     </thing>
   <thing id="rcPUaPush" name="Push" description="The aegis gains the ability to push creatures away with a successful attack. Whenever the aegis makes a successful melee attack, he can attempt a free combat maneuver check. If successful, the target of the attack is pushed 5 feet directly away from the aegis.{br}{br}This ability only works on creatures of a size equal to or smaller than the aegis. Creatures pushed in this way do not provoke attacks of opportunity. If there is insufficient room for the target to be pushed away, the attempt automatically fails." compset="CustomSpec" summary="Successful melee attacks allow a CMB check to push the target." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="rcPUaRetal" name="Retaliate" description="The aegis gains the ability as an immediate action and by expending psionic focus to make a melee attack against an enemy that has successfully hit him with a melee attack. This counts as an attack of opportunity and the aegis must be able to reach the enemy. An aegis must be at least 8th level before selecting this customization." compset="CustomSpec" summary="Immediate action expend focus to make an AoO vs attacker." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="abAction" tag="PUExpFocus"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <prereq message="Aegis level 8+ required.">
@@ -1620,9 +1607,8 @@
     </thing>
   <thing id="rcPUaIReta" name="Retaliate, Improved" description="As the Retaliate customization, except the triggering attack does not need to be successful.{br}{br}The aegis must have the Retaliate customization and be at least 16th level before selecting this customization." compset="CustomSpec" summary="The triggering attack does not need to be successful." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <exprreq message="Retaliate customization required."><![CDATA[#hasability[rcPUaRetal] <> 0]]></exprreq>
     <prereq message="Aegis level 16+ required.">
@@ -1636,7 +1622,7 @@
     </thing>
   <thing id="wPUSpiCar" name="Carapace Spikes" description="The astral suit is covered in sharp spikes as if equipped with armor spikes." compset="Weapon" uniqueness="unique">
     <usesource source="pPsiUn"/>
-    <tag group="wMain" tag="1d6_5"/>
+    <tag group="wMain" tag="1d6"/>
     <tag group="wCritMin" tag="20"/>
     <tag group="wCritMult" tag="2"/>
     <tag group="wType" tag="P"/>
@@ -1657,9 +1643,9 @@
     </thing>
   <thing id="rcPUaSpikC" name="Spiked Carapace" description="The astral suit is covered in sharp spikes as if equipped with armor spikes." compset="CustomSpec" summary="Gain armor spikes" uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="wPUSpiCar">
       <autotag group="HasAbility" tag="rcPUaSpikC"/>
@@ -1667,9 +1653,9 @@
     </thing>
   <thing id="rcPUaSwim" name="Swim" description="The aegis gains a swim speed equal to his base speed." compset="CustomSpec" summary="Swim speed = base land speed." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="14000"><![CDATA[
       ~ If we're not wearing the Astral Suit, get out now
@@ -1682,17 +1668,17 @@
     </thing>
   <thing id="rcPUaUndw" name="Underwater Breath" description="The aegis can safely breathe underwater as long as he is wearing his astral suit." compset="CustomSpec" summary="You can breathe water as well as air." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="rcPUaAdFt1" name="Adhesive Feet" description="The aegis gains a +4 bonus to CMD against bull rush, trip, and any combat maneuvers that attempt to move him from his current location. He also gains a +4 circumstance bonus to Climb checks." compset="CustomSpec" summary="Bonus CMD vs being moved." uniqueness="useronce">
     <fieldval field="abValue" value="4"/>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="1000"><![CDATA[
       ~ If we're not wearing the Astral Suit, get out now
@@ -1708,9 +1694,8 @@
     </thing>
   <thing id="rcPUaAugWp" name="Augmented Weapon" description="The astral suit coats the aegis&apos;s weapon. The weapon is treated as if it was one size category larger for damage purposes. The aegis does not suffer any penalties for wielding the weapon. This ability does not stack with effects that increase the aegis&apos;s size category, such as {i}expansion{/i}. The aegis must be at least 6th level to select this customization.\n\n{b}Note:{/b} You must equip a weapon to see the damage increase." compset="CustomSpec" summary="Weapons treated as one size larger." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="5000"><![CDATA[
       ~ If we're not wearing the Astral Suit, get out now
@@ -1731,9 +1716,9 @@
   <thing id="rcPUaCham" name="Chameleon" description="The aegis gains a +4 circumstance bonus to Stealth checks. The aegis must be at least 5th level before selecting this customization and this customization can be taken once for every five levels the aegis possesses." compset="CustomSpec" summary="+4 bonus to stealth.">
     <fieldval field="abValue" value="4"/>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="1000"><![CDATA[
       ~ If we're not wearing the Astral Suit, get out now
@@ -1772,9 +1757,9 @@
     </thing>
   <thing id="rcPUaClimb" name="Climb" description="The aegis gains a climb speed equal to 1/2 of his base land speed." compset="CustomSpec" summary="Climb speed = 1/2 base speed." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="14000"><![CDATA[
       ~ If we're not wearing the Astral Suit, get out now
@@ -1789,10 +1774,9 @@
     <fieldval field="actName" value="2PP for +2d6"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="User" tag="Activation"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="5000"><![CDATA[
       ~ If we're not wearing the Astral Suit, get out now
@@ -1815,9 +1799,9 @@
     </thing>
   <thing id="rcPUaFligh" name="Flight" description="The aegis uses psychokinetic energy to gain a fly speed equal to its base speed. The aegis&apos;s maneuverability depends on his size. Medium or smaller aegii have good maneuverability. Large aegii have average maneuverability, while Huge aegii have poor maneuverability. For 2 additional customization points, the aegis&apos;s maneuverability increases to perfect. The aegis&apos;s fly speed can be increased by spending additional customization points, gaining a 20-foot increase to fly speed for each additional point spent. The aegis must be at least 5th level before selecting this customization." compset="CustomSpec" summary="Fly speed = land speed.">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="14000"><![CDATA[
@@ -1849,9 +1833,9 @@
     </thing>
   <thing id="rcPUaFSpd" name="Flight Speed (+20)" description="The aegis&apos;s fly speed provided by the Flight customization can be increased by spending additional customization points, gaining a 20-foot increase to fly speed for each additional point spent. The aegis must be at least 5th level and have the Flight customization before selecting this customization." compset="CustomSpec" summary="Your fly speed increases by +20ft.">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="1"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="10000"><![CDATA[
@@ -1869,9 +1853,9 @@
     </thing>
   <thing id="rcPUaFMan" name="Flight Maneuverability (Perfect)" description="The aegis&apos;s fly maneuverability provided by the Flight customization can be increased to Perfect for 2 additional customization points. The aegis must be at least 5th level and have the Flight customization before selecting this customization." compset="CustomSpec" summary="You have perfect fly maneuverability." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="14100"><![CDATA[
@@ -1891,9 +1875,9 @@
     </thing>
   <thing id="rcPUaIDamR" name="Improved Damage Reduction" description="The aegis&apos;s damage reduction from his astral suit increases by 1. This customization can be taken once for every five levels the aegis possesses Its effects stack. The aegis must be at least 5th level before selecting this customization." compset="CustomSpec">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="1000"><![CDATA[
@@ -1934,9 +1918,9 @@
   <thing id="rcPUaInSiz" name="Increased Size" description="The transformed body grows in size and the aegis and all of his equipment is treated as one size category larger as if affected by {i}expansion{/i}. The aegis must be at least 9th level to select this customization." compset="CustomSpec" summary="Grow one size larger." uniqueness="useronce">
     <fieldval field="abValue" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="DescInfo" tag="puExpand1"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="1000"><![CDATA[
@@ -1963,9 +1947,9 @@
   <thing id="rcPUaIISiz" name="Increased Size, Improved" description="The astral suit grows in size and the aegis is treated as two size categories larger as if affected by an augmented {i}expansion{/i}. The aegis must be at least 15th level and have selected the increased size customization to select this customization. This customization does not stack with the increased size customization." compset="CustomSpec" summary="Increased size increases size by two size categories." uniqueness="useronce">
     <fieldval field="abValue" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" priority="500"><![CDATA[
@@ -1983,9 +1967,9 @@
     </thing>
   <thing id="rcPUaPwrR" name="Power Resistance" description="The aegis gains power resistance 13. This customization may be selected up to 3 times. Each subsequent time increases the power resistance gained by 3. This ability can be selected again starting at 8th level and at 12th level, increasing the power resistance by 3 for every additional time it is taken." compset="CustomSpec" summary="Gain Power Resistance.">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="5000"><![CDATA[
@@ -2023,9 +2007,9 @@
     </thing>
   <thing id="rcPUaPowBl" name="Powerful Build" description="The aegis gains the powerful build trait while wearing his astral suit. Whenever the aegis is subject to a size modifier or special size modifier for a Combat Maneuver Bonus or Combat Maneuver Defense (such as during grapple checks, bull rush attempts, and trip attempts), the aegis is treated as one size larger if doing so is advantageous to him. The aegis is also considered to be one size larger when determining whether a creature&apos;s special attacks based on size (such as grab or swallow whole) can affect him. The aegis can use weapons designed for a creature one size larger without penalty. However, his space and reach remain those of a creature of his actual size. The benefits of this trait stack with the effects of powers, abilities, and spells that change the subject&apos;s size category." compset="CustomSpec" summary="Treated as one size larger." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="xPowBuild">
@@ -2034,9 +2018,9 @@
     </thing>
   <thing id="rcPUaRam" name="Ram" description="The astral suit forms a hardened shell over the aegis&apos;s head. If the aegis makes a bull rush or overrun attempt, he gains a +2 bonus to his CMB. Alternatively, he can make a single attack with this shell as part of a charge and deal 2d6 points of damage. This attack is treated as adamantine when used to attack an object.{br}{br}This customization can be taken once for every five levels the aegis possesses, each additional selection increasing the bonus to CMB by 1 and the damage on a charge by 1d6 points of damage. The aegis must be at least 5th level before selecting this customization." compset="CustomSpec" summary="On a charge deal damage.">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="10000"><![CDATA[
       ~ Set Helper.FirstCopy &
@@ -2091,9 +2075,8 @@
     </thing>
   <thing id="rcPUaIRngA" name="Improved Ranged Attack" description="The damage of the aegis&apos;s ranged attack ability increases by an additional 1d8 points of piercing damage for every five class levels the aegis has. If the aegis is using the energy blast customization, the additional damage is instead 1d6 points of damage of your active energy type for every five class levels. The aegis must be at least 5th level and have the ranged attack customization before selecting this customization." compset="CustomSpec" summary="Increase range dmg by +1d8." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="20000" index="2"><![CDATA[
       ~ Calculate the bonus number of dice &
@@ -2113,9 +2096,8 @@
     </thing>
   <thing id="rcPUaIEnBl" name="Improved Energy Blast" description="When using the energy blast customization, the attack can target up to three creatures, no two of which can be more than fifteen feet apart. Each creature may only be the target of one such attack each round. Each attack is rolled separately. The aegis must be at least 12th level and have the energy blast and ranged attack customizations before selecting this customization." compset="CustomSpec" summary="Attack 3 targets no 2 of which can not be more than 15ft apart." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <exprreq message="Energy Blast customization required."><![CDATA[#hasability[rcPUaEneBl] <> 0]]></exprreq>
     <exprreq message="Ranged Attack customization required."><![CDATA[#hasability[rcPUaRngAt] <> 0]]></exprreq>
@@ -2131,16 +2113,13 @@
   <thing id="rcPUaWoStr" name="Woodland Stride" description="While wearing his astral suit, the trailblazer may move through any sort of undergrowth (such as natural thorns, briars, overgrown areas, and similar terrain) at his normal speed and without taking damage or suffering any other impairment. Thorns, briars, and overgrown areas that are enchanted or magically manipulated to impede motion, however, still affect him. The trailblazer must be at least 10th level before selecting this customization." compset="CustomSpec" summary="Move through undergrowth at your normal speed.">
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
-    <exprreq message="Trailblazer Archetype required."><![CDATA[#hasarchetype[arPUTrailb] <> 0]]></exprreq>
+    <tag group="abCategory" tag="arPUTrailb"/>
     </thing>
   <thing id="rcPUaFaTer" name="Favored Terrain" description="The trailblazer may select a single type of terrain from the Favored Terrains table. While wearing his astral suit, the trailblazer gains a +2 bonus on initiative checks and Knowledge (geography), Perception, Stealth, and Survival skill checks when in this terrain. The trailblazer traveling through his favored terrain normally leaves no trail and cannot be tracked (though he may leave a trail if he so chooses).{br}{br}The trailblazer must be at least 5th level before selecting this customization." compset="CustomSpec">
     <fieldval field="abValue" value="2"/>
     <usesource source="pPsiUn"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
+    <tag group="abCategory" tag="arPUTrailb"/>
     <tag group="User" tag="NeedDomain"/>
-    <tag group="Helper" tag="Secondary"/>
     <tag group="User" tag="Activation"/>
     <tag group="CustomCost" tag="2"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -2156,7 +2135,6 @@
       #skillbonus[skPercep] += field[abValue].value
       #skillbonus[skStealth] += field[abValue].value
       #skillbonus[skSurvival] += field[abValue].value]]></eval>
-    <exprreq message="Trailblazer Archetype required."><![CDATA[#hasarchetype[arPUTrailb] <> 0]]></exprreq>
     <prereq message="Aegis level 5+ required.">
       <validate><![CDATA[
         var classcheck as string
@@ -2166,11 +2144,11 @@
         validif (levels >= 5)]]></validate>
       </prereq>
     </thing>
-  <thing id="rcPUaTrem" name="Tremorsense" description="The aegis gains tremorsense out to a range of 30 feet. This allows the aegis to pinpoint the location of creatures that it cannot see without having to make a Perception check as long as the creature and the aegis are in contact with the ground, but such creatures still have total concealment from the aegis. Visibility still affects the aegis&apos;s movement and he is still denied his Dexterity bonus to Armor Class against attacks from creatures he cannot see. The aegis must be at least 7th level before selecting this customization." compset="RaceCustom" summary="Gain 30ft tremorsense." uniqueness="useronce">
+  <thing id="rcPUaTrem" name="Tremorsense" description="The aegis gains tremorsense out to a range of 30 feet. This allows the aegis to pinpoint the location of creatures that it cannot see without having to make a Perception check as long as the creature and the aegis are in contact with the ground, but such creatures still have total concealment from the aegis. Visibility still affects the aegis&apos;s movement and he is still denied his Dexterity bonus to Armor Class against attacks from creatures he cannot see. The aegis must be at least 7th level before selecting this customization." compset="CustomSpec" summary="Gain 30ft tremorsense." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="xTremorsen">
@@ -2190,8 +2168,7 @@
     <fieldval field="abValue" value="2"/>
     <usesource source="pPsiUn"/>
     <tag group="CustomCost" tag="2"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="Helper" tag="SpecUp"/>
     <eval phase="PostLevel" priority="15000"><![CDATA[
       ~ If we're not wearing the Astral Suit, get out now
@@ -2206,9 +2183,9 @@
     </thing>
   <thing id="rcPUaBlind" name="Blindsense" description="The astral suit augments the aegis&apos;s senses, giving him blindsense out to a range of 30 feet.{br}{br}This ability allows the aegis to pinpoint the location of creatures that he cannot see without having to make a Perception check, but such creatures still have total concealment from the aegis. Visibility still affects the aegis&apos;s movement and he is still denied his Dexterity bonus to Armor Class against attacks from creatures he cannot see. The aegis must be at least 9th level before selecting this customization." compset="CustomSpec" summary="Gain 30ft blindsense." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="rBlindsen">
@@ -2226,9 +2203,9 @@
     </thing>
   <thing id="rcPUaBurro" name="Burrow" description="The aegis gains a burrow speed equal to 1/2 his base speed. He can use this speed to move through dirt, clay, sand, and earth. He does not leave a hole behind, nor is his passage marked on the surface. The aegis must be at least 9th level before selecting this customization." compset="CustomSpec" summary="Gain a burrow speed equal to 1/2 your base speed." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="14000"><![CDATA[
@@ -2250,20 +2227,19 @@
     </thing>
   <thing id="rcPUaDieha" name="Diehard" description="When the aegis&apos;s hit point total is below 0, but he is not dead, he automatically stabilizes. He does not need to make a Constitution check each round to avoid losing additional hit points. He may choose to act as if disabled, rather than dying. He must make this decision as soon as he is reduced to negative hit points (even if it isn&apos;t his turn). If he does not choose to act as if disabled, he immediately falls unconscious. When under this effect, the aegis is staggered. He can take a move action without further injuring himself, but if he performs any standard action (or any other action deemed as strenuous, including some swift actions, such as manifesting a quickened power) he takes 1 point of damage after completing the act. If his negative hit points are equal to or greater than his Constitution score, he immediately dies." compset="CustomSpec" uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
   <thing id="rcPUaFrigh" name="Frightful Presence" description="The aegis makes his astral suit unsettling to his foes, gaining the frightful presence ability. The aegis can activate this ability as part of an offensive action, such as a charge or attack. Opponents within 30 feet of the aegis must make a Will save or become shaken for 3d6 rounds. The DC of this save is equal to 10 + 1/2 the aegis&apos;s class level + the aegis&apos;s Charisma modifier. If the aegis has at least 4 more Hit Dice than an opponent, that opponent becomes frightened instead. Foes with more HD than the aegis are immune to this effect. The aegis must be at least 11th level before selecting this customization." compset="CustomSpec" summary="Gain the frightful presence ability." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="StandardDC" tag="aCHA"/>
     <tag group="ProductId" tag="HLCommunit"/>
-    <eval phase="PostLevel" priority="20000">
-      ~ Calculate the DC = 1/2 aegis + Cha
+    <eval phase="PostLevel" priority="20000">~ Calculate the DC = 1/2 aegis + Cha
       field[abDC].value += round(linkage[table].field[cfgLevel].value/2,0,-1)</eval>
     <prereq message="Aegis level 11+ required.">
       <validate><![CDATA[
@@ -2276,9 +2252,9 @@
     </thing>
   <thing id="rcPUaQuick" name="Quickened Attacks" description="When the aegis makes a full attack, he gains one additional attack at his highest attack bonus.{br}{br}This customization does not stack with other sources of extra attacks, such as {i}haste{/i}. The aegis must be at least 10th level before selecting this customization." compset="CustomSpec" summary="Gain an addiitional attack at your highest BAB." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PostLevel" priority="50000"><![CDATA[
       ~ If we're not wearling the Astral Suit, get out now
@@ -2300,9 +2276,9 @@
   <thing id="rcPUaReach" name="Reach" description="The aegis&apos;s reach increases by 5 feet. The aegis must be at least 7th level before selecting this customization." compset="CustomSpec" summary="Reach increases by +5ft." uniqueness="useronce">
     <fieldval field="abValue" value="5"/>
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="3"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="Final" priority="15000"><![CDATA[
       ~ If we're not wearling the Astral Suit, get out now
@@ -2321,9 +2297,9 @@
     </thing>
   <thing id="rcPUaBlinS" name="Blindsight" description="The astral suit massively augments the aegis&apos;s senses, giving him blindsight out to a range of 30 feet. The aegis can maneuver and attack as normal, ignoring darkness, invisibility, and most forms of concealment as long as he has line of effect to the target.{br}{br}The aegis must possess the blindsense customization to take this customization. The aegis must be at least 11th level before selecting this customization." compset="CustomSpec" summary="Gain 30ft blindsight." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="rBlindSi">
@@ -2341,9 +2317,8 @@
     </thing>
   <thing id="rcPUaExPas" name="Extra Passenger" description="The aegis can carry one creature of the same size or smaller as the aegis&apos;s base size (powers and effects that increase the aegis&apos;s size do not allow him to carry larger creatures, although Increased Size and Improved Increased Size customizations do allow the aegis to carry larger passengers). The carried creature is treated as if it has total concealment and he gains the damage reduction of the astral suit, as well as any environmental customization options, such as that granted from the Energy Resistance or Underwater Breath customization. The creature carried using this ability remains adjacent to the aegis and moves with the aegis&apos;s move actions. A creature can be loaded and unloaded into the astral suit as a free action by the aegis, but the creature can take no actions until its next turn.{br}{br}The aegis must be at least 11th level before selecting this customization." compset="CustomSpec" summary="Carry 1 creature of same size or smaller." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <prereq message="Aegis level 11+ required.">
       <validate><![CDATA[
@@ -2356,9 +2331,9 @@
     </thing>
   <thing id="rcPUaIEvad" name="Improved Evasion" description="As long as the aegis is wearing the astral suit, if the aegis is subjected to an attack that normally allows a Reflex save for half damage, he takes no damage if he makes a successful saving throw and only half damage if the saving throw fails. The aegis must be at least 12th level before selecting this customization." compset="CustomSpec" summary="Gain improved evasion." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="Helper" tag="SpecUp"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="raImpEvas">
@@ -2375,9 +2350,9 @@
     </thing>
   <thing id="rcPUaIStal" name="Improved Stalwart" description="As long as the aegis is wearing the astral suit, if the aegis is subjected to an attack that normally allows a Fortitude or Will save for a reduced or partial effect, he can expend his psionic focus as an immediate action to ignore the effect if he makes a successful saving throw and suffers the reduced effect if the saving throw fails. The aegis must be at least 16th level before selecting this customization." compset="CustomSpec" summary="Expend focus to ingore partial Will/Fort saves." uniqueness="useronce">
     <usesource source="pPsiUn"/>
-    <tag group="Helper" tag="Secondary"/>
+    <tag group="abCategory" tag="PUAegisCus"/>
+    <tag group="abCategory" tag="arPUAberra"/>
     <tag group="CustomCost" tag="4"/>
-    <tag group="AllowRCust" tag="cfgPUAstSu"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <prereq message="Aegis level 16+ required.">
       <validate><![CDATA[
@@ -2387,5 +2362,444 @@
         call PUPreReqs
         validif (levels >= 16)]]></validate>
       </prereq>
+    </thing>
+  <thing id="arPUTrailb" name="Trailblazer" description="The trailblazer develops skills to aid him in tracking prey and avoiding obstacles, rather than in the learning how to manipulate and craft psionic items. He uses his astral suit to improve his ability to move and handle varied environments, in addition to its use as a form of protection. Where other hunters might find armor to be a hindrance, the trailblazer&apos;s astral suit is an asset, helping him to blend in with his surroundings.{br}{br}{b}Class Skills:{/b} A trailblazer adds Survival as a class skill, but does not count Use Magic Device as a class skill." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="264"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
+    <usesource source="pPsiUn"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="abCategory" tag="arPUTrailb" name="Trailblazer Customization"/>
+    <tag group="AbReplace" tag="cPUCraftsm"/>
+    <tag group="AbReplace" tag="cPUReconfi"/>
+    <tag group="AbReplace" tag="cPUAugSuit"/>
+    <tag group="AbReplace" tag="cPUMastCr"/>
+    <tag group="NotClassSk" tag="skUseMagic"/>
+    <tag group="ClassSkill" tag="skSurvival"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPUAegTrk">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPURapAdj">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cPUUndTra">
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="cPUAegTrap">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpPU0"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Setup Aegis Configurable &
+      Call SetAegArch]]></eval>
+    </thing>
+  <thing id="cPUAegTrk" name="Track" description="A trailblazer adds half his level (minimum 1) to Survival skill checks made to follow tracks." compset="ClSpecial" summary="Add the listed bonus to survival checks made to track.">
+    <comment>Trailblazer Archetype ability</comment>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="aaTrack"></bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Bonus is half-level, min 1
+      field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),1)
+
+      #situational[hero.child[skSurvival],signed(field[abValue].value) & " to track.",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="cPURapAdj" name="Rapid Adjustment" description="The trailblazer can, as a swift action, alter his astral suit&apos;s customizations to better allow him to follow prey or respond to changing environments, but he is limited to the list of customizations below when doing so. The customization being lost and the customization being gained must both be in the list below. The customizations the trailblazer can select from are Burrow, Chameleon, Climb, Darkvision, Flight, Speed, Swim, Underwater Breath. This ability replace reconfigure." compset="ClSpecial">
+    <comment>Trailblazer Archetype ability</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cPUUndTra" name="Undetected Tracker" description="Starting at 4th level, the trailblazer learns how to make his astral suit blend in with his environment and soften his movements. The trailblazer adds 1/2 his class level to Stealth checks as long as he is maintaining psionic focus and has his astral suit active. This ability replaces augment suit." compset="ClSpecial" summary="Add the listed bonus to Stealth checks  when focused and with an active astral suit.">
+    <comment>Trailblazer Archetype ability</comment>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Our bonus is level /2, min 1
+      field[abValue].value += maximum(round(field[xTotalLev].value / 2,0,-1),1)
+
+      var v_focus as number
+      call PUPsiFocus
+      ~ Only Apply bonus if focused and Wearing suit.
+      doneif (hero.tagcount[Custom.WearAstS] + v_focus <> 2)
+
+      #skillbonus[skStealth] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cPUAegTrap" name="Trapfinding" description="A trailblazer of 5th level adds 1/2 his class level to Perception skill checks made to locate traps and to Disable Device skill checks (minimum +1). A trailblazer can use Disable Device to disarm magic traps.{br}{br}This ability replaces Master Craftsman." compset="ClSpecial" summary="Gain a bonus to find or disable traps, including magical ones.">
+    <comment>Trailblazer Archetype ability</comment>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="Render" priority="10000" index="2"><![CDATA[
+      field[sbName].text = lowercase(field[thingname].text) & " " & signed(field[abValue].value)]]></eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Only do it for the first copy.
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ our bonus is level /2, min 1
+      field[abValue].value += maximum(round(field[xAllLev].value / 2,0,-1),1)
+
+      #skillbonus[skDisable] += field[abValue].value
+      #situational[hero.child[skPercep],signed(field[abValue].value) & " to locate traps",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="arPUAberra" name="Aberrant" description="Using ectoplasm is the way a typical aegis protects and enhances the physical body. Others have discovered that by directly altering the body, they can achieve similar results, although they might have a more grisly appearance. These aberrants often have misshapen or twisted forms, yet they are equally deadly." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="261"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
+    <usesource source="pPsiUn"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AbReplace" tag="cPUMastCr"/>
+    <tag group="AbReplace" tag="cPUAstSuit"/>
+    <tag group="AbReplace" tag="cPUAstrRep"/>
+    <tag group="AbReplace" tag="cPUCraftsm"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPUVim">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUTranBod">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUIntim">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPUPsiForm">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cPUTranBod">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cPUTranBod">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <bootstrap thing="cPUTranBod">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cPUTranBod">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpPU0"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Setup Aegis Configurable &
+      Call SetAegArch]]></eval>
+    </thing>
+  <thing id="cfgPUTranB" name="Transformed Body" compset="Configure" uniqueness="unique">
+    <comment>Aberrant Archetype Configurable</comment>
+    <fieldval field="cfgObject1" value="Customization"/>
+    <fieldval field="cfgMax1" value="1"/>
+    <tag group="abCategory" tag="arPUAberra" name="Transformed Body"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="rcPUaBrawn">
+      <autotag group="CustTaken" tag="cfgPUTranB"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaHardS">
+      <autotag group="CustTaken" tag="cfgPUTranB"/>
+      </bootstrap>
+    <bootstrap thing="raDarkVis">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 2]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUTranB"/>
+      </bootstrap>
+    <bootstrap thing="rcPUaIDamR">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 10]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUTranB"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="25000"><![CDATA[
+      ~ Set focus to Aegis Helper Pick &
+      perform hero.childfound[cPUAegHelp].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ Set Astral Suit Level from Aegis Helper &
+      field[cfgLevel].value = focus.field[abValue].value
+
+      ~ Set Configurable points from Aegis Helper.
+      ~ abValue2 is Bonus points and abValue3 is the Base Points.
+      field[cfgMax1].value = focus.field[abValue2].value + focus.field[abValue3].value]]>
+      <after name="Set Aegis Base Points"/>
+      </eval>
+    <eval phase="Final" priority="999999" index="2"><![CDATA[
+      ~ To make this configurable expression backwards compatabile
+      ~ we will include the old AllowRCust.cfgPUTranB tag and
+      ~ the new Ability Category tag abCategory.arPUAberra.
+
+      ~ Change the Customiazation expression to include Ability Category tags
+      ~ NOTE: This script assumes at least ONE abCategory.? tag exists on the configurable
+      ~       at the time that it runs.
+      field[cfgAllow1].text = "(" & field[cfgAllow1].text & ") | (" & tagids[abCategory.?,"|"] & ")"]]></eval>
+    </thing>
+  <thing id="cPUTranBod" name="Transformed Body" description="An aberrant learns to modify his own form, rather than covering himself in an ectoplasmic suit. The aberrant gains a +1 natural armor bonus to his AC. At 5th level and every 5 levels thereafter (10th, 15th, and 20th), the natural armor bonus increases by 1.{br}{br}An aberrant can modify his form in a fashion similar to the aegis&apos;s customization, but his options are more limited. He can choose customizations from the customization list below, as well as new customizations exclusive to the aberrant. Because the aberrant is modifying his own body, he can wear armor as normal.{br}{br}The aberrant gains hardened strikes and brawn as a free customization. At 2nd level, the aberrant gains darkvision as a free customization. At 10th level, the aberrant gains improved damage reduction as a free customization.{br}{br}This ability replaces astral suit." compset="ClSpecial">
+    <comment>Aberrant Archetype Ability</comment>
+    <fieldval field="actName" value="Transformed"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cfgPUTranB"></bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & signed(field[xIndex].value)
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      hero.child[ArmorClass].field[tACNatural].value += field[abValue].value]]></eval>
+    <eval phase="First" priority="500" index="2"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      ~ Being transformed is the same as wearing our Astral Suite
+      ~ so set tag on hero.
+      perform hero.assign[Custom.WearAstS]]]></eval>
+    </thing>
+  <thing id="cPUVim" name="Vim" description="The aberrant gains {i}vim{/i} as a psi-like ability usable at will at first level as long as he maintains psionic focus. This ability replaces astral repair." compset="ClSpecial">
+    <comment>Aberrant Archetype Ability</comment>
+    <tag group="AbilType" tag="PsiLike"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="puVim0">
+      <autotag group="Helper" tag="PsiLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    </thing>
+  <thing id="cPUIntim" name="Intimidate" description="Beginning at 2nd level, an aberrant gains a +1 bonus to Intimidate checks. At 6th level and every four levels thereafter, this bonus increases by 1. This ability replaces craftsman." compset="ClSpecial" summary="Gain listed bonus to intimidate checks.">
+    <comment>Aberrant Archetype Ability</comment>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="SpecType" tag="Skill"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & signed(field[xIndex].value)
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xCount].value
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      #skillbonus[skIntim] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cPUPsiForm" name="Psionic Form" description="At 5th level, the aberrant gains 1 hit point for each psionic feat he has. Whenever he takes a new psionic feat, he gains 1 more hit point. These bonus hit points stack with those gained from the Psionic Body feat. This ability replaces Master Craftsman." compset="ClSpecial">
+    <comment>Aberrant Archetype Ability</comment>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Add 1 * (number of psionic feats on the hero) to our hit points.
+      field[abValue].value += hero.tagcount[fCategory.Psionic]
+
+      ~ Give the bonus HP to the character
+      herofield[tHP].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="rcPUaDisjo" name="Disjointed" description="The aberrant gains a +2 bonus on Escape Artist checks." compset="CustomSpec" summary="+2 bonus to Escape Artist." uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not wearing the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      #skillbonus[skEscape] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="rcPUaEyest" name="Eyestalks" description="The aberrant&apos;s eyes extend out on a pair of stacks, giving a +2 bonus on Perception checks and low-light vision. The aberrant is also capable of looking around corners while still maintaining cover." compset="CustomSpec" summary="Gain +2 Perception and low-light vision." uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raLowLight">
+      <containerreq phase="First" priority="500"><![CDATA[count:hero#Custom.WearAstS  <> 0]]></containerreq>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not wearling the Astral Suit, get out now
+      doneif (hero.tagcount[Custom.WearAstS] = 0)
+
+      #skillbonus[skPercep] += field[abValue].value]]></eval>
+    </thing>
+  <thing id="rcPUaSting" name="Stinger" description="The aberrant gains a stinger that resembles a scorpion&apos;s as a secondary natural attack that deals 1d4 points of piercing damage." compset="CustomSpec" summary="Gain a stinger as a secondary natural attack." uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="wSting">
+      <autotag group="wMain" tag="1d4"/>
+      <autotag group="Helper" tag="NatSecond"/>
+      <autotag group="Helper" tag="NoRootName"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcPUaTearS" name="Tearing Sting" description="When the aberrant makes a successful attack with his stinger, it rips the flesh of the target, causing the target to bleed, taking 1 point of damage each round. The aberrant must have the stinger customization before selecting this customization." compset="CustomSpec" uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set bleed note on the stinger &
+      #extradamage[hero.childfound[wSting]," plus one bleed",field[name].text]]]></eval>
+    <exprreq message="Stinger customization required."><![CDATA[#hasability[rcPUaSting] <> 0]]></exprreq>
+    </thing>
+  <thing id="rcPUaTenta" name="Tentacle" description="The aberrant grows a tentacle and gains a secondary natural attack with the tentacle that deals 1d4 points of damage. The aberrant also gains the grab ability and gets a +2 bonus to grab for every tentacle beyond the first he has. This customization can be selected up to 4 times; its benefits stack." compset="CustomSpec" summary="Gain a tentacle as a secondary natural attack." maxlimit="4">
+    <fieldval field="abValue" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="CustomCost" tag="1"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="xxPUaTenta"></bootstrap>
+    <bootstrap thing="wTentacle">
+      <autotag group="wMain" tag="1d4"/>
+      <autotag group="Helper" tag="NatSecond"/>
+      <autotag group="Helper" tag="NoRootName"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000">~ +2 bonus to grab for each tentacle past the
+      ~ first one.
+      hero.child[manGrapple].field[cmbBonus].value += hero.tagcount[Ability.rcPUaTenta] - 1</eval>
+    </thing>
+  <thing id="xxPUaTenta" name="Tentacle" description="Helper Pick to make grab only display once" compset="CustomSpec" uniqueness="unique">
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Hide" tag="Special"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="raGrab">
+      <autotag group="Target" tag="wTentacle"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcPUaObese" name="Obese" description="The aberrant&apos;s base movement is reduced as if wearing heavy armor (for example, 30 ft. becomes 15 ft), but the aberrant gains extra hit points equal to his aberrant level and the aberrant&apos;s damage reduction gained from his transformed body improves by 1." compset="CustomSpec" summary="Gain lvl bonus HP but move slower." uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="1000"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ DR increses by 1
+      #value[cPUAegDR] += 1
+
+      ~ Speed is slow as if wearing armor &
+      perform hero.assign[Hero.ArmorSpeed]
+
+      ~ HP Bonus for Aegis levels
+      field[abValue].value = #levelcount[Aegis]
+      hero.child[Totals].field[tBonusHP].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="rcPUaPoiso" name="Poison" description="The aberrant&apos;s stinger attacks deal 1 point of Strength damage (Fortitude negates, DC 10 + 1/2 the aberrant&apos;s level + the aberrant&apos;s Charisma modifier) on a successful attack. The aberrant must have the stinger customization before selecting this customization." compset="CustomSpec" summary="Stinger attack gains a poison effect causing 1 Str dmg." uniqueness="useronce">
+    <fieldval field="abText" value="Fort Neg"/>
+    <usesource source="pPsiUn"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abSave" tag="FortNeg"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="abAction" tag="Attack"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="LvNamePar" tag="AppText"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Set poison note on the stinger &
+      #extradamage[hero.childfound[wSting]," plus poison",field[name].text]]]></eval>
+    <exprreq message="Stinger customization required."><![CDATA[#hasability[rcPUaSting] <> 0]]></exprreq>
+    </thing>
+  <thing id="rcPUaINatA" name="Improved Natural Armor" description="The aberrant&apos;s natural armor bonus increases by 1. This customization can be taken once for every five levels the aberrant possesses.{br}{br}The aberrant must be at least 5th level before selecting this customization." compset="CustomSpec" summary="Increase natural AC bonus by 1.">
+    <fieldval field="abValue" value="1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="9000"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Increase Transformed Body AC bonus by 1 &
+      #value[cPUTranBod] += field[abValue].value]]></eval>
+    <prereq message="">
+      <validate><![CDATA[
+        var classcheck as string
+        var levels as number
+        classcheck = "Aegis"
+        call PUPreReqs
+
+        var allowed as number
+        allowed = round(levels/5,0,-1) + 1
+
+        ~if we're a pick, then there must be complevel/5 or fewer copies of
+        ~ this ability
+        If (@ispick <> 0) then
+          validif (hero.tagcount[HasAbility.rcPUaINatA] <= allowed)
+
+        ~otherwise, look for fewer, since we're adding this
+        Else
+          validif (hero.tagcount[HasAbility.rcPUaINatA] < allowed)
+        Endif
+
+        @message = "You may not have more than " & allowed & " copies of this ability."]]></validate>
+      </prereq>
+    </thing>
+  <thing id="rcPUaSpike" name="Spikes" description="The aberrant gains the ability to loose a volley of two spikes as a standard action (make an attack roll for each spike). This attack has a range of 180 feet with no range increment and deals 1d6 points of damage plus the aberrant&apos;s Strength modifier (if the aberrant is Medium sized; adjust the damage accordingly if the aberrant is a size other than Medium). All targets must be within 30 feet of each other. The aberrant can launch only 24 spikes in any 24-hour period." compset="CustomSpec" summary="Gain ability to loose a volley of two spikes." uniqueness="useronce">
+    <fieldval field="trkMax" value="24"/>
+    <usesource source="pPsiUn"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="User" tag="Tracker"/>
+    <bootstrap thing="wSpikes">
+      <autotag group="wMain" tag="1d6"/>
+      <autotag group="Helper" tag="NatSecond"/>
+      <autotag group="Helper" tag="NoRootName"/>
+      </bootstrap>
+    </thing>
+  <thing id="rcPUaTearF" name="Tear Flesh" description="When the aberrant has successfully grabbed a creature with its tentacles, he deals 1d6 damage per attached tentacle when target breaks free, The aberrant must have the tentacles customization before selecting this customization." compset="CustomSpec" summary="Tentacles cause dmg when target breaks grapple." uniqueness="useronce">
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="abValue2" value="6"/>
+    <usesource source="pPsiUn"/>
+    <tag group="CustomCost" tag="2"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="LvNameApp" tag="DieCntVal"/>
+    <tag group="LvNameApp" tag="SignDieCnt"/>
+    <tag group="LvNameApp" tag="DieSizVal2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <exprreq message="Tentacle customization required."><![CDATA[#hasability[rcPUaTenta] <> 0]]></exprreq>
     </thing>
   </document>
