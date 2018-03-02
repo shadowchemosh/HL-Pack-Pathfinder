@@ -341,6 +341,11 @@
       ~ If we're not wearing the Astral Suit, get out now
       doneif (hero.tagcount[Custom.WearAstS] = 0)
 
+      ~ If we have a multiplier value then use it
+      If (field[abValue2].value <> 0) Then
+        field[abValue].value = field[abValue].value * field[abValue2].value
+      Endif
+
       ~ Apply DR to hero
       #applydr[xDamRd,field[abValue].value]]]></eval>
     </thing>
@@ -2801,5 +2806,314 @@
     <tag group="LvNameApp" tag="DieSizVal2"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <exprreq message="Tentacle customization required."><![CDATA[#hasability[rcPUaTenta] <> 0]]></exprreq>
+    </thing>
+  <thing id="rcPUaToxic" name="Toxic" description="A number of times per day equal to the aberrant&apos;s Constitution modifier (minimum 1/day), the aberrant can envenom a weapon that he wields or one natural attack with toxic saliva. Applying venom in this way is a swift action and the aberrant is immune to this poison.{br}{br}{b}Aberrant Saliva:{/b} Injury; save Fort DC 10 + 1/2 aberrant level + the aberrant&apos;s Constitution modifier; frequency 1/ round for 6 rounds; effect 1d2 Dex; cure 1 save." compset="CustomSpec" summary="Envenom a weapon or natural attack with toxic saliva." uniqueness="useronce">
+    <usesource source="pPsiUn"/>
+    <tag group="CustomCost" tag="3"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ChargeCalc" tag="AttrOnly"/>
+    <tag group="ChargeCalc" tag="Minimum1"/>
+    <tag group="ChargeAttr" tag="aCON"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="rcPUaProSh" name="Protective Shell" description="The aberrant gains the ability to form a protective shell around his entire body, but loses his ability to move while it is active. As a full-round action, the aberrant gains heavy fortification and doubles his damage reduction from transformed body, but he cannot make attacks of opportunity. The aberrant must be at least 12th level before selecting this customization." compset="CustomSpec" summary="Gain heavy fortification and 2x DR but you can&apos;t move or make an AoO." uniqueness="useronce">
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue2" value="75"/>
+    <usesource source="pPsiUn"/>
+    <tag group="CustomCost" tag="4"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="abCategory" tag="arPUAberra"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      ~ Mutliple DR by 2
+      #value2[cPUAegDR] += field[abValue].value
+
+      ~ Apply Fortification to hero
+      #applyfort[field[abValue2].value]]]></eval>
+    <prereq message="Aegis level 12+ required.">
+      <validate><![CDATA[
+        var classcheck as string
+        var levels as number
+        classcheck = "Aegis"
+        call PUPreReqs
+        validif (levels >= 12)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="arPUCryWar" name="Crystal Warrior" description="Some aegis have learned to form a psicrystal and shape their astral suit around the small creature, creating a sentient suit of armor that grants them many benefits at the cost of some flexibility." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="262"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
+    <usesource source="pPsiUn"/>
+    <tag group="AbReplace" tag="cPUInvigSu"/>
+    <tag group="AbReplace" tag="cPUCanniSu"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AbReplace" tag="cPUAstrRep"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPUPsiAff">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUMissive">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUPsicryC">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cPUEneBlst">
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="cPUPsCShot">
+      <autotag group="ClSpecWhen" tag="7"/>
+      </bootstrap>
+    <bootstrap thing="cPUTacSuit">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cPUTacSuit">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPUTacSuit">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <bootstrap thing="cPUTacSuit">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cPUTacSuit">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpPU0"/>
+    <eval phase="Final" priority="9999"><![CDATA[
+      #appenddesc[cPUAstSuit,"{b}Modification from Crystal Warrior{/b}: To gain the benefits of some of the additional class features detailed below, the aegis's psicrystal must be physically touching the aegis when the aegis forms his astral suit, and the psicrystal is consumed by the astral suit while the astral suit is active.{br}{br}When the psicrystal is consumed in this fashion, it still grants all the normal benefits for being within 5 ft. of the aegis (Alertness, etc), but the aegis does not gain any of the psicrystal's special abilities (natural armor, hardness, etc.) The aegis may still form his astral suit normally, but he loses those abilities detailed below that rely upon the psicrystal being consumed by the astral suit.{br}{br}In addition, the aegis gains the ranged attack customization as a bonus customization."]
+
+      hero.childfound[cPUPerfMer].field[CustDesc].text = "An aegis of 20th level has learned to become one with his suit. His suit cannot be dispelled or removed against his will by any means, although his astral suit ability still does not function within areas where psionics do not work, such as a null psionics field.{br}{br}In addition, the aegis can spend two daily uses of his reconfigure ability, to alter all of the customizations on his astral suit."]]></eval>
+    <eval phase="PreLevel" priority="100000" index="2"><![CDATA[
+      ~ Disable the 7th level Reconfigure only
+      perform hero.findchild[BaseClSpec,"thingid.cPUReconfi & SpecSource.cHelpPU0 & ClSpecWhen.7"].assign[Helper.SpcDisable]
+      perform hero.findchild[BaseClSpec,"thingid.cPUReconfi & SpecSource.cHelpPU0 & ClSpecWhen.7"].assign[Helper.SpcReplace]]]></eval>
+    </thing>
+  <thing id="cPUPsiAff" name="Psicrystal Affinity" description="The aegis gains the Psicrystal Affinity feat as a bonus feat at 1st level. For the purposes of his psicrystal&apos;s abilities and the feat&apos;s prerequisites, the aegis&apos;s class level counts as his manifester level. This ability replaces one of the customization points gained at 1st level." compset="ClSpecial" summary="Gain Psicyrstal Affinity feat.">
+    <comment>Crystal Warrior archetype ability</comment>
+    <fieldval field="actName" value="Psicrystal Subsumed"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Custom" tag="PcrySub" name="Psicrystal Subsumed"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <bootstrap thing="rcPUaRngAt">
+      <containerreq phase="First" priority="500"><![CDATA[(count:hero#Custom.PcrySub + count:hero#Custom.WearAstS = 2) & (count:Classes.Aegis >= 1)]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <bootstrap thing="fPUPsicry"></bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Decrease aegis customization points
+      #value2[cPUAegHelp] -=1]]></eval>
+    <eval phase="First" index="2"><![CDATA[
+      ~ if we've been disabled, get out now &
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If not activated get out now!
+      doneif (field[abilActive].value = 0)
+
+      ~ Set hero tag for Psicyrstal Subsumed
+      perform forward[Custom.PcrySub]]]></eval>
+    </thing>
+  <thing id="cPUMissive" name="Missive" description="While the aegis&apos;s astral suit is active and his psicrystal is consumed by it, he gains the ability to use {i}missive{/i} as a psi-like ability with a manifester level equal to his class level. This ability replaces astral repair." compset="ClSpecial" summary="Gain missive power as a psi-like ability.">
+    <comment>Crystal Warrior archetype ability</comment>
+    <fieldval field="abValue" value="2"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="PsiLike"/>
+    <bootstrap thing="puMissive0">
+      <containerreq phase="First" priority="500">count:hero#Custom.PcrySub + count:hero#Custom.WearAstS = 2</containerreq>
+      <autotag group="Helper" tag="PsiLike"/>
+      <autotag group="Usage" tag="AtWill"/>
+      </bootstrap>
+    </thing>
+  <thing id="cPUPsicryC" name="Psicrystal Containment" description="The aegis gains the Psicrystal Containment feat as a bonus feat at 3rd level. For the purposes of the feat&apos;s prerequisites, the aegis&apos;s class level counts as his manifester level. This ability replaces invigorating suit." compset="ClSpecial" summary="Gain Psicrystal Containment feat.">
+    <comment>Crystal Warrior archetype ability</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="fPUPsicryC">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 3 & !AbReplace.cPUPsicryC]]></containerreq>
+      <autotag group="thing" tag="skipprereq"/>
+      </bootstrap>
+    </thing>
+  <thing id="cPUEneBlst" name="Energy Blast" description="Starting at 4th level, the aegis gains the energy blast customization when his psicrystal is consumed by the astral suit. This ability replaces one of the customization points normally gained at 4th level." compset="ClSpecial" summary="Gain the engery blast customization.">
+    <comment>Crystal Warrior archetype ability</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <bootstrap thing="rcPUaEneBl">
+      <containerreq phase="First" priority="500"><![CDATA[(count:hero#Custom.PcrySub + count:hero#Custom.WearAstS = 2) & (count:Classes.Aegis >= 4)]]></containerreq>
+      <autotag group="CustTaken" tag="cfgPUAstSu"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Decrease aegis customization points
+      #value2[cPUAegHelp] -=1]]></eval>
+    </thing>
+  <thing id="cPUPsCShot" name="Psicrystal Shot" description="At 7th level, when the aegis&apos;s psicrystal is consumed by the astral suit, the psicrystal can use its own actions to aid the aegis in combat. The psicrystal can use the attack options from the ranged attack customization, including any customizations that improve the ranged attack, such as energy blast. Use the crystal warrior&apos;s base attack bonus, as calculated from all his classes, and the psicrystal&apos;s Dexterity modifier to calculate the psicrystal&apos;s attack bonus. Treat its Dexterity as if it was under the self-propulsion effect. This ability replaces the daily use of reconfigure normally gained at 7th level.\n\n{b}Note:{/b} Not fully implemented (TODO)." compset="ClSpecial">
+    <comment>Crystal Warrior archetype ability</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cPUTacSuit" name="Tactical Suit" description="Beginning at 12th level, once per day while his astral suit is active and the psicrystal is consumed by it, the aegis can expend his psionic focus to be treated as if under the {i}battlesense{/i} power, with a manifester level equal to half his class level. The power is manifested as if the aegis had spent a number of power points equal to the effect&apos;s manifester level. The aegis gains any benefits from the list of special abilities of {i}battlesense{/i} as if he was a member of the manifester&apos;s collective, but no other creatures gain the benefits of the power. The aegis can spend a standard action to alter the benefit of the power. Every two levels thereafter, the aegis can use this ability an additional time per day. This ability replaces cannibalize suit." compset="ClSpecial" summary="Expend focus to be treated as if under the {i}battlesense{/i} power.">
+    <comment>Crystal Warrior archetype ability</comment>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abAction" tag="PUExpFocus"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="DescInfo" tag="puBattl3"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & field[xIndex].value & "/day"
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[trkMax].value += field[xCount].value
+
+      ~ Calculate Half ML
+      field[abValue].value += round(field[xTotalLev].value/2,0,-1)
+
+      ~ Format Display name
+      field[livename].text = field[thingname].text & " (ML " & field[abValue].value & ")"]]></eval>
+    </thing>
+  <thing id="arPUEctArt" name="Ectopic Artisan" description="A shaper and an aegis both use ectoplasm to achieve their desired goals. The rare aegis has learned to blend the tools of the shaper into his own skills, but by doing so he reduces the power of his astral suit. These ectopic artisans gain allies formed of ectoplasm to aid them in battle.{br}{br}{b}Class Skills:{/b} The ectopic adept gains Disable Device as a class skill." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="263"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
+    <usesource source="pPsiUn"/>
+    <tag group="AbReplace" tag="cPUAegDR"/>
+    <tag group="AbReplace" tag="cPUReconfi"/>
+    <tag group="AbReplace" tag="cPUCanniSu"/>
+    <tag group="AbReplace" tag="cPUMastCr"/>
+    <tag group="ClassSkill" tag="skDisable"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AbReplace" tag="cPUAstrRep"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPUAstrMan">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUEctCre">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPUAstWarr">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cPUCoStrik">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cPUAstSwar">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cPUAstSwar">
+      <autotag group="ClSpecWhen" tag="14"/>
+      </bootstrap>
+    <bootstrap thing="cPUAstSwar">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <bootstrap thing="cPUAstSwar">
+      <autotag group="ClSpecWhen" tag="18"/>
+      </bootstrap>
+    <bootstrap thing="cPUAstSwar">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpPU0"/>
+    <eval phase="Final" priority="9999"><![CDATA[
+      hero.childfound[cPUPerfMer].field[CustDesc].text = "An aegis of 20th level has learned to become one with his suit. His suit cannot be dispelled or removed against his will by any means, although his astral suit ability still does not function within areas where psionics do not work, such as a null psionics field.{br}{br}In addition, the aegis can spend two daily uses of his reconfigure ability, to alter all of the customizations on his astral suit."]]></eval>
+    </thing>
+  <thing id="cPUAstrMan" name="Astral Manipulation" description="The ectopic artisan can, with a touch, restore an object&apos;s hit points or cause damage. As a standard action, the ectopic artisan can touch an object and either deal 2 hit points of damage to the object or heal 2 hit points of damage, although broken objects cannot be repaired in this fashion. Damage dealt to objects is not subject to object hardness.{br}{br}This ability replaces {i}astral repair{/i}." compset="ClSpecial" summary="Restore/Deal HP dmg to object touched.">
+    <fieldval field="abValue" value="2"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="20000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[livename].text = field[thingname].text & " (" & field[abValue].value & " HP Dmg)"
+
+
+      field[abSumm].text = "Restore/Deal " & field[abValue].value & " HP dmg to object touched."]]></eval>
+    </thing>
+  <thing id="cPUEctCre" name="Ectoplasmic Creation" description="An ectopic adept of 2nd level is able to shape ectoplasm for a myriad of uses, gaining the ability to manifest {i}ectoplasmic creation{/i} as a psi-like ability with a manifester level equal to half his class level a number of times per day equal to his Intelligence modifier.{br}{br}At 11th level, the ectopic adept can instead manifest {i}major ectoplasmic creation{/i} as a psi-like ability with a manifester level equal to his class level." compset="ClSpecial" summary="Gain powers to shape ectoplasm.">
+    <tag group="AbilType" tag="PsiLike"/>
+    <bootstrap thing="puEctoCre1">
+      <containerreq phase="First" priority="500"><![CDATA[(count:Classes.Aegis >= 2) & (count:Classes.Aegis < 11)]]></containerreq>
+      <autotag group="Helper" tag="PsiLike"/>
+      <autotag group="Usage" tag="Day"/>
+      </bootstrap>
+    <bootstrap thing="puEctoCrM5">
+      <containerreq phase="First" priority="500"><![CDATA[count:Classes.Aegis >= 11]]></containerreq>
+      <autotag group="Helper" tag="PsiLike"/>
+      <autotag group="Usage" tag="Day"/>
+      </bootstrap>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ ML of powers is half-level
+      field[abValue].value += round(field[xTotalLev].value/2,0,-1)
+
+      ~ Uses per day is equal to Int Modifier
+      field[trkMax].value += #attrmod[aINT]
+
+      field[livename].text = field[thingname].text & " (ML: " & field[abValue].value & ", " & field[trkMax].value & "/day)"]]></eval>
+    <eval phase="Final" priority="999999999" index="2">
+      ~ Set ML on powers
+      hero.childfound[puEctoCre1].field[sCL].value = field[abValue].value
+      hero.childfound[puEctoCrM5].field[sCL].value = field[abValue].value</eval>
+    </thing>
+  <thing id="cPUAstWarr" name="Astral Warrior" description="An ectopic artisan of 3rd level is able to create an ally to aid him in battle. Creating an astral warrior takes one minute of concentration to complete and the astral warrior remains until dismissed by the ectopic artisan.\n\nThis astral warrior functions as a summoner&apos;s eidolon using the ectopic artisan&apos;s class level as the summoner level, with some differences. The astral warrior uses the biped base form of the eidolon, but does not gain any of the natural attacks of the eidolon, nor does it gain any evolution points of its own. Instead, it is created with a masterwork weapon appropriate for its size and is considered proficient with the weapon. The weapon&apos;s damage type (bludgeoning, piercing, or slashing) is chosen by the ectopic artisan at the time of creation, but the weapon always deals 1d8 points of damage (for a medium sized creature). The astral warrior receives additional iterative attacks as normal if it has a high base attack bonus. The astral warrior&apos;s weapon disappears if it leaves the astral warrior&apos;s possession for more than one minute.\n\nThe ectopic artisan and the astral warrior split the total customization points available to the ectopic artisan, chosen when the ectopic artisan configures his astral suit.\n\nThe ectopic artisan can split his customization points in any ratio between himself and his astral warrior. The ectopic artisan must choose customizations separately for himself and for his astral warrior, although the ectopic artisan does not need to spend 8 hours separately for himself and for his astral warrior. The ectopic artisan can choose to leave customization points to be selected later as normal, choosing them for either himself or his astral warrior by spending one minute as normal. An astral warrior always forms with full hit points, and the astral warrior does not gain any evolutions.\n\nAn astral warrior is a mindless construct. Commanding an astral warrior is the same as commanding an astral construct.\n\nAn astral warrior disperses if the ectopic artisan is rendered unconscious or dies.\n\nThis ability replaces reconfigure.\n\n{b}Note:{/b} This isn&apos;t fully implemented yet.(TODO)" compset="ClSpecial">
+    <tag group="AbilType" tag="PsiLike"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cPUCoStrik" name="Cocooning Strike" description="The ectopic artisan gains a permanent customization that triggers on a critical hit while his astral suit is active. When triggered, the target is affected by {i}ectoplasmic cocoon{/i} (Reflex save DC 10 + half the aegis&apos;s level + the aegis&apos;s Intelligence modifier to negate). This effect only works on Large or smaller creatures. This ability can only be triggered once per round. The ectopic artisan can grant this customization to his astral warrior when it is created, but he loses access to it while the astral warrior is active and has been granted the customization. This ability replaces Master Craftsman." compset="ClSpecial" summary="Use {i}ecotoplasimic cocoon{/i} as a psi-like ability.">
+    <usesource source="pPsiUn"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="DescInfo" tag="puEctoCoc3"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abSave" tag="RefNeg"/>
+    <tag group="StandardDC" tag="aINT"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cPUAstSwar" name="Astral Swarm" description="An ectopic artisan of 12th level can create an astral swarm once per day (see Appendix).{br}{br}Every even level thereafter (14th,16th, 18th, and 20th), the ectopic artisan gains an additional daily use of this ability. This ability replaces cannibalize suit." compset="ClSpecial" summary="Create an astral swarm.">
+    <usesource source="pPsiUn"/>
+    <tag group="SpecType" tag="Defense"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ Set the list name
+      field[listname].text = field[thingname].text & " " & field[xIndex].value & "/day"
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " " & field[abValue].value
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      field[trkMax].value += field[abValue].value
+      ]]></eval>
     </thing>
   </document>
