@@ -219,15 +219,16 @@ foreach pick in hero from BaseSkill
   <thing id="cMHSHPalad" name="Angel Spells" description="{b}Benefit{/b}: You gain access to the Paladin spell list.\n\nFor spell progression use the same stats as the Mystic from the sample setting in the Modern Path.\n\nAngels can channel stored spell energy into healing spells that she did not prepare ahead of time. The Angel can “lose” any prepared spell that is not an orison or domain spell in order to cast any cure spell of the same spell level or lower (a cure spell is any spell with “cure” in its name)." compset="CustomSpec" summary="You gain access to the Paladin spell list" uniqueness="unique">
     <usesource source="SHModPath"/>
     <tag group="AbilType" tag="Super"/>
-    <tag group="SpecType" tag="SpellLike"/>
     <tag group="ClsCountAs" tag="cHelpPal"/>
     <tag group="SpecSource" tag="arMPSHAnge"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="abCategory" tag="GRCModernT"/>
+    <tag group="Custom" tag="MPSHAngSpe" name="Angel Spells" abbrev="Angel Spells"/>
     <bootstrap thing="cClrSpont">
       <autotag group="ClSpecWhen" tag="1"/>
       </bootstrap>
     <eval phase="First" priority="500">perform hero.childfound[cHelpMdH].assign[sClass.cHelpPal]</eval>
+    <eval phase="First" index="2">perform hero.assign[Custom.MPSHAngSpe]</eval>
     <pickreq thing="cMPGracePw"/>
     </thing>
   <thing id="cMPSHAntiP" name="Demon Spells" description="{b}Benefit{/b}: You gain access to the Antipaladin spell list.\n\nFor spell progression use the same stats as the Mystic from the sample setting in the Modern Path.\n\nA demon can&apos;t convert prepared spells to cure spells but can convert them to inflict spells (an inflict spell is one with “inflict” in its name)." compset="CustomSpec" summary="You gain access to the Antipaladin spell list" uniqueness="useronce">
@@ -286,7 +287,6 @@ foreach pick in hero from BaseSkill
 ~add 1 uses to our Hero Point Max
       hero.childfound[cMHHeroPB].field[livename].text = "Grace"]]></eval>
     <pickreq thing="tpOutsider"/>
-    <exprreq message="Must have Creature Type: Outsider"><![CDATA[#hastype[tpOutsider] <> 0]]></exprreq>
     </thing>
   <thing id="cMPSHAnStE" name="Smite Evil" description="{b}Benefit{/b}: Adds your Wisdom bonus to attack rolls and HD to your damage roll when used against an evil foe. This lasts until you rest or the targeted foe is dead.\n\nThis cost 1 Grace point." compset="CustomSpec">
     <fieldval field="actName" value="Angel Smite Evil"/>
@@ -1301,15 +1301,15 @@ doneif (field[pIsOn].value = 0)
       <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
     <link linkage="varies" thing="cHelpMdH"/>
-    <eval phase="First" index="3"><![CDATA[perform hero.assignstr["Template.tmPFNosfer"]]]></eval>
-    <eval phase="First" index="4"><![CDATA[perform hero.assignstr["Template.tmVampJian"]]]></eval>
-    <eval phase="PostAttr" priority="10000">var hp as number
-hp = hero.child[aCHA].field[aModBonus].value
-hero.childfound[cMHHeroPB].field[trkMax].value += hp</eval>
     <eval phase="First" index="2"><![CDATA[perform hero.assignstr["Race.rDhampir"]
 perform hero.assignstr["IsRace.rDhampir"]
 perform hero.assignstr["RaceEquip.rDhampir"]
 perform hero.assignstr["wGroup.rDhampir"]]]></eval>
+    <eval phase="First" index="4"><![CDATA[perform hero.assignstr["Template.tmVampJian"]]]></eval>
+    <eval phase="PostAttr" priority="10000">var hp as number
+hp = hero.child[aCHA].field[aModBonus].value
+hero.childfound[cMHHeroPB].field[trkMax].value += hp</eval>
+    <eval phase="First" index="3"><![CDATA[perform hero.assignstr["Template.tmPFNosfer"]]]></eval>
     </thing>
   <thing id="cMPSHPVamp" name="{Path of the Vampire}" description="Vampires are undead humanoid creatures that feed on the blood of the living. They look much as they did in life, often becoming more attractive, though some have a hardened, feral look instead.\n\n{b}Benefit{/b}: The chosen attribute will provide his Hit Dice, Skill Ranks per Level, Base Attack Bonus, and Saving Throws to the Modern Hero class." compset="CustomSpec">
     <usesource source="SHModPath"/>
@@ -1357,6 +1357,7 @@ perform hero.assignstr["wGroup.rDhampir"]]]></eval>
     <tag group="fCategory" tag="General" name="General" abbrev="General"/>
     <tag group="ClVaryName" tag="Replace" name="Replace" abbrev="Replace"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="tpOutsider"></bootstrap>
     <bootstrap thing="chfCeObed"></bootstrap>
     <link linkage="varies" thing="cHelpMdH"/>
     <eval phase="PostAttr" priority="10000"><![CDATA[
@@ -1416,7 +1417,7 @@ perform hero.assignstr["wGroup.rDhampir"]]]></eval>
     <tag group="AllowCust" tag="cHelpSoD"/>
     <tag group="fCategory" tag="Combat"/>
     <tag group="fCategory" tag="Divine"/>
-    <tag group="SplAttr" tag="aCON"/>
+    <tag group="SplAttr" tag="aCHA"/>
     <tag group="fCategory" tag="General" name="General" abbrev="General"/>
     <tag group="ClVaryName" tag="Replace" name="Replace" abbrev="Replace"/>
     <tag group="cRef" tag="Poor"/>
@@ -1486,18 +1487,18 @@ perform hero.assignstr["wGroup.rDhampir"]]]></eval>
     <tag group="fCategory" tag="Combat"/>
     <tag group="fCategory" tag="Teamwork"/>
     <tag group="fCategory" tag="Wild"/>
-    <tag group="SplAttr" tag="aSTR"/>
+    <tag group="SplAttr" tag="aWIS"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="tmLyWolfA">
       <autotag group="thing" tag="skipprereq"/>
       </bootstrap>
     <link linkage="varies" thing="cHelpMdH"/>
-    <eval phase="First" priority="10000" index="3"><![CDATA[perform hero.assignstr["HasAbility.rcSknWolf"]]]></eval>
     <eval phase="PostAttr" priority="10000">var hp as number
 hp = hero.child[aSTR].field[aModBonus].value
 hero.childfound[cMHHeroPB].field[trkMax].value += hp</eval>
     <eval phase="First" index="2"><![CDATA[perform hero.assignstr["Race.rSknwalker"]
 perform hero.assignstr["IsRace.rSknwalker"]]]></eval>
+    <eval phase="First" priority="10000" index="3"><![CDATA[perform hero.assignstr["HasAbility.rcSknWolf"]]]></eval>
     </thing>
   <thing id="cMPSHWrWf" name="{Path of the Werewolf}" description="Lycanthropes are humanoids with the ability to turn into animals and animal-humanoid hybrid shapes. Natural lycanthropes are born with this ability and have perfect control over their shapechanging. Afflicted lycanthropes contract this ability like a curse or disease from another lycanthrope; they sometimes change form involuntarily.\n\n{b}Benefit{/b}: The chosen attribute will provide his Hit Dice, Skill Ranks per Level, Base Attack Bonus, and Saving Throws to the Modern Hero class." compset="CustomSpec">
     <usesource source="SHModPath"/>
