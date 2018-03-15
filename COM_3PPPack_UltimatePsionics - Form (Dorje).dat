@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+
+  <!-- Titles -->
+  <portal
+    id="iDorCustom"
+    style="lblTitle">
+    <label
+      text="Create a Dorje"
+      istitle="yes">
+      </label>
+    </portal>
+
+  <!-- List of all powers  -->
+  <portal
+    id="DorPowers"
+    style="Table">
+    <table_dynamic
+      component="BasePower"
+      showtemplate="sScrlPick"
+      headertemplate="sScrlPick"
+      choosetemplate="psiThing"
+      descwidth="375"
+      addpick="CustDorj"
+      buytemplate="BuyQty"
+      ismultiadd="no"
+      showsortset="Spell"
+      choosesortset="Spell"
+      candidatepick="CustDorj"
+      candidatefield="abItemExpr"
+      xactspecial="1"> <!-- Don't do anything with money or we'll ruin the
+                            transaction that the custom gear pick is doing. -->
+      <list><![CDATA[
+        ]]></list>
+      <autotag group="Helper" tag="OnScroll"/>
+      <autotag group="Helper" tag="CustItWand"/>
+      <autotag group="Helper" tag="NoPrepCnt"/>
+      <additem><![CDATA[
+        if (container.parent.tagcount[Helper.CustHasSpl] > 1) then
+          @text = "{text clrwarning}Too many powers have been added"
+        elseif (container.parent.tagcount[Helper.CustHasSpl] = 1) then
+          @text = "{text clrdisable}No more powers can be added"
+        else
+          @text = "{text clrprompt}Click to add a new power"
+          endif
+        ]]></additem>
+      </table_dynamic>
+    </portal>
+
+  <!-- Custom dorje Totals -->
+  <template
+    id="DorTotal"
+    name="Custom dorje Totals"
+    compset="Value">
+
+    <portal
+      id="totals"
+      style="lblNormal">
+      <label_script
+        text="Total Dorje Cost: ">
+        <labeltext><![CDATA[
+          var v_money as number
+          v_money = field[abValue].value
+          var v_text as string
+          call tMoneyLbl
+          @text = @text & v_text
+          ]]></labeltext>
+        </label_script>
+      </portal>
+
+    <position>
+      width = portal[totals].right
+      height = portal[totals].bottom
+      </position>
+    </template>
+
+  <template
+    id="DorCharges"
+    name="Custom Dorje Charges"
+    compset="Ability">
+
+    <portal
+      id="Label"
+      style="lblNormal">
+      <label
+        text="Initial Charges: ">
+        </label>
+      </portal>
+
+    <portal
+      id="Charges"
+      style="SmallIncr">
+      <incrementer
+        field="actUser"/>
+      </portal>
+
+    <position><![CDATA[
+      if (field[actUser].value > 50) then
+        perform portal[Label].setstyle[lblWarning]
+        endif
+
+      perform portal[Charges].alignrel[ltor,Label,5]
+
+      height = portal[Charges].bottom
+      ]]></position>
+
+    </template>
+
+
+  <!-- Dorje stuff -->
+  <layout
+    id="CustDorj">
+    <portalref portal="iDorCustom"/>
+    <portalref portal="DorPowers" taborder="10"/>
+    <templateref template="DorCharges" thing="CustDorj" ispick="yes" taborder="20"/>
+    <templateref reference="totals" template="DorTotal" thing="CustDorj" ispick="yes" taborder="30"/>
+    <position><![CDATA[
+      width = 500
+      portal[iDorCustom].width = width
+
+      portal[DorPowers].width = width
+      perform portal[DorPowers].alignrel[ttob,iDorCustom,10]
+      template[DorCharges].top = portal[DorPowers].bottom + 15
+      perform template[DorCharges].render
+      template[totals].top = template[DorCharges].bottom + 5
+      perform template[totals].render
+      ]]></position>
+    </layout>
+
+
+  <form
+    id="CustDorj"
+    name="Custom Dorje">
+    <layoutref layout="CustDorj"/>
+    <prelayout>
+      scenevalue[margin] = 10
+
+      ~ Set the height of the form - we can't set this to anything bigger
+      ~ because the "cost" controls and buttons take up a certain amount
+      ~ of space at the bottom.
+      height = 175
+
+      ~ Set the dimensions of our layout
+      layout[CustDorj].left = scenevalue[margin]
+      layout[CustDorj].top = scenevalue[margin]
+      layout[CustDorj].height = height - layout[CustDorj].top
+      </prelayout>
+    <postlayout>
+      ~ Set the width of the form
+      width = layout[CustDorj].width + (scenevalue[margin] * 2)
+      </postlayout>
+    </form>
+
+
+  </document>

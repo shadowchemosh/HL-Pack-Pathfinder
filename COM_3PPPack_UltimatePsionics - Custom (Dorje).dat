@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+
+  <!-- Custom Dorje -->
+  <thing
+    id="sCustomDor"
+    name="- Add Custom Dorje -"
+    compset="MagicItem"
+    description="Add this item to create a custom dorje."
+    buytemplate="BuyGeneral"
+    xactspecial="2"> <!-- Barebones purchase, showing just coin fields -->
+    <usesource source="pPsiUn"/>
+
+    <tag group="Helper" tag="CustomItem"/>
+    <tag group="Helper" tag="CustSpCont"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="gType" tag="Wand"/>
+    <tag group="SpecialTab" tag="GRWand"/>
+    <tag group="Helper" tag="HeldItem"/>
+
+    <eval value="1" phase="Render" priority="105100">
+      <after name="Gen Custom Spell Name"/><![CDATA[
+      var powername as string
+      foreach pick in gizmo from BasePower
+        If (eachpick.field[sCL].value > eachpick.field[sCasterMin].value) Then
+          powername = splice(powername,"ML " & ordinal(eachpick.field[sCL].value),", ")
+        Endif
+        powername = splice(powername, field[trkMax].value & " charges",", ")
+        powername = lowercase(eachpick.field[sbName].text) & " (" & powername & ")"
+      nexteach
+
+      field[livename].text = "Dorje of " & powername
+      field[sbName].text = "dorje of " & powername
+      ]]></eval>
+
+    <eval index="2" phase="First" priority="1000"><![CDATA[
+      if (field[gIsEquip].value = 0) then
+        perform assign[Hide.Activation]
+        perform assign[Helper.SpecUp]
+      endif
+      ]]></eval>
+
+    <eval index="3" phase="Final" priority="10000"><![CDATA[
+      ~ Our list of powers does not include wordspells
+      ~ Set both Child helper Picks with the custom expression to keep everything
+      ~ consistant.
+      gizmo.child[CustDorj].field[abItemExpr].text = "!component.BaseWord & !Helper.Helper & !Helper.Obsolete"
+      gizmo.child[CustWand].field[abItemExpr].text = "!component.BaseWord & !Helper.Helper & !Helper.Obsolete"
+      ]]></eval>
+
+    <eval index="4" phase="Final" priority="10000"><![CDATA[
+      ~during play, this doesn't need to be on the Special tab, but we do want
+      ~it displayed in the gear description appendix, so we add tags that will
+      ~make it show up in that list if we're outputting this item, but *not* in
+      ~the general special abilities list at the end of the statblock
+      if (state.isoutput <> 0) then
+        perform assign[Helper.ShowSpec]
+        perform assign[Hide.Statblock]
+      endif
+      ]]></eval>
+
+    <eval index="5" phase="Final" priority="28000">
+      <after name="Custom Wands, Potions, and Scrolls calculate cost based on spells"/><![CDATA[
+      ~ Spell/Power component scripts are hard-coded to go to the CustWand to set the abValue
+      ~ for cost. This script runs after the cost is set and moves it to our Custom Dorje
+      ~ helper Pick instead.
+      ~ NOTE: Yes this is a bit of a hack but without access to the Spell/Power component scripts
+      ~       nothing else can be done.
+      gizmo.child[CustDorj].field[abValue].value = gizmo.child[CustWand].field[abValue].value
+      ]]></eval>
+
+    <child entity="CustDorj"/>
+    </thing>
+
+  <!-- Custom Dorje helper thing -->
+  <thing
+    id="CustDorj"
+    name="Custom Dorje Helper"
+    compset="Ability">
+    <fieldval field="actUserMin" value="1"/>
+    <fieldval field="actUserMax" value="9999"/>
+    <fieldval field="actUser" value="50"/>
+    <tag group="User" tag="NoActSign"/>
+    <tag group="Helper" tag="Helper"/>
+    <eval index="2" phase="Level" priority="15000">
+      <before name="Calc trkLeft"/><![CDATA[
+      ~we use the actUser field to let the user set the number of charges
+      ~now, copy that value into the tracker value.
+      ~ We have to overwrite the value being placed into here by the CustWand Pick.
+      parent.field[trkMax].value = field[actUser].value
+      ]]></eval>
+    </thing>
+
+  </document>
