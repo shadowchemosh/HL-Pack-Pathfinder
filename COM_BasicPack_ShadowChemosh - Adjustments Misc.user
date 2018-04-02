@@ -3970,15 +3970,13 @@
 
       perform field[pChosen].chosen.assign[thing.skipprereq]]]></eval>
     </thing>
-  <thing id="pS2ArcStRe" name="Archetype: Stop Replace Ability" description="This adjustment lets you prevent an archetype from replacing a specific class ability. This is useful for when you want to combine two different archetypes together and they both replace the same class feature and not display a warning message.\n\n{b}Note:{/b} This adjustment ONLY works AFTER you have already added the archetype to your character.  Then from the first drop down select the archetype.  From the second drop down select the class ability that should not get replaced." compset="InPlay">
+  <thing id="pS2ArcStRe" name="Archetype: Stop Replace Ability" description="This adjustment lets you prevent an archetype from replacing a specific class ability. This is useful for when you want to combine two different archetypes together and they both replace the same class feature and are displaying a warning message.\n\n{b}Note:{/b} This adjustment ONLY works AFTER you have already added the archetype to your character. Then from the first drop down select the archetype. If the archetype has replaced abilities a second drop down appears letting you select the class ability to not have replaced." compset="InPlay">
     <fieldval field="pCandExpr" value="component.BaseVary"/>
-    <fieldval field="pCandExpr2" value="component.BaseClSpec"/>
     <usesource source="srcS2Adjus"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Adjust2nd" tag="S2Custom"/>
+    <tag group="Adjustment" tag="S2Custom"/>
     <tag group="OthAdjCat" tag="Class"/>
     <tag group="Helper" tag="NoIncr"/>
-    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="First" index="2"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[pIsOn].value = 0)
@@ -3999,13 +3997,22 @@
       doneif (field[pChosen].ischosen = 0)
 
       var sTags as string
-      ~ Built a list of abilities that are being replaced
-      sTags = field[pChosen].chosen.tagids[AbReplace.?,"|"]
-
       ~ Select Things
       field[pUsePicks2].value = 0
-      ~ Set search expression for CORE spell school
-      field[pCandExpr2].text = "component.BaseClSpec & (" & sTags & ")"]]></eval>
+
+      ~ Build list of archetype replaced abilities
+      If (field[pChosen].chosen.tagis[AbReplace.?] <> 0) Then
+
+        ~ Build a list of abilities that are being replaced
+        sTags = field[pChosen].chosen.tagids[AbReplace.?,"|"]
+
+        ~ Set search expression for replaced abilities
+        field[pCandExpr2].text = "component.BaseClSpec & (" & sTags & ")"
+
+        ~ Allow 2nd dropdown
+        perform assign[Adjust2nd.S2Custom]
+      Endif
+      ]]></eval>
     </thing>
   <thing id="mmS2Level1" name="- Higher Spell Slot -" description="This helper metamagic allows you to prepare or use lower level spells in higher level spell slots. After adding this you will be able to select how many levels higher.\n\n{b}Spell Slots{/b}\nThe various character class tables show how many spells of each level a character can cast per day. These openings for daily spells are called spell slots. a spellcaster always has the option to fill a higher-level spell slot with a lower-level spell. A spellcaster who lacks a high enough ability score to cast spells that would otherwise be his due still gets the slots but must fill them with spells of lower levels." compset="Metamagic" summary="Prepare spells in higher lvl slots." uniqueness="unique">
     <fieldval field="mmAbbr" value="Higher Slot"/>
