@@ -6,6 +6,45 @@
   <fileconstants>
     <autotag group="Helper" tag="PFSUserOK"/>
     </fileconstants>
+  <thing id="cS20WildEm" name="Wild Empathy" description="A character can improve the attitude of an animal. This ability functions just like a Diplomacy check made to improve the attitude of a person. The character rolls 1d20 and adds her class level and her Charisma modifier to determine the wild empathy check result.\n\nThe typical domestic animal has a starting attitude of indifferent, while wild animals are usually unfriendly.\n\nTo use wild empathy, the druid and the animal must be able to study each other, which means that they must be within 30 feet of one another under normal conditions. Generally, influencing an animal in this way takes 1 minute but, as with influencing people, it might take more or less time.\n\nA character can also use this ability to influence a magical beast with an Intelligence score of 1 or 2, but she takes a -4 penalty on the check." compset="ClSpecial" summary="Improve the attitude of an animal, as if using Diplomacy." replaces="cWildEmp">
+    <comment>Not happy this uses a replace Thing ID but it works and been here for years.</comment>
+    <fieldval field="abRange" value="30"/>
+    <tag group="Helper" tag="ClExLose"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SbNameApp" tag="AppValue"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="abDuration" tag="Instant"/>
+    <tag group="LvNameApp" tag="AppValue"/>
+    <tag group="LvNameApp" tag="SignAppVal"/>
+    <tag group="SbNameApp" tag="ShowZeroes"/>
+    <tag group="SbNameApp" tag="SignAppVal"/>
+    <tag group="LvNameApp" tag="ShowZeroes"/>
+    <eval phase="PreLevel" priority="1000"><![CDATA[
+      ~ Remove original wile empathy desc tag &
+      perform delete[DescInfo.cWildEmp]]]></eval>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Test hero for Wild Empathy attribute tags at the hero level
+      ~ if none found the default to Cha.
+      if (hero.tagis[WildEmpath.aSTR] <> 0) then
+        field[abValue].value += field[xAllLev].value + #attrbonus[aSTR]
+        field[livename].text = field[thingname].text & " (Str)"
+      elseif (hero.tagis[WildEmpath.aCON] <> 0) then
+        field[abValue].value += field[xAllLev].value + #attrbonus[aCON]
+        field[livename].text = field[thingname].text & " (Con)"
+      elseif (hero.tagis[WildEmpath.aINT] <> 0) then
+        field[abValue].value += field[xAllLev].value + #attrbonus[aINT]
+        field[livename].text = field[thingname].text & " (Int)"
+      elseif (hero.tagis[WildEmpath.aWIS] <> 0) then
+        field[abValue].value += field[xAllLev].value + #attrbonus[aWIS]
+        field[livename].text = field[thingname].text & " (Wis)"
+      else
+        field[abValue].value += field[xAllLev].value + #attrbonus[aCHA]
+      endif]]></eval>
+    </thing>
   <thing id="xxImmMaDis" name="Immunity to Magical Disease" description="You are immune to the effects of all diseases, including magical diseases such as mummy rot." compset="Ability" uniqueness="useronce">
     <comment/>
     <tag group="SpecType" tag="Immune"/>
