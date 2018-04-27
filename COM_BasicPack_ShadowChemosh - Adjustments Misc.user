@@ -3588,6 +3588,22 @@
       ~ Append Source/Duration text onto Pick name
       Call S2PFSName]]></eval>
     </thing>
+  <thing id="pS2PFShist" name="PFS, History" description="Adding this adjustment will make all notes/values on the History tab (from Ultimate Campaign) legal for Pathfinder Society Characters (including &quot;Core Only Campaign&quot;). The character history tab has no mechanical changes to a character." compset="InPlay">
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="OthAdjCat" tag="PFS"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+
+      foreach pick in hero from PathSocRes where "Helper.NoPathSoc & SpecialTab.History"
+        perform eachpick.delete[Helper.NoPathSoc]
+        perform eachpick.assign[CoreCampOK]
+      nexteach
+      ]]></eval>
+    </thing>
   <thing id="pS2EqUses" name="Equipment, Uses/Period" description="Select thsi adjustment to be able to adjus the numbe of uses/period of a specific piece of equipment." compset="InPlay">
     <usesource source="srcS2Adjus"/>
     <tag group="Adjustment" tag="YourGear"/>
