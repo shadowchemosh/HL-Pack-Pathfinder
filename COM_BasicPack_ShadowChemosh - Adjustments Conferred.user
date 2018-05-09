@@ -119,6 +119,7 @@
       ~ we have to turn the adjustment value on/off.
       trustme
       root.field[pIsOn].value = field[abilActive].value
+      root.field[pAdjust].value = field[actUser].value
       ]]></eval>
     </thing>
   <thing id="abS2FavTer" name="Favored Terrain" description="At 3rd level, a ranger may select a type of terrain from Table: Ranger Favored Terrains. The ranger gains a +2 bonus on initiative checks and Knowledge (geography), Perception, Stealth, and Survival skill checks when he is in this terrain. A ranger traveling through his favored terrain normally leaves no trail and cannot be tracked (though he may leave a trail if he so chooses).{br}{br}At 8th level and every five levels thereafter, the ranger may select an additional favored terrain. In addition, at each such interval, the skill bonus and initiative bonus in any one favored terrain (including the one just selected, if so desired), increases by +2.{br}{br}If a specific terrain falls into more than one category of favored terrain, the ranger&apos;s bonuses do not stack; he simply uses whichever bonus is higher." compset="Ability" summary="Bonus on Initiative, Know (Geography), Perception, Stealth and Survival.">
@@ -137,10 +138,14 @@
     <tag group="ChooseSrc1" tag="Thing"/>
     <tag group="abAction" tag="None"/>
     <tag group="abRange" tag="Personal"/>
+    <tag group="thingid" tag="pFavorTerr"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <eval phase="PreLevel" priority="10000"><![CDATA[
       ~ If we're not enabled, get out now
       doneif (field[abilActive].value = 0)
+
+      ~ Get the Favored Terrain tags
+      perform field[usrChosen1].chosen.pulltags[Ability.ft?]
 
       ~ Initiative bonus
       hero.child[Initiative].field[Bonus].value += field[actUser].value
@@ -163,6 +168,13 @@
         perform assign[Hide.Special]
         done
       endif]]></eval>
+    <eval phase="Final" priority="9000" index="5"><![CDATA[
+      ~ To have the Vicious Aim ability (thingid.cRgrVicAim) work correctly
+      ~ we have to turn the adjustment value on/off.
+      trustme
+      root.field[pIsOn].value = field[abilActive].value
+      root.field[pAdjust].value = field[actUser].value
+      ]]></eval>
     </thing>
   <thing id="pS2FavTerr" name="Ranger: Favored Terrain" description="A ranger gains a +2 bonus on initiative checks and Knowledge (geography), Perception, Stealth, and Survival skill checks when he is in his favored terrain. A ranger traveling through his favored terrain normally leaves no trail and cannot be tracked (though he may leave a trail if he so chooses).\n\n{B}Note:{/b} This version is different than the official one as it places an activation on the &quot;In-Play&quot; tab instead of leaving it here as an adjustment. This is much more helpful for those using the iPad." compset="InPlay">
     <usesource source="srcS2Adjus"/>

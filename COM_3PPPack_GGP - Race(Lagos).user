@@ -175,9 +175,16 @@
     <tag group="AllowRCust" tag="r3PLagos"/>
     <tag group="Helper" tag="SpecUp"/>
     <bootstrap thing="wSlam">
-      <autotag group="Value" tag="2"/>
+      <containerreq phase="First" priority="500">!Activated.w3PLegBrac</containerreq>
       <autotag group="wMain" tag="1d4"/>
+      <autotag group="Value" tag="2"/>
+      <autotag group="Ability" tag="ra3PPowKic"/>
       </bootstrap>
+    <eval phase="First" priority="400"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      perform hero.pushtags[Ability.?]]]></eval>
     </thing>
   <thing id="ra3PLScent" name="Scent" description="Some lagos favor a keen sense of smell over sensitive hearing. Lagos with this racial trait gain the scent ability. This racial trait replaces the low-light vision racial trait." compset="AltRaceTrt" uniqueness="unique">
     <usesource source="srcGGPLago"/>
@@ -472,34 +479,58 @@
     <bootstrap thing="c3PNomEndu">
       <autotag group="ClSpecWhen" tag="3"/>
       </bootstrap>
+    <bootstrap thing="c3PDrifBli">
+      <autotag group="ClSpecWhen" tag="17"/>
+      </bootstrap>
     <link linkage="varies" thing="cHelpMnk"/>
     <eval phase="First" priority="1000">~ Remove normal list of feats
      perform linkage[varies].delete[BonusFeat.?]
      perform linkage[varies].delete[BonusFor.?]</eval>
     <exprreq message="Lagos race required."><![CDATA[#hasrace[r3PLagos] <> 0]]></exprreq>
     </thing>
-  <thing id="f3PWiHaSty" name="Wild Hare Style" description="Passed on by lagos drift nomads, the wild hare style embodies the speed and momentum that the lagos can build while still avoiding harm.\n\n{b}Prerequisites:{/b} Dex 13, movement speed of at least 30.\n\n{b}Benefit:{/b} You do not suffer any penalty to AC from charging. You also keep your Dexterity bonus to AC when making a full round run action as the Run feat." compset="Feat" uniqueness="useronce">
+  <thing id="f3PWiHaSty" name="Wild Hare Style" description="Passed on by lagos drift nomads, the wild hare style embodies the speed and momentum that the lagos can build while still avoiding harm.\n\n{b}Prerequisites:{/b} Dex 13, movement speed of at least 30.\n\n{b}Benefit:{/b} You do not suffer any penalty to AC from charging. You also keep your Dexterity bonus to AC when making a full round run action as the Run feat." compset="Feat" summary="No penalty to AC when charging and keep Dex to AC when running." uniqueness="useronce">
+    <fieldval field="reqDex" value="13"/>
     <usesource source="srcGGPLago"/>
-    <tag group="ProductId" tag="HLCommunit"/>
-    <tag group="Helper" tag="ShowSpec"/>
     <tag group="fCategory" tag="Combat"/>
     <tag group="fCategory" tag="Style"/>
     <tag group="fMoMSNext" tag="f3PWiHaJuk"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      perform hero.assign[Hero.RunningDex]
+
+      #value2[pstChargin] = 0]]></eval>
+    <exprreq message="Movement speed of at least 30 required."><![CDATA[hero.child[Speed].field[tSpeedMod].value >= 30]]></exprreq>
     </thing>
-  <thing id="f3PWiHaJuk" name="Wild Hare Juke" description="Wild hares juke left or right while pursued, and easily can throw off pursuers. Imitating these movements while on the attack is equally effective.\n\n{b}Prerequisites:{/b} Dex 15, Wild Hare Style.\n\n{b}Benefit:{/b} You may make charges that change direction in surprising ways with no apparent loss in momentum. You do not need to select the straightest path to the target of your charge, but must travel in straight lines and you must reach the target by the end of twice your movement (on a full charge) or your movement (on a partial charge). You may change direction a number of times during your charge equal to your Dexterity modifier (minimum 1). Enemies cannot set to receive your charge when you use this feat." compset="Feat" uniqueness="useronce">
+  <thing id="f3PWiHaJuk" name="Wild Hare Juke" description="Wild hares juke left or right while pursued, and easily can throw off pursuers. Imitating these movements while on the attack is equally effective.\n\n{b}Prerequisites:{/b} Dex 15, Wild Hare Style.\n\n{b}Benefit:{/b} You may make charges that change direction in surprising ways with no apparent loss in momentum. You do not need to select the straightest path to the target of your charge, but must travel in straight lines and you must reach the target by the end of twice your movement (on a full charge) or your movement (on a partial charge). You may change direction a number of times during your charge equal to your Dexterity modifier (minimum 1). Enemies cannot set to receive your charge when you use this feat." compset="Feat" summary="Change directions during a charge attack." uniqueness="useronce">
+    <fieldval field="reqDex" value="15"/>
+    <fieldval field="abText" value="change direction"/>
     <usesource source="srcGGPLago"/>
-    <tag group="fCategory" tag="Combat"/>
-    <tag group="fCategory" tag="Style"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="fMoMSNext" tag="f3PWiHaImp"/>
-    </thing>
-  <thing id="f3PWiHaImp" name="Wild Hare Impact" description="The great speed of mobile fighters are usually wasted just getting to their targets, but with proper technique, that momentum can be delivered into an enemy’s body.\n\n{b}Prerequisites:{/b} Dex 17, Power Attack, Wild Hare Juke.\n\n{b}Benefit:{/b} You throw every bit of momentum into your charge. When you successfully hit with a charge attack while using Power Attack, you may make a bull rush maneuver against the target as a free action, adding a +1 bonus to the CMB check for every 10 feet you traveled during your charge. This bull rush does not provoke attacks of opportunity." compset="Feat" uniqueness="useronce">
-    <usesource source="srcGGPLago"/>
+    <tag group="fCategory" tag="Style"/>
+    <tag group="ReqFeat" tag="f3PWiHaSty"/>
     <tag group="fCategory" tag="Combat"/>
+    <tag group="LvNamePar" tag="AppText"/>
+    <tag group="LvNamePar" tag="AppValue"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      field[abValue].value += #attrbonus1[aDEX]]]></eval>
+    </thing>
+  <thing id="f3PWiHaImp" name="Wild Hare Impact" description="The great speed of mobile fighters are usually wasted just getting to their targets, but with proper technique, that momentum can be delivered into an enemy’s body.\n\n{b}Prerequisites:{/b} Dex 17, Power Attack, Wild Hare Juke.\n\n{b}Benefit:{/b} You throw every bit of momentum into your charge. When you successfully hit with a charge attack while using Power Attack, you may make a bull rush maneuver against the target as a free action, adding a +1 bonus to the CMB check for every 10 feet you traveled during your charge. This bull rush does not provoke attacks of opportunity." compset="Feat" summary="Charge with Power Attack make free bull rush adding +1 per 10ft moved." uniqueness="useronce">
+    <fieldval field="reqDex" value="17"/>
+    <usesource source="srcGGPLago"/>
     <tag group="fCategory" tag="Style"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="ReqFeat" tag="fPowerAtt"/>
+    <tag group="ReqFeat" tag="f3PWiHaJuk"/>
     </thing>
   <thing id="c3PDriStri" name="Drift Strike" description="At 1st level, a drift nomad who moves more than 10 feet in the round and makes an unarmed strike or natural attack adds their monk level to the damage. This ability replaces the monk’s stunning\nfist." compset="ClSpecial" summary="Moving more than 10ft gives +level on dmg for unarmed strike and natural weapons.">
     <fieldval field="actName" value="Moved more than 10ft"/>
@@ -513,7 +544,12 @@
       ~ if we've been disabled, get out now
       doneif (tagis[Helper.SpcDisable] <> 0)
 
-      field[abValue].value += field[xTotalLev].value
+      field[abValue].value += field[xTotalLev].value]]></eval>
+    <eval phase="PostLevel" priority="15000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now &
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
 
       ~ The following should only happen once on the first copy
       doneif (tagis[Helper.FirstCopy] = 0)
@@ -524,9 +560,354 @@
       nexteach]]></eval>
     </thing>
   <thing id="c3PNomEndu" name="Nomad’s Endurance" description="At 3rd level, the drift nomad gains Endurance as a bonus feat, and the feat bonus doubles when he makes Constitution checks because of a forced march. In addition, a drift nomad gains a +2 bonus on saving throws against spells and\neffects that cause exhaustion and fatigue. This ability replaces still mind." compset="ClSpecial">
+    <fieldval field="abValue" value="4"/>
+    <fieldval field="abValue" value="2"/>
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="fEndure">
       <containerreq phase="First" priority="500"><![CDATA[      (count:Classes.Monk >= 3 | count:Classes.MonkUnc >= 3) & !AbReplace.c3PNomEndu]]></containerreq>
       </bootstrap>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      #situational[hero.child[aCON],signed(field[abValue].value) & " bonus when doing a forced march (this stacks with endurance feat).",field[thingname].text]
+      #situational[hero.child[aCON],signed(field[abValue2].value) & " vs. spells and effects that cause exhaustion and fatigue.",field[thingname].text]]]></eval>
+    </thing>
+  <thing id="c3PDrifBli" name="Drift Blitz" description="At 17th level, a drift nomad can make a full attack at the end of a charge. While making a full attack in this method, the damage bonus granted by drift strike is reduced to half their monk level. This ability replaces timeless body." compset="ClSpecial" summary="Full attack at end of a charge but drift strike dmg is 1/2.">
+    <fieldval field="actName" value="1/2 drift strike dmg"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostLevel" priority="11000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+      doneif (field[abilActive].value = 0)
+
+      ~ Set drift damage to half
+      #value[c3PDriStri] = round(hero.childfound[c3PDriStri].field[abValue].value/2,0,-1)]]></eval>
+    </thing>
+  <thing id="w3PLegBrac" name="Leg Braces" compset="Weapon">
+    <usesource source="srcGGPLago"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="Helper" tag="NoOutGear"/>
+    <tag group="Helper" tag="NoSelect"/>
+    <tag group="wFtrGroup" tag="Natural"/>
+    <tag group="wClass" tag="Light"/>
+    <tag group="wProfReq" tag="Simple"/>
+    <tag group="wCategory" tag="Melee"/>
+    <tag group="wMain" tag="1d4_4"/>
+    <tag group="wCritMin" tag="20"/>
+    <tag group="wCritMult" tag="2"/>
+    <tag group="EquipType" tag="Metal"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="wType" tag="B"/>
+    <tag group="Helper" tag="Proficient"/>
+    <tag group="IsWeapon" tag="wSlam"/>
+    <eval phase="First" priority="5000"><![CDATA[
+      ~ Force this weapon to be Masterwork &
+      If (container.ishero = 0) then
+        container.child[gCustMagic].field[gMasterFor].value = 1
+      Endif]]></eval>
+    </thing>
+  <thing id="i3PLegBrac" name="Leg Braces" description="Designed as shin and leg guards specifically for the lagos to run and fight in, these braces don’t provide any armor class of their own, but can be used to complete a set of armor. While worn in a set, lagos with the powerful kicks racial trait treat their slam attacks as masterwork manufactured light weapons (instead of a natural slam attack). Leg braces can be made magical as normal for a weapon. Leg braces can be used as part of a full attack action with other weapons, or used in pairs or paired with other weapons using two-weapon fighting." compset="MagicWep" buytemplate="BuyGeneral" xactspecial="2">
+    <comment>Copying this item to make anything other than the weapon stats for a Leg Braces is not recommended. There are settings that cannot be changed in the editor, which will be carried along with your copy.</comment>
+    <usesource source="srcGGPLago"/>
+    <tag group="Helper" tag="Shadow"/>
+    <tag group="Helper" tag="CustomItem"/>
+    <tag group="Helper" tag="MatForceMs"/>
+    <tag group="Helper" tag="Helper"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoSelect"/>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[
+      var bonus as number
+      ~ Count number of Damage Up tags
+      bonus += hero.childfound[wSlam].tagcount[Helper.DamageUp]
+
+      ~ Increase Leg Braces damage based on Slam Damage increases &
+      field[wDamage].value += bonus
+      field[wRanDamage].value += bonus]]></eval>
+    <eval phase="Render" priority="99999999" index="3"><![CDATA[
+      ~ This fixes an issue with the name getting messed up because of the
+      ~ bootstrap and magical powers.
+      ~field[livename].text &= " Leg Braces"
+
+      ~ Correct the magic weapons name & text which
+      ~ is lost when any item power is added.
+      Call X1MagName]]></eval>
+    <eval phase="PreLevel" priority="5000"><![CDATA[
+      ~ Setup Magic Weapon Stuff &
+      call iMagWeapon
+      ~ Remove MW cost
+      field[gCost].value += -300]]></eval>
+    <child entity="gMagWeapon">
+      <tag group="Helper" tag="NoSelChild"/>
+      <bootstrap thing="w3PLegBrac">
+        <autotag group="Helper" tag="Forward"/>
+        </bootstrap>
+      </child>
+    </thing>
+  <thing id="g3PLegBrac" name="Leg Braces" description="Designed as shin and leg guards specifically for the lagos to run and fight in, these braces don’t provide any armor class of their own, but can be used to complete a set of armor. While worn in a set, lagos with the powerful kicks racial trait treat their slam attacks as masterwork manufactured light weapons (instead of a natural slam attack). Leg braces can be made magical as normal for a weapon. Leg braces can be used as part of a full attack action with other weapons, or used in pairs or paired with other weapons using two-weapon fighting.\n\n{B}Note:{/b} Once purchased a Custom weapon will appear on the {b}Weapon{/b} tab that will allow you to enhance by clicking on the Wrench/Hammer icon." compset="Gear">
+    <fieldval field="gCost" value="450"/>
+    <fieldval field="gWeight" value="2"/>
+    <usesource source="srcGGPLago"/>
+    <tag group="gType" tag="Clothing"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="RaceEquip" tag="r3PLagos"/>
+    <tag group="Hero" tag="EqpFoot"/>
+    <bootstrap thing="i3PLegBrac">
+      <autotag group="Helper" tag="NoRootName"/>
+      </bootstrap>
+    <eval phase="First" priority="400"><![CDATA[
+      ~ Hide the Powerful Kicks slam attacks as we replace them &
+      perform hero.assign[Activated.w3PLegBrac]]]></eval>
+    <exprreq message="Powerful Kicks required."><![CDATA[#hasability[ra3PPowKic] <> 0]]></exprreq>
+    </thing>
+  <thing id="f3PMarRunn" name="Marathon Runner" description="The lagos live their entire life on the move, and many can pick up their gear and run for hours without tiring.\n\n{b}Prerequisites:{/b} Lagos, Endurance, Run\n\n{b}Benefit:{/b} A lago with this feat can hustle for two hours before taking any damage, and can hustle for two hour increments per instance of damage accrued, In addition, they add half their character level to Constitution checks when making a forced march." compset="Feat" summary="You can hustle for 2hrs before taking any dmg &amp; can hustle for 2hr increments per instance of dmg accrued." uniqueness="useronce">
+    <usesource source="srcGGPLago"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="ReqFeat" tag="fEndure"/>
+    <tag group="ReqFeat" tag="fRun"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing &
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      field[abValue].value += #totallevelcount[]
+      field[abValue].value = round(field[abValue].value/2,0,-1)
+
+      #situational[hero.child[aCON], signed(field[abValue].value) & " bonus when making a forced march.", field[thingname].text]]]></eval>
+    <exprreq message="Lagos race required."><![CDATA[#hasrace[r3PLagos] <> 0]]></exprreq>
+    </thing>
+  <thing id="f3PShareLo" name="Sharing the Long Road" description="The lagos focus on sticking together as a drove. A lago mother can share her strength with her children so they do not fall behind.\n\n{b}Prerequisites:{/b} Lagos, Marathon Runner\n\n{b}Benefit:{/b} A lago with this feat may share the benefits of Marathon Runner with characters that do not possess the feat. They may grant this benefit with 1 target, plus 1 additional target per point of Constitution modifier they have. This ability can only be shared while all involved are hustling or making a forced march, and the benefits only extend while all characters stay within 30 feet of the lago with this feat." compset="Feat" summary="Share the benefits of Marathon Runner with characters that do not possess the feat." uniqueness="useronce">
+    <fieldval field="abRange" value="30"/>
+    <fieldval field="abText" value="Target"/>
+    <fieldval field="abValue" value="1"/>
+    <usesource source="srcGGPLago"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="LvNamePar" tag="AppText"/>
+    <tag group="LvNamePar" tag="AppValue"/>
+    <tag group="LvNamePar" tag="AppTarget"/>
+    <tag group="LvNamePar" tag="IncRange"/>
+    <tag group="ReqFeat" tag="f3PMarRunn"/>
+    <eval phase="Final" priority="50000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      field[abValue].value += #attrmod[aCON]]]></eval>
+    <exprreq message="Lagos race required."><![CDATA[#hasrace[r3PLagos] <> 0]]></exprreq>
+    </thing>
+  <thing id="f3PExeHear" name="Exemplary Hearing" description="Some lago’s hearing is even more finely tuned than others. Their awareness of the world around them is so fine that it is almost supernatural.\n\n{b}Prerequisites:{/b} Lagos, Exceptional Hearing racial trait.\n\n{b}Benefit:{/b} You gain blindsense with a range of 15 feet. In addition, you are not denied your Dexterity bonus to Armor Class against attacks from creatures you cannot see but are within your range of blindsense. Your blindsense does not work if you are deaf or in an area of silence." compset="Feat" summary="Not denied your Dex to AC vs creatures you cannot see but are within your range of blindsense" uniqueness="useronce">
+    <usesource source="srcGGPLago"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="abRange" tag="Feet"/>
+    <bootstrap thing="rBlindsen">
+      <autotag group="Value" tag="15"/>
+      </bootstrap>
+    <exprreq message="Lagos race required."><![CDATA[#hasrace[r3PLagos] <> 0]]></exprreq>
+    <exprreq message="Exceptional Hearing racial trait required."><![CDATA[#hasability[ra3PExcHea] <> 0]]></exprreq>
+    </thing>
+  <thing id="f3PStrOfLa" name="Strength of the Lagos" description="Known for their exceptional leg strength, the lagos’ kick is something more powerful than an average humanoid.\n\n{b}Prerequisites:{/b} Lagos, Str 13.\n\n{b}Benefit:{/b} If you do not have the powerful kicks racial trait, you gain the powerful kicks racial trait. If you already have the powerful kicks racial trait, the damage of your slam attacks increases to 1d6." compset="Feat" uniqueness="useronce">
+    <fieldval field="reqStr" value="13"/>
+    <usesource source="srcGGPLago"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="wSlam">
+      <containerreq phase="First" priority="500"><![CDATA[!Ability.ra3PPowKic & !Activated.w3PLegBrac]]></containerreq>
+      <autotag group="wMain" tag="1d6"/>
+      <autotag group="Value" tag="2"/>
+      </bootstrap>
+    <eval phase="First" priority="10000"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+      ~ If we don't have the Powerful Kicks ability get out now! &
+      doneif (hero.tagis[Ability.ra3PPowKic] = 0)
+
+      perform hero.findchild[BaseNatWep,"IsWeapon.wSlam & Ability.ra3PPowKic"].setfocus
+      doneif (state.isfocus = 0)
+
+      perform focus.delete[wMain.?]
+      perform focus.assign[wMain.1d6]]]></eval>
+    <exprreq message="Lagos race required."><![CDATA[#hasrace[r3PLagos] <> 0]]></exprreq>
+    </thing>
+  <thing id="f3PSurvAda" name="Survival Adaptation" description="The lagos focus on sticking together as a drove. A lago mother can share her strength with her children so they do not fall behind.\n\n{b}Prerequisites:{/b} Lagos, Favored Terrain class feature.\n\n{b}Benefit:{/b} Select one terrain type from your current favored terrains. If your natural fur coloration is not conductive for the region, it will change overnight as you shed. After changing fur color, your gain twice the normal favored terrain bonus to all stealth checks within the favored terrain." compset="Feat" uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.BaseCustSp &amp; abCategory.RgrFavTerr"/>
+    <usesource source="srcGGPLago"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="fCategory" tag="Combat"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <eval phase="Final" priority="9050"><![CDATA[
+      ~ If we're disabled, do nothing
+      doneif (tagis[Helper.FtDisable] <> 0)
+
+      var active as number
+
+      ~ look for copies of the core favored enemy adjustment
+      foreach pick in hero from BaseInPlay where "thingid.pFavorTerr & !thingid.pS2FavTerr"
+        ~ Save all active states
+        active += eachpick.field[pIsOn].value
+
+        ~ Save the bonus amount if active
+        If (eachpick.field[pIsOn].value = 1) Then
+          field[abValue].value += eachpick.field[pAdjust].value
+        Endif
+      nexteach
+
+      ~ Get the Favored Terrain tags
+      perform field[usrChosen1].chosen.pulltags[Ability.ft?]
+
+      ~ Only if a specific terrain is chosen
+      If (tagis[Ability.ft?] <> 0) Then
+
+        ~ look for copies of community favored enemy ability
+        foreach pick in hero from Ability where "Ability.abS2FavTer & (" & tagids[Ability.ft?,"|"] & ")"
+
+          ~ Save all active states
+          active += eachpick.field[abilActive].value
+
+          ~ Save the bonus amount if active
+          If (eachpick.field[abilActive].value = 1) Then
+            field[abValue].value += eachpick.field[actUser].value
+          Endif
+        nexteach
+      Endif
+
+      ~ If we find one, and it's not active, then get out
+      doneif (active = 0)
+
+      #skillbonus[skStealth] += field[abValue].value]]></eval>
+    <exprreq message="Favored terrain class feature required."><![CDATA[hero.tagis[Ability.ft?] <> 0]]></exprreq>
+    <exprreq message="Lagos race required."><![CDATA[#hasrace[r3PLagos] <> 0]]></exprreq>
+    </thing>
+  <thing id="io3PRabRuc" name="Rabbit-Rucksack" description="{i}Rabbit-rucksacks{/i} are light leather packs stretched over a metal frame. This rucksack has a single compartment, which is an extradimensional space capable of holding 10 cubic feet or 100 lbs of material. No matter how full this compartment is, this pack always weighs 10 lbs. The rucksack frame also comes with hooks and straps for attaching more gear to the outside. The wearer of this pack also doubles the amount of weight they normally can carry. This does not increase their actual Strength in any way, nor does it affect how much weight they can lift or drag, just the amount that they can carry.\n\n{b}CONSTRUCTION REQUIREMENTS{/b}\n{b}Cost{/b} 2,000 gp\nCraft Wondrous Item, {i}secret chest, ant haul{/i}" compset="Wondrous">
+    <fieldval field="gWeight" value="10"/>
+    <fieldval field="gHeldMaxWt" value="100"/>
+    <fieldval field="gCost" value="4000"/>
+    <fieldval field="iCL" value="9"/>
+    <usesource source="srcGGPLago"/>
+    <tag group="thing" tag="holder" name="Holder" abbrev="???"/>
+    <tag group="gType" tag="Wonder" name="Wondrous Item" abbrev="Wonder"/>
+    <tag group="iSchool" tag="Transmutat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="RaceEquip" tag="r3PLagos"/>
+    <tag group="iSchool" tag="Conjur" name="Conjuration" abbrev="Conjur"/>
+    <tag group="Helper" tag="AlwaysAvl"/>
+    <gear><![CDATA[
+      ~ Our contents count for no weight at all! &
+      field[gearNet].value = field[gearWeight].value]]></gear>
+    <eval phase="PostAttr" priority="1500"><![CDATA[
+      ~ Double the amount of weight that can be carried &
+      herofield[tEncumLgt].value *= 2
+      herofield[tEncumMed].value *= 2
+      herofield[tEncumHvy].value *= 2]]></eval>
+    </thing>
+  <thing id="io3PRoRunL" name="All Road Runners, Lesser" description="{i}All road runners{/i} are designed specifically for a lago’s feet, and are made to give them extraordinary traction, but versions for other humanoid foot shapes exist. These springy reed sandals are secured on the feet with leather straps and buckled at the knee. This footwear allows the wearer to ignore the adverse movement effects of difficult terrain while hustling, running or charging. This does not allow them to make a 5-foot step through difficult terrain.\n\n{b}CONSTRUCTION REQUIREMENTS{/b}\n{b}Cost{/b} 1,250 gp\nCraft Wondrous Item, {i}feather step{/i}" compset="Wondrous" summary="Ignore the movement effects of difficult terrain while hustling, running or charging.">
+    <fieldval field="gCost" value="2500"/>
+    <fieldval field="gWeight" value="4"/>
+    <fieldval field="iCL" value="7"/>
+    <usesource source="srcGGPLago"/>
+    <tag group="RaceEquip" tag="r3PLagos"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    <tag group="iSchool" tag="Transmutat"/>
+    <tag group="Hero" tag="EqpFoot"/>
+    </thing>
+  <thing id="io3PRoRunG" name="All Road Runners, Greater" description="These {i}all road runners{/i} work identically to their lesser counterparts, but they also have the following additional benefits. These sandals increase the movement speed of the wearer by 10 feet, and grant them a +4 enhancement bonus to CMD to resist trip attempts. These two effects do not operate if the wearer is under a heavy load or wearing heavy armor.\n\n{b}CONSTRUCTION REQUIREMENTS{/b}\n{b}Cost{/b} 1,250 gp\nCraft Wondrous Item, {i}feather step, expeditious retreat{/i}" compset="Wondrous" summary="+10ft movement and +4 enhancement bonus to CMD to resist trip attempts.">
+    <fieldval field="gCost" value="7500"/>
+    <fieldval field="iCL" value="11"/>
+    <fieldval field="gWeight" value="4"/>
+    <fieldval field="abValue" value="10"/>
+    <fieldval field="abValue2" value="4"/>
+    <usesource source="srcGGPLago"/>
+    <tag group="Helper" tag="EquipAvail"/>
+    <tag group="iSchool" tag="Transmutat"/>
+    <tag group="Hero" tag="EqpFoot"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="RaceEquip" tag="r3PLagos"/>
+    <tag group="Helper" tag="ShowSpec"/>
+    <tag group="gType" tag="Wonder"/>
+    <tag group="Helper" tag="EquipMag"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If not equipped get out now! &
+      doneif (field[gIsEquip].value = 0)
+      ~ If wearing heavy armor or heavy encumbered get out now!
+      doneif (hero.tagis[Hero.HeavyArmor] + hero.tagis[Encumbered.Heavy] <> 0)
+
+      hero.child[Speed].field[Bonus].value += field[abValue].value
+      #applybonus[cmdBonEnh,hero.childfound[manTrip],field[abValue2].value]]]></eval>
+    </thing>
+  <thing id="sp3PInsBu3" name="Instant Burrow" description="This spell will instantly dig a burrow capable of housing up to six Medium-sized creatures. The spell displaces up to three 10-ft cubes of material directly below the caster, though it can be cast into the side of a hill if there is sufficient space for the burrow. This material is moved out of the way. The burrow can be dug out of loose earth, sand, grass, thick mud, or even gravel, and it is built in such a way that it cannot be collapsed by walking over it.\n\nThis spell cannot dig a burrow out of solid rock, or create one underwater, or out of bog or swamp terrains. This burrow is comfortable but not lavish, and does not possess any special features. There is enough ‘rooms’ for 6 Medium humanoids, as well as a central room connecting each individual chamber and the entrance. A burrow crafted this way can be made to collapse by damaging the walls as normal, or deliberately collapsed with a Knowledge (engineering) skill check DC 20. Additional castings of the spell can expand upon a burrow, excavating out 3 additional 10-ft cubes per casting and increasing the number of occupants by 6." compset="Spell">
+    <fieldval field="sCompDesc" value="a disk of woven grass"/>
+    <fieldval field="sEffect" value="three 10-ft cubes of workable material."/>
+    <usesource source="srcGGPLago"/>
+    <tag group="sClass" tag="cHelpDrd"/>
+    <tag group="sClass" tag="cHelpRgr"/>
+    <tag group="sComp" tag="V"/>
+    <tag group="sComp" tag="S"/>
+    <tag group="sComp" tag="M"/>
+    <tag group="sLevel" tag="3"/>
+    <tag group="sRange" tag="Close"/>
+    <tag group="sCastTime" tag="Full1"/>
+    <tag group="sDuration" tag="Instant"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="sSchool" tag="Transmutat"/>
+    </thing>
+  <thing id="sp3PRabEa2" name="Rabbit Ears" description="The target of this spell’s ears grow larger and more receptive to sounds. Any lago with this spell active only notices the increased sensitivity; a member of any other race’s ears will transform into large rabbit ones just like a lago possesses. For the duration of the spell, the target of the spell gains a +5 insight bonus to all Perception checks related to hearing, and gains the benefits of the Blind-Fight feat. The target gains no additional benefit from already possessing the feat." compset="Spell">
+    <fieldval field="sCompDesc" value="pinch of rabbit fur"/>
+    <fieldval field="sEffect" value="1 target"/>
+    <fieldval field="sDuration" value="1 minute/level"/>
+    <fieldval field="sSave" value="Fortitude (harmless)"/>
+    <usesource source="srcGGPLago"/>
+    <tag group="sComp" tag="S"/>
+    <tag group="sComp" tag="M"/>
+    <tag group="sLevel" tag="2"/>
+    <tag group="sRange" tag="Close"/>
+    <tag group="sCastTime" tag="Action1"/>
+    <tag group="sDuration" tag="Minute"/>
+    <tag group="sDuration" tag="PerLevel"/>
+    <tag group="sSchool" tag="Transmutat"/>
+    <tag group="sClass" tag="cHelpDrd"/>
+    <tag group="sSave" tag="FortNeg"/>
+    <tag group="sSave" tag="Harmless"/>
+    <tag group="sResist" tag="Yes"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="sClass" tag="cHelpRgr"/>
+    </thing>
+  <thing id="sp3PScaHa1" name="Scattered Hares" description="This spell creates illusory doubles of you that start off merged with your form, but that split off and flee in random directions. These doubles make it harder for enemies to catch you when you flee.\n\nWhen scattered hares is cast, you create 1d3+1 images. These images imitate you in sight and sound, and each one flees from your location, taking whatever movement actions it can to leave the area through the safest squares in its path. The figments can provoke attacks of opportunity, have an AC of 11, and are destroyed automatically if successfully hit. Spells and effects that do not require an attack roll affect each figment as if they were an individual. Spells that require a touch attack are harmlessly discharged if used to destroy a figment.\n\nAn attacker must be able to see the figments to be fooled. If you are invisible or the attacker is blind, the spell has no effect (although the normal miss chances still apply)." compset="Spell">
+    <fieldval field="sTarget" value="you"/>
+    <fieldval field="sDuration" value="3 rounds"/>
+    <usesource source="srcGGPLago"/>
+    <tag group="sSchool" tag="Illusion"/>
+    <tag group="sSubschool" tag="Figment"/>
+    <tag group="sClass" tag="cHelpBrd"/>
+    <tag group="sClass" tag="cHelpBlr"/>
+    <tag group="sClass" tag="cHelpMag"/>
+    <tag group="sClass" tag="cHelpRgr"/>
+    <tag group="sClass" tag="cHelpSor"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="sCastTime" tag="Swift1"/>
+    <tag group="sComp" tag="V"/>
+    <tag group="sComp" tag="S"/>
+    <tag group="sRange" tag="Personal"/>
+    <tag group="sLevel" tag="1"/>
+    <tag group="sClass" tag="cHelpWiz"/>
+    <tag group="sDuration" tag="3Rounds"/>
     </thing>
   </document>
