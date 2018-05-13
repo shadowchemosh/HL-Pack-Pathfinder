@@ -3601,8 +3601,7 @@
       foreach pick in hero from PathSocRes where "Helper.NoPathSoc & SpecialTab.History"
         perform eachpick.delete[Helper.NoPathSoc]
         perform eachpick.assign[Helper.CoreCampOK]
-      nexteach
-      ]]></eval>
+      nexteach]]></eval>
     </thing>
   <thing id="pS2EqUses" name="Equipment, Uses/Period" description="Select thsi adjustment to be able to adjus the numbe of uses/period of a specific piece of equipment." compset="InPlay">
     <usesource source="srcS2Adjus"/>
@@ -3985,6 +3984,29 @@
       doneif (field[pChosen].ischosen = 0)
 
       perform field[pChosen].chosen.assign[thing.skipprereq]]]></eval>
+    </thing>
+  <thing id="pS2ClsPrRe" name="Class, Pre-Req Valid" description="Use this adjustment to be able to make any class on your character into a valid class. In example if you add PrC class that has validation errors for prerequisites you can select that class from the drop down and it will not longer display those validation errors." compset="InPlay">
+    <fieldval field="pCandExpr" value="component.BaseClHelp"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="Adjustment" tag="S2Custom"/>
+    <tag group="OthAdjCat" tag="Class"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="First" priority="500"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen = 0)
+
+      var id as string
+      id = field[pChosen].chosen.tagids[thingid.?,"|"]
+
+      foreach pick in hero from BaseClLev
+        If (eachpick.linkage[helper].tagcountstr[id] <> 0) Then
+          perform eachpick.assign[thing.skipprereq]
+        Endif
+      nexteach]]></eval>
     </thing>
   <thing id="pS2ArcStRe" name="Archetype: Stop Replace Ability" description="This adjustment lets you prevent an archetype from replacing a specific class ability. This is useful for when you want to combine two different archetypes together and they both replace the same class feature and are displaying a warning message.\n\n{b}Note:{/b} This adjustment ONLY works AFTER you have already added the archetype to your character. Then from the first drop down select the archetype. If the archetype has replaced abilities a second drop down appears letting you select the class ability to not have replaced." compset="InPlay">
     <fieldval field="pCandExpr" value="component.BaseVary"/>
@@ -4943,5 +4965,4 @@
       ~ Add Activation 1 tag
       perform field[pChosen].chosen.assign[User.Activation]]]></eval>
     </thing>
-
   </document>
