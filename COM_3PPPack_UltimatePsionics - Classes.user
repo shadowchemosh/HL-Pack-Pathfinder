@@ -5272,10 +5272,16 @@ field[abSumm].text = "Gain total concealment (50% miss chance) for " & #attrmod[
       count:Classes.Vitalist>= 2 & !AbReplace.cPUUnwPart]]></containerreq>
       </bootstrap>
     </thing>
-  <thing id="cPUDrnHlth" name="Drain Health" description="A life leech of 3rd level can steal hit points from members of his collective and transfer them as healing to other members of the collective. As a standard action, one member of the collective takes damage equal to double the life leech&apos;s class level + the life leech&apos;s Wisdom modifier and another member of the collective heals the same amount.\nIf used on an unwilling target, a successful Will save halves the amount of damage taken and healed.\nThis ability may only be used on creatures with a Constitution score and may not be used against creatures with a total number of hit dice less than half the life leech&apos;s level.\nThis ability replaces steal health." compset="ClSpecial">
-    <eval phase="PostAttr" priority="10000"><![CDATA[~set abText field for livename
-      field[abValue].value = (#levelcount[Vitalist] * 2) + #attrmod[aWIS]
-      field[listname].text = "Drain Health (+" & field[abValue].value & " dmg transferred to health)"]]></eval>
+  <thing id="cPUDrnHlth" name="Drain Health" description="A life leech of 3rd level can steal hit points from members of his collective and transfer them as healing to other members of the collective. As a standard action, one member of the collective takes damage equal to double the life leech&apos;s class level + the life leech&apos;s Wisdom modifier and another member of the collective heals the same amount.\n\nIf used on an unwilling target, a successful Will save halves the amount of damage taken and healed.\n\nThis ability may only be used on creatures with a Constitution score and may not be used against creatures with a total number of hit dice less than half the life leech&apos;s level.\n\nThis ability replaces steal health." compset="ClSpecial">
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Calculate 2x Level plus wisdom modifier
+      field[abValue].value += (field[xTotalLev].value * 2) + #attrmod[aWIS]
+      field[livename].text = field[thingname].text & " (" & signed(field[abValue].value) & " dmg transferred to health)"]]></eval>
     </thing>
   <thing id="cPUTranAtt" name="Transfer Attack" description="A 9th level life leech can expend his psionic focus as an immediate action to redirect damage being taken by one member of the collective to another member of the collective. Calculate the damage as if the original target would have taken it. The damage transferred is empathic in nature, so damage reduction or other means to block the damage to the final target are not effective. This ability replaces the Expanded Knowledge feat normally gained at 9th level." compset="ClSpecial" summary="Expend psionic focus as an immediate action to redirect damage from one member of the collective to another member.">
     <tag group="ProductId" tag="HLCommunit"/>
