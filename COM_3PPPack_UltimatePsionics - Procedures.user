@@ -641,4 +641,36 @@
     ]]>
   </procedure>
 
+  <!-- ****************************************************************** -->
+  <procedure id="PUDevToTxt" context="pick"><![CDATA[
+    ~ Set ability text, extra damage & DC values on the Dread's
+    ~ Devastating Touch attack ability.
+
+    ~ If not active get out now!
+    doneif (field[abilActive].value = 0)
+
+    var TextDmg as string
+
+    ~ If livename is empty then build name ourself
+    If (field[livename].isempty = 1) Then
+      TextDmg = " plus " & field[name].text
+
+      ~ Append DC value
+      If (tagis[StandardDC.?] = 1) Then
+        TextDmg &=  " (DC " & field[abDC].value & ")"
+      Endif
+
+    Else
+      TextDmg = " plus " & field[livename].text
+    Endif
+
+    ~ Add extra damage info
+    #extradamage[hero.childfound[cPUDevaTou],TextDmg,field[thingname].text]
+
+    ~ Set description information tag
+    perform hero.childfound[cPUDevaTou].pushtags[DescInfo.?]
+    ]]>
+  </procedure>
+
+
 </document>
