@@ -141,6 +141,14 @@
     <bootstrap thing="zPUMndBld1"></bootstrap>
     <bootstrap thing="zPUMndBld2"></bootstrap>
     <bootstrap thing="zPUMndBld3"></bootstrap>
+    <eval phase="First" priority="50" name="Add Mind Blade Tags"><![CDATA[
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen <> 1)
+
+      perform field[usrChosen1].chosen.pulltags[MindBlade.?]
+      perform hero.pushtags[MindBlade.?]]]></eval>
     <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
@@ -148,6 +156,8 @@
       doneif (tagis[Helper.SpcDisable] <> 0)
       ~ If we've not chosen anything, get out
       doneif (field[usrChosen1].ischosen = 0)
+      ~ Don't run of Additional Configuration is activated
+      doneif (hero.tagis[Activated.cSknBSAddC] = 1)
 
       ~ Bludgeoning
       if (field[usrIndex].value = 0) then
@@ -167,15 +177,6 @@
         perform eachpick.pushtags[wType.?]
         perform eachpick.gizmo.pushtags[wType.?]
       nexteach]]></eval>
-    <eval phase="First" priority="50" name="Add Mind Blade Tags"><![CDATA[
-      ~ If we've been Disabled, get out now
-      doneif (tagis[Helper.SpcDisable] <> 0)
-
-      ~ If nothing chosen get out now!
-      doneif (field[usrChosen1].ischosen <> 1)
-
-      perform field[usrChosen1].chosen.pulltags[MindBlade.?]
-      perform hero.pushtags[MindBlade.?]]]></eval>
     </thing>
   <thing id="cSknWldTal" name="Wild Talent" description="The soulknife gains Wild Talent as a bonus feat at 1st level. This provides her with the psionic power necessary to manifest her mind blade. A character who is already psionic instead gains the Psionic Talent feat." compset="ClSpecial">
     <tag group="Helper" tag="SpecUp"/>
@@ -802,19 +803,103 @@
       </prereq>
     </thing>
   <thing id="cSknBSAddC" name="Additional Configuration" description="The soulknife gains the ability to have a separate configuration for his mind blade&apos;s enhancement bonus and special abilities. When he forms his mind blade, the soulknife may choose either configuration. Creating this extra configuration functions just as reassigning the enhancement of his mind blade, typically 8 hours of concentration, and when the soulknife reassigns his mind blade configuration, he must reassign each configuration separately, taking the normal 8 hours of concentration per configuration. Additionally, the soulknife may configure the off-hand light weapon form of his mind blade separately from the main hand configuration, if he chooses to form two mind blades and spends the normal 8 hours of concentration. The off-hand mind blade in both configurations can be separately configured in this way. If a soulknife with a separate off-hand configuration forms a one-handed or two-handed mind blade, it always uses the current configuration set for the main hand, never the off-hand configuration. The soulknife must be at least 6th level in order to select this blade skill." compset="CustomSpec" uniqueness="useronce">
+    <fieldval field="usrCandid1" value="component.Simple &amp; PackSelect.MindBlade"/>
+    <fieldval field="actName" value="Swap Configs"/>
+    <arrayval field="usrArray" index="1" value="Piercing"/>
+    <arrayval field="usrArray" index="2" value="Slashing"/>
+    <arrayval field="usrArray" index="0" value="Bludgeoning"/>
     <usesource source="pPsiUn"/>
-    <tag group="SpecSource" tag="cHelpSkn"/>
     <tag group="abCategory" tag="PUBladeSk"/>
     <tag group="NotClExpr" tag="cHelpPUA"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="Helper" tag="ActivMenu"/>
     <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="SpecSource" tag="cHelpSkn"/>
+    <bootstrap thing="iPUMndBtMR">
+      <containerreq phase="First" priority="99">hero#MindBladeA.BoltMed</containerreq>
+      <autotag group="MindBladeA" tag="BoltMed"/>
+      </bootstrap>
+    <bootstrap thing="iPUMndBtSR">
+      <containerreq phase="First" priority="99">hero#MindBladeA.BoltShort</containerreq>
+      <autotag group="MindBladeA" tag="BoltShort"/>
+      </bootstrap>
+    <bootstrap thing="iPUMndBtLR">
+      <containerreq phase="First" priority="99">hero#MindBladeA.BoltLong</containerreq>
+      <autotag group="MindBladeA" tag="BoltLong"/>
+      </bootstrap>
+    <bootstrap thing="iPUMndBl2H">
+      <containerreq phase="First" priority="99">hero#MindBladeA.TwoHanded</containerreq>
+      <autotag group="MindBladeA" tag="TwoHanded"/>
+      </bootstrap>
+    <bootstrap thing="iPUMndBlLT">
+      <containerreq phase="First" priority="99">hero#MindBladeA.Light</containerreq>
+      <autotag group="MindBladeA" tag="Light"/>
+      </bootstrap>
+    <bootstrap thing="iPUMndBlLT">
+      <containerreq phase="First" priority="99">hero#MindBladeA.Light|hero#MindBladeA.1HLight</containerreq>
+      <autotag group="MindBladeA" tag="Light"/>
+      </bootstrap>
+    <bootstrap thing="iPUMndBl1H">
+      <containerreq phase="First" priority="99">hero#MindBladeA.OneHanded|hero#MindBladeA.1HLight</containerreq>
+      <autotag group="MindBladeA" tag="OneHanded"/>
+      </bootstrap>
+    <bootstrap thing="iPUMndDagg">
+      <containerreq phase="First" priority="99">hero#MindBladeA.Dagger</containerreq>
+      <autotag group="MindBladeA" tag="Dagger"/>
+      </bootstrap>
+    <bootstrap thing="iPUMndDagg">
+      <containerreq phase="First" priority="99">hero#MindBladeA.Dagger</containerreq>
+      <autotag group="MindBladeA" tag="Dagger"/>
+      </bootstrap>
+    <eval phase="PostLevel" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we've not chosen anything, get out
+      doneif (field[usrChosen1].ischosen = 0)
+      ~ If not activated get out now!
+      doneif (field[abilActive].value = 0)
+
+      ~ Bludgeoning
+      if (field[usrIndex].value = 0) then
+        perform assign[wType.B]
+      ~ Piercing
+      elseif (field[usrIndex].value = 1) then
+        perform assign[wType.P]
+      ~ Slashing
+      elseif (field[usrIndex].value = 2) then
+        perform assign[wType.S]
+      endif
+
+      ~ Find all Mindblades and set the damage type tag
+      foreach pick in hero from BaseWep where "IsWeapon.wMindBlade"
+        perform eachpick.delete[wType.?]
+        perform eachpick.pushtags[wType.?]
+        perform eachpick.gizmo.delete[wType.?]
+        perform eachpick.gizmo.pushtags[wType.?]
+      nexteach]]></eval>
+    <eval phase="First" priority="55"><![CDATA[
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If nothing chosen get out now!
+      doneif (field[usrChosen1].ischosen <> 1)
+      ~ If not activated get out now!
+      doneif (field[abilActive].value = 0)
+
+      perform field[usrChosen1].chosen.pulltags[MindBladeA.?]
+      perform hero.pushtags[MindBladeA.?]
+
+      perform hero.delete[MindBlade.?]]]>
+      <after name="Add Mind Blade Tags"/>
+      </eval>
     <prereq message="Soulknife level 6+ required.">
-      <validate><![CDATA[        var classcheck as string
+      <validate><![CDATA[
+        var classcheck as string
         var levels as number
-
         classcheck = "Soulknife"
-
         call PUPreReqs
-
         validif (levels >= 6)]]></validate>
       </prereq>
     </thing>
