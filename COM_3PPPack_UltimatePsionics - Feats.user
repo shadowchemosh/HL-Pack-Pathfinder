@@ -171,9 +171,13 @@
       ~ If nothing chosen get out now
       doneif (field[usrChosen2].ischosen <> 1)
 
-      ~ Get spell level from selection
+      ~ Get Class Allows Powers tag from the power and push it
+      ~ to the Class.
       perform field[usrChosen2].chosen.pulltags[ClsAllowPs.?]
       perform field[usrChosen1].chosen.pushtags[ClsAllowPs.?]
+
+      ~ Get the Class Helper tag for building the error message
+      perform field[usrChosen1].chosen.pulltags[ClassHelp.?]
 
       ~ Increase the powers known known field by one
       field[usrChosen1].chosen.field[cPsiPowMax].value += 1]]></eval>
@@ -184,6 +188,8 @@
         validif (@ispick = 0)
         ~ If nothing chosen then we are valid
         validif (altpick.tagcount[ClsAllowPs.?] = 0)
+
+        @message = "You must add your new power on the " & altpick.tagnames[ClassHelp.?] & " class tab. This feat did not automatically add it to your character."
 
         var sTag as string
         sTag = altpick.tagids[ClsAllowPs.?]
