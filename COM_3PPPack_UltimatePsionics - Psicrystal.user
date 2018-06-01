@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <document signature="Hero Lab Data">
   <loadonce key="COM_3PPPack_UltimatePsionics - Psicrystal"/>
   <thing id="abPUAlertn" name="Alertness" description="The presence of a psicrystal sharpens its master&apos;s senses. While a psicrystal is within arm&apos;s reach (adjacent to or in the same square as its owner), its owner gains the Alertness feat." compset="Ability" summary="While a psicrystal is within arm&apos;s reach, its owner gains the Alertness feat." uniqueness="useronce">
@@ -75,16 +75,20 @@
     <fieldval field="rSpace" value="1"/>
     <fieldval field="rHitDice" value="1"/>
     <fieldval field="rFeat" value="-1"/>
+    <fieldval field="rHPStart" value="1"/>
     <usesource source="pPsiUn"/>
-    <tag group="RaceType" tag="Animal" name="Minion" abbrev="Minion"/>
-    <tag group="NoScore" tag="aCON"/>
     <tag group="NoScore" tag="aDEX"/>
     <tag group="NoScore" tag="aSTR"/>
-
     <tag group="Hero" tag="CantSpeak"/>
+    <tag group="Helper" tag="FixedHP"/>
     <tag group="RaceSize" tag="Dimin13"/>
+    <tag group="RaceType" tag="Animal"/>
     <tag group="HasType" tag="tpConstPsi"/>
-    <bootstrap thing="raPUSelfPr"></bootstrap>
+    <tag group="NoScore" tag="aCON"/>
+    <bootstrap thing="raImpEvas"></bootstrap>
+    <bootstrap thing="raPUPerson"></bootstrap>
+    <bootstrap thing="raPUShaPwr"></bootstrap>
+    <bootstrap thing="raPUSighte"></bootstrap>
     <bootstrap thing="raPUDelTou">
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 3]]></containerreq>
       </bootstrap>
@@ -108,20 +112,8 @@
     <bootstrap thing="raPUChaPwr">
       <containerreq phase="First" priority="500"><![CDATA[fieldval:anCompLev >= 15]]></containerreq>
       </bootstrap>
-    <bootstrap thing="cArcFImpEv"></bootstrap>
-    <bootstrap thing="raPUPerson"></bootstrap>
-    <bootstrap thing="raPUShaPwr"></bootstrap>
-    <bootstrap thing="raPUSighte"></bootstrap>
-    <eval phase="Final" priority="50000" index="4"><![CDATA[
-      ~ Set the psicrystal's saves to be the equal to the masters base
-      ~ save plus attribute.
-      hero.child[svFort].field[svTotal].value = master.hero.child[svFort].field[svBase].value + master.hero.child[svFort].field[svAttr].value
-      hero.child[svRef].field[svTotal].value = master.hero.child[svRef].field[svBase].value + master.hero.child[svRef].field[svAttr].value
-      hero.child[svWill].field[svTotal].value = master.hero.child[svWill].field[svBase].value + master.hero.child[svWill].field[svAttr].value]]></eval>
+    <bootstrap thing="raPUSelfPr"></bootstrap>
     <eval phase="First" priority="490"><![CDATA[
-      ~ Set skill bonsues
-      #skillbonus[skPercep] += 6
-
       ~ Pull Masters alignment and set to ourself
       perform master.hero.findchild[Alignment].pulltags[Alignment.?]
       ~perform master.hero.pulltags[Alignment.?]
@@ -133,6 +125,8 @@
       field[anCompLev].value += master.hero.tagcount[Psionics.Class]
       ~ Give any bonus levels like from "improved psicyrstal" feat
       field[anCompLev].value += master.hero.tagcount[Psicrystal.BonusLvl]
+      ~ Set the hit dice equal to level so that skills don't complain
+      field[rHitDice].value = field[anCompLev].value
 
       ~ Set the correct Intelligence and Natural Armor bonus
       If (field[anCompLev].value >= 19) Then
@@ -163,7 +157,7 @@
         hero.child[aINT].field[aStartMod].value += 1
         hero.child[ArmorClass].field[tACNatural].value += 1
       Endif]]></eval>
-    <eval phase="PreLevel" priority="4000" index="2"><![CDATA[
+    <eval phase="PostLevel" priority="4000" index="2"><![CDATA[
       var sTag as string
 
       ~ Loop through all the masters skills
@@ -178,24 +172,37 @@
           ~ If we got a lock then set minion skill
           If (state.isfocus <> 0) Then
             ~ Add the master ranks to the minon's skill bonus.
-            focus.field[Bonus].value += eachpick.field[skUser].value
-            ~ Remove the Not Usable tag so that the bonus always displays
-            perform focus.delete[Helper.NotUsable]
-            perform focus.delete[Helper.TrainOnly]
+            focus.field[skItem].value += eachpick.field[skUser].value
             ~ Clear the focus so we can focus again on the next
             perform state.clearfocus
           Endif
         Endif
-      nexteach]]></eval>
-    <eval phase="Final" priority="5000" index="3"><![CDATA[
+      nexteach
+
+      ~ We get a minimum of 4 ranks in Perception and Stealth
+      #applybonus[skItem,hero.child[skPercep],4]
+      #applybonus[skItem,hero.child[skStealth],4]
+      ]]></eval>
+    <eval phase="PostAttr" priority="50000" index="3"><![CDATA[
+      ~ Remove skill points &
+      #resmax[resSkill] = 0]]></eval>
+    <eval phase="Final" priority="5000" index="4"><![CDATA[
       var hitpoints as number
       ~ Total up the Masters Hit Points &
       hitpoints = master.hero.child[Totals].field[tHP].value + master.hero.child[Totals].field[tBonusHP].value
       ~ We have hit points equal to half our master
-      herofield[tHP].value = round(hitpoints/2,0,-1)]]></eval>
-    <eval phase="PostAttr" priority="50000" index="5"><![CDATA[
-      ~ Remove skill points &
-      #resmax[resSkill] = 0]]></eval>
+      herofield[tHP].value = round(hitpoints/2,0,-1)
+
+      ~ Prevent error for having 4 ranks at low level
+      perform hero.child[skPercep].delete[Helper.SklErRanks]
+      perform hero.child[skStealth].delete[Helper.SklErRanks]
+      ]]></eval>
+    <eval phase="Final" priority="50000" index="5"><![CDATA[
+      ~ Set the psicrystal's saves to be the equal to the masters base
+      ~ save plus attribute.
+      hero.child[svFort].field[svTotal].value = master.hero.child[svFort].field[svBase].value + master.hero.child[svFort].field[svAttr].value
+      hero.child[svRef].field[svTotal].value = master.hero.child[svRef].field[svBase].value + master.hero.child[svRef].field[svAttr].value
+      hero.child[svWill].field[svTotal].value = master.hero.child[svWill].field[svBase].value + master.hero.child[svWill].field[svAttr].value]]></eval>
     <exprreq message="This race is only valid to be taken when added on the &quot;Other&quot; tab."><![CDATA[hero.tagis[system_tag.minion] <> 0]]></exprreq>
     </thing>
   <thing id="raPUPerson" name="Personality" description="Each psicrystal has a distinct personality, chosen by its owner at the time of its creation from among those given on the Psicrystal Personalities table. At 1st level, its owner typically gets a feel for a psicrystal&apos;s personality only through occasional impulses, but as the owner increases in level the psicrystal&apos;s personality becomes more pronounced.\n\nAt higher levels, it is not uncommon for a psicrystal to constantly ply its owner with observations and advice, often severely slanted toward the psicrystal&apos;s particular worldview. The owner always sees a bit of himself in his psicrystal, even if magnified and therefore distorted.\n\n{b}Note:{/b} The Sage personality is not fully implented yet and won&apos;t provide a bonus to single knowledge skill." compset="RaceSpec" summary="Every psicrystal has a personality.">
@@ -229,7 +236,7 @@
          perform master.child[abPUAlertn].pushtags[Reference.?]
       Endif]]></eval>
     </thing>
-  <thing id="raPUShaPwr" name="Share Powers" description="At the owner&apos;s option, he can have any power (but not any psi-like ability) he manifests on himself also affect his psicrystal. The psicrystal must be within 5 feet of him at the time of the manifestation to receive the benefit. If the power has a duration other than instantaneous, it stops affecting the psicrystal if it moves farther than 5 feet away, and will not affect the psicrystal again, even if it returns to its owner before the duration expires.\n\nAdditionally, the owner can manifest a power with a target of &#147;You&#148; on his psicrystal (as a touch range power) instead of on himself. The owner and psicrystal cannot share powers if the powers normally do not affect creatures of the psicrystal&apos;s type (construct)." compset="RaceSpec">
+  <thing id="raPUShaPwr" name="Share Powers" description="At the owner&apos;s option, he can have any power (but not any psi-like ability) he manifests on himself also affect his psicrystal. The psicrystal must be within 5 feet of him at the time of the manifestation to receive the benefit. If the power has a duration other than instantaneous, it stops affecting the psicrystal if it moves farther than 5 feet away, and will not affect the psicrystal again, even if it returns to its owner before the duration expires.\n\nAdditionally, the owner can manifest a power with a target of “You” on his psicrystal (as a touch range power) instead of on himself. The owner and psicrystal cannot share powers if the powers normally do not affect creatures of the psicrystal&apos;s type (construct)." compset="RaceSpec">
     <tag group="AbilType" tag="Super"/>
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -244,7 +251,7 @@
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
-  <thing id="raPUDelTou" name="Deliver Touch Powers" description="If the owner is 3rd level or higher, his psicrystal can deliver touch powers for him. If the owner and psicrystal are in contact at the time the owner manifests a touch power, he can designate his psicrystal as the &#147;toucher.&#148; The psicrystal can then deliver the touch power just as the owner could. As usual, if the owner manifests another power before the touch is delivered, the touch power dissipates.\n\nBecause of the telepathic link between a psicrystal and its owner, the owner has the same connection to an item or place that the psicrystal does. For instance, if his psicrystal has seen a room, the owner can teleport into that room as if he has seen it too." compset="RaceSpec">
+  <thing id="raPUDelTou" name="Deliver Touch Powers" description="If the owner is 3rd level or higher, his psicrystal can deliver touch powers for him. If the owner and psicrystal are in contact at the time the owner manifests a touch power, he can designate his psicrystal as the “toucher.” The psicrystal can then deliver the touch power just as the owner could. As usual, if the owner manifests another power before the touch is delivered, the touch power dissipates.\n\nBecause of the telepathic link between a psicrystal and its owner, the owner has the same connection to an item or place that the psicrystal does. For instance, if his psicrystal has seen a room, the owner can teleport into that room as if he has seen it too." compset="RaceSpec">
     <tag group="Helper" tag="ShowSpec"/>
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
@@ -330,7 +337,6 @@
     <usesource source="pPsiUn"/>
     <tag group="gType" tag="PUPsionics"/>
     <tag group="gType" tag="PUPsicrsta"/>
-
     <bootstrap thing="abPUAlertn"></bootstrap>
     <bootstrap thing="abPUDeToPo">
       <containerreq phase="First" priority="495"><![CDATA[count:Psionics.Class + count:Psicrystal.BonusLvl >= 3]]></containerreq>
