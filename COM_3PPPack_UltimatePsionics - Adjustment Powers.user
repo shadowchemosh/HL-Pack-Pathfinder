@@ -52,7 +52,7 @@
       ~ Augment bonus
       field[pChosen].chosen.field[Bonus].value += field[abValue].value]]></eval>
     </thing>
-  <thing id="pPACZFury" name="Zealous Fury, Zelladariath’s" description="For this adjustment, the incrementer value is the amount of the penalty reduction * 5 that is removed from the BAB calculations." compset="InPlay">
+  <thing id="pPACZFury" name="Zealous Fury" description="For this adjustment, the incrementer value is the amount of the penalty reduction * 5 that is removed from the BAB calculations." compset="InPlay">
     <fieldval field="pMaximum" value="3"/>
     <fieldval field="pMinimum" value="0"/>
     <usesource source="pPsiUn"/>
@@ -126,5 +126,89 @@
 
         Endif
       nexteach]]></eval>
+    </thing>
+  <thing id="pPUPhyAcce" name="Physical Acceleration" compset="InPlay">
+    <fieldval field="pDuration" value="1 round/level"/>
+    <fieldval field="abValue" value="30"/>
+    <fieldval field="abValue2" value="2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="AdjSpell"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="DescInfo" tag="puPhyAc4"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreLevel" priority="10005" name="Physical Acceleration attack, save and AC"><![CDATA[
+      ~ Check to see if Haste
+      If (hero.childfound[pHaste].field[pIsOn].value = 1) Then
+        perform assign[Helper.SpcDisable]
+      Endif
+
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ if we're not active, just get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ This procedure adds +1 to attack, +1 to Reflex saves, and foreaches
+      ~ through all non-natural attacks to assign an extra attack.
+      call HasteComb]]>
+      <after name="Haste attack, save and AC"/>
+      </eval>
+    <eval phase="Final" priority="9900" name="Physical Acceleration speed"><![CDATA[
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ if we're not active, just get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ This procedure detects if we have a special speed (like swim) and then
+      ~ increases it by 30 or double (whichever is less).
+      call HasteMove]]></eval>
+    </thing>
+  <thing id="pPUFormDoo" name="Form of Doom" compset="InPlay">
+    <fieldval field="abValue" value="5"/>
+    <fieldval field="abValue2" value="5"/>
+    <fieldval field="abValue3" value="4"/>
+    <fieldval field="abValue4" value="10"/>
+    <fieldval field="abValue5" value="10"/>
+    <usesource source="pPsiUn"/>
+    <tag group="Helper" tag="AdjSpell"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="NoIncr"/>
+    <tag group="DescInfo" tag="puForDoom6"/>
+    <bootstrap thing="wTentacle">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      <autotag group="wMain" tag="2d8"/>
+      <autotag group="Value" tag="4"/>
+      <autotag group="Helper" tag="NatOverSec"/>
+      </bootstrap>
+    <bootstrap thing="raFrightPr">
+      <containerreq phase="First" priority="500"><![CDATA[fieldval:pIsOn <> 0]]></containerreq>
+      <assignval field="abRange" value="30"/>
+      <assignval field="abDC" value="16"/>
+      </bootstrap>
+    <eval phase="Render" priority="9000"><![CDATA[
+      ~ if we're not active, just get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ Override DC to be 16 + Cha
+      hero.childfound[raFrightPr].field[abDC].value = 16 + #attrmod[aCHA]]]></eval>
+    <eval phase="PreLevel" priority="10000" index="2">~ if we&apos;re not active, just get out now
+      doneif (field[pIsOn].value = 0)
+
+      ~ +10 bonus to jump
+      hero.child[mNatural].field[Bonus].value += field[abValue].value
+
+      ~ damage reduction 5/–
+      #applydr[xDamRd,field[abValue2].value]
+
+      ~ +4 bonus to your Strength
+      hero.child[aSTR].field[Bonus].value += field[abValue3].value
+
+      ~ +10 feet to your land speed
+      hero.child[Speed].field[Bonus].value += field[abValue4].value
+
+      ~ +10 bonus on Climb checks 
+      #skillbonus[skClimb] += field[abValue5].value
+
+      ~ +5 natural armor bonus
+      herofield[tJumpBonus].value += field[abValue5].value</eval>
     </thing>
   </document>
