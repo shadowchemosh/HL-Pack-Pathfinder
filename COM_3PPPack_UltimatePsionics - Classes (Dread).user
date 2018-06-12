@@ -193,8 +193,11 @@
     <tag group="IsWeapon" tag="wTouch"/>
     <tag group="Helper" tag="NoSelect"/>
     <eval phase="Final" priority="10000"><![CDATA[
-      ~ If we've been Disabled, get out now
-      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we've been Disabled, hide the weapon and get out
+      If (tagis[Helper.SpcDisable] = 1) Then
+        perform assign[Hide.Weapon]
+        done
+      Endif
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] = 0)
 
@@ -225,7 +228,22 @@
     <tag group="AbilType" tag="Super"/>
     <tag group="abAction" tag="Swift"/>
     <tag group="LvNamePar" tag="IncAction"/>
-    <eval phase="PostLevel" priority="500"><![CDATA[
+    <eval phase="PreLevel" priority="10050"><![CDATA[
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we are still using Cha to calc terrors get out now!
+      doneif (tagis[ChargeAttr.aCHA] = 1)
+
+      perform pulltags[ChargeAttr.?,StandardDC]
+
+      foreach pick in hero from BaseCustSp where "abCategory.PUTerror & StandardDC.?"
+        perform eachpick.delete[StandardDC.?]
+        perform eachpick.pushtags[StandardDC.?]
+      nexteach
+
+      ~ We ourself don't have a DC so remove tag
+      perform delete[StandardDC.?]]]></eval>
+    <eval phase="PostLevel" priority="500" index="2"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
       ~ if we've been disabled, get out now
@@ -234,7 +252,7 @@
       doneif (tagis[Helper.FirstCopy] = 0)
 
       field[actUserMax].value = field[xTotalLev].value]]></eval>
-    <eval phase="PostLevel" priority="9000" index="2"><![CDATA[
+    <eval phase="PostLevel" priority="9000" index="3"><![CDATA[
       ~ If we're not shown, just get out now
       doneif (tagis[Helper.ShowSpec] <> 1)
       ~ if we've been disabled, get out now
@@ -1076,5 +1094,871 @@
 
       ~ Set Extra Damage and tags on Devastating Touch attack
       call PUDevToTxt]]></eval>
+    </thing>
+  <thing id="arPUFeaFle" name="Fear in Flesh" description="Fear is a powerful emotion, one which dreads use to great effect. Some dreads learn to use the power of fear to alter their own physical form, becoming nightmares made real, beings referred to as fear in flesh. These individuals become nightmares brought to life, striking fear deep into the hearts of those unfortunate enough to face them." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="267"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
+    <arrayval field="cvCustTot" index="7" value="-1"/>
+    <arrayval field="cvCustTot" index="9" value="-1"/>
+    <arrayval field="cvCustTot" index="11" value="-1"/>
+    <arrayval field="cvCustTot" index="13" value="-1"/>
+    <arrayval field="cvCustTot" index="15" value="-1"/>
+    <arrayval field="cvCustTot" index="17" value="-1"/>
+    <arrayval field="cvCustTot" index="3" value="-1"/>
+    <arrayval field="cvCustTot" index="5" value="-1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="AbReplace" tag="cPUChanTer"/>
+    <tag group="AbReplace" tag="cPUDevaTou"/>
+    <tag group="fDisable" tag="fWepMart"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPUFeaMFle">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUIntStr">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cPUStrFear">
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="cPUStrFear">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPUStrFear">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cPUStrFear">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <bootstrap thing="cPUStrFear">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPUStrFea2">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpPU2"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Update Terrors ability text
+      #appenddesc[cPUTerrors,"{b}Fear In Flesh:{/b} The fear in flesh can use his terrors with natural attacks, since he does not have the devastating touch ability."]]]></eval>
+    </thing>
+  <thing id="cPUFeaMFle" name="Fear Made Flesh" description="The fear in flesh can spend 1 hour in meditation, preparing his body for a physical transformation into a frightening creature. Once the fear in flesh has finished his meditation, he can activate the transformation at any time as a standard action. Once activated, the fear in flesh is under the effects of {i}bite of the wolf{/i} and {i}claws of the beast{/i}, with a manifester level equal to his class level. This effect lasts 10 minutes per class level. Once the effect ends, the fear in flesh must spend another hour in meditation before he can transform again. This ability replaces devastating touch.\n\n{B}Note:{/b} You can find the power adjustments for {i}bite of the wolf{/i} and {i}claws of the beast{/i} on the Adjust tab under &quot;Spell Adjustments&quot;." compset="ClSpecial" summary="Grow claw and bite attacks.">
+    <comment>Fear in Flesh archetype ability.</comment>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ChargeCalc" tag="LevelX10"/>
+    <tag group="ChargeCalc" tag="LevelFull"/>
+    <tag group="Usage" tag="Minute"/>
+    <tag group="DescInfo" tag="puBiteWlf1"/>
+    <tag group="DescInfo" tag="puClawBea1"/>
+    </thing>
+  <thing id="cPUIntStr" name="Intimidating Strike" description="A fear in flesh of 3rd level can expend his psionic focus after making a successful natural attack to gain a free Intimidate check against the creature struck. This ability replaces channel terror." compset="ClSpecial" summary="Expend Focus to gain a free intimidate check vs creature struck.">
+    <comment>Fear in Flesh archetype ability.</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abAction" tag="PUExpFocus"/>
+    </thing>
+  <thing id="cPUStrFear" name="Strengthened By Fear" description="A fear in flesh of 4th level can channel the fear of those around him into a physical boost to his own form. Once per day as a swift action, the fear in flesh can gain a +1 insight bonus to his natural armor and a +2 insight bonus to one physical ability score (Strength, Dexterity, or Constitution) for a number of rounds equal to his dread level. The fear in flesh can only use this ability if there is a creature within the fear in flesh&amp;apos;s line of sight with the shaken, frightened, or panicked condition.\n\nAt 8th level, the effect grants a +2 natural armor bonus, a +4 insight bonus to one physical ability score (Strength, Dexterity, or Constitution), and a +2 insight bonus to a second physical ability score.\n\nAt 12th level, the effect grants a +3 natural armor bonus, a +6 insight bonus to one physical ability score (Strength, Dexterity, or Constitution), a +4 insight bonus to a second physical ability score, and a +2 insight bonus to the third physical ability score.\n\nAt 8th, 12th, 16th, and 20th level, the fear in flesh gains an additional daily use of this ability.\n\nThis ability replaces the terror gained at 4th level.\n\n{B}Note:{/b} The first drop down is always your highest bonus. The second chooser is the next highest ability.  At 12th level a new ability will appear that lets you choose the third ability score which is the lowest ability bonus." compset="ClSpecial">
+    <comment>Fear in Flesh archetype ability.</comment>
+    <fieldval field="actName" value="Active"/>
+    <fieldval field="abValue" value="2"/>
+    <fieldval field="abValue4" value="1"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="abDuration" tag="Round"/>
+    <tag group="SbNamePar" tag="IncDurati"/>
+    <tag group="SbNamePar" tag="IncUses"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="Usage" tag="Day"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ abValue  = 1st ability score
+      ~ abValue2 = 2nd ability score
+      ~ abValue3 = 3rd ability score
+      ~ abValue4 = Natural AC bonus
+
+      ~ Set the list name
+      field[listname].text = field[name].text & " (" & field[xIndex].value & tagnames[Usage.?] & ")"
+
+      ~ If we're not shown, just get out now!
+      doneif (tagis[Helper.ShowSpec] = 0)
+      ~ if we've been disabled, get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+      ~ If not the first copy, get out now!
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      ~ Set the number of times we can be used based on the number
+      ~ of times we are bootstrapped to the class.
+      ~ Note: Livename will be taken care of for us by HL.
+      field[trkMax].value += field[xCount].value
+
+      ~ Let only the first special choose a physical attribute
+      field[usrCandid1].text = "component.BaseAttr & AttribCat.Physical"
+
+      ~ At 8th level increase bonuses and and allow a 2nd physical ability score
+      if (field[xCount].value >= 2) then
+        field[abValue].value += 2
+        field[abValue2].value += 2
+        field[abValue4].value += 1
+        field[usrCandid2].text = "component.BaseAttr & AttribCat.Physical"
+      endif
+
+      ~ At 12th level increase bonuses and and allow a 3rd physical ability score
+      if (field[xCount].value >= 3) then
+        field[abValue].value  += 2
+        field[abValue2].value += 2
+        field[abValue3].value += 2
+        field[abValue4].value += 1
+      endif
+
+      ~ Place our Has Ability tag onto the ability score so that we can
+      ~ validate that the same ability score is not chosen more than once.
+      perform field[usrChosen1].chosen.assign[HasAbility.cPUStrFear]
+      perform field[usrChosen2].chosen.assign[HasAbility.cPUStrFear]
+
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      ~ If 1st ability score chosen then give bonus
+      if (field[usrChosen1].ischosen <> 0) then
+        #applybonus[BonInsight,field[usrChosen1].chosen,field[abValue].value]
+      endif
+
+      ~ If 2nd ability score chosen then give bonus
+      if (field[usrChosen2].ischosen <> 0) then
+        #applybonus[BonInsight,field[usrChosen2].chosen,field[abValue2].value]
+      endif]]></eval>
+    <prereq message="You can not pick the same ability score more than once.">
+      <validate><![CDATA[
+        var nValid as number
+        ~ Assume valid unless we find otherwise
+        nValid = 1
+
+        ~ If 1st ability score has too many tags then error
+        if (altpick.field[usrChosen1].chosen.tagcount[HasAbility.cPUStrFear] > 1) then
+          nValid = 0
+        endif
+
+        ~ If 2nd ability score has too many tags then error
+        if (altpick.field[usrChosen2].chosen.tagcount[HasAbility.cPUStrFear] > 1) then
+          nValid = 0
+        endif
+
+        ~ If we are a one then we are valid
+        validif (nValid = 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="cPUStrFea2" name="Strengthened By Fear" description="At 12th level, the effect grants a +3 natural armor bonus, a +6 insight bonus to one physical ability score (Strength, Dexterity, or Constitution), a +4 insight bonus to a second physical ability score, and a +2 insight bonus to the third physical ability score." compset="ClSpecial" summary="3rd physical ability score chooser.">
+    <comment>Fear in Flesh archetype ability.</comment>
+    <fieldval field="actName" value="Active"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="ActivMenu"/>
+    <tag group="ChooseSrc1" tag="Hero"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="PostLevel" priority="11000"><![CDATA[
+      ~ If we're not shown, just get out now!
+      doneif (tagis[Helper.ShowSpec] = 0)
+      ~ If we've been disabled, get out now!
+      doneif (tagis[Helper.SpcDisable] = 1)
+
+      field[usrCandid1].text = "component.BaseAttr & AttribCat.Physical"
+
+      ~ Get the the 3rd ability score bonus
+      field[abValue].value += #value3[cPUStrFear]
+
+      ~ Place our Has Ability tag onto the ability score so that we can
+      ~ validate that the same ability score is not chosen more than once.
+      perform field[usrChosen1].chosen.assign[HasAbility.cPUStrFear]
+
+      ~ If main ability not active get out now!
+      doneif (hero.tagis[Activated.cPUStrFear] = 0)
+      ~ If nothing chosen get out now
+      doneif (field[usrChosen1].ischosen = 0)
+
+      ~ Give insight bonus to the chosen ability score
+      #applybonus[BonInsight,field[usrChosen1].chosen,field[abValue].value]]]></eval>
+    <prereq message="You can not pick the same ability score more than once.">
+      <validate><![CDATA[
+        var nValid as number
+        ~ Assume valid unless we find otherwise
+        nValid = 1
+
+        ~ If 1st ability score has too many tags then error
+        if (altpick.field[usrChosen1].chosen.tagcount[HasAbility.cPUStrFear] > 1) then
+          nValid = 0
+        endif
+
+        ~ If 2nd ability score has too many tags then error
+        if (altpick.field[usrChosen2].chosen.tagcount[HasAbility.cPUStrFear] > 1) then
+          nValid = 0
+        endif
+
+        ~ If we are a one then we are valid
+        validif (nValid = 1)]]></validate>
+      </prereq>
+    </thing>
+  <thing id="arPUFeaMon" name="Fearmonger" description="For the typical dread, their force of personality and ability to influence others is what powers their ability to harness fear. For the fearmonger, their intuition and insight allows them to instead identify the darkest fears of a creature and bring them to life.\n\n{b}Power Points/Day:{/b} The fearmonger determines bonus power points based upon her Wisdom modifier instead of her Charisma modifier.\n\n{b}Powers Known:{/b} The fearmonger determines the difficulty class of her powers based upon her Wisdom modifier instead of her Charisma modifier.\n\n{b}Maximum Power Level Known:{/b} The fearmonger determines the maximum power level she can manifest based upon her Wisdom modifier instead of her Charisma modifier.\n\n{b}Note:{/b} This archetype when changing from Cha to Wis causes the ability score instead of the modifier to be used to calculate the DC of powers.  This is a base LW bug and has been reported to them to fix." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="267"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
+    <arrayval field="cvCustTot" index="3" value="-1"/>
+    <arrayval field="cvCustTot" index="5" value="-1"/>
+    <arrayval field="cvCustTot" index="7" value="-1"/>
+    <arrayval field="cvCustTot" index="9" value="-1"/>
+    <arrayval field="cvCustTot" index="11" value="-1"/>
+    <arrayval field="cvCustTot" index="13" value="-1"/>
+    <arrayval field="cvCustTot" index="15" value="-1"/>
+    <arrayval field="cvCustTot" index="17" value="-1"/>
+    <arrayval field="cvPsiPowTo" index="8" value="-1"/>
+    <arrayval field="cvBonFtMod" index="8" value="-1"/>
+    <arrayval field="cvBonFtMod" index="12" value="-2"/>
+    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbReplace" tag="cPUFearIns"/>
+    <tag group="PsiAttr" tag="aWIS"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <bootstrap thing="cPUInsKey">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUDrinkFe">
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="cPUEnerFea">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cPUHorReve">
+      <autotag group="ClSpecWhen" tag="13"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpPU2"/>
+    <eval phase="PreLevel" priority="10000"><![CDATA[
+      ~ Update Terrors ability text
+      #appenddesc[cPUTerrors,"{b}Fear In Flesh:{/b} The fearmonger determines the number of terrors she can use per day and the save DCs for her terrors based upon her Wisdom modifier instead of her Charisma modifier."]
+
+      ~ Change terrors to use Wisdom instead of Cha
+      perform hero.childfound[cPUTerrors].tagreplace[ChargeAttr.?,ChargeAttr.aWIS]]]></eval>
+    </thing>
+  <thing id="cPUDrinkFe" name="Drink Fear" description="Starting at 4th level, the fearmonger gains a number of temporary hit points equal to her class level whenever using her devastating touch ability on a shaken, frightened, or panicked target. These temporary hit points last for one minute. This ability replaces the terror normally gained at 4th level." compset="ClSpecial" summary="Devastating touch ability on a shaken, frightened, or panicked target gain Temp HP.">
+    <comment>Fearmonger archetype ability.</comment>
+    <fieldval field="trkMax" value="10"/>
+    <fieldval field="abText" value="Temp HP"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Usage" tag="Round"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="LvNamePar" tag="AppText"/>
+    <tag group="LvNamePar" tag="AppValue"/>
+    <eval phase="PostLevel" priority="10100"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xTotalLev].value]]></eval>
+    </thing>
+  <thing id="cPUEnerFea" name="Energizing Fear" description="Once a fearmonger has reached 9th level, when the fearmonger uses her devastating touch ability, she gains an insight bonus to her AC and saves equal to half her Wisdom modifier and the temporary hit points gained from her drink fear ability increase to two hit points per class level. This ability replaces the bonus feat and power known normally gained at 9th level." compset="ClSpecial">
+    <comment>Fearmonger archetype ability.</comment>
+    <fieldval field="actName" value="AC &amp; Saves"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="LvNamePar" tag="AppValue"/>
+    <tag group="LvNamePar" tag="SignAppVal"/>
+    <tag group="User" tag="Activation"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Increase Drink Fear by character level
+      #value[cPUDrinkFe] += field[xTotalLev].value]]></eval>
+    <eval phase="PostAttr" priority="10000" index="2"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ 1/2 Wis bonus
+      field[abValue].value += round(#attrmod[aWIS]/2,0,-1)
+
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      #applybonus[BonInsight,hero.child[ArmorClass],field[abValue].value]
+      #applybonus[BonInsight,hero.child[svAll],field[abValue].value]]]></eval>
+    </thing>
+  <thing id="cPUHorReve" name="Horrid Revelation" description="At 13th level, when the fearmonger uses her devastating touch and already has temporary hit points from her drink fear ability, she can sacrifice all of those temporary hit points to cause the target of her devastating touch ability to become staggered and shaken unless it makes a successful save (DC 10 + 1/2 dread level + Wisdom modifier). This effect lasts one round per temporary hit point sacrificed. The fearmonger does not gain temporary hit points from this use of devastating touch. This ability replaces the bonus feat normally gained at 13th level." compset="ClSpecial">
+    <comment>Fearmonger archetype ability.</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="StandardDC" tag="aWIS"/>
+    </thing>
+  <thing id="arPUNightC" name="Nightmare Constructor" description="Where most dreads use fear as something to manipulate in creatures, nightmare constructors turn fears into reality. These individuals form horrors created from the energy of nightmares and send them into battle. Enemies of nightmare constructors must truly face their deepest fears when confronted by the creatures created from terror." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="268"/>
+    <fieldval field="cvEidStar" value="1"/>
+    <fieldval field="srcBookInf" value="Ultimate Psionics"/>
+    <arrayval field="cvPsiPowTo" index="1" value="-1"/>
+    <arrayval field="cvBonFtMod" index="8" value="-1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="AbReplace" tag="cPUChanTer"/>
+    <tag group="AbReplace" tag="cPUDevaTou"/>
+    <tag group="AbReplace" tag="cPUShaTwin"/>
+    <tag group="AbReplace" tag="cPUTwinFea"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="Helper" tag="RemovePrim"/>
+    <bootstrap thing="cPUHorror">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUReinHor">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUNCDevaT">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPUFearSur">
+      <autotag group="ClSpecWhen" tag="3"/>
+      </bootstrap>
+    <bootstrap thing="cPUImpFrSu">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cPUGrtFrSu">
+      <autotag group="ClSpecWhen" tag="9"/>
+      </bootstrap>
+    <bootstrap thing="cPUEmpFear">
+      <autotag group="ClSpecWhen" tag="15"/>
+      </bootstrap>
+    <bootstrap thing="cPUHorrInf">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <bootstrap thing="cPUEmpFear">
+      <autotag group="ClSpecWhen" tag="11"/>
+      </bootstrap>
+    <bootstrap thing="puTelLash0">
+      <autotag group="SpellSort" tag="cHelpPU2"/>
+      <autotag group="SpellType" tag="cHelpPU2"/>
+      <autotag group="Helper" tag="Free"/>
+      </bootstrap>
+    <bootstrap thing="cEidClass"></bootstrap>
+    <link linkage="varies" thing="cHelpPU2"/>
+    </thing>
+  <thing id="cPUHorror" name="Horror" description="A nightmare constructor is able to form a creature created from distilled fears and nightmares. Creating a horror takes one minute of concentration to complete and the horror remains until dismissed by the nightmare constructor.\n\nThis horror functions as a summoner&apos;s eidolon using the nightmare constructor&apos;s class level as the summoner level, with the following exceptions. A horror is treated as a construct for the purposes of effects related to its type, such as favored enemy. Commanding a horror is the same as commanding an astral construct. A horror disperses if the nightmare constructor is rendered unconscious or dies.\n\nThe nightmare constructor can allow his horror to use his terrors, but such uses still count against his daily limit. At 3rd level, the nightmare constructor can also allow his horror to utilize his channel terrors ability.\n\nThis ability replaces devastating touch." compset="ClSpecial">
+    <comment>Nightmare Constructor archetype ability.</comment>
+    <tag group="Helper" tag="ShowStatbl"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <eval phase="Render" priority="10000"><![CDATA[
+       ~ If No Eidolon present then get out now!
+       doneif (hero.childlives[cEidolon] = 0)
+
+       ~ Correctly set name
+       If (empty(hero.childfound[cEidolon].minion.actorname) = 0) then
+         field[sbName].text = lowercase(field[thingname].text) & " (named " & hero.childfound[cEidolon].minion.actorname & ")"
+       Endif]]></eval>
+    </thing>
+  <thing id="cPUReinHor" name="Reinvigorate Horror" description="The nightmare constructor is able to channel his own energy to restore the nightmarish form of his horror. As a standard action that provokes attacks of opportunity, the nightmare constructor can touch his horror and restore 5 hit points per power point spent. The nightmare constructor cannot spend more power points on this ability than his manifester level." compset="ClSpecial">
+    <comment>Nightmare Constructor archetype ability.</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    </thing>
+  <thing id="cPUFearSur" name="Fear Surge" description="When the horror of a 3rd level or higher nightmare constructor is within 30 ft. of a creature that suffers from the shaken, frightened, or panicked condition, the nightmare constructor gains an additional evolution point to spend on the horror. This evolution point only lasts while there is a creature within 30 ft. of the horror with the shaken, frightened, or panicked condition. This ability replaces channel terror." compset="ClSpecial">
+    <comment>Nightmare Constructor archetype ability.</comment>
+    <fieldval field="abValue" value="1"/>
+    <fieldval field="actName" value="Add evolution points"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10050"><![CDATA[
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      field[livename].text = field[name].text & " (" & signed(field[abValue].value) & " evolution points)"
+
+      ~ If not active get out now!
+      doneif (field[abilActive].value = 0)
+
+      hero.child[cEidolon].field[CompAbiNum].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cPUImpFrSu" name="Improved Fear Surge" description="At 6th level, when the nightmare constructor gains an evolution point from fear surge, he instead gains two evolution points. This ability replaces the terror normally gained at 6th level." compset="ClSpecial" summary="Two evolution points when your fear surge is activated.">
+    <comment>Nightmare Constructor archetype ability.</comment>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~ increase the value of Fear Surge
+      hero.child[cPUFearSur].field[abValue].value += 1]]></eval>
+    </thing>
+  <thing id="cPUGrtFrSu" name="Greater Fear Surge" description="A nightmare constructor of 9th level gains three evolution points when his fear surge is activated. This ability replaces the bonus feat normally gained at 9th level." compset="ClSpecial" summary="Three evolution points when your fear surge is activated.">
+    <comment>Nightmare Constructor archetype ability.</comment>
+    <tag group="Helper" tag="SpecUp"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~ increase the value of Fear Surge
+      hero.child[cPUFearSur].field[abValue].value += 1]]></eval>
+    </thing>
+  <thing id="cPUHorrInf" name="Horrific Infusion" description="Starting at 11th level, the nightmare constructor can merge with his horror as a standard action. The nightmare constructor wears the horror like translucent and undulating armor. The horror mimics all of the nightmare constructor&apos;s movements, and the nightmare constructor perceives through the horror&apos;s senses and speaks through its voice, as the two are now one creature. The nightmare constructor directs all of the horror&apos;s actions while merged.\n\nWhile merged with his horror, the nightmare constructor uses the horror&apos;s Strength, Dexterity, and Constitution, but retains his own Intelligence, Wisdom, and Charisma. The nightmare constructor gains the horror&apos;s hit points as temporary hit points. When these hit points reach 0, the horror is killed and sent back to its home plane. The nightmare constructor uses the horror&apos;s base attack bonus, and gains the horror&apos;s armor and natural armor bonuses and modifiers to ability scores. The nightmare constructor also gains access to the horror&apos;s special abilities and the horror&apos;s evolutions. The nightmare constructor is still limited to the horror&apos;s maximum number of natural attacks. The horror has no skills or feats of its own. The horror must be at least the same size as the nightmare constructor. The horror must have limbs for the nightmare constructor to cast spells with somatic components (should the nightmare constructor have spellcasting ability). \n\nWhile fused, the nightmare constructor loses the benefits of his armor. He counts both as his original type and as a construct for any effect related to type, whichever is worse for the nightmare constructor. Powers such as dismiss ectoplasm work on the horror, but the nightmare constructor is unaffected. Neither the nightmare constructor nor his horror can be targeted separately, as they are fused into one creature. The nightmare constructor and horror cannot take separate actions. While fused with his horror, the nightmare constructor can use all of his own abilities and gear, except for his armor. In all other cases, this ability functions as the normal horror ability.\n\nThis ability replaces shadow twin." compset="ClSpecial">
+    <tag group="Custom" tag="FusedOut"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abAction" tag="Standard"/>
+    <bootstrap thing="xEidolon">
+      <containerreq phase="First" priority="1000">!AbReplace.cPUHorrInf</containerreq>
+      <assignval field="livename" value="Fused Eidolon"/>
+      </bootstrap>
+    <eval phase="First" priority="445"><![CDATA[
+      ~ we need tags in the gizmo, so that our additional HD can use them for
+      ~ their containerreq. We'll add 1 tag/summoner level.
+      var i as number
+      for i = 1 to #levelcount[Dread]
+        perform gizmo.assign[Helper.FusedEidLv]
+      next
+
+      if (field[abilActive].value <> 0) then
+        perform hero.assign[Hero.FusedEid]
+        perform hero.assign[Hero.ArmVanish]
+
+        if (gizmo.tagcount[Helper.FusedEidLv] >= 14) then
+          perform gizmo.assign[CompPower.cAnimImpEv]
+        elseif (gizmo.tagcount[Helper.FusedEidLv] >= 2) then
+          perform gizmo.assign[CompPower.cAnimEvas]
+        endif
+
+        if (gizmo.tagcount[Helper.FusedEidLv] >= 6) then
+          perform gizmo.assign[CompPower.cAnimDevo]
+        endif
+
+        perform gizmo.assign[CompPower.raDarkVis]
+
+        ~ If we are a fused eidolon race, then the way our racial speed works is
+        ~ different. We need to set the real race's base speed equal to our form
+        ~ when fused so that it can be increased correctly based on the number
+        ~ of legs evolutions we bootstrap.
+        perform gizmo.findchild[BaseRace].setfocus
+
+        doneif (state.isfocus = 0)
+
+        hero.findchild[BaseRace].field[rSpeed].value = focus.field[rSpeed].value
+      endif]]>
+      <before name="Calc gIsEquip"/>
+      <before name="Racial Stats"/>
+      </eval>
+    <eval phase="PreAttr" priority="5000" index="2"><![CDATA[
+      ~ we can't do this until the user has chosen a race in the gizmo
+      perform gizmo.findchild[BaseRace].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ we get a bonus to our STR & DEX based on summoner level
+      ~ the formula is (level * 2/5) + 1/5, rounded down
+      field[abValue2].value += round(field[xAllLev].value * 0.4 + 0.2,0,-1)
+
+      ~ set the attributes in our gizmo, using the modifiers for those attributes
+      ~ that are on our race (and for STR & DEX, adding the bonus we
+      ~ calculated and placed in field[abValue2].value
+      gizmo.child[aSTR].field[aNormForce].value = 10 + focus.field[rSTR].value + field[abValue2].value
+      gizmo.child[aDEX].field[aNormForce].value = 10 + focus.field[rDEX].value + field[abValue2].value
+      gizmo.child[aCON].field[aNormForce].value = 10 + focus.field[rCON].value
+      gizmo.child[aINT].field[aNormForce].value = 10 + focus.field[rINT].value
+      gizmo.child[aWIS].field[aNormForce].value = 10 + focus.field[rWIS].value
+      gizmo.child[aCHA].field[aNormForce].value = 10 + focus.field[rCHA].value
+
+      ~ Add our racial AC bonus to the field that will pass it to the hero.
+      field[abValue3].value += focus.field[rAC].value]]></eval>
+    <eval phase="Attr" priority="1000" index="3"><![CDATA[
+      ~ we get an AC bonus that depends on our summoner level
+      ~ the formula is (level * 2/5) + 1/5, rounded down
+      ~ Actually, that formula is for the Str/Dex bonus, the AC is double that
+      ~ and + the races natural armor bonus as well (usually 2, but could be
+      ~ improved with evolutions) which was added in the previous eval.
+      field[abValue3].value += round(field[xAllLev].value * 0.4 + 0.2,0,-1) * 2
+
+      ~ the rest only applies while we're actively fused
+      doneif (hero.tagis[Hero.FusedEid] = 0)
+
+      ~ while we're fused, the eidolon's physical ability scores are used instead
+      ~ of the hero's
+      hero.child[aSTR].field[aOverride].value = gizmo.child[aSTR].field[aUser].value
+      hero.child[aDEX].field[aOverride].value = gizmo.child[aDEX].field[aUser].value
+      hero.child[aCON].field[aOverride].value = gizmo.child[aCON].field[aUser].value
+
+      ~ add our AC bonus to the hero's natural AC
+      hero.child[ArmorClass].field[tACNatural].value = field[abValue3].value]]>
+      <before name="Attribute Bound"/>
+      <before name="Attribute Final"/>
+      </eval>
+    <eval phase="PostAttr" priority="15000" index="4"><![CDATA[
+      ~ total up the HP items on the eidolon into our tracker (unless that HP
+      ~ entry is still at its default of 9999)
+      foreach pick in gizmo from BaseHitDie
+        If (eachpick.field[cHP].value <> 9999) then
+          field[trkMax].value += eachpick.field[cHP].value + eachpick.field[cHPBonus].value
+        Endif
+      nexteach]]>
+      <after name="Add HP to Hero"/>
+      </eval>
+    <eval phase="Level" priority="15000" index="5"><![CDATA[
+      ~ we'll use our abValue field to store the difference between the BAB of
+      ~ the Eidolon and the BAB of the Summoner's class levels.
+
+      ~ the BAB of our class is calculated on the class helper which bootstraps
+      ~ us and stored in cClassBAB. Since Outsiders get full BAB, we need to
+      ~ calculate the number of HD our eidolon has, then set the difference as
+      ~ our abValue
+      field[abValue].value += (round(hero.childfound[cHelpPU2].field[cTotalLev].value*3/4,0,1) - hero.childfound[cHelpPU2].field[cClassBAB].value)
+
+      ~ if we're currently fused, replace the character's BAB with that value
+      if (hero.tagis[Hero.FusedEid] <> 0) then
+        hero.childfound[cHelpPU2].field[cClassBAB].value += field[abValue].value
+      endif]]>
+      <before name="Add Class Saves and BAB"/>
+      <after name="Calc Class Saves and BAB"/>
+      </eval>
+    <eval phase="First" priority="1000" index="6"><![CDATA[
+      ~ this only applies while we're NOT actively fused
+      doneif (hero.tagis[Hero.FusedEid] <> 0)
+
+      ~ search through all our Eidolon evolutions and disable them
+      foreach pick in hero from Ability where "Helper.ShadowFuse"
+        perform eachpick.assign[Helper.SpcDisable]
+        perform eachpick.delete[Helper.ShowSpec]
+      nexteach]]></eval>
+    <eval phase="First" priority="1000" index="7"><![CDATA[
+      ~ this only applies while we're actively fused
+      doneif (hero.tagis[Hero.FusedEid] = 0)
+
+      ~ by default, we have no hands while fused - our evolutions may add them
+      ~ back in
+      herofield[tNumHands].value = 0
+
+      ~ set the character's size to the eidolon's size
+      var sizetarget as number
+      ~ find our Eidolon's race
+      perform gizmo.findchild[BaseRace].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ get the eidolon's size modifier
+      sizetarget = focus.field[rSizeMod].value
+
+      ~ change the hero's size to that
+      call SetSizeTo]]>
+      <after name="Racial Stats"/>
+      </eval>
+    <eval phase="Final" priority="100000" index="8"><![CDATA[
+      ~ if our Evolutions resource isn't finished, turn our edit button and our
+      ~ class' special ability button red
+      if (gizmo.child[resRaceCus].field[resLeft].value <> 0) then
+        perform assign[Helper.GizmoError]
+        perform root.linkage[varies].assign[Helper.ClSpecSel]
+      endif]]>
+      <after name="Calc resLeft"/>
+      </eval>
+    <eval phase="Render" priority="10000" index="9"><![CDATA[
+      ~ build up a description of our Eidolon and include that in our description
+      foreach pick in gizmo from BaseRace
+        field[DescAppend].text &= eachpick.field[name].text & "{br}"
+        field[DescAppend].text &= hero.tagabbrevs[Alignment.?,""] & " "
+
+        ~This only handles the sizes that are available to an Eidolon, not the
+        ~full range of sizes in the game
+        if (eachpick.field[rSizeMod].value = -1) then
+          field[DescAppend].text &= "Small "
+        elseif (eachpick.field[rSizeMod].value = 0) then
+          field[DescAppend].text &= "Medium "
+        elseif (eachpick.field[rSizeMod].value = 1) then
+          field[DescAppend].text &= "Large "
+        elseif (eachpick.field[rSizeMod].value = 2) then
+          field[DescAppend].text &= "Huge "
+        endif
+        field[DescAppend].text &= "outsider{br}"
+      nexteach
+
+      var ac as number
+      ac = field[abValue3].value + 10
+      field[DescAppend].text &= "{b}AC{/b} " & ac & " (" & signed(field[abValue3].value) & " natural){br}"
+
+      var hpbonus as number
+      var hdcount as number
+      foreach pick in gizmo from BaseHitDie
+        hpbonus += eachpick.field[cHPBonus].value
+        hdcount += 1
+      nexteach
+
+      field[DescAppend].text &= "{b}hp{/b} " & field[trkMax].value & " (" & hdcount & "d10" & signed(hpbonus) & "){br}"
+
+      var attrtext as string
+      var attrabbrev as string
+      foreach pick in gizmo from BaseAttr sortas explicit
+
+        ~ the abbreviation is stored in ALL CAPS, and we want title case
+        attrabbrev = eachpick.field[aAbbr].text
+        attrabbrev = left(attrabbrev,1) & right(lowercase(attrabbrev),2)
+
+        attrtext = splice(attrtext,"{b}" & attrabbrev & "{/b} " & eachpick.field[aFinalVal].value,", ")
+      nexteach
+
+      field[DescAppend].text &= attrtext & "{br}"
+
+      field[DescAppend].text &= "{b}Base Atk{/b} " & signed(field[abValue].value) & "{br}"
+
+      var evoltext as string
+      foreach pick in gizmo from RaceCustom where "!Hide.All"
+        evoltext = splice(evoltext,eachpick.field[livename].text,", ")
+      nexteach
+
+      field[DescAppend].text &= "{b}Evolutions{/b} " & evoltext
+
+      ~ now that we're done building it, append it to our description (the
+      ~ printed output also uses this text, but it uses the raw DescAppend field)
+      #appenddesc[cPUHorrInf,"{b}Eidolon{/b}{br}" & field[DescAppend].text]
+
+      ~ display our current HP as part of our name
+      field[livename].text &= " (" & field[trkLeft].value & "/" & field[trkMax].value & " HP)"]]></eval>
+    <eval phase="First" priority="5000" index="10"><![CDATA[
+      ~ find our Eidolon's race
+      perform gizmo.findchild[BaseRace].setfocus
+      doneif (state.isfocus = 0)
+
+      ~ Eidolons always use d10 for their HD
+      focus.field[rHDSides].value = 10]]></eval>
+    <eval phase="First" priority="500" index="11">~ hide xEidolon, bootstrap tags have made us always active
+      perform hero.childfound[xEidolon].delete[User.Activation]
+      perform hero.childfound[xEidolon].delete[Helper.ShowSpec]
+      ~ and give both us and our eidolon the appropiate tags
+      ~ since we are always in reach and adjacent
+      perform hero.assign[Hero.EidolonRch]
+      perform hero.assign[Hero.EidolonAdj]</eval>
+    <eval phase="Validation" priority="5050" index="12"><![CDATA[
+      ~ If we're shown, get out now!
+      doneif (tagis[Helper.ShowSpec] = 1)
+
+      ~ if our level is not shown yet remove all error tags
+      perform delete[Helper.GizmoError]]]></eval>
+    <evalrule phase="Validation" priority="5000" message="You must select a race for your fused eidolon." summary="You must select a race for your fused eidolon."><![CDATA[
+      ~ If not correct level for this ability then we are valid
+      validif (tagis[Helper.ShowSpec] = 0)
+
+      ~ races forward their IsRace identity tag to their container (and therefore
+      ~ to the parent of their container) - so, we can test this simply by
+      ~ looking for that tag on ourself
+      validif (tagis[IsRace.?] <> 0)
+
+      ~ we can only get here if we failed - turn our edit button red and tell
+      ~ our class to turn the Special Abilities button red.
+      perform assign[Helper.GizmoError]
+
+      doneif (root.islinkage[varies] = 0)
+
+      perform root.linkage[varies].assign[Helper.ClSpecSel]]]></evalrule>
+    <evalrule phase="Validation" priority="5000" index="2" message="The eidolon must be at least the same size as its summoner." summary="The eidolon must be at least the same size as its summoner."><![CDATA[
+      ~ If not correct level for this ability then we are valid
+      validif (tagis[Helper.ShowSpec] = 0)
+
+      ~ we can't do this until the user has chosen a race in the gizmo
+      perform gizmo.findchild[BaseRace].setfocus
+      validif (state.isfocus = 0)
+
+      validif (herofield[tSize].value <= focus.field[rSizeMod].value)]]></evalrule>
+    <child entity="FusedEid">
+      <tag group="Hero" tag="EidolonAdj"/>
+      <tag group="Hero" tag="EidolonRch"/>
+      <bootstrap thing="resEidAtk"></bootstrap>
+      <bootstrap thing="rcEidAtk"></bootstrap>
+      <bootstrap thing="resRaceCus"></bootstrap>
+      <bootstrap thing="resRace2nd"></bootstrap>
+      <bootstrap thing="resAbilAdv"></bootstrap>
+      <bootstrap thing="fiHelper"></bootstrap>
+      <bootstrap thing="aSTR"></bootstrap>
+      <bootstrap thing="aDEX"></bootstrap>
+      <bootstrap thing="aCON"></bootstrap>
+      <bootstrap thing="aCHA"></bootstrap>
+      <bootstrap thing="aINT"></bootstrap>
+      <bootstrap thing="aWIS"></bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 11]]></containerreq>
+        <assignval field="cIndexMod" value="1"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 11]]></containerreq>
+        <assignval field="cIndexMod" value="2"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 11]]></containerreq>
+        <assignval field="cIndexMod" value="3"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 11]]></containerreq>
+        <assignval field="cIndexMod" value="4"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 11]]></containerreq>
+        <assignval field="cIndexMod" value="5"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 11]]></containerreq>
+        <assignval field="cIndexMod" value="6"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 11]]></containerreq>
+        <assignval field="cIndexMod" value="7"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 11]]></containerreq>
+        <assignval field="cIndexMod" value="8"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 11]]></containerreq>
+        <assignval field="cIndexMod" value="9"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 13]]></containerreq>
+        <assignval field="cIndexMod" value="10"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 14]]></containerreq>
+        <assignval field="cIndexMod" value="11"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 15]]></containerreq>
+        <assignval field="cIndexMod" value="12"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 17]]></containerreq>
+        <assignval field="cIndexMod" value="13"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 18]]></containerreq>
+        <assignval field="cIndexMod" value="14"/>
+        </bootstrap>
+      <bootstrap thing="cBonusHD">
+        <containerreq phase="First" priority="450"><![CDATA[count:Helper.FusedEidLv >= 19]]></containerreq>
+        <assignval field="cIndexMod" value="15"/>
+        </bootstrap>
+      <bootstrap thing="raDarkVis">
+        <containerreq phase="First" priority="450"><![CDATA[CompPower.raDarkVis & !CompPowNot.raDarkVis]]></containerreq>
+        <autotag group="Helper" tag="ShadowFuse"/>
+        </bootstrap>
+      <bootstrap thing="cAnimEvas">
+        <containerreq phase="First" priority="450"><![CDATA[CompPower.cAnimEvas & !CompPowNot.cAnimEvas]]></containerreq>
+        <autotag group="Helper" tag="ShadowFuse"/>
+        </bootstrap>
+      <bootstrap thing="cAnimDevo">
+        <containerreq phase="First" priority="450"><![CDATA[CompPower.cAnimDevo & !CompPowNot.cAnimDevo]]></containerreq>
+        <autotag group="Helper" tag="ShadowFuse"/>
+        </bootstrap>
+      <bootstrap thing="cAnimMulti">
+        <containerreq phase="First" priority="450"><![CDATA[CompPower.cAnimMulti & !CompPowNot.cAnimMulti]]></containerreq>
+        <autotag group="Helper" tag="ShadowFuse"/>
+        </bootstrap>
+      <bootstrap thing="cAnimImpEv">
+        <containerreq phase="First" priority="450"><![CDATA[CompPower.cAnimImpEv & !CompPowNot.cAnimImpEv]]></containerreq>
+        <autotag group="Helper" tag="ShadowFuse"/>
+        </bootstrap>
+      </child>
+    </thing>
+  <thing id="cPUEmpFear" name="Empowered in Fear" description="At 11th level, the nightmare constructor&apos;s horror is treated as if under the effect of {i}physical acceleration{/i} any time it is within 30 ft. of a creature suffering from either the shaken, frightened, or panicked conditions.\nAt 15th level, the horror is also treated as if under the {i}form of doom{/i} power when within 30 ft. of a creature suffering from either the shaken, frightened, or panicked conditions. This effect allows the horror to have more natural attacks than its normal eidolon form limit.\nThis ability replaces twin fear.\n\n{b}Note:{/b} You can find adjustments for {i}physical acceleration{/i} and {i}form of doom{/i} on the Adjust tab under Spells." compset="ClSpecial">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="DescInfo" tag="puPhyAc4"/>
+    <tag group="DescInfo" tag="puForDoom6"/>
+    </thing>
+  <thing id="arPUShaHnt" name="Shadow Hunter" description="Even the most intelligent of races can have fears of what might be lurking within the shadows, and a special breed of dread known as shadow hunters have learned how to use their connection to fears to manipulate darkness to aid them. Whether it is concealing them from sight or turning shadows into substance, shadow hunters are at home where others fear the unknown." compset="ClassVary" uniqueness="unique">
+    <fieldval field="srcPageNum" value="269"/>
+    <arrayval field="cvBonFtMod" index="4" value="-1"/>
+    <arrayval field="cvCustTot" index="9" value="-1"/>
+    <arrayval field="cvCustTot" index="11" value="-1"/>
+    <arrayval field="cvCustTot" index="13" value="-1"/>
+    <arrayval field="cvCustTot" index="15" value="-1"/>
+    <arrayval field="cvCustTot" index="17" value="-1"/>
+    <arrayval field="cvCustTot" index="19" value="-1"/>
+    <usesource source="pPsiUn"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="AbReplace" tag="cPUFearIns"/>
+    <tag group="AbReplace" tag="cPUDevaTou"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <bootstrap thing="cPUShdwDiv">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUCovNatu">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPUGrspShd">
+      <autotag group="ClSpecWhen" tag="5"/>
+      </bootstrap>
+    <bootstrap thing="cPUStThShd">
+      <autotag group="ClSpecWhen" tag="10"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpPU2"/>
+    </thing>
+  <thing id="cPUCovNatu" name="Covert Nature" description="The shadow hunter is at home in dark places and knows how to avoid detection. The shadow hunter gains an insight bonus to Stealth checks equal to half her class level (minimum +1). This ability replaces fearsome insight." compset="ClSpecial" summary="Gain insight bonus to Stealth">
+    <comment>Shadow Hunter archetype ability.</comment>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ Calc 1/2 Dread level with a minimum of 1
+      field[abValue].value += maximum(round(field[xTotalLev].value/2,0,-1),1)
+      #applybonus[BonInsight,hero.childfound[skStealth],field[abValue].value]]]></eval>
+    </thing>
+  <thing id="cPUShdwDiv" name="Shadow Diversion" description="As a standard action, the shadow hunter can cause shadows to take physical shape adjacent to a creature within 30 ft. Unless the creature makes a successful Will save (DC 10 + 1/2 the shadow hunter&apos;s level + the shadow hunter&apos;s Charisma modifier), the creature treats the shadow as an enemy when determining if the creature is flanked until the end of the shadow hunter&apos;s next turn. If the shadow is adjacent to multiple creatures, the shadow hunter must choose which one is affected by it. If the shadow hunter has Improved Feint, it reduces the action needed to use this ability to a move action, while Greater Feint reduces action needed to a swift action. This ability replaces devastating touch." compset="ClSpecial" summary="Use a shadow creature for flanking">
+    <comment>Shadow Hunter archetype ability.</comment>
+    <usesource source="pPsiUn"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="abSave" tag="WillNeg"/>
+    <tag group="LvNamePar" tag="IncAction"/>
+    <eval phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~ determine which Action tag to assign
+      if (#hasfeat[fGreatFein] <> 0) then
+        perform hero.child[cPUShdwDiv].assign[abAction.Swift]
+      elseif (#hasfeat[fImpFeint] <> 0) then
+        perform hero.child[cPUShdwDiv].assign[abAction.Move]
+      else
+        perform hero.child[cPUShdwDiv].assign[abAction.Standard]
+      endif]]></eval>
+    </thing>
+  <thing id="cPUGrspShd" name="Grasping Shade" description="A shadow hunter of 5th level can make shadows turn into reaching, grabbing tentacles of substance. As a standard action, the shadow hunter can target a creature within 30 ft. and direct shadows near the creature to entangle the target. The creature targeted cannot be in an area of bright light or the attempt fails. The creature may make a Reflex save to negate the attack with a DC equal to 10 + 1/2 the shadow hunter&apos;s class level + the shadow hunter&apos;s Charisma modifier. \n\nEntangled creatures can attempt to break free as a move action, making a Strength or Escape Artist check. The DC for this check is equal to 11 + the shadow hunter&apos;s Charisma modifier. Successive successful uses on the same target before the target has successfully broken free cause the target to gain the grappled condition if entangled and the pinned condition if grappled, although a successful save only stops the target from gaining the additional condition. \n\nThis ability can be used a number of times per day equal to 3 + the shadow hunter&apos;s Charisma modifier. This ability replaces the bonus feat normally gained at 5th level." compset="ClSpecial" summary="Use shadows to entagle a creature not in bright light">
+    <comment>Shadow Hunter archetype ability.</comment>
+    <fieldval field="abRange" value="30"/>
+    <tag group="abSave" tag="RefNeg"/>
+    <tag group="StandardDC" tag="aCHA"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="User" tag="Tracker"/>
+    <tag group="ChargeAttr" tag="aCHA"/>
+    <tag group="abAction" tag="Standard"/>
+    <tag group="Usage" tag="Day"/>
+    <tag group="ChargeCalc" tag="AttrUses3"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="LvNamePar" tag="IncRange"/>
+    </thing>
+  <thing id="cPUStThShd" name="Step Through Shadows" description="At 10th level, if the shadow hunter is in an area of dim light or darkness, she can travel to another location of dim light or darkness as if by means of {i}fold space{/i}, as long as the destination is within 60 ft. of the her initial location. Using this ability counts as a daily use of the terrors ability. This ability replaces the terror normally gained at 10th level." compset="ClSpecial" summary="Travel up to 60 ft through shadows">
+    <comment>Shadow Hunter archetype ability.</comment>
+    <fieldval field="abRange" value="60"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Super"/>
+    <tag group="abRange" tag="Feet"/>
+    <tag group="DescInfo" tag="puFoldSpa4"/>
+    <tag group="LvNamePar" tag="IncRange"/>
     </thing>
   </document>
