@@ -4354,6 +4354,71 @@
          field[pChosen].chosen.field[Bonus].value += field[pAdjust].value
       Endif]]></eval>
     </thing>
+  <thing id="pS2AttrTypPerm" name="Ability Score (Perm), Type" description="Select this adjustment to give a specific bonus/penalty type to a selected Ability Score. This adjustment follows the normal Pathfinder stacking rules regarding typed bonuses. So Bonus and Circumstance types will stack with themselves but all others will only apply the greatest value.\n\nThe difference between a Permanent and Temp ability score is that Permanent will give skill points if you increase Int." compset="InPlay">
+    <fieldval field="pCandExpr2" value="component.SelectHelp &amp; PackSelect.AttrBonus"/>
+    <usesource source="srcS2Adjus"/>
+    <tag group="Adjustment" tag="Attribute"/>
+    <tag group="OthAdjCat" tag="Attributes"/>
+    <tag group="Adjust2nd" tag="S2Custom"/>
+    <tag group="Helper" tag="CoreCampOK"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PreAttr" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+      doneif (field[pChosen2].ischosen <> 1)
+
+      ~ Figure out which 'field' to apply the adjustment too
+      If (field[pChosen2].chosen.tagis[AdjustBon.Alchemical] <> 0) Then
+         #applybonus[BonAlch,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Circumstan] <> 0) Then
+         field[pChosen].chosen.field[ModCirc].value += field[pAdjust].value
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Competence] <> 0) Then
+         #applybonus[BonComp,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Enhancemen] <> 0) Then
+         #applybonus[BonEnhance,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Insight] <> 0) Then
+         #applybonus[BonInsight,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Inherent] <> 0) Then
+         #applybonus[aInherBon,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Luck] <> 0) Then
+         #applybonus[BonLuck,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Morale] <> 0) Then
+         #applybonus[BonMorale,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Profane] <> 0) Then
+         #applybonus[BonProfane,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Sacred] <> 0) Then
+         #applybonus[BonSacred,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Trait] <> 0) Then
+         #applybonus[BonTrait,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Resist] <> 0) Then
+         #applybonus[svResist,field[pChosen].chosen,field[pAdjust].value]
+      ElseIf (field[pChosen2].chosen.tagis[AdjustBon.Bonus] <> 0) Then
+         field[pChosen].chosen.field[Bonus].value += field[pAdjust].value
+      Endif
+      ]]></eval>
+    <eval index="2" phase="PostAttr" priority="10000"><![CDATA[
+      ~ If we're not enabled, get out now
+      doneif (field[pIsOn].value = 0)
+      ~ If nothing chosen, get out now
+      doneif (field[pChosen].ischosen <> 1)
+      doneif (field[pChosen2].ischosen <> 1)
+      ~ If not intelligence get out now!
+      doneif (field[pChosen].chosen.tagis[IsAttr.aINT] = 0)
+      ~ If not intelligence get out now!
+      doneif (field[pChosen].chosen.field[aFinalVal].value <= 10)
+
+      ~ For every two points of Int give a bonus language known
+      field[abValue].value += round(field[pAdjust].value/2,0,-1)
+
+      ~ Add skill points appropriately
+      #resmax[resSkill] += field[abValue].value
+
+      ~ Add to our languages known
+      herofield[tLangsSta].value += field[abValue].value
+      ]]></eval>
+    </thing>
   <thing id="pS2RceSize" name="Race, Size Category" description="Select this adjustment to change your size category but unlike the adjustment &quot;Size Category&quot; this adjustment does NOT change your equipment size." compset="InPlay">
     <usesource source="srcS2Adjus"/>
     <tag group="OthAdjCat" tag="Race"/>
