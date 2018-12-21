@@ -2349,4 +2349,168 @@
     <tag group="AbilType" tag="Super"/>
     <tag group="ProductId" tag="HLCommunit"/>
     </thing>
+  <thing id="arPWBruSlay" name="Brutal Slayer" description="Where other stalkers use grace and finesse, the brutal slayer relies on strength and fury. Wielding heavy, two handed weapons with blinding speed, the brutal slayer is a terrifying predator of the night." compset="ClassVary" uniqueness="unique">
+    <usesource source="srcPathOfW"/>
+    <tag group="ClVaryName" tag="AppParen"/>
+    <tag group="Helper" tag="RemoveQuat"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="Helper" tag="OverCustS2"/>
+    <tag group="Helper" tag="RemoveCast"/>
+    <tag group="ClassSkill" tag="skIntim"/>
+    <tag group="ClassSkill" tag="skSurvival"/>
+    <tag group="NotClassSk" tag="skP7Acroba"/>
+    <tag group="AbReplace" tag="cPW2DeadSt"/>
+    <tag group="AbReplace" tag="cPW2Dodge"/>
+    <bootstrap thing="cPWBSSAoS">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPWBSSAoS">
+      <autotag group="ClSpecWhen" tag="12"/>
+      </bootstrap>
+    <bootstrap thing="cPWBSSAoS">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <bootstrap thing="cPWBSSAoS">
+      <autotag group="ClSpecWhen" tag="20"/>
+      </bootstrap>
+    <bootstrap thing="cPWBSSAoS">
+      <autotag group="ClSpecWhen" tag="4"/>
+      </bootstrap>
+    <bootstrap thing="cPWBSSMusMem">
+      <autotag group="ClSpecWhen" tag="2"/>
+      </bootstrap>
+    <bootstrap thing="cPWBSSMusMem">
+      <autotag group="ClSpecWhen" tag="6"/>
+      </bootstrap>
+    <bootstrap thing="cPWBBSSBruStri">
+      <autotag group="ClSpecWhen" tag="1"/>
+      </bootstrap>
+    <bootstrap thing="cPWBBSSBruStri">
+      <autotag group="ClSpecWhen" tag="8"/>
+      </bootstrap>
+    <bootstrap thing="cPWBBSSBruStri">
+      <autotag group="ClSpecWhen" tag="16"/>
+      </bootstrap>
+    <link linkage="varies" thing="cHelpPW2"/>
+    <eval phase="First" priority="4000"><![CDATA[
+      ~ Grant access to Thrashing Dragon discipline
+      perform hero.child[mHelpPW2].assign[Discipline.PrimalFury]
+      perform hero.child[mHelpPW2].assign[Discipline.BlackSerph]
+      ~ 11/23/2016 - Changed the timing to First/4000 to be before
+      ~ the adjustments/Feats that can add a disipline to a class.
+      ~ In addition I removed the whole "counting" check first and
+      ~ simply removed the Iron Tortoise disciplines.
+      perform hero.child[mHelpPW2].delete[Discipline.ThrashDrag]]]></eval>
+    </thing>
+  <thing id="cPWBSSBruAm" name="Brutal Ambush" description="Whenever the brutal slayer attacks a flat-footed opponent, he increases his Strength while making that attack as if he had activated his brutal strikes ability. This benefit ends after his attack resolves." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="arPWBruSlay"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cPWBSSBruAs" name="Brutal Assault" description="As a swift action, the brutal slayer can spend a point of ki and target a single creature he can see. He gains the benefit of his brutal strikes ability when making attacks against that creature for a number of rounds equal to his initiation modifier." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="arPWBruSlay"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cPWBSSBBruFS" name="Furious Strikes" description="The Strength bonus granted by the brutal slayer’s brutal strikes ability increases by +2. In addition, he treats his class level as his base attack bonus for the purposes of qualifying for critical feats. If the brutal slayer possesses fighter levels, he also adds his brutal slayer level to his fighter level for the purposes of qualifying for critical feats. (Not implemented)" compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="arPWBruSlay"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="Helper" tag="SpecUp"/>
+    <eval phase="PostLevel" priority="9000"><![CDATA[      ~ If we've been Disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      ~Increase Brutal Strike Strike dice by one
+      #value[cPWBBSSBruStri] += 2]]></eval>
+    </thing>
+  <thing id="cPWBSSBruCS" name="Cruel Strike" description="When the brutal slayer hits with a melee attack while under the effect of his brutal strikes ability, he can reduce the damage he deals by 1/4 (rounded down) to sicken the target for a number of rounds equal to his brutal slayer initiation modifier." compset="CustomSpec" uniqueness="unique">
+    <usesource source="srcPOWEx"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="SpecSource" tag="arPWBruSlay"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cPWBSSSA" name="Stalker Arts" description="Whenever a brutal slayer gains a new stalker art, he may choose from the following list in addition to the standard stalker’s stalker arts:\n\nBrutal Ambush (Ex): Whenever the brutal slayer attacks a flat-footed opponent, he increases his Strength while making that attack as if he had activated his brutal strikes ability. This benefit ends after his attack resolves.\n\nBrutal Assault (Ex): As a swift action, the brutal slayer can spend a point of ki and target a single creature he can see. He gains the benefit of his brutal strikes ability when making attacks against that creature for a number of rounds equal to his initiation modifier.\n\nFurious Strikes (Ex): The Strength bonus granted by the brutal slayer’s brutal strikes ability increases by +2. In addition, he treats his class level as his base attack bonus for the purposes of qualifying for critical feats. If the brutal slayer possesses fighter levels, he also adds his brutal slayer level to his fighter level for the purposes of qualifying for critical feats.\n\nCruel Strike (Ex): When the brutal slayer hits with a melee attack while under the effect of his brutal strikes ability, he can reduce the damage he deals by 1/4 (rounded down) to sicken the target for a number of rounds equal to his brutal slayer initiation modifier.\n\nThis ability alters stalker arts, but does not cause the brutal slayer archetype to be incompatible with other archetypes that alter the stalker arts class feature.\n\nThis ability replaces fast movement and trap sense." compset="ClSpecial">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    </thing>
+  <thing id="cPWBBSSBruStri" name="Brutal Strikes" description="Starting at 1st level, whenever a brutal slayer confirms a critical hit against a creature, he gains a +4 profane bonus Strength for a number of rounds equal to his brutal slayer initiation modifier. This bonus increases to +6 at 8th level and to +8 at 16th level.\n\nThis ability replaces deadly strikes." compset="ClSpecial">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <tag group="User" tag="Activation"/>
+    <tag group="abDuration" tag="Round"/>
+    <tag group="abAction" tag="None"/>
+    <tag group="Helper" tag="UseOwnLev"/>
+    <eval phase="PostLevel" priority="10000"><![CDATA[      ~ Set the list name
+      var listbonus as number
+      listbonus = (2 * field[xIndex].value) + 2
+      field[listname].text = field[thingname].text & " " & signed(listbonus)
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += (2 * field[xCount].value) + 2
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+      ~if we're not active, just get out now
+      doneif (field[abilActive].value = 0)
+
+      ~ Give profane bonus to Str
+      #applybonus[BonProfane,hero.childfound[aSTR],field[abValue].value]]]></eval>
+    </thing>
+  <thing id="cPWBSSAoS" name="Armor of Scars" description="The brutal slayer takes as well as he gives, becoming protected by the scars of wounds he has already survived. At 1st level, a brutal slayer gains a +1 bonus to his natural armor bonus to AC (this stacks with his existing natural armor bonus, if any). At 4th level and every four levels thereafter, this bonus increases by +1. In addition, the brutal slayer’s instincts enable him to better dodge incoming blows; whenever he spends a full-round action to recover maneuvers, he gains a dodge bonus to AC equal to his brutal slayer initiation modifier.\n\nThis ability replaces dodge bonus." compset="ClSpecial" summary="Natural Armor bonus to your Armor Class.">
+    <tag group="AbilType" tag="Extra" name="Extraordinary Ability" abbrev=" (Ex)"/>
+    <tag group="Helper" tag="UseOwnLev" name="UseOwnLev" abbrev="UseOwnLev"/>
+    <tag group="SpecType" tag="Defense" name="Defense" abbrev="Defense"/>
+    <tag group="ProductId" tag="HLCommunit"/>
+    <eval phase="PostAttr" priority="20000"><![CDATA[
+      ~Set the list name
+      field[listname].text = field[thingname].text & " " & signed(field[xIndex].value)
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] <> 1)
+      ~if we've been replaced, get out now
+      doneif (tagis[Helper.SpcReplace] <> 0)
+      ~only perform the calculations for the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      field[abValue].value += field[xCount].value
+      field[livename].text = field[thingname].text & " " & signed(field[abValue].value)
+      field[abSumm].text = "+" & field[abValue].value  & " Natural Armor bonus to your AC."
+
+      ~ Give Natural Armor bonus to AC
+      hero.child[ArmorClass].field[tACNatural].value += field[abValue].value]]></eval>
+    </thing>
+  <thing id="cPWBSSMusMem" name="Muscle Memory" description="The muscles of a brutal slayer are honed to deadly efficiency, just like his blades. Starting at 2nd level, a brutal slayer may add 1/2 his Strength modifier to his AC and to Reflex saves instead of his Dexterity modifier. At 6th level, the brutal slayer may add his full Strength modifier instead of his Dexterity modifier, rather than 1/2. The brutal slayer’s Strength bonus to his AC is still limited by his armor’s maximum Dexterity bonus." compset="ClSpecial">
+    <tag group="ProductId" tag="HLCommunit"/>
+    <tag group="AbilType" tag="Extra"/>
+    <eval phase="PostAttr" priority="3100"><![CDATA[      field[abValue2].value += field[xCount].value     
+      if (field[abValue2].value = 1) then
+         field[abValue].value += round(minimum(#attrmod[aSTR],herofield[tMaxDex].value)/2,0,-1)
+        else
+         field[abValue].value += minimum(#attrmod[aSTR],herofield[tMaxDex].value)
+      endif
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+
+      ~ If we're disabled, just get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      if (hero.child[aDEX].field[aStartMod].value < hero.child[aSTR].field[aStartMod].value) then
+        hero.child[ArmorClass].field[tACDexMod].value = maximum(hero.child[ArmorClass].field[tACDexMod].value, field[abValue].value)
+
+      else
+        perform assign[Helper.SpcDisable]
+        endif]]>
+      <after name="Apply Dex to AC"/>
+      </eval>
+    </thing>
   </document>
