@@ -1,0 +1,801 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+
+  <template
+    id="xManPick"
+    name="PoW Manuever Pick"
+    compset="CustomSpec"
+    marginhorz="5"
+    marginvert="1"
+    tabletmarginhorz="10">
+
+    <portal
+      id="mLevel"
+      style="lblBigNums">
+      <label>
+        <labeltext><![CDATA[
+          @text = tagvalue[mLevel.?]
+          ]]></labeltext>
+        </label>
+      </portal>
+
+    <portal
+      id="name"
+      style="lblNormal"
+      showinvalid="yes">
+      <label
+        field="name">
+        </label>
+      </portal>
+
+    <portal
+      id="thingname"
+      style="lblNormal"
+      showinvalid="yes">
+      <label
+        field="thingname">
+        </label>
+      </portal>
+
+    <portal
+      id="summary"
+      style="lblSummary">
+      <label>
+        <labeltext><![CDATA[
+          if (tagis[component.FavClass] <> 0) then
+            @text = field[fcName].text
+          elseif (tagis[Helper.SpcDisable] <> 0) then
+            if (tagis[Helper.SpcReplace] <> 0) then
+              @text = "(Replaced)"
+            elseif (tagis[Helper.SpcNotWorn] <> 0) then
+              @text = "(Not Equipped)"
+            else
+              @text = "(Requirements not met)"
+              endif
+          else
+            @text = field[abSumm].text
+            endif
+          ]]></labeltext>
+        </label>
+      </portal>
+
+    <portal
+      id="lblmenu1"
+      style="lblSecond">
+      <label
+        field="usrLabel1">
+        </label>
+      </portal>
+
+    <!-- shortname needs for various class specials that choose favored terrains
+      and enemies.
+
+    Partial list that need these are:
+
+    Barbarian: (Jungle Rager) Home Ground Advantage,
+    Cavalier: (Order of the Guard) Prepared for the Journey, Terrain Training
+    Druid: (Troll Fury) Chosen Prey
+    Hellknight: Favored Quarry, Domination
+    Horizon Walker: Terrain Dominance (all versions)
+    Riftwarden: Favored Enemy, Favored Terrain
+    Rogue Talents: Greater Terrain Mastery, Hide in Plain Sight, Terrain Mastery
+    Vigilante: Environment Weapon
+
+    -->
+    <portal
+      id="menu1"
+      style="menuNormal">
+      <menu_things
+        field="usrChosen1"
+        component="none"
+        maxvisible="10"
+        usepicksfield="usrSource1"
+        candidatefield="usrCandid1"
+        namefield="shortname">
+        </menu_things>
+      </portal>
+
+    <portal
+      id="lblmenu2"
+      style="lblSecond">
+      <label
+        field="usrLabel2">
+        </label>
+      </portal>
+
+    <portal
+      id="menu2"
+      style="menuNormal">
+      <menu_things
+        field="usrChosen2"
+        component="none"
+        maxvisible="10"
+        usepicksfield="usrSource2"
+        candidatefield="usrCandid2"
+        namefield="shortname">
+        </menu_things>
+      </portal>
+
+    <portal
+      id="lblmenuar"
+      style="lblSecond">
+      <label
+        field="usrLabelAr">
+        </label>
+      </portal>
+
+    <portal
+      id="menuarray"
+      style="menuNormal">
+      <menu_array
+        storeindex="yes"
+        field="usrIndex"
+        array="usrArray"
+        maxvisible="10">
+        </menu_array>
+      </portal>
+
+    <portal
+      id="checkbox"
+      style="chkNormal">
+      <checkbox
+        field="usrIsCheck"
+        dynamicfield="usrChkText">
+        </checkbox>
+      </portal>
+
+    <portal
+      id="domain"
+      style="edit">
+      <edit
+        field="domDomain">
+        </edit>
+      </portal>
+
+    <portal
+      id="info"
+      style="actInfo">
+      <action
+        action="info">
+        </action>
+      <mouseinfo><![CDATA[
+        var sText as string
+        call PWManSumm
+        @text = sText
+        ]]></mouseinfo>
+      </portal>
+
+    <portal
+      id="delete"
+      style="actDelete"
+      tiptext="Click to delete this item">
+      <action
+        action="delete">
+        </action>
+      </portal>
+
+    <portal
+      id="adjust"
+      style="CompSmIncr">
+      <incrementer
+        field="abUserVal">
+        </incrementer>
+      </portal>
+
+    <portal
+      id="pForm"
+      style="actEdit">
+      <action
+        action="edit"
+        buttontext="">
+        </action>
+      </portal>
+
+    <position><![CDATA[
+      ~set up our height based on our tallest portal
+      ~note: Tablet doesn't show a summary!
+      if (state.istablet = 0) then
+        height = portal[checkbox].height + portal[summary].height + 2
+      else
+        height = maximum(portal[checkbox].height, portal[menu1].height)
+        portal[summary].visible = 0
+        endif
+
+      ~if this is a "sizing" calculation, we're done
+      doneif (issizing <> 0)
+
+      ~Determine whether our polymorph form button should be shown. By default,
+      ~it would be visible if there is a gizmo, but we want to be able to "turn
+      ~off" the ability to polymorph for certain archetypes and such. Thus we
+      ~will link it being shown to the presence of a tag instead.
+      portal[pForm].visible = tagis[Helper.AdjPolymor]
+
+      ~center our tallest portals vertically
+      perform portal[info].centervert
+      perform portal[pForm].centervert
+      perform portal[delete].centervert
+      perform portal[mLevel].centervert
+
+      ~place our next-largest portal at the top if we have to fit a summary into
+      ~it
+      if (portal[summary].visible <> 0) then
+        portal[checkbox].top = 0
+      else
+        perform portal[checkbox].centervert
+        endif
+
+      ~and center the rest on it
+      perform portal[name].centeron[vert,checkbox]
+      perform portal[thingname].centeron[vert,checkbox]
+      perform portal[lblmenu1].centeron[vert,checkbox]
+      perform portal[menu1].centeron[vert,checkbox]
+      perform portal[lblmenu2].centeron[vert,checkbox]
+      perform portal[menu2].centeron[vert,checkbox]
+      perform portal[domain].centeron[vert,checkbox]
+      perform portal[lblmenuar].centeron[vert,checkbox]
+      perform portal[menuarray].centeron[vert,checkbox]
+
+      ~place the summary at the bottom
+      perform portal[summary].alignedge[bottom,0]
+
+      ~determine whether our portals are visible; we only show them if requested
+      ~Note: Remember that a non-empty tagexpr field indicates menu selection is used.
+      if (field[usrCandid1].isempty <> 0) then
+        portal[lblmenu1].visible = 0
+        portal[menu1].visible = 0
+      elseif (field[usrLabel1].isempty <> 0) then
+        portal[lblmenu1].visible = 0
+        endif
+
+      if (field[usrCandid2].isempty <> 0) then
+        portal[lblmenu2].visible = 0
+        portal[menu2].visible = 0
+      elseif (field[usrLabel2].isempty <> 0) then
+        portal[lblmenu2].visible = 0
+        endif
+
+      if (empty(field[usrArray].arraytext[0]) <> 0) then
+        portal[lblmenuar].visible = 0
+        portal[menuarray].visible = 0
+      elseif (field[usrLabelAr].isempty <> 0) then
+        portal[lblmenuar].visible = 0
+        endif
+
+      if (field[usrChkText].isempty <> 0) then
+        portal[checkbox].visible = 0
+        endif
+
+      if (tagis[User.NeedDomain] = 0) then
+        portal[domain].visible = 0
+        endif
+
+      if (tagis[Helper.Increment] = 0) then
+        portal[adjust].visible = 0
+        endif
+
+      ~if our target has been explicitly selected for us, we don't need to show
+      ~a menu
+      if (tagis[Target.?] <> 0) then
+        portal[lblmenu1].visible = 0
+        portal[menu1].visible = 0
+        endif
+      if (tagis[Target2.?] <> 0) then
+        portal[lblmenu2].visible = 0
+        portal[menu2].visible = 0
+        endif
+
+      ~position the delete portal on the far right
+      perform portal[delete].alignedge[right,0]
+
+      ~position the info portal to the left of the delete button
+      perform portal[info].alignrel[rtol,delete,-8]
+
+      ~position the adjust or polymorph form portal to the left of the info button
+      if (portal[pForm].visible <> 0) then
+        perform portal[pForm].alignrel[rtol,info,-8]
+      else
+        ~position the adjust portal to the left of the info button
+        perform portal[adjust].alignrel[rtol,info,-8]
+        endif
+
+      ~determine our effective right edge, allowing for the buttons above
+      ~NOTE: No buttons on the tablet
+      var edge as number
+      if (state.istablet = 0) then
+        if (portal[pForm].visible <> 0) then
+          edge = portal[pForm].left
+        else
+          edge = portal[info].left
+          endif
+      else
+        edge = width
+        endif
+
+      ~setup the default portal width and gap to be used between and around portals
+      var defwidth as number
+      var gap as number
+      var halfgap as number
+      defwidth = 100
+      gap = 10
+      halfgap = 5
+
+      ~determine the minimum amount of space we need to reserve for our portals
+      var reserve as number
+      if (portal[checkbox].visible <> 0) then
+        reserve += defwidth
+        endif
+      if (portal[menuarray].visible <> 0) then
+        reserve += portal[lblmenuar].width * portal[lblmenuar].visible
+        reserve += defwidth + gap
+        endif
+      if (portal[menu1].visible <> 0) then
+        reserve += portal[lblmenu1].width * portal[lblmenu1].visible
+        reserve += defwidth + gap
+        reserve += portal[lblmenu2].width * portal[menu2].visible
+        reserve += (defwidth + gap) * portal[menu2].visible
+        endif
+      if (portal[domain].visible <> 0) then
+        reserve += defwidth
+        endif
+
+      ~position the name on the left, reserving our minimum space for any portals
+      var x as number
+
+      portal[mLevel].left = 0
+      perform portal[name].alignrel[ltor,mLevel,5]
+
+      ~our summary starts a little to the left of the name
+      perform portal[summary].alignrel[ltor,mLevel,15]
+
+      ~if the ability is auto-added, change its font to indicate that fact
+      ~NOTE: Tablet shows stuff in a different read-only table, so nothing
+      ~     should show as undeletable, because otherwise everything will!
+      if (candelete = 0) then
+        if (tagis[Helper.NotFree] = 0) then
+          if (state.istablet = 0) then
+            perform portal[name].setstyle[lblAuto]
+            perform portal[thingname].setstyle[lblAuto]
+            endif
+          portal[mLevel].visible = 0
+          portal[name].left = 0
+          portal[summary].left = 10
+        else
+          if (state.istablet = 0) then
+            perform portal[name].setstyle[lblAuto]
+            perform portal[thingname].setstyle[lblAuto]
+            endif
+          endif
+
+      ~if we don't need to display a mLevel, hide that and scoot the name and summary to the left
+      elseif (tagis[mLevel.?] = 0) then
+        portal[mLevel].visible = 0
+        portal[name].left = 0
+        portal[summary].left = 10
+        endif
+
+      portal[thingname].width = minimum(portal[thingname].width,edge - portal[name].left - reserve)
+      portal[name].width = minimum(portal[name].width,edge - portal[name].left - reserve)
+
+      if (intable[RacAltAbil] + intable[clsFavor] <> 0) then
+        portal[name].visible = 0
+
+        portal[thingname].left = portal[name].left
+        ~portal[thingname].width = portal[name].width
+        perform portal[thingname].sizetofit[24]
+        perform portal[thingname].autosize
+        portal[thingname].width = minimum(portal[thingname].width,edge - portal[name].left - reserve)
+        portal[name].width = minimum(portal[name].width,edge - portal[name].left - reserve)
+        x = portal[thingname].right + gap
+      else
+        portal[thingname].visible = 0
+
+        perform portal[name].sizetofit[24]
+        perform portal[name].autosize
+        portal[thingname].width = minimum(portal[thingname].width,edge - portal[name].left - reserve)
+        portal[name].width = minimum(portal[name].width,edge - portal[name].left - reserve)
+        x = portal[name].right + gap
+        endif
+
+      ~setup the maximum width for our some portals, regardless of space available
+      var maxwidth as number
+      maxwidth = 150
+
+      portal[summary].width = minimum(portal[summary].width,edge - portal[summary].left - 5)
+
+      ~ Work out how to size and place our extras (things like checkboxes, user
+      ~ text fields, arrays, and choosers).
+      var numline1 as number
+      var numline2 as number
+      var halfgap1 as number
+      var halfgap2 as number
+      var nextleft as number
+      var nexttop as number
+      var widelim1 as number
+      var widelim2 as number
+      var numextra as number
+
+      ~ Gather info to create the width
+      if (portal[checkbox].visible <> 0) then
+        if (numline1 < 2) then
+          numline1 += 1
+        else
+          numline2 += 1
+          endif
+        endif
+
+      if (portal[domain].visible <> 0) then
+        if (numline1 < 2) then
+          numline1 += 1
+        else
+          numline2 += 1
+          endif
+        endif
+
+      if (portal[menuarray].visible <> 0) then
+        if (numline1 < 2) then
+          numline1 += 1
+
+          if (portal[lblmenuar].visible <> 0) then
+            halfgap1 += 1
+            endif
+        else
+          numline2 += 1
+
+          if (portal[lblmenuar].visible <> 0) then
+            halfgap2 += 1
+            endif
+          endif
+        endif
+
+      if (portal[menu1].visible <> 0) then
+        if (numline1 < 2) then
+          numline1 += 1
+
+          if (portal[lblmenu1].visible <> 0) then
+            halfgap1 += 1
+            endif
+        else
+          numline2 += 1
+
+          if (portal[lblmenu1].visible <> 0) then
+            halfgap2 += 1
+            endif
+          endif
+        endif
+
+      if (portal[menu2].visible <> 0) then
+        if (numline1 < 2) then
+          numline1 += 1
+
+          if (portal[lblmenu2].visible <> 0) then
+            halfgap1 += 1
+            endif
+        else
+          numline2 += 1
+
+          if (portal[lblmenu2].visible <> 0) then
+            halfgap2 += 1
+            endif
+          endif
+        endif
+
+      ~ By now we should have the number of extras showing on line 1, plus the number of halfgaps on that line. The number of full gaps is always going to be 1 less than the number of things on the line. Use that information to calculate how wide each extra on line 1 is allowed to be.
+      widelim1 = (portal[info].left - portal[name].right - (gap * (numline1 - 1)) - (halfgap * halfgap1))/numline1
+
+      ~ We want to set a limit on how wide a single extra can be, no more than 150 pixels.
+      widelim1 = minimum(widelim1, 150)
+
+      ~ Use the same information for the second line. Note that we have more horizontal space to work with on the second line, because we don't have to worry about the name.
+      widelim2 = (portal[summary].width - (gap * (numline2 - 1)) - (halfgap * halfgap2))/numline2
+
+      ~ We want to set a limit on how wide a single extra can be, no more than 150 pixels.
+      widelim2 = minimum(widelim2, 150)
+
+      ~ Set the top and nextleft variables, which define where our extra will go.
+      nexttop = 0
+      nextleft = x
+
+      ~ Now go through each of our extras, positioning them appropriately
+      ~ IMPORTANT! Make sure these are evaluated in the same order as above
+      ~ (checkbox, domain, array, menu1 and menu2). If you ever add more portals
+      ~ (like menu3 and menu4), be sure to order them there and here in matching
+      ~ fashion.
+
+      ~ Checkbox
+      if (portal[checkbox].visible <> 0) then
+        numextra += 1
+
+        if (numextra >= 3) then
+          portal[checkbox].width = minimum(widelim2, portal[checkbox].width)
+        else
+          portal[checkbox].width = minimum(widelim1, portal[checkbox].width)
+          endif
+
+        portal[checkbox].top = nexttop
+        portal[checkbox].left = nextleft
+        nextleft = portal[checkbox].right + gap
+        endif
+
+      ~ Domain
+      if (portal[domain].visible <> 0) then
+        numextra += 1
+
+        if (numextra >= 3) then
+          ~ If we are bigger than the limit, shrink us. Otherwise expand us.
+          if (portal[domain].width > widelim2) then
+            portal[domain].width = minimum(widelim2, portal[domain].width)
+          else
+            portal[domain].width = maximum(widelim2, portal[domain].width)
+            endif
+        else
+          ~ If we are bigger than the limit, shrink us. Otherwise expand us.
+          if (portal[domain].width > widelim1) then
+            portal[domain].width = minimum(widelim1, portal[domain].width)
+          else
+            portal[domain].width = maximum(widelim1, portal[domain].width)
+            endif
+          endif
+
+        portal[domain].top = nexttop
+        portal[domain].left = nextleft
+        nextleft = portal[domain].right + gap
+        endif
+
+      ~ If we have both selections on the first line filled, reset nexttop and nextleft to push things onto the next line
+      if (numextra = 2) then
+        nexttop = portal[summary].top
+        nextleft = portal[summary].left
+        endif
+
+      if (numextra = 3) then
+        portal[summary].visible = 0
+        endif
+
+      ~ Array
+      if (portal[menuarray].visible <> 0) then
+        numextra += 1
+
+        if (numextra >= 3) then
+          ~ If we are bigger than the limit, shrink us. Otherwise expand us.
+          if (portal[menuarray].width > widelim2) then
+            portal[menuarray].width = minimum(widelim2, portal[menuarray].width)
+          else
+            portal[menuarray].width = maximum(widelim2, portal[menuarray].width)
+            endif
+        else
+          ~ If we are bigger than the limit, shrink us. Otherwise expand us.
+          if (portal[menuarray].width > widelim1) then
+            portal[menuarray].width = minimum(widelim1, portal[menuarray].width)
+          else
+            portal[menuarray].width = maximum(widelim1, portal[menuarray].width)
+            endif
+          endif
+
+        if (portal[lblmenuar].visible <> 0) then
+          portal[lblmenuar].left = nextleft
+          nextleft = portal[lblmenuar].right + halfgap
+          endif
+
+        portal[menuarray].top = nexttop
+        portal[menuarray].left = nextleft
+        nextleft = portal[menuarray].right + gap
+        endif
+
+      ~ If we have both selections on the first line filled, reset nexttop and nextleft to push things onto the next line
+      if (numextra = 2) then
+        nexttop = portal[summary].top
+        nextleft = portal[summary].left
+        endif
+
+      if (numextra = 3) then
+        portal[summary].visible = 0
+        endif
+
+      ~ Menu 1
+      if (portal[menu1].visible <> 0) then
+        numextra += 1
+
+        if (numextra >= 3) then
+          ~ If we are bigger than the limit, shrink us. Otherwise expand us.
+          if (portal[menu1].width > widelim2) then
+            portal[menu1].width = minimum(widelim2, portal[menu1].width)
+          else
+            portal[menu1].width = maximum(widelim2, portal[menu1].width)
+            endif
+        else
+          ~ If we are bigger than the limit, shrink us. Otherwise expand us.
+          if (portal[menu1].width > widelim1) then
+            portal[menu1].width = minimum(widelim1, portal[menu1].width)
+          else
+            portal[menu1].width = maximum(widelim1, portal[menu1].width)
+            endif
+          endif
+
+        if (portal[lblmenu1].visible <> 0) then
+          portal[lblmenu1].left = nextleft
+          nextleft = portal[lblmenu1].right + halfgap
+          endif
+
+        portal[menu1].top = nexttop
+        portal[menu1].left = nextleft
+        nextleft = portal[menu1].right + gap
+        endif
+
+      ~ If we have both selections on the first line filled, reset nexttop and nextleft to push things onto the next line
+      if (numextra = 2) then
+        nexttop = portal[summary].top
+        nextleft = portal[summary].left
+        endif
+
+      if (numextra = 3) then
+        portal[summary].visible = 0
+        endif
+
+      ~ Menu 2
+      if (portal[menu2].visible <> 0) then
+        numextra += 1
+
+        if (numextra >= 3) then
+          ~ If we are bigger than the limit, shrink us. Otherwise expand us.
+          if (portal[menu2].width > widelim2) then
+            portal[menu2].width = minimum(widelim2, portal[menu2].width)
+          else
+            portal[menu2].width = maximum(widelim2, portal[menu2].width)
+            endif
+        else
+          ~ If we are bigger than the limit, shrink us. Otherwise expand us.
+          if (portal[menu2].width > widelim1) then
+            portal[menu2].width = minimum(widelim1, portal[menu2].width)
+          else
+            portal[menu2].width = maximum(widelim1, portal[menu2].width)
+            endif
+          endif
+
+        if (portal[lblmenu2].visible <> 0) then
+          portal[lblmenu2].left = nextleft
+          nextleft = portal[lblmenu2].right + halfgap
+          endif
+
+        portal[menu2].top = nexttop
+        portal[menu2].left = nextleft
+        nextleft = portal[menu2].right + gap
+        endif
+
+      ~ If we have both selections on the first line filled, reset nexttop and nextleft to push things onto the next line
+      if (numextra = 2) then
+        nexttop = portal[summary].top
+        nextleft = portal[summary].left
+        endif
+
+      if (numextra = 3) then
+        portal[summary].visible = 0
+        endif
+
+      ~Configurables have significantly more horizontal space than the tables on
+      ~the background tab, so refactor things here if we are in one of their
+      ~tables.
+      if (intable[cfg1Race] + intable[cfg2Race] + intable[cfg1Abil] + intable[cfg2Abil] + intable[cfg3Abil] + intable[cfg4Abil] + intable[cfg5Abil] <> 0) then
+        var availspace as number
+        var numshown as number
+        var lastright as number
+        numshown = portal[menuarray].visible + portal[menu1].visible + portal[menu2].visible + portal[domain].visible
+        availspace = portal[info].left - portal[name].width
+
+        availspace = (availspace/numshown) - ((numshown + 1) * gap)
+        lastright = portal[name].right
+
+        if (portal[domain].visible <> 0) then
+          portal[domain].width = minimum(150, availspace)
+          portal[domain].left = lastright + gap
+
+          lastright = portal[domain].right
+          endif
+
+        if (portal[menuarray].visible <> 0) then
+          portal[menuarray].width = minimum(150, availspace)
+          portal[menuarray].left = lastright + gap
+
+          lastright = portal[menuarray].right
+          endif
+
+        if (portal[menu1].visible <> 0) then
+          portal[menu1].width = minimum(150, availspace)
+          portal[menu1].left = lastright + gap
+
+          lastright = portal[menu1].right
+          endif
+
+        if (portal[menu2].visible <> 0) then
+          portal[menu2].width = minimum(150, availspace)
+          portal[menu2].left = lastright + gap
+          endif
+        endif
+
+
+      ~if a menu is visible, make sure it has a selection
+      if (portal[menu1].visible <> 0) then
+        if (field[usrChosen1].ischosen = 0) then
+          perform portal[menu1].setstyle[menuError]
+          endif
+        endif
+      if (portal[menu2].visible <> 0) then
+        if (field[usrChosen2].ischosen = 0) then
+          perform portal[menu2].setstyle[menuError]
+          endif
+        endif
+      if (portal[menuarray].visible <> 0) then
+        if (empty(field[usrArray].arraytext[field[usrIndex].value]) <> 0) then
+          perform portal[menuarray].setstyle[menuError]
+          endif
+        endif
+
+      ~if we're disabled, grey out most things
+      if (tagis[Helper.SpcDisable] <> 0) then
+        perform portal[name].setstyle[lblDisable]
+        perform portal[thingname].setstyle[lblDisable]
+        perform portal[summary].setstyle[lblSummDs]
+        endif
+      ]]></position>
+
+    </template>
+
+
+
+
+
+  <!-- Path of War Maneuver 'thing' template -->
+  <template
+    id="xManThing"
+    name="PoW Maneuver Thing"
+    compset="PWManuever"
+    marginhorz="5"
+    marginvert="5">
+
+    <portal
+      id="mLevel"
+      style="lblNormal">
+      <label>
+        <labeltext><![CDATA[
+          @text = tagvalue[mLevel.?]
+          ]]></labeltext>
+        </label>
+      </portal>
+
+    <portal
+      id="name"
+      style="lblNormal">
+      <label_field
+        field="name">
+        </label_field>
+      </portal>
+
+    <position><![CDATA[
+      height = portal[name].fontheight
+      width = 300
+      doneif (issizing <> 0)
+
+      portal[mLevel].left = 0
+      portal[name].left = 25
+
+      done
+
+      perform portal[mLevel].alignedge[right, 0]
+      portal[name].width = minimum(width - portal[mLevel].width - 5, portal[name].width)
+
+      ~if we're not showing a mLevel, hide the mLevel and center the name
+      if (tagis[mLevel.?] = 0) then
+        portal[mLevel].visible = 0
+        perform portal[name].autosize
+        portal[name].width = minimum(width,portal[name].width)
+
+        perform portal[name].centerhorz
+        endif
+
+      perform portal[name].sizetofit[30]
+      ]]></position>
+    </template>
+
+
+
+
+  </document>

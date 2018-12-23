@@ -26,12 +26,11 @@
       name="Manuever DC"
       type="derived"
       maxlength="0">
-      <calculate phase="PostAttr" priority="10000"><![CDATA[
-        ~ Calculate our DC as 10 plus Maneuver level plus the Attribute Score we are linked
-        ~ to by the UseAttr.? tag on the configurable. We will also add in the "school of magic"
-        ~ DC bonus. We are using the schools in the same way as LW to give a single place to increase
-        ~ all the DC's of a specific Discipline.
-        @value = 10 + tagvalue[mLevel.?] + hero.findchild[BaseAttr,linkage[table].tagids[UseAttr.?]].field[aModBonus].value + hero.findchild[SplSchool,"PathOfWar.Discipline & " & tagids[Discipline.?]].field[schDC].value
+      <calculate phase="PostAttr" priority="10000">
+        <after name="PoW Calc Attribute Bonus"/><![CDATA[
+        ~ Calculate our DC as 10 plus Maneuver level plus the Attribute Score.
+        ~ We will also add in the "school of magic" DC bonus. We are using the schools in the same way as LW to give a single place to increase all the DC's of a specific Discipline.
+        @value = 10 + tagvalue[mLevel.?] + linkage[table].field[powInitAttr].value + hero.findchild[SplSchool,"PathOfWar.Discipline & " & tagids[Discipline.?]].field[schDC].value
         ]]></calculate>
     </field>
     <field
@@ -39,10 +38,10 @@
       name="Initiator Level"
       type="derived"
       maxlength="0">
-      <calculate phase="PostLevel" priority="20"><![CDATA[
-        ~ Get our current IL from the configurator that is setup
-        ~ from the PoW class at PostLevel/10.
-        @value = linkage[table].field[cfgLevel].value
+      <calculate phase="PostLevel" priority="20">
+        <after name="PoW Calc IL"/><![CDATA[
+        ~ Get our current IL from the panel agent
+        @value = linkage[table].field[cIL].value
         ]]></calculate>
     </field>
     <field
@@ -50,9 +49,10 @@
       name="Initiation Modifier"
       type="derived"
       maxlength="0">
-      <calculate phase="PostAttr" priority="10000"><![CDATA[
+      <calculate phase="PostAttr" priority="10000">
+        <after name="PoW Calc Attribute Bonus"/><![CDATA[
         ~ Initiation Modifier is the same linked Attribute score we used to calculate save DC
-        @value = hero.findchild[BaseAttr,linkage[table].tagids[UseAttr.?]].field[aModBonus].value
+        @value = linkage[table].field[powInitAttr].value
         ]]></calculate>
     </field>
     <field
@@ -98,12 +98,152 @@
     <tag group="Usage" tag="PWEncounte"/>
     <tag group="SpecType" tag="Attack"/>
 
+    <eval index="20" phase="First" priority="100"><![CDATA[
+      ~ THIS WHOLE ROUTINE EXISTS TO TRY AND AUTO-CONVERT POW MANEUVERS TO
+      ~ THE NEW CUSTOM UI TAB.
+
+      ~ If we already have correct portal/agent tags then get out now!
+      doneif (tagis[hasagent.mHelp?] <> 0)
+
+      ~ Warlord
+      If (tagis[hasagent.cCfgPW1] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPW1]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPW1]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPW1"]
+      Endif
+
+      If (tagis[hasagent.cCfgPW2] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPW2]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPW2]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPW2"]
+      Endif
+
+      If (tagis[hasagent.cCfgPW3] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPW3]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPW3]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPW3"]
+      Endif
+
+      If (tagis[hasagent.cCfgPW4] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPW4]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPW4]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPW4"]
+      Endif
+
+      If (tagis[hasagent.cCfgPW5] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPW5]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPW6]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPW6"]
+      Endif
+
+      If (tagis[hasagent.cCfgPW6] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPW6]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPW6]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPW6"]
+      Endif
+
+      If (tagis[hasagent.cHelpPWPC1] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPWPC1]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPWPC1]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPWPC1"]
+      Endif
+
+      If (tagis[hasagent.cHelpPWPC2] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPWPC2]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPWPC2]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPWPC2"]
+      Endif
+
+      If (tagis[hasagent.cHelpPWPC3] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPWPC3]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPWPC3]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPWPC3"]
+      Endif
+
+      If (tagis[hasagent.cHelpPWPC4] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPWPC4]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPWPC4]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPWPC4"]
+      Endif
+
+      If (tagis[hasagent.cHelpPWPC5] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPWPC5]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPWPC5]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPWPC5"]
+      Endif
+
+      If (tagis[hasagent.cHelpPWPC6] = 1) Then
+        perform           tagreplace[hasagent.?,hasagent.mHelpPWPC6]
+        perform tagreplace[PowPanelTaken.?,PowPanelTaken.mHelpPWPC6]
+        perform setlinkage[table,PWManList,"PowPanelLive.mHelpPWPC6"]
+      Endif
+      ]]>
+    </eval>
     <!-- This forwards HasMan.? tags to the hero. It also correctly increases the number of
          taken Manuevers on the Configurable.
     -->
-    <eval index="1" phase="First" priority="10000"><![CDATA[
+    <eval index="1" phase="First" priority="10000" name="Setup Maneuver or Stance"><![CDATA[
       ~ Correctly setup the manuever or stance
-      Call PWsetupMan
+      ~Call PWsetupMan
+
+      ~ If we are maneuver then process here
+      ~-------------------------------------
+      If (tagis[mType.Stance] = 0) Then
+        ~ Setup the user choice array
+        field[usrArray].arraytext[0] = "Not Readied"
+        field[usrArray].arraytext[1] = "Readied"
+
+        ~ Create Has Manuever tag
+        perform pulltags[Discipline.?,HasMan]
+
+        ~ Assign Has Manuever tag to the hero which allows for Prerequisites checking
+        perform forward[HasMan.?]
+
+        ~ Increase the selected manuever count by one
+        linkage[table].field[powManSpent].value += 1
+
+        ~ If our manuever is readied then turn on tracker
+        If (field[abilActive].value + field[usrIndex].value <> 0) Then
+
+          ~ Set tags so we display on the In-Play tab for usage
+          perform assign[User.Tracker]
+          perform assign[Helper.ShowSpec]
+          perform assign[User.Activation]
+          field[trkMax].value += 1
+
+          ~ Set readied tag on Configurator
+          perform linkage[table].assign[PathOfWar.ManueverOn]
+        Endif
+
+      ~..If we are a stance process here
+      ~---------------------------------
+      Else
+        ~ Create Has Stance tag
+        perform pulltags[Discipline.?,HasStance]
+
+        ~ Assign Has Stance tag to the hero which allows for Prerequisites checking
+        perform forward[HasStance.?]
+
+        ~ Increase the selected stance count by one
+        linkage[table].field[powStaSpent].value += 1
+
+        ~ Set tags so we display on the In-Play tab for usage as a Stance should always display.
+        perform assign[Helper.ShowSpec]
+        perform assign[User.Activation]
+
+        ~ If our stance is activated then set Stance Activated tag on hero
+        If (field[abilActive].value + field[usrIndex].value <> 0) Then
+          ~ Set activated stance tag on Configurator
+          perform linkage[table].assign[PathOfWar.StanceOn]
+          perform hero.assign[PathOfWar.StanceOn]
+        Endif
+
+      Endif
+
+      ~ Push our level tag to the discipline object; this is for tracking purposes so that things like the Sleeping Goddess PP bonus can work
+      perform hero.findchild[Simple,tagids[Discipline.?]].setfocus
+      doneif (state.isfocus = 0)
+      perform focus.pushtags[mLevel.?]
       ]]>
     </eval>
 
@@ -113,7 +253,7 @@
     -->
     <eval index="2" phase="PreLevel" priority="10000"><![CDATA[
       ~ Set the class this maneuver is attached to
-      perform linkage[table].pulltags[ClsCountAs.?]
+      perform linkage[table].linkage[powClass].pulltags[ClsCountAs.?]
       ]]>
     </eval>
 
@@ -123,9 +263,62 @@
     <prereq message="maneuver(s) required.">
       <validate><![CDATA[
         ~ Validate the number of maneuvers needed. The number of maneuvers needed is stored in mPreReq
+        ~var ValidManRQ as number
+        ~var ValidManTx as string
+        ~Call ValidManRQ
+
+        ~ This procedure validates if we have the correct number of required
+        ~ maneuvers/stances to take this maneuver.
+        ~ ===How to use this Procedure===
+        ~ var ValidManRQ as number
+        ~ var ValidManTx as string
+        ~ Call ValidManRQ
+        ~ @valid = ValidManRQ
+        ~ @message = ValidManTx
+
         var ValidManRQ as number
         var ValidManTx as string
-        Call ValidManRQ
+        var s2name     as string
+        var s2Tag      as string
+        var s2TagSta   as string
+        var s2TagMan   as string
+
+        ~ Default to requirments are valid
+        ValidManRQ = 1
+
+        ~ If a Thing process here
+        If (@ispick = 0) Then
+          s2Tag = altthing.tagids[Discipline.?]
+          s2TagMan = replace(s2Tag,"Discipline","HasMan",0)
+          s2TagSta = replace(s2Tag,"Discipline","HasStance",0)
+
+          ~ If we don't have the correct number then we are invalid
+          If (hero.tagcountstr[s2TagMan] + hero.tagcountstr[s2TagSta] < altthing.field[mPreReq].value) Then
+            ~ not valid
+            ValidManRQ = 0
+            ~ get discipline name
+            s2name = altthing.tagnames[Discipline.?]
+            ~ generate error message to be passed back
+            ValidManTx = altthing.field[mPreReq].value & " " & s2name & " maneuver(s) required."
+          Endif
+
+        ~ If a Pick process here
+        ElseIf (@ispick = 1) Then
+          s2Tag = altpick.tagids[Discipline.?]
+          s2TagMan = replace(s2Tag,"Discipline","HasMan",0)
+          s2TagSta = replace(s2Tag,"Discipline","HasStance",0)
+
+          ~ If we don't have the correct number then we are invalid
+          If (hero.tagcountstr[s2TagMan] + hero.tagcountstr[s2TagSta] < altpick.field[mPreReq].value) Then
+            ~ not valid
+            ValidManRQ = 0
+            ~ get discipline name
+            s2name = altpick.tagnames[Discipline.?]
+            ~ generate error message to be passed back
+            ValidManTx = altpick.field[mPreReq].value & " " & s2name & " maneuver(s) required."
+          Endif
+        Endif
+
         @valid = ValidManRQ
         @message = ValidManTx
         ]]>
@@ -154,9 +347,7 @@
           ~ Only try this if we are attached to a agent like a configurable
           If (isagent = 1) Then
 
-            ~ Our highest manuever level is one lower than our current Initiator Level
-            ~ because the array starts at zero.
-            ManLevel = agent.field[cfgLevel].value - 1
+            ManLevel = agent.field[powClsLevelAry].value
 
             ~ Test to see if the level of the manuever is higher than what we can use
             ~ and if so we are NOT valid.
@@ -181,12 +372,14 @@
   <!-- ************************************************************************ -->
 
 
-  <!-- ==================================================  -->
+  <!-- ================================================== -->
+  <!-- Maneuver List UI Panel                             -->
+  <!-- ================================================== -->
   <component
     id="PWManList"
     name="Maneuver List"
     autocompset="no"
-    hasshortname="no"
+    hasshortname="yes"
     ispublic="yes">
 
     <!-- Arrays -->
@@ -219,7 +412,7 @@
       arrayrows="20">
     </field>
     <field
-      id="AryLevel"
+      id="powClsLevelAry"
       name="Array Class Level"
       type="derived"
       maxlength="0">
@@ -230,19 +423,110 @@
       type="derived"
       maxlength="0">
     </field>
+    <field
+      id="powInitAttr"
+      name="Initiator Attribute Modifier"
+      type="derived"
+      maxlength="0">
+    </field>
+
+    <!-- Number of Maneuvers -->
+    <field
+      id="powManMax"
+      name="Maneuvers table maximum"
+      type="derived">
+    </field>
+    <field
+      id="powManSpent"
+      name="Maneuvers table spent"
+      type="derived">
+    </field>
+    <field
+      id="powManLeft"
+      name="Maneuvers table remaining"
+      type="derived">
+      <calculate phase="Final" priority="50000"><![CDATA[
+        @value = field[powManMax].value - field[powManSpent].value
+      ]]></calculate>
+    </field>
+    <field
+      id="powManAddText"
+      name="Maneuvers table add text"
+      type="derived"
+      maxlength="500">
+    </field>
+    <field
+      id="powManTitle"
+      name="Maneuvers table title"
+      type="derived"
+      maxlength="500">
+    </field>
+    <field
+      id="powManCandid"
+      name="Maneuvers candidate expression"
+      type="derived"
+      maxlength="5000">
+    </field>
+
+    <!-- Number of Stances -->
+    <field
+      id="powStaMax"
+      name="Maneuvers table maximum"
+      type="derived">
+      </field>
+    <field
+      id="powStaSpent"
+      name="Maneuvers table spent"
+      type="derived">
+      </field>
+    <field
+      id="powStaLeft"
+      name="Maneuvers table remaining"
+      type="derived">
+      <calculate phase="Final" priority="50000"><![CDATA[
+        @value = field[powStaMax].value - field[powStaSpent].value
+        ]]></calculate>
+      </field>
+    <field
+      id="powStaAddText"
+      name="Stances table add text"
+      type="derived"
+      maxlength="500">
+    </field>
+    <field
+      id="powStaTitle"
+      name="Maneuvers table title"
+      type="derived"
+      maxlength="500">
+    </field>
+    <field
+      id="powStaCandid"
+      name="Stances candidate expression"
+      type="derived"
+      maxlength="5000">
+    </field>
 
     <!--
       These linkages link the class to its configurable. This allows an easy way to setup the
       configurable. It also moves all the logic to background scripts instead. Meaning the
       proceadure call can be removed from the Configurables.
     -->
-    <linkage linkage="powCfg"/>
+    <linkage linkage="powCfg" optional="yes"/>
     <linkage linkage="powClass"/>
+
+    <!-- The presence of this identity tag on the hero controls the live state of the linked panel -->
+    <identity group="PowPanelLive"/>
+
+    <!-- These tag marks everything added to its tables -->
+    <identity group="PowPanelTaken"/>
 
     <!--
         This does some initial setup of tags.
     -->
-    <eval phase="First" priority="50" index="1" name="PoW Init Setup"><![CDATA[
+    <eval index="1" phase="First" priority="50" name="PoW Init Setup"><![CDATA[
+      ~ if not attached to a configurable we are done!
+      doneif (islinkage[powCfg] = 0)
+
       var searchexpr as string
 
       ~ Name the custom ability lists
@@ -273,7 +557,7 @@
     <!--
         This setups the IL information on the Configurable
     -->
-    <eval phase="PostLevel" priority="10" index="2" name="PoW Calc IL"><![CDATA[
+    <eval index="2" phase="PostLevel" priority="10" name="PoW Calc IL"><![CDATA[
       ~ If this is a prestige class, stop now, because we're going to inherit our IL from another configurable in the next script
       ~ NOTE: To support special "houserules" from the community we added a new PrCIndMan tag to represent a PrC
       ~       class that does not inherit any of its IL values from another PoW class.
@@ -295,27 +579,55 @@
         ~ Add the PrC levels and half of the other levels to the level of the current class to get our total IL
       field[cIL].value += miPrc + round( otherlev/2,0,-1) + linkage[powClass].field[cTotalLev].value
 
+      ~ if not attached to a configurable we are done!
+      doneif (islinkage[powCfg] = 0)
+
       ~ Set the IL onto the associated configurator to save time for later checks
       linkage[powCfg].field[cfgLevel].value += field[cIL].value
+      ]]></eval>
+
+    <!--
+        This setups the initiation attribute modifier so the Manuevers/Stances have an easy field to pull from.
+    -->
+    <eval index="3" phase="PostAttr" priority="100" name="PoW Calc Attribute Bonus"><![CDATA[
+        ~ Set the Initiation Attribute Modifier value
+        field[powInitAttr].value = hero.findchild[BaseAttr,tagids[UseAttr.?]].field[aModBonus].value
       ]]></eval>
 
     <!--
         This sets the correct number of Maneuvers Known, Readied, and Stances onto the Configurable based
         upon the class we are linked too.
     -->
-    <eval phase="Final" priority="11000" index="3"><![CDATA[
+    <eval index="4" phase="Final" priority="11000"><![CDATA[
       var level as number
 
-      ~ If we're a normal prestige class, make sure we have chosen an existing maneuver list to work
-      ~ from, otherwise don't allow picking any maneuvers yet.
-      ~ NOTE: To support special "houserules" from the community we added a new PrCIndMan tag to represent a PrC
-      ~       class that does not inherit any of its IL values from another PoW class.
-      if (linkage[powClass].tagis[ClassType.Prestige] - linkage[powClass].tagis[PathOfWar.PrCIndMan] = 1) then
-        if (hero.childfound[cPWP1Man].field[usrChosen1].ischosen = 0) then
-          linkage[powCfg].field[cfgMax1].value = 0
-          linkage[powCfg].field[cfgMax2].value = 0
-          linkage[powCfg].field[livename].text = linkage[powCfg].tagnames[ClsCountAs.?] & " Maneuvers: Pick Maneuver List on class tab first!"
-          done
+      ~ Calculate the array value which is class level minus one as we start at zero
+      field[powClsLevelAry].value += linkage[powClass].field[cTotalLev].value - 1
+      level = field[powClsLevelAry].value
+
+      ~ Set up Manuever and Stance expressions here
+      field[powManCandid].text = "component.PWManuever & PathOfWar.Manuever & (" & tagids[Discipline.?,"|"] & ")"
+      field[powStaCandid].text = "component.PWManuever & PathOfWar.Stance & (" & tagids[Discipline.?,"|"] & ")"
+
+      ~ Set the panels's number of manuevers/stances known
+      field[powManMax].value += field[cManKnown].arrayvalue[level]
+      field[powStaMax].value += field[cStances].arrayvalue[level]
+
+
+
+      if (islinkage[powCfg] <> 0) then
+
+        ~ If we're a normal prestige class, make sure we have chosen an existing maneuver list to work
+        ~ from, otherwise don't allow picking any maneuvers yet.
+        ~ NOTE: To support special "houserules" from the community we added a new PrCIndMan tag to represent a PrC
+        ~       class that does not inherit any of its IL values from another PoW class.
+        if (linkage[powClass].tagis[ClassType.Prestige] - linkage[powClass].tagis[PathOfWar.PrCIndMan] = 1) then
+          if (hero.childfound[cPWP1Man].field[usrChosen1].ischosen = 0) then
+            linkage[powCfg].field[cfgMax1].value = 0
+            linkage[powCfg].field[cfgMax2].value = 0
+            linkage[powCfg].field[livename].text = linkage[powCfg].tagnames[ClsCountAs.?] & " Maneuvers: Pick Maneuver List on class tab first!"
+            done
+          endif
         endif
       endif
 
@@ -328,46 +640,133 @@
         done
       endif
 
-      ~ Set to pull anything that is not a stance
-      linkage[powCfg].field[cfgAllow1].text = "PathOfWar.Manuever & (" & tagids[Discipline.?,"|"] & ")"
-      ~ Set to pull all the stances
-      linkage[powCfg].field[cfgAllow2].text = "PathOfWar.Stance & (" & tagids[Discipline.?,"|"] & ")"
+      if (islinkage[powCfg] <> 0) then
+        ~ Set to pull anything that is not a stance
+        linkage[powCfg].field[cfgAllow1].text = "PathOfWar.Manuever & (" & tagids[Discipline.?,"|"] & ")"
 
-      ~ Enforce maximum maneuver level, if we have a custom progression
-      if (tagis[PathOfWar.CstManProg] <> 0) then
-        linkage[powCfg].field[cfgAllow1].text &= " & (mLevel.0"
-        var i as number
-        i = 1
-        while (i <= field[cMaxManLvl].arrayvalue[field[cIL].value - 1])
-          linkage[powCfg].field[cfgAllow1].text &= " | mLevel." & i
-          i += 1
-        loop
-        linkage[powCfg].field[cfgAllow1].text &= ")"
+        ~ Set to pull all the stances
+        linkage[powCfg].field[cfgAllow2].text = "PathOfWar.Stance & (" & tagids[Discipline.?,"|"] & ")"
+
+        ~ Enforce maximum maneuver level, if we have a custom progression
+        if (tagis[PathOfWar.CstManProg] <> 0) then
+          linkage[powCfg].field[cfgAllow1].text &= " & (mLevel.0"
+          var i as number
+          i = 1
+          while (i <= field[cMaxManLvl].arrayvalue[field[cIL].value - 1])
+            linkage[powCfg].field[cfgAllow1].text &= " | mLevel." & i
+            i += 1
+          loop
+          linkage[powCfg].field[cfgAllow1].text &= ")"
+        endif
+
+        linkage[powCfg].field[cfgMax1].value += field[cManKnown].arrayvalue[level]
+        linkage[powCfg].field[cfgMax2].value += field[cStances].arrayvalue[level]
+
+        ~ Set the live name to inform the number of manuevers that can be readied
+        linkage[powCfg].field[livename].text = linkage[powCfg].tagnames[ClsCountAs.?] & " Maneuvers Readied: " & linkage[powCfg].tagcount[PathOfWar.ManueverOn] & " of " & field[cManReady].arrayvalue[level]
+
       endif
-
-      ~ Calculate the array value which is class level minus one as we start at zero
-      field[AryLevel].value += linkage[powClass].field[cTotalLev].value - 1
-      level = field[AryLevel].value
-
-      ~ Set the configurator's number of manuevers known
-      linkage[powCfg].field[cfgMax1].value += field[cManKnown].arrayvalue[level]
-
-      ~ Set the configurator's number of stances known
-      linkage[powCfg].field[cfgMax2].value += field[cStances].arrayvalue[level]
-
-      ~ Set the live name to inform the number of manuevers that can be readied
-      linkage[powCfg].field[livename].text = linkage[powCfg].tagnames[ClsCountAs.?] & " Maneuvers Readied: " & linkage[powCfg].tagcount[PathOfWar.ManueverOn] & " of " & field[cManReady].arrayvalue[level]
       ]]></eval>
 
     <!--
         Push validation tags to the hero.
     -->
-    <eval phase="Final" priority="50000" index="4"><![CDATA[
+    <eval index="5" phase="Final" priority="50000"><![CDATA[
       ~ Push the Discipline tags to the hero so that Maneuvers can
       ~ validate correctly.
       perform hero.pushtags[Discipline.?]
       ]]></eval>
 
+    <eval index="6" phase="Final" priority="100000" name="Maneuver List Panel Visibility"><![CDATA[
+      ~ If we are live then tell the hero to show the maneuver list panel
+      perform forward[PowPanelLive.?]
+      ]]></eval>
+
+    <eval index="7" phase="Render" priority="10000" name="Maneuver List Panel - Add text"><![CDATA[
+      var overspent as number
+
+      ~ Maneuvers
+      ~----------------------------------------------------
+      if (field[powManLeft].value = 0) then
+        field[powManAddText].text = "{text clrdisable}No more maneuvers can be added."
+        field[powManTitle].text = "Maneuvers: " & field[powManSpent].value & " of " & field[powManMax].value
+
+      elseif (field[powManLeft].value < 0) then
+        overspent = - field[powManLeft].value
+        field[powManAddText].text = "{text clrwarning}Too many maneuvers have been added." & " (" & overspent & " overspent)"
+        field[powManTitle].text = "Maneuvers: " & "{text clrwarning}" & field[powManSpent].value & " of " & field[powManMax].value & " (" & overspent & " overspent)"
+
+      elseif (field[powManLeft].value > 0) then
+        field[powManAddText].text = "{text clrbright}Add more maneuvers (" & field[powManLeft].value & " left)!"
+        field[powManTitle].text = "Maneuvers: " & "{text clrbright}" & field[powManSpent].value & " of " & field[powManMax].value & " (" & field[powManLeft].value & " left)"
+      endif
+
+      ~ Stances
+      ~----------------------------------------------------
+      if (field[powStaLeft].value = 0) then
+        field[powStaAddText].text = "{text clrdisable}No more stances can be added."
+        field[powStaTitle].text = "Stances: " & field[powStaSpent].value & " of " & field[powStaMax].value
+
+      elseif (field[powStaLeft].value < 0) then
+        overspent = - field[powStaLeft].value
+        field[powStaAddText].text = "{text clrwarning}Too many stances have been added." & " (" & overspent & " overspent)"
+        field[powStaTitle].text = "Stances: " & "{text clrwarning}" & field[powStaSpent].value & " of " & field[powStaMax].value & " (" & overspent & " overspent)"
+
+      elseif (field[powStaLeft].value > 0) then
+        field[powStaAddText].text = "{text clrbright}Add more stances (" & field[powStaLeft].value & " left)!"
+        field[powStaTitle].text = "Stances: " & "{text clrbright}" & field[powStaSpent].value & " of " & field[powStaMax].value & " (" & field[powStaLeft].value & " left)"
+      endif
+
+      ]]></eval>
+
+    <!-- Eval Rules -->
+    <evalrule index="8" phase="Validation" priority="5000" message="PoW List Maneuvers Incorrect" severity="warning"><![CDATA[
+      ~ Overspent
+      if (field[powManLeft].value < 0) then
+        if (ispanel <> 0) then
+          linkvalid = 0
+          endif
+
+        @message = "Maneuvers overspent: " & field[powManSpent].value & " of " & field[powManMax].value
+        done
+
+      ~ Underspent
+      elseif (field[powManLeft].value > 0) then
+        if (ispanel <> 0) then
+          linkvalid = 0
+          endif
+
+        @message = "Maneuvers underspent: " & field[powManSpent].value & " of " & field[powManMax].value
+        done
+        endif
+
+      ~if neither of those applied, we're good
+      @valid = 1
+      ]]></evalrule>
+
+    <evalrule index="9" phase="Validation" priority="5000" message="PoW List Stances Incorrect" severity="warning"><![CDATA[
+      ~ Overspent
+      if (field[powStaLeft].value < 0) then
+        if (ispanel <> 0) then
+          linkvalid = 0
+          endif
+
+        @message = "Stances overspent: " & field[powStaSpent].value & " of " & field[powStaMax].value
+        done
+
+      ~ Underspent
+      elseif (field[powStaLeft].value > 0) then
+        if (ispanel <> 0) then
+          linkvalid = 0
+          endif
+
+        @message = "Stances underspent: " & field[powStaSpent].value & " of " & field[powStaMax].value
+        done
+        endif
+
+      ~if neither of those applied, we're good
+      @valid = 1
+      ]]></evalrule>
 
   </component>
   <!-- ************************************************************************ -->
@@ -521,7 +920,8 @@
   </compset>
 
   <compset
-    id="PWManList">
+    id="PWManList"
+    forceunique="yes">
     <compref component="PWManList"/>
     <compref component="Value"/>
   </compset>

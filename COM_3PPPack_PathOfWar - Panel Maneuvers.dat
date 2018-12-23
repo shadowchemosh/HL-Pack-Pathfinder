@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document signature="Hero Lab Data">
+
+  <portal
+    id="powTitle"
+    style="lblTitle">
+    <label
+      istitle="yes">
+      <labeltext><![CDATA[
+        perform agent.setfocus
+        @text = focus.field[name].text
+        ]]></labeltext>
+      </label>
+    </portal>
+
+  <!-- Maneuvers -->
+  <portal
+    id="powManTable"
+    style="Table">
+    <table_dynamic
+      component="PWManuever"
+      showtemplate="xManPick"
+      choosetemplate="xManThing"
+      showsortset="PoWManeuverSort"
+      choosesortset="PoWManeuverSort"
+      useagentadd="yes"
+      useagentlinkage="yes"
+      useagentcandidate="yes"
+      agentlist="PowPanelTaken"
+      agentautotag="PowPanelTaken"
+      candidatefield="powManCandid"
+      descwidth="350">
+      <list><![CDATA[
+        PathOfWar.Manuever
+        ]]></list>
+      <titlebar><![CDATA[
+        perform agent.setfocus
+        @text = focus.field[powManTitle].text
+      ]]></titlebar>
+      <description><![CDATA[
+        var sText as string
+        call PWManSumm
+        @text = sText
+        ]]></description>
+      <additem><![CDATA[
+        @text = field[powManAddText].text
+        ]]></additem>
+      </table_dynamic>
+    </portal>
+
+  <!-- Stances -->
+  <portal
+    id="powStaTable"
+    style="Table">
+    <table_dynamic
+      component="PWManuever"
+      showtemplate="xManPick"
+      choosetemplate="xManThing"
+      showsortset="PoWManeuverSort"
+      choosesortset="PoWManeuverSort"
+      useagentadd="yes"
+      useagentlinkage="yes"
+      useagentcandidate="yes"
+      agentlist="PowPanelTaken"
+      agentautotag="PowPanelTaken"
+      candidatefield="powStaCandid"
+      descwidth="350">
+      <list><![CDATA[
+        PathOfWar.Stance
+        ]]></list>
+      <autotag group="Helper" tag="Secondary"/>
+      <titlebar><![CDATA[
+        perform agent.setfocus
+        @text = focus.field[powStaTitle].text
+      ]]></titlebar>
+      <description><![CDATA[
+        var sText as string
+        call PWManSumm
+        @text = sText
+        ]]></description>
+      <additem><![CDATA[
+        @text = field[powStaAddText].text
+        ]]></additem>
+      </table_dynamic>
+    </portal>
+
+  <!-- General class tables -->
+  <layout
+    id="powTables">
+    <portalref portal="powTitle"/>
+    <portalref portal="powManTable" taborder="1"/>
+    <portalref portal="powStaTable" taborder="2"/>
+
+    <position><![CDATA[
+      perform agent.setfocus
+
+      autogap = 10
+      perform portal[powTitle].batchadd
+
+      perform portal[powManTable].batchadd
+      perform portal[powStaTable].batchadd
+
+      portal[powManTable].visible = 1
+      portal[powStaTable].visible = 1
+
+      ~ Tablet has no need for title
+      if (state.istablet <> 0) then
+        portal[powTitle].visible = 0
+        endif
+
+      perform this.batchplace
+      ~If none of our tables is visible, this layout doesn't even need to show
+      if (portal[powManTable].visible + portal[powStaTable].visible = 0) then
+        height = 0
+        visible = 0
+      else
+        height = autotop
+        endif
+      ]]></position>
+    </layout>
+
+  <!-- Maneuvers panel -->
+  <panel
+    id="powManeuvers"
+    name="Maneuvres Panel"
+    order="155"
+    marginhorz="5"
+    marginvert="2"
+    tabletmarginhorz="20"
+    tabletmarginvert="20"
+    agentcompset="PWManList"
+    agentlive="PowPanelLive"
+    agentname="shortname"
+    tablettabicon="tablet_tab_configurable.png">
+    <layoutref layout="powTables"/>
+    <position><![CDATA[
+      perform agent.setfocus
+
+      perform layout[powTables].autoplace[15]
+
+      height = autotop
+      ]]></position>
+    </panel>
+
+  </document>

@@ -195,7 +195,7 @@
       ~ If we found no hit get out now!
       doneif (state.isfocus = 0)
       ~ Calculate the array value which is class level minus one as we start at zero
-    s2X = focus.field[AryLevel].value
+    s2X = focus.field[powClsLevelAry].value
       doneif (s2X < 0)
 
       ~ Validate our level vs the number of Readied manuevers allowed
@@ -492,17 +492,27 @@
   </procedure>
 
 
-  <!-- Retrieve summary info on a Maneuvers -->
+  <!-- Retrieve summary info on a Maneuver/Stance -->
   <procedure id="PWManSumm" context="info"><![CDATA[
     ~ OUT: sText - output text
     var sText as string
+    var nIsPick as number
 
-    ~ Set text fields
     var sBreak  as string
+
     ~ Default to the HL new line
     sBreak = "{br}"
 
-    sText = "{b}Discipline:{/b} " & tagnames[Discipline.?] & " (" & tagnames[mType.?] & ")"
+    ~ If we are pick and NOT being printed then add name as header
+    if (ispick + state.isoutput = 1) Then
+      sText = "{b}" & field[thingname].text & "{/b}\n\n"
+    else
+      sText = ""
+    endif
+
+    sText &= "{align left}"
+
+    sText &= "{b}Discipline:{/b} " & tagnames[Discipline.?] & " (" & tagnames[mType.?] & ")"
 
     ~ If we have a descriptor tag then add it into the header text
     If (tagis[mDescript.?] <> 0) Then
@@ -541,16 +551,30 @@
     Endif
 
     ~ If we have a saving throw tag then add it into the header text
-    If (tagis[mSave.?] <> 0) Then
-      sText &= sBreak & "{b}Saving Throw:{/b} " & tagnames[mSave.?]
-    ~.. If we have a manually entered Saving Throw text then use it
-    ElseIf ( empty(field[mDuration].text) = 0 ) Then
-      sText &= sBreak & "{b}Saving Throw:{/b} " & field[mSave].text
+    If (tagis[mSave.?] + !field[mSave].isempty <> 0) Then
+
+      If (tagis[mSave.?] <> 0) Then
+        sText &= sBreak & "{b}Saving Throw:{/b} " & tagnames[mSave.?]
+      ~.. If we have a manually entered Saving Throw text then use it
+      ElseIf (!field[mSave].isempty = 1 ) Then
+        sText &= sBreak & "{b}Saving Throw:{/b} " & field[mSave].text
+      Endif
+
+      ~ If we are a pick and we have a saving throw show the DC value
+      If (ispick = 1) then
+        sText &= " DC (" & field[mDC].text & ")"
+      Endif
     Endif
 
     ~ Combine the Manuever text to after the header
     sText &= sBreak & sBreak & field[descript].text
-    ]]>
-    </procedure>
+
+    if (tagis[thing.showonly] = 0) then
+      var foottext as string
+      call MsInfFoot
+      sText = splice(sText, foottext, "\n\n{align left}")
+      endif
+
+    ]]></procedure>
 
   </document>
