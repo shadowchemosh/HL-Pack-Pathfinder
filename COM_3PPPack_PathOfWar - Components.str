@@ -94,6 +94,15 @@
       maxlength="0">
     </field>
 
+    <!-- Activation state of maneuvers - we're not activated by default -->
+    <field
+      id="mReady"
+      name="Maneuver Readied?"
+      type="user"
+      minvalue="0"
+      maxvalue="1">
+      </field>
+
     <!-- TAGS -->
     <tag group="Usage" tag="PWEncounte"/>
     <tag group="SpecType" tag="Attack"/>
@@ -179,8 +188,10 @@
       Endif
       ]]>
     </eval>
-    <!-- This forwards HasMan.? tags to the hero. It also correctly increases the number of
-         taken Manuevers on the Configurable.
+
+    <!--
+        This forwards HasMan.? tags to the hero. It also correctly increases the number of
+        taken Manuevers on the Configurable.
     -->
     <eval index="1" phase="First" priority="10000" name="Setup Maneuver or Stance"><![CDATA[
       ~ Correctly setup the manuever or stance
@@ -190,8 +201,8 @@
       ~-------------------------------------
       If (tagis[mType.Stance] = 0) Then
         ~ Setup the user choice array
-        field[usrArray].arraytext[0] = "Not Readied"
-        field[usrArray].arraytext[1] = "Readied"
+        ~field[usrArray].arraytext[0] = "Not Readied"
+        ~field[usrArray].arraytext[1] = "Readied"
 
         ~ Create Has Manuever tag
         perform pulltags[Discipline.?,HasMan]
@@ -203,7 +214,7 @@
         linkage[table].field[powManSpent].value += 1
 
         ~ If our manuever is readied then turn on tracker
-        If (field[abilActive].value + field[usrIndex].value <> 0) Then
+        If (field[mReady].value <> 0) Then
 
           ~ Set tags so we display on the In-Play tab for usage
           perform assign[User.Tracker]
@@ -213,6 +224,12 @@
 
           ~ Set readied tag on Configurator
           perform linkage[table].assign[PathOfWar.ManueverOn]
+          linkage[table].field[powReadyManSpent].value += 1
+
+        ~ Else not ready and we can not be active so turn off
+        Else
+          trustme
+          field[abilActive].value = 0
         Endif
 
       ~..If we are a stance process here
@@ -235,6 +252,7 @@
         If (field[abilActive].value + field[usrIndex].value <> 0) Then
           ~ Set activated stance tag on Configurator
           perform linkage[table].assign[PathOfWar.StanceOn]
+          linkage[table].field[powReadyStaSpent].value += 1
           perform hero.assign[PathOfWar.StanceOn]
         Endif
 
@@ -430,7 +448,7 @@
       maxlength="0">
     </field>
 
-    <!-- Number of Maneuvers -->
+    <!-- Maneuvers -->
     <field
       id="powManMax"
       name="Maneuvers table maximum"
@@ -468,20 +486,20 @@
       maxlength="5000">
     </field>
 
-    <!-- Number of Stances -->
+    <!-- Stances -->
     <field
       id="powStaMax"
-      name="Maneuvers table maximum"
+      name="Stances table maximum"
       type="derived">
       </field>
     <field
       id="powStaSpent"
-      name="Maneuvers table spent"
+      name="Stances table spent"
       type="derived">
       </field>
     <field
       id="powStaLeft"
-      name="Maneuvers table remaining"
+      name="Stances table remaining"
       type="derived">
       <calculate phase="Final" priority="50000"><![CDATA[
         @value = field[powStaMax].value - field[powStaSpent].value
@@ -495,7 +513,7 @@
     </field>
     <field
       id="powStaTitle"
-      name="Maneuvers table title"
+      name="Stances table title"
       type="derived"
       maxlength="500">
     </field>
@@ -505,6 +523,59 @@
       type="derived"
       maxlength="5000">
     </field>
+
+    <!-- Maneuvers Ready -->
+    <field
+      id="powReadyManMax"
+      name="Maneuvers ready maximum"
+      type="derived">
+    </field>
+    <field
+      id="powReadyManSpent"
+      name="Maneuvers readied"
+      type="derived">
+    </field>
+    <field
+      id="powReadyManLeft"
+      name="Maneuvers ready remaining"
+      type="derived">
+      <calculate phase="Final" priority="50000"><![CDATA[
+        @value = field[powReadyManMax].value - field[powReadyManSpent].value
+      ]]></calculate>
+    </field>
+    <field
+      id="powReadyManTitle"
+      name="Maneuvers Ready Title"
+      type="derived"
+      maxlength="500">
+    </field>
+
+    <!-- Stances Ready -->
+    <field
+      id="powReadyStaMax"
+      name="Stances ready maximum"
+      type="derived">
+    </field>
+    <field
+      id="powReadyStaSpent"
+      name="Stances readied"
+      type="derived">
+    </field>
+    <field
+      id="powReadyStaLeft"
+      name="Stances ready remaining"
+      type="derived">
+      <calculate phase="Final" priority="50000"><![CDATA[
+        @value = field[powReadyStaMax].value - field[powReadyStaSpent].value
+      ]]></calculate>
+    </field>
+    <field
+      id="powReadyStaTitle"
+      name="Stances Ready Title"
+      type="derived"
+      maxlength="500">
+    </field>
+
 
     <!--
       These linkages link the class to its configurable. This allows an easy way to setup the
@@ -613,8 +684,11 @@
       field[powManMax].value += field[cManKnown].arrayvalue[level]
       field[powStaMax].value += field[cStances].arrayvalue[level]
 
+      ~ Set the panels number of manuevers that can be readied
+      field[powReadyManMax].value += field[cManReady].arrayvalue[level]
+      field[powReadyStaMax].value += 1 + tagcount[PathOfWar.StanceUp]
 
-
+      ~ This only runs for old classes using a configurable still
       if (islinkage[powCfg] <> 0) then
 
         ~ If we're a normal prestige class, make sure we have chosen an existing maneuver list to work
@@ -701,6 +775,18 @@
         field[powManTitle].text = "Maneuvers: " & "{text clrbright}" & field[powManSpent].value & " of " & field[powManMax].value & " (" & field[powManLeft].value & " left)"
       endif
 
+      ~ Maneuvers Ready
+      if (field[powReadyManLeft].value = 0) then
+        field[powReadyManTitle].text = "Maneuvers Ready: " & field[powReadyManSpent].value & " of " & field[powReadyManMax].value
+
+      elseif (field[powReadyManLeft].value < 0) then
+        overspent = - field[powReadyManLeft].value
+        field[powReadyManTitle].text = "Maneuvers Ready: " & "{text clrwarning}" & field[powManSpent].value & " of " & field[powManMax].value & " (" & overspent & " overspent)"
+
+      elseif (field[powReadyManLeft].value > 0) then
+        field[powReadyManTitle].text = "Maneuvers Ready: " & "{text clrbright}" & field[powReadyManSpent].value & " of " & field[powReadyManMax].value & " (" & field[powReadyManLeft].value & " left)"
+      endif
+
       ~ Stances
       ~----------------------------------------------------
       if (field[powStaLeft].value = 0) then
@@ -715,6 +801,18 @@
       elseif (field[powStaLeft].value > 0) then
         field[powStaAddText].text = "{text clrbright}Add more stances (" & field[powStaLeft].value & " left)!"
         field[powStaTitle].text = "Stances: " & "{text clrbright}" & field[powStaSpent].value & " of " & field[powStaMax].value & " (" & field[powStaLeft].value & " left)"
+      endif
+
+      ~ Stances Ready
+      if (field[powReadyStaLeft].value = 0) then
+        field[powReadyStaTitle].text = "Stances Ready: " & field[powReadyStaSpent].value & " of " & field[powReadyStaMax].value
+
+      elseif (field[powReadyStaLeft].value < 0) then
+        overspent = - field[powReadyStaLeft].value
+        field[powReadyStaTitle].text = "Stances Ready: " & "{text clrwarning}" & field[powStaSpent].value & " of " & field[powStaMax].value & " (" & overspent & " overspent)"
+
+      elseif (field[powReadyStaLeft].value > 0) then
+        field[powReadyStaTitle].text = "Stances Ready: " & "{text clrbright}" & field[powReadyStaSpent].value & " of " & field[powReadyStaMax].value & " (" & field[powReadyStaLeft].value & " left)"
       endif
 
       ]]></eval>
@@ -917,6 +1015,7 @@
     <compref component="SpecialTab"/>
     <compref component="StatblName"/>
     <compref component="Custom"/>
+    <compref component="Domain"/>
   </compset>
 
   <compset

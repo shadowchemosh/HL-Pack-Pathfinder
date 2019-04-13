@@ -7,8 +7,8 @@
     <label
       istitle="yes">
       <labeltext><![CDATA[
-        perform agent.setfocus
-        @text = focus.field[name].text
+        ~perform agent.setfocus
+        @text = agent.field[name].text & " " & agent.field[powReadyManTitle].text
         ]]></labeltext>
       </label>
     </portal>
@@ -87,21 +87,24 @@
   <!-- General class tables -->
   <layout
     id="powTables">
-    <portalref portal="powTitle"/>
-    <portalref portal="powManTable" taborder="1"/>
-    <portalref portal="powStaTable" taborder="2"/>
-
+    <portalref portal="powTitle" taborder="1"/>
+    <portalref portal="powManTable" taborder="2"/>
+    <portalref portal="powStaTable" taborder="3"/>
+    <templateref template="mManInfo" dynamic="yes" ispick="yes" taborder="0"/>
     <position><![CDATA[
       perform agent.setfocus
 
       autogap = 10
-      perform portal[powTitle].batchadd
 
+      ~perform template[mManInfo].render
+      perform template[mManInfo].batchadd
+      perform portal[powTitle].batchadd
       perform portal[powManTable].batchadd
       perform portal[powStaTable].batchadd
 
       portal[powManTable].visible = 1
       portal[powStaTable].visible = 1
+      template[mManInfo].visible = 1
 
       ~ Tablet has no need for title
       if (state.istablet <> 0) then
@@ -109,6 +112,7 @@
         endif
 
       perform this.batchplace
+
       ~If none of our tables is visible, this layout doesn't even need to show
       if (portal[powManTable].visible + portal[powStaTable].visible = 0) then
         height = 0
@@ -137,6 +141,8 @@
       perform agent.setfocus
 
       perform layout[powTables].autoplace[15]
+      ~perform layout[mManInfo].autoplace[15]
+      ~perform layout[mManInfo].render
 
       height = autotop
       ]]></position>

@@ -1,13 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document signature="Hero Lab Data">
 
+  <!-- Maneuvers info template -->
+  <template
+    id="mManInfo"
+    name="Maneuvers Info Template"
+    compset="PWManList">
+
+    <portal
+      id="mReadyMan"
+      style="lblNormal">
+      <label
+        ismultiline="no"
+        text="XXXXXXXXXXXXXXXXXXXXXXX">
+        <labeltext><![CDATA[
+          ~@text = agent.field[powReadyManTitle].text
+          ]]></labeltext>
+        </label>
+      </portal>
+    <portal
+      id="mReadySta"
+      style="lblNormal">
+      <label_field
+        field="powReadyStaTitle">
+        </label_field>
+      </portal>
+
+      <position><![CDATA[
+        ~we have a lot more space to spread out into on the tablet
+        var vertspace as number
+        var horzspace as number
+        var position as number
+        if (state.istablet = 0) then
+        ~  vertspace = 10
+        else
+        ~  vertspace = 25
+          endif
+        ~horzspace = 15
+        ~perform agent.setfocus
+        ~autogap = 10
+
+        height = portal[mReadyMan].height + 10
+        ~width = portal[mReadyMan].width + 10
+        ~perform portal[mReadyMan].centerhorz
+
+        portal[mReadyMan].top = 0
+        ~perform portal[mReadyMan].alignedge[top,150]
+        portal[mReadyMan].visible = 1
+        portal[mReadySta].visible = 0
+
+        ]]></position>
+    </template>
+
+
+
+
+
+
+
+
+
+
+
+
   <template
     id="xManPick"
     name="PoW Manuever Pick"
-    compset="CustomSpec"
+    compset="PWManuever"
     marginhorz="5"
     marginvert="1"
     tabletmarginhorz="10">
+
+    <portal
+      id="mReady"
+      style="chkNormal"
+      showinvalid="yes">
+      <checkbox
+        field="mReady"
+        message="">
+        </checkbox>
+      <mouseinfo><![CDATA[
+        if (tagis[Helper.SpcDisable] <> 0) then
+          if (tagis[Helper.SpcReplace] <> 0) then
+            @text = "(Replaced)"
+          elseif (tagis[Helper.SpcNotWorn] <> 0) then
+            @text = "(Not Equipped)"
+          else
+            @text = "(Requirements not met)"
+            endif
+        else
+          @text = "Click to ready or un-ready this maneuver/stance."
+          endif
+        ]]></mouseinfo>
+      </portal>
 
     <portal
       id="mLevel"
@@ -215,6 +300,7 @@
       perform portal[pForm].centervert
       perform portal[delete].centervert
       perform portal[mLevel].centervert
+      perform portal[mReady].centervert
 
       ~place our next-largest portal at the top if we have to fit a summary into
       ~it
@@ -341,11 +427,12 @@
       ~position the name on the left, reserving our minimum space for any portals
       var x as number
 
-      portal[mLevel].left = 0
+      portal[mReady].left = 0
+      perform portal[mLevel].alignrel[ltor,mReady,5]
       perform portal[name].alignrel[ltor,mLevel,5]
 
       ~our summary starts a little to the left of the name
-      perform portal[summary].alignrel[ltor,mLevel,15]
+      perform portal[summary].alignrel[ltor,mLevel,5]
 
       ~if the ability is auto-added, change its font to indicate that fact
       ~NOTE: Tablet shows stuff in a different read-only table, so nothing
