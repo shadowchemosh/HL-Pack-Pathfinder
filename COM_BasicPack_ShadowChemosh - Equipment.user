@@ -279,7 +279,6 @@
     <tag group="Helper" tag="Improvised"/>
     <tag group="Helper" tag="AlwaysAvl"/>
     <tag group="ShadowEqp" tag="TorchLit"/>
-
     <tag group="ProductId" tag="HLCommunit"/>
     <bootstrap thing="abS2Torch"></bootstrap>
     <eval phase="PreLevel" priority="8000"><![CDATA[
@@ -299,7 +298,17 @@
         perform delete[Helper.Improvised]
         perform tagreplace[wProfReq.ImprovMel,wProfReq.Simple]
         field[DescAppend].text &= "{B}Torch Handling{/b} the radius of normal and increased illumination shed by any torch or mundane light source you carry increases by 10 feet."
-      Endif]]></eval>
+      Endif
+
+      ~ Feat "Firebrand" taken then process here
+      If (#hasfeat[fFirebrand] = 1) Then
+
+        ~ Make us a simple weapon
+        perform delete[Helper.Improvised]
+        perform tagreplace[wMain.1d3,wMain.1d6]
+        perform assign[Helper.Proficient]
+      Endif
+      ]]></eval>
     <eval phase="Final" priority="50000" index="2"><![CDATA[
       ~ If not active get out now! &
       doneif (tagis[ShadowEqp.TorchLit] = 0)
