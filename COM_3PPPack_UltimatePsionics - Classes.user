@@ -340,19 +340,34 @@ hero.child[xPwrRes].field[abValue].value = field[abValue].value]]></eval>
   endif]]></eval>
     </thing>
   <thing id="cScornEart" name="Scorn Earth" description="t 1st level, an elocater&apos;s feet lift from the ground. From now on, she can float a foot above the ground, but still move and act as if she were standing on solid ground. At distances greater than 1 foot from any sufficiently stable surface, her speed diminishes to 10 feet per round, but she can move in any direction (including straight up or down). Melee and ranged attacks suffer increasing penalties as if she were the subject of the defy gravity power. \n\nScorn earth is constantly active, even when unconscious, unless the elocater deliberately suppresses it (a free action), is heavily encumbered, or is slain. If the elocater is carrying a medium load or wearing heavy or medium armor while using scorn earth, her speed reduces to 10 feet per round." compset="ClSpecial">
-    <eval phase="Final"><![CDATA[if (hero.tagis[Encumbered.Light] = 0) then
-  ~ If we are carrying a Medium Load or wearing Medium or Heavy Armor   ~ speed reduces to 10'
-  hero.child[Speed].field[tSpeed].value = 10
-  endif]]></eval>
+    <eval phase="Final"><![CDATA[
+      if (hero.tagis[Encumbered.Light] = 0) then
+        ~ If we are carrying a Medium Load or wearing Medium or Heavy Armor
+        ~ speed reduces to 10'
+        hero.child[Speed].field[tSpeed].value = 10
+      endif]]></eval>
     </thing>
   <thing id="cTermVelo" name="Terminal Velocity" description="As long as either personal gravity or scorn earth is active, if the elocater would be in a position to fall (for example, stepping over a pit), she instead hovers at her current position, as if standing on solid ground. As a move action, she can safely float or jump down 30&apos; (she can float down an additional 30&apos; per additional move action spent in this way)." compset="ClSpecial"></thing>
   <thing id="cFreerun" name="Freerunning" description="Beginning at 2nd level, an elocater&apos;s land speed increases by 10 feet. This is treated as a circumstance bonus (it does not stack with terrain-based circumstance bonuses, such as the circumstance bonus from using skate on a decline). This bonus increases to 20 feet at 5th level and to 30 feet at 8th level." compset="ClSpecial">
     <tag group="AbilType" tag="Extra"/>
-    <eval phase="Final" priority="10000"><![CDATA[var bonus as number
-bonus = field[xIndex].value * 10
-field[listname].text = "Freerunning (+" & bonus & "')"]]>
-      <after name="Encumber Final"/>
-      </eval>
+    <eval phase="PostLevel" priority="10000"><![CDATA[
+      var bonus as number
+      bonus = field[xIndex].value * 10
+      field[listname].text = field[thingname].text & " (" & signed(bonus) & "')"
+
+      ~ If we're not shown, just get out now
+      doneif (tagis[Helper.ShowSpec] = 0)
+      ~ if we've been disabled, get out now
+      doneif (tagis[Helper.SpcDisable] <> 0)
+
+      field[abValue].value += field[xCount].value * 10
+      field[livename].text = field[thingname].text & " (" & signed(field[abValue].value) & "')"
+
+      ~ The following should only happen once on the first copy
+      doneif (tagis[Helper.FirstCopy] = 0)
+
+      #applybonus[ModCirc,hero.child[Speed],field[abValue].value]
+      ]]></eval>
     </thing>
   <thing id="cDimeStep" name="Dimension Step" description="An elocater of 3rd level or higher can slip psionically between spaces as if using the {i}fold space{/i} power, once per day. The elocater cannot bring any other creatures with her. Her manifester level for this effect is equal to her elocater level. At 6th level, the elocater gains a second daily usage, and at 9th level, she can use this ability three times per day." compset="ClSpecial">
     <tag group="AbilType" tag="Super"/>
